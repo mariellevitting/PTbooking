@@ -37,7 +37,7 @@ export async function registerUser(
 
   if (role === "parent" && dancerNames && dancerNames.length > 0) {
     await supabase.from("children").insert(
-      dancerNames.map(name => ({ parent_id: data.user!.id, name }))
+      dancerNames.map(name => ({ parent_id: data.user?.id ?? "", name }))
     );
   }
 
