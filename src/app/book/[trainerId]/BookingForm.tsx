@@ -71,6 +71,24 @@ export default function BookingForm({ slots, bookerId, bookerName, bookerRole }:
       .update({ is_booked: true })
       .eq("id", selectedSlot.id);
 
+    // Send varsel til treneren
+    const start = new Date(selectedSlot.start_at);
+    const tidspunkt = start.toLocaleDateString("nb-NO", { weekday: "long", day: "numeric", month: "long" }) +
+      " kl. " + start.toLocaleTimeString("nb-NO", { hour: "2-digit", minute: "2-digit" });
+
+    const { data: slotData } = await supabase
+      .from("availability_slots")
+      .select("trainer_id")
+      .eq("id", selectedSlot.id)
+      .single();
+
+    if (slotData) {
+      await supabase.from("notifications").insert({
+        user_id: slotData.trainer_id,
+        message: `${dancerName} har booket time i ${danceStyle} – ${tidspunkt}`,
+      });
+    }
+
     router.push("/booking/kvittering?success=1");
   }
 
