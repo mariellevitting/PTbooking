@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Poppins } from "next/font/google";
 import "./globals.css";
+import Footer from "@/components/Footer";
 
 const poppins = Poppins({
   subsets: ["latin"],
@@ -20,7 +21,10 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="nb" className={`${poppins.variable} h-full antialiased`}>
-      <body className="min-h-full flex flex-col font-[family-name:var(--font-poppins)]">{children}</body>
+      <body className="min-h-full flex flex-col font-[family-name:var(--font-poppins)]">
+        {children}
+        <Footer />
+      </body>
     </html>
   );
 }
