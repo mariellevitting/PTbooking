@@ -58,7 +58,7 @@ export default function AvailabilityPage() {
   today.setHours(0, 0, 0, 0);
 
   const [weekStart, setWeekStart] = useState(getMondayOfWeek(today));
-  const [selectedDate, setSelectedDate] = useState<Date | null>(null);
+  const [selectedDate, setSelectedDate] = useState<Date | null>(today);
   const [selected, setSelected] = useState<Set<string>>(new Set());
   const [saving, setSaving] = useState(false);
   const [success, setSuccess] = useState(false);
@@ -72,8 +72,11 @@ export default function AvailabilityPage() {
     prev.setDate(weekStart.getDate() - 7);
     if (prev >= getMondayOfWeek(today)) {
       setWeekStart(prev);
-      setSelectedDate(null);
+      const days = getWeekDays(prev);
+      const firstAvailable = days.find((d) => d >= today) ?? days[0];
+      setSelectedDate(firstAvailable);
       setSelected(new Set());
+      setSuccess(false);
     }
   }
 
@@ -81,8 +84,11 @@ export default function AvailabilityPage() {
     const next = new Date(weekStart);
     next.setDate(weekStart.getDate() + 7);
     setWeekStart(next);
-    setSelectedDate(null);
+    const days = getWeekDays(next);
+    const firstAvailable = days.find((d) => d >= today) ?? days[0];
+    setSelectedDate(firstAvailable);
     setSelected(new Set());
+    setSuccess(false);
   }
 
   function pickDate(date: Date) {
