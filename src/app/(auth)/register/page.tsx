@@ -144,6 +144,7 @@ export default function RegisterPage() {
                   </button>
                 </div>
               )}
+
               {role === "trainer" && (
                 <div className="space-y-1.5">
                   <label className="text-sm font-medium">Trenerkode</label>

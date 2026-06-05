@@ -15,6 +15,11 @@ interface Slot {
   end_at: string;
 }
 
+interface Child {
+  id: string;
+  name: string;
+}
+
 interface Props {
   slots: Slot[];
   trainerId: string;
@@ -22,6 +27,7 @@ interface Props {
   bookerName: string;
   bookerRole: string;
   danceStyles: string[];
+  children: Child[];
 }
 
 function groupByDate(slots: Slot[]) {
@@ -36,13 +42,14 @@ function groupByDate(slots: Slot[]) {
   return groups;
 }
 
-export default function BookingForm({ slots, bookerId, bookerName, bookerRole, danceStyles }: Props) {
+export default function BookingForm({ slots, bookerId, bookerName, bookerRole, danceStyles, children }: Props) {
   const router = useRouter();
   const isParent = bookerRole === "parent";
   const isDouble = (style: string) => DOUBLE_STYLES.includes(style);
 
+  const autoFill = isParent && children.length === 1 ? children[0].name : "";
   const [selectedSlot, setSelectedSlot] = useState<Slot | null>(null);
-  const [dancer1, setDancer1] = useState(isParent ? "" : bookerName);
+  const [dancer1, setDancer1] = useState(isParent ? autoFill : bookerName);
   const [dancer2, setDancer2] = useState("");
   const [danceStyle, setDanceStyle] = useState("");
   const [step, setStep] = useState<"pick" | "confirm">("pick");
@@ -144,11 +151,25 @@ export default function BookingForm({ slots, bookerId, bookerName, bookerRole, d
               <label className="text-sm font-medium">
                 {needsTwoNames ? "Danser 1 – navn" : "Danserens navn"}
               </label>
-              <Input
-                value={dancer1}
-                onChange={(e) => setDancer1(e.target.value)}
-                placeholder="Navn på danseren"
-              />
+              {children.length > 1 ? (
+                <select
+                  value={dancer1}
+                  onChange={(e) => setDancer1(e.target.value)}
+                  className="w-full border rounded-lg px-3 py-2 text-sm bg-white"
+                  required
+                >
+                  <option value="">Velg danser</option>
+                  {children.map((c) => (
+                    <option key={c.id} value={c.name}>{c.name}</option>
+                  ))}
+                </select>
+              ) : (
+                <Input
+                  value={dancer1}
+                  onChange={(e) => setDancer1(e.target.value)}
+                  placeholder="Navn på danseren"
+                />
+              )}
             </div>
           )}
 

@@ -31,6 +31,11 @@ export default async function TrainerBookPage({ params }: { params: Promise<{ tr
     .eq("id", trainerId)
     .single();
 
+  const { data: children } = await supabase
+    .from("children")
+    .select("id, name")
+    .eq("parent_id", user.id);
+
   const { data: slots } = await supabase
     .from("availability_slots")
     .select("*")
@@ -97,6 +102,7 @@ export default async function TrainerBookPage({ params }: { params: Promise<{ tr
             bookerName={profile?.name ?? ""}
             bookerRole={profile?.role ?? "dancer"}
             danceStyles={styles}
+            children={children ?? []}
           />
         )}
       </div>
