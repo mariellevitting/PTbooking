@@ -33,7 +33,7 @@ export default async function TrainerProfilPage() {
 
   const { data: allUsers } = isAdmin ? await supabase
     .from("profiles")
-    .select("id, name, role")
+    .select("id, name, role, email")
     .order("role")
     .order("name") : { data: null };
 
@@ -79,9 +79,12 @@ export default async function TrainerProfilPage() {
                       <div className="w-8 h-8 rounded-full bg-purple-100 flex items-center justify-center text-purple-600 font-bold text-xs shrink-0">
                         {u.name.charAt(0)}
                       </div>
-                      <p className="text-sm font-medium">{u.name}</p>
+                        <div>
+                        <p className="text-sm font-medium">{u.name}</p>
+                        {u.email && <p className="text-xs text-gray-400">{u.email}</p>}
+                      </div>
                     </div>
-                    <span className={`text-xs px-2 py-0.5 rounded-full ${
+                    <span className={`text-xs px-2 py-0.5 rounded-full shrink-0 ${
                       u.role === "trainer" ? "bg-purple-100 text-purple-600" :
                       u.role === "dancer" ? "bg-blue-100 text-blue-600" :
                       "bg-green-100 text-green-600"

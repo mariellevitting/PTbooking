@@ -27,6 +27,7 @@ export async function registerUser(
     id: data.user.id,
     name,
     role,
+    email,
   });
 
   if (profileError) {
