@@ -168,7 +168,7 @@ export default function BookingForm({ slots, bookerId, bookerName, bookerRole, d
           <div className="bg-blue-50 border border-blue-200 rounded-xl p-4">
             <p className="text-sm font-semibold text-blue-800 mb-1">Betaling</p>
             <p className="text-sm text-blue-700">
-              Betaling skjer via <strong>Spond</strong> inntil videre. Du vil motta betalingsforespørsel der etter at timen er booket.
+              Betaling er som før i <strong>Spond</strong>.
             </p>
           </div>
 
