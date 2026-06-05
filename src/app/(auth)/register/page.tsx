@@ -49,6 +49,7 @@ export default function RegisterPage() {
       <div className="hidden md:flex md:w-1/2 relative bg-purple-600">
         <div className="absolute inset-0 bg-gradient-to-br from-purple-500 to-purple-800" />
         <div className="relative z-10 flex flex-col justify-end p-10 text-white">
+          <p className="text-white/60 text-sm italic tracking-widest uppercase mb-3">Av dansere, for dansere</p>
           <h1 className="text-4xl font-bold mb-2">Evolution Danseklubb</h1>
           <p className="text-white/80 text-lg">Book din privattime enkelt og raskt</p>
         </div>
@@ -57,6 +58,7 @@ export default function RegisterPage() {
       {/* Mobil – liten toppdel */}
       <div className="md:hidden h-48 relative bg-gradient-to-br from-purple-500 to-purple-800">
         <div className="absolute inset-0 flex flex-col justify-end p-6">
+          <p className="text-white/60 text-xs italic tracking-widest uppercase mb-1">Av dansere, for dansere</p>
           <h1 className="text-2xl font-bold text-white">Evolution Danseklubb</h1>
           <p className="text-white/80 text-sm">Book din privattime</p>
         </div>
