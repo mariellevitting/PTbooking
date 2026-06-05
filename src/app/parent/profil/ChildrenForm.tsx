@@ -71,21 +71,18 @@ export default function ChildrenForm({ parentId, children: initial }: { parentId
         )}
       </div>
 
-      <div className="bg-white rounded-2xl border p-5">
-        <h2 className="font-semibold text-base mb-4">Legg til danser</h2>
-        <form onSubmit={handleAdd} className="flex gap-2">
-          <Input
-            value={newName}
-            onChange={(e) => setNewName(e.target.value)}
-            placeholder="Navn på danseren"
-            required
-          />
-          <Button type="submit" className="bg-purple-600 hover:bg-purple-700 shrink-0" disabled={saving}>
-            {saving ? "..." : "Legg til"}
-          </Button>
-        </form>
-        {success && <p className="text-sm text-green-600 mt-2">Danser lagt til!</p>}
-      </div>
+      <form onSubmit={handleAdd} className="flex gap-2 mt-2">
+        <Input
+          value={newName}
+          onChange={(e) => setNewName(e.target.value)}
+          placeholder="Legg til danser"
+          className="text-sm"
+        />
+        <Button type="submit" className="bg-purple-600 hover:bg-purple-700 shrink-0 text-sm px-3" disabled={saving}>
+          {saving ? "..." : "Legg til"}
+        </Button>
+      </form>
+      {success && <p className="text-xs text-green-600 mt-1">Danser lagt til!</p>}
     </div>
   );
 }
