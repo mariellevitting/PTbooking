@@ -38,7 +38,7 @@ export default function HomePage() {
             anvisningene nøye.
           </p>
           <div className="bg-amber-50 border border-amber-200 rounded-xl p-4">
-            <p className="text-sm font-semibold text-amber-800 mb-1">⚠️ VIKTIG!</p>
+            <p className="text-sm font-semibold text-amber-800 mb-1">VIKTIG!</p>
             <p className="text-sm text-amber-700">
               Kvitteringen du mottar på mail for betalt privattime må danseren ha med til privattimen!
               Du kan også ta et bilde av kvitteringen og sende til treneren i forkant av timen.

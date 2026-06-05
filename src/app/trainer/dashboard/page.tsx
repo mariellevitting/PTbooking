@@ -4,6 +4,7 @@ import { createClient } from "@/lib/supabase/server";
 import { Button } from "@/components/ui/button";
 import LogoutButton from "@/components/LogoutButton";
 import NotificationBell from "@/components/NotificationBell";
+import { UserCircle } from "lucide-react";
 
 export default async function TrainerDashboard() {
   const supabase = await createClient();
@@ -40,6 +41,9 @@ export default async function TrainerDashboard() {
           <h1 className="text-2xl font-bold">Hei, {profile.name}!</h1>
           <div className="flex items-center gap-3">
             <NotificationBell notifications={notifications ?? []} />
+            <Link href="/trainer/profil" className="text-gray-400 hover:text-purple-600 transition-colors">
+              <UserCircle size={24} />
+            </Link>
             <LogoutButton />
           </div>
         </div>

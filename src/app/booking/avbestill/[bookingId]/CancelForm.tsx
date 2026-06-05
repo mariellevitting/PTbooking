@@ -67,7 +67,7 @@ export default function CancelForm({ bookingId, slotId, trainerId, dancerName, d
 
       {withinDeadline && (
         <div className="bg-red-50 border border-red-200 rounded-xl p-4">
-          <p className="text-sm font-semibold text-red-700 mb-1">⚠️ Sen avbestilling</p>
+          <p className="text-sm font-semibold text-red-700 mb-1">Sen avbestilling</p>
           <p className="text-sm text-red-600">
             Timen er om mindre enn 24 timer. Ved avbestilling så sent må timen betales i sin helhet.
           </p>

@@ -72,7 +72,7 @@ export default async function DancerDashboard() {
                   </div>
                   <div className="mt-3 pt-3 border-t flex justify-between items-center">
                     {hoursUntil < 24 && (
-                      <p className="text-xs text-red-400">⚠️ Under 24t – gebyr ved avbestilling</p>
+                      <p className="text-xs text-red-400">Under 24t – gebyr ved avbestilling</p>
                     )}
                     <Link href={`/booking/avbestill/${booking.id}`} className="ml-auto">
                       <button className="text-xs text-red-400 hover:text-red-600">

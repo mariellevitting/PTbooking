@@ -2,6 +2,7 @@
 
 import { useState, useRef, useEffect } from "react";
 import { createClient } from "@/lib/supabase/client";
+import { Bell } from "lucide-react";
 
 interface Notification {
   id: string;
@@ -42,8 +43,8 @@ export default function NotificationBell({ notifications: initial }: Props) {
 
   return (
     <div ref={ref} className="relative">
-      <button onClick={handleOpen} className="relative p-1">
-        <span className="text-2xl">🔔</span>
+      <button onClick={handleOpen} className="relative p-1 text-gray-500 hover:text-purple-600 transition-colors">
+        <Bell size={22} />
         {unread > 0 && (
           <span className="absolute -top-1 -right-1 bg-purple-600 text-white text-xs w-5 h-5 rounded-full flex items-center justify-center font-bold">
             {unread}
