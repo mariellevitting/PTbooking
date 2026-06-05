@@ -29,9 +29,11 @@ export default async function TrainerProfilPage() {
     .eq("role", "trainer")
     .order("name");
 
-  const { data: allUsers } = await supabase
+  const isAdmin = user.email === "miemarielle@live.no";
+
+  const { data: allUsers } = isAdmin ? await supabase
     .from("profiles")
-    .select("role");
+    .select("role") : { data: null };
 
   return (
     <main className="min-h-screen bg-gray-50 p-6">
@@ -48,8 +50,8 @@ export default async function TrainerProfilPage() {
           danceStyles={trainerDetails?.dance_styles ?? []}
         />
 
-        {/* Brukerstatistikk */}
-        {(() => {
+        {/* Brukerstatistikk – kun synlig for admin */}
+        {isAdmin && (() => {
           const dancers = allUsers?.filter(u => u.role === "dancer").length ?? 0;
           const parents = allUsers?.filter(u => u.role === "parent").length ?? 0;
           const trainers = allUsers?.filter(u => u.role === "trainer").length ?? 0;
@@ -76,8 +78,8 @@ export default async function TrainerProfilPage() {
           );
         })()}
 
-        {/* Registrerte trenere */}
-        <div className="bg-white rounded-2xl border p-5 mt-6">
+        {/* Registrerte trenere – kun synlig for admin */}
+        {isAdmin && <div className="bg-white rounded-2xl border p-5 mt-6">
           <h2 className="font-semibold text-base flex items-center gap-2 mb-4">
             <Users size={16} className="text-purple-500" />
             Registrerte trenere ({allTrainers?.length ?? 0})
@@ -102,7 +104,7 @@ export default async function TrainerProfilPage() {
               );
             })}
           </div>
-        </div>
+        </div>}
       </div>
     </main>
   );
