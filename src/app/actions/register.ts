@@ -8,7 +8,8 @@ export async function registerUser(
   password: string,
   name: string,
   role: UserRole,
-  trainerCode?: string
+  trainerCode?: string,
+  dancerName?: string
 ): Promise<{ error?: string }> {
   if (role === "trainer") {
     if (!trainerCode || trainerCode !== process.env.TRAINER_INVITE_CODE) {
@@ -32,6 +33,13 @@ export async function registerUser(
 
   if (profileError) {
     return { error: "Kunne ikke opprette profil" };
+  }
+
+  if (role === "parent" && dancerName) {
+    await supabase.from("children").insert({
+      parent_id: data.user.id,
+      name: dancerName,
+    });
   }
 
   return {};

@@ -22,6 +22,7 @@ export default function RegisterPage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [trainerCode, setTrainerCode] = useState("");
+  const [dancerName, setDancerName] = useState("");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
 
@@ -31,7 +32,7 @@ export default function RegisterPage() {
     setLoading(true);
     setError("");
 
-    const result = await registerUser(email, password, name, role, trainerCode || undefined);
+    const result = await registerUser(email, password, name, role, trainerCode || undefined, dancerName || undefined);
 
     if (result.error) {
       setError(result.error);
@@ -107,6 +108,18 @@ export default function RegisterPage() {
                 <label className="text-sm font-medium">Passord</label>
                 <Input type="password" value={password} onChange={(e) => setPassword(e.target.value)} placeholder="Minst 6 tegn" minLength={6} required />
               </div>
+              {role === "parent" && (
+                <div className="space-y-1.5">
+                  <label className="text-sm font-medium">Danserens navn</label>
+                  <Input
+                    value={dancerName}
+                    onChange={(e) => setDancerName(e.target.value)}
+                    placeholder="Navn på danseren som skal ha privattime"
+                    required
+                  />
+                  <p className="text-xs text-gray-400">Navnet på barnet ditt som skal ha privattime.</p>
+                </div>
+              )}
               {role === "trainer" && (
                 <div className="space-y-1.5">
                   <label className="text-sm font-medium">Trenerkode</label>
