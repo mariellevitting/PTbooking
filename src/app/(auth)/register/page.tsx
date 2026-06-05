@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
-import { createClient } from "@/lib/supabase/client";
+import { registerUser } from "@/app/actions/register";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -22,6 +22,7 @@ export default function RegisterPage() {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [trainerCode, setTrainerCode] = useState("");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
 
@@ -31,27 +32,10 @@ export default function RegisterPage() {
     setLoading(true);
     setError("");
 
-    const supabase = createClient();
+    const result = await registerUser(email, password, name, role, trainerCode || undefined);
 
-    const { data, error: signUpError } = await supabase.auth.signUp({
-      email,
-      password,
-    });
-
-    if (signUpError || !data.user) {
-      setError(signUpError?.message ?? "Noe gikk galt");
-      setLoading(false);
-      return;
-    }
-
-    const { error: profileError } = await supabase.from("profiles").insert({
-      id: data.user.id,
-      name,
-      role,
-    });
-
-    if (profileError) {
-      setError("Kunne ikke opprette profil");
+    if (result.error) {
+      setError(result.error);
       setLoading(false);
       return;
     }
@@ -83,50 +67,39 @@ export default function RegisterPage() {
               ))}
               <p className="text-center text-sm text-gray-500 mt-4">
                 Har du allerede konto?{" "}
-                <Link href="/login" className="text-purple-600 hover:underline">
-                  Logg inn
-                </Link>
+                <Link href="/login" className="text-purple-600 hover:underline">Logg inn</Link>
               </p>
             </div>
           ) : (
             <form onSubmit={handleRegister} className="space-y-4">
-              <button
-                type="button"
-                onClick={() => setStep("role")}
-                className="text-sm text-purple-600 hover:underline mb-2"
-              >
+              <button type="button" onClick={() => setStep("role")} className="text-sm text-purple-600 hover:underline mb-2">
                 ← Endre rolle
               </button>
               <div className="space-y-2">
                 <label className="text-sm font-medium">Navn</label>
-                <Input
-                  value={name}
-                  onChange={(e) => setName(e.target.value)}
-                  placeholder="Ditt fulle navn"
-                  required
-                />
+                <Input value={name} onChange={(e) => setName(e.target.value)} placeholder="Ditt fulle navn" required />
               </div>
               <div className="space-y-2">
                 <label className="text-sm font-medium">E-post</label>
-                <Input
-                  type="email"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  placeholder="din@epost.no"
-                  required
-                />
+                <Input type="email" value={email} onChange={(e) => setEmail(e.target.value)} placeholder="din@epost.no" required />
               </div>
               <div className="space-y-2">
                 <label className="text-sm font-medium">Passord</label>
-                <Input
-                  type="password"
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  placeholder="Minst 6 tegn"
-                  minLength={6}
-                  required
-                />
+                <Input type="password" value={password} onChange={(e) => setPassword(e.target.value)} placeholder="Minst 6 tegn" minLength={6} required />
               </div>
+              {role === "trainer" && (
+                <div className="space-y-2">
+                  <label className="text-sm font-medium">Trenerkode</label>
+                  <Input
+                    type="password"
+                    value={trainerCode}
+                    onChange={(e) => setTrainerCode(e.target.value)}
+                    placeholder="Kode fra klubben"
+                    required
+                  />
+                  <p className="text-xs text-gray-400">Kun trenere med kode fra Evolution kan registrere seg.</p>
+                </div>
+              )}
               {error && <p className="text-sm text-red-500">{error}</p>}
               <Button type="submit" className="w-full" disabled={loading}>
                 {loading ? "Oppretter konto..." : "Lag konto"}
