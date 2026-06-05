@@ -11,3 +11,7 @@ build/
 .idea/
 coverage/
 .turbo/
+node_modules/
+.next/
+.env.local
+.env*.local
