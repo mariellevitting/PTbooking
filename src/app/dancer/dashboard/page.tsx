@@ -24,9 +24,14 @@ export default async function DancerDashboard() {
     .eq("booker_id", user.id)
     .eq("status", "confirmed");
 
+  const now = new Date();
   const upcomingBookings = (bookings ?? [])
-    .filter(b => b.availability_slots && new Date(b.availability_slots.start_at) >= new Date())
+    .filter(b => b.availability_slots && new Date(b.availability_slots.end_at) >= now)
     .sort((a, b) => new Date(a.availability_slots.start_at).getTime() - new Date(b.availability_slots.start_at).getTime());
+
+  const completedBookings = (bookings ?? [])
+    .filter(b => b.availability_slots && new Date(b.availability_slots.end_at) < now)
+    .sort((a, b) => new Date(b.availability_slots.start_at).getTime() - new Date(a.availability_slots.start_at).getTime());
 
   return (
     <main className="bg-gray-50 p-6">
@@ -41,13 +46,11 @@ export default async function DancerDashboard() {
         <div className="flex justify-between items-center mb-4">
           <h2 className="font-semibold text-lg">Mine timer</h2>
           <Link href="/book">
-            <Button className="bg-purple-600 hover:bg-purple-700 text-sm">
-              + Book time
-            </Button>
+            <Button className="bg-purple-600 hover:bg-purple-700 text-sm">+ Book time</Button>
           </Link>
         </div>
 
-        {upcomingBookings.length === 0 ? (
+        {upcomingBookings.length === 0 && completedBookings.length === 0 ? (
           <div className="bg-white rounded-xl border p-6 text-center text-gray-400">
             <p className="text-lg font-medium mb-2">Ingen bookede timer</p>
             <p className="text-sm mb-6">Finn en trener og book din første privattime</p>
@@ -57,7 +60,7 @@ export default async function DancerDashboard() {
             {upcomingBookings.map((booking) => {
               const start = new Date(booking.availability_slots.start_at);
               const end = new Date(booking.availability_slots.end_at);
-              const hoursUntil = (start.getTime() - new Date().getTime()) / (1000 * 60 * 60);
+              const hoursUntil = (start.getTime() - now.getTime()) / (1000 * 60 * 60);
               return (
                 <div key={booking.id} className="bg-white rounded-xl border p-4">
                   <div className="flex justify-between items-start">
@@ -77,14 +80,38 @@ export default async function DancerDashboard() {
                       <p className="text-xs text-red-400">Under 24t – gebyr ved avbestilling</p>
                     )}
                     <Link href={`/booking/avbestill/${booking.id}`} className="ml-auto">
-                      <button className="text-xs text-red-400 hover:text-red-600">
-                        Avbestill
-                      </button>
+                      <button className="text-xs text-red-400 hover:text-red-600">Avbestill</button>
                     </Link>
                   </div>
                 </div>
               );
             })}
+
+            {completedBookings.length > 0 && (
+              <>
+                <p className="text-sm font-medium text-gray-400 pt-2">Gjennomførte timer</p>
+                {completedBookings.map((booking) => {
+                  const start = new Date(booking.availability_slots.start_at);
+                  const end = new Date(booking.availability_slots.end_at);
+                  return (
+                    <div key={booking.id} className="bg-white rounded-xl border p-4 opacity-70">
+                      <div className="flex justify-between items-start">
+                        <div>
+                          <p className="font-semibold capitalize text-gray-500">
+                            {start.toLocaleDateString("nb-NO", { weekday: "long", day: "numeric", month: "long" })}
+                          </p>
+                          <p className="text-sm text-gray-400">
+                            {start.toLocaleTimeString("nb-NO", { hour: "2-digit", minute: "2-digit" })}–{end.toLocaleTimeString("nb-NO", { hour: "2-digit", minute: "2-digit" })}
+                          </p>
+                          <p className="text-sm text-gray-400 mt-1">{booking.dance_style}</p>
+                        </div>
+                        <span className="text-xs bg-gray-100 text-gray-500 px-2 py-1 rounded-full">Fullført</span>
+                      </div>
+                    </div>
+                  );
+                })}
+              </>
+            )}
           </div>
         )}
       </div>

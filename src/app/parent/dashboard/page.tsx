@@ -24,9 +24,14 @@ export default async function ParentDashboard() {
     .eq("booker_id", user.id)
     .eq("status", "confirmed");
 
+  const now = new Date();
   const upcomingBookings = (bookings ?? [])
-    .filter(b => b.availability_slots && new Date(b.availability_slots.start_at) >= new Date())
+    .filter(b => b.availability_slots && new Date(b.availability_slots.end_at) >= now)
     .sort((a, b) => new Date(a.availability_slots.start_at).getTime() - new Date(b.availability_slots.start_at).getTime());
+
+  const completedBookings = (bookings ?? [])
+    .filter(b => b.availability_slots && new Date(b.availability_slots.end_at) < now)
+    .sort((a, b) => new Date(b.availability_slots.start_at).getTime() - new Date(a.availability_slots.start_at).getTime());
 
   return (
     <main className="bg-gray-50 p-6">
@@ -88,6 +93,32 @@ export default async function ParentDashboard() {
                 </div>
               );
             })}
+
+            {completedBookings.length > 0 && (
+              <>
+                <p className="text-sm font-medium text-gray-400 pt-2">Gjennomførte timer</p>
+                {completedBookings.map((booking) => {
+                  const start = new Date(booking.availability_slots.start_at);
+                  const end = new Date(booking.availability_slots.end_at);
+                  return (
+                    <div key={booking.id} className="bg-white rounded-xl border p-4 opacity-70">
+                      <div className="flex justify-between items-start">
+                        <div>
+                          <p className="font-semibold capitalize text-gray-500">
+                            {start.toLocaleDateString("nb-NO", { weekday: "long", day: "numeric", month: "long" })}
+                          </p>
+                          <p className="text-sm text-gray-400">
+                            {start.toLocaleTimeString("nb-NO", { hour: "2-digit", minute: "2-digit" })}–{end.toLocaleTimeString("nb-NO", { hour: "2-digit", minute: "2-digit" })}
+                          </p>
+                          <p className="text-sm text-gray-400 mt-1">{booking.dancer_name} · {booking.dance_style}</p>
+                        </div>
+                        <span className="text-xs bg-gray-100 text-gray-500 px-2 py-1 rounded-full">Fullført</span>
+                      </div>
+                    </div>
+                  );
+                })}
+              </>
+            )}
           </div>
         )}
       </div>
