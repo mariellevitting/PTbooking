@@ -1,0 +1,87 @@
+"use client";
+
+import { useState, useRef, useEffect } from "react";
+import { createClient } from "@/lib/supabase/client";
+
+interface Notification {
+  id: string;
+  message: string;
+  created_at: string;
+  read: boolean;
+}
+
+interface Props {
+  notifications: Notification[];
+}
+
+export default function NotificationBell({ notifications: initial }: Props) {
+  const [open, setOpen] = useState(false);
+  const [notifications, setNotifications] = useState(initial);
+  const ref = useRef<HTMLDivElement>(null);
+  const unread = notifications.filter((n) => !n.read).length;
+
+  useEffect(() => {
+    function handleClick(e: MouseEvent) {
+      if (ref.current && !ref.current.contains(e.target as Node)) {
+        setOpen(false);
+      }
+    }
+    document.addEventListener("mousedown", handleClick);
+    return () => document.removeEventListener("mousedown", handleClick);
+  }, []);
+
+  async function handleOpen() {
+    setOpen((v) => !v);
+    if (!open && unread > 0) {
+      const supabase = createClient();
+      const ids = notifications.filter((n) => !n.read).map((n) => n.id);
+      await supabase.from("notifications").update({ read: true }).in("id", ids);
+      setNotifications((prev) => prev.map((n) => ({ ...n, read: true })));
+    }
+  }
+
+  return (
+    <div ref={ref} className="relative">
+      <button onClick={handleOpen} className="relative p-1">
+        <span className="text-2xl">🔔</span>
+        {unread > 0 && (
+          <span className="absolute -top-1 -right-1 bg-purple-600 text-white text-xs w-5 h-5 rounded-full flex items-center justify-center font-bold">
+            {unread}
+          </span>
+        )}
+      </button>
+
+      {open && (
+        <div className="absolute right-0 mt-2 w-80 bg-white rounded-2xl shadow-xl border z-50 overflow-hidden">
+          <div className="px-4 py-3 border-b">
+            <p className="font-semibold text-sm">Varsler</p>
+          </div>
+          {notifications.length === 0 ? (
+            <div className="px-4 py-6 text-center text-gray-400 text-sm">
+              Ingen varsler
+            </div>
+          ) : (
+            <div className="max-h-96 overflow-y-auto divide-y">
+              {notifications.map((n) => (
+                <div key={n.id} className={`px-4 py-3 flex gap-3 items-start ${!n.read ? "bg-purple-50" : ""}`}>
+                  <div className="w-9 h-9 rounded-full bg-purple-100 flex items-center justify-center text-purple-600 shrink-0 text-sm font-bold">
+                    PT
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <p className="text-sm text-gray-800">{n.message}</p>
+                    <p className="text-xs text-gray-400 mt-0.5">
+                      {new Date(n.created_at).toLocaleDateString("nb-NO", { day: "numeric", month: "short" })} · {new Date(n.created_at).toLocaleTimeString("nb-NO", { hour: "2-digit", minute: "2-digit" })}
+                    </p>
+                  </div>
+                  {!n.read && (
+                    <div className="w-2 h-2 rounded-full bg-purple-500 mt-1.5 shrink-0" />
+                  )}
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+      )}
+    </div>
+  );
+}

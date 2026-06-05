@@ -3,6 +3,7 @@ import Link from "next/link";
 import { createClient } from "@/lib/supabase/server";
 import { Button } from "@/components/ui/button";
 import LogoutButton from "@/components/LogoutButton";
+import NotificationBell from "@/components/NotificationBell";
 
 export default async function TrainerDashboard() {
   const supabase = await createClient();
@@ -32,43 +33,17 @@ export default async function TrainerDashboard() {
     .gte("start_at", new Date().toISOString())
     .order("start_at");
 
-  const unreadCount = notifications?.length ?? 0;
-
   return (
     <main className="min-h-screen bg-gray-50 p-6">
       <div className="max-w-lg mx-auto">
         <div className="flex items-center justify-between mb-1">
           <h1 className="text-2xl font-bold">Hei, {profile.name}!</h1>
           <div className="flex items-center gap-3">
-            {unreadCount > 0 && (
-              <div className="relative">
-                <span className="text-2xl">🔔</span>
-                <span className="absolute -top-1 -right-1 bg-purple-600 text-white text-xs w-5 h-5 rounded-full flex items-center justify-center font-bold">
-                  {unreadCount}
-                </span>
-              </div>
-            )}
+            <NotificationBell notifications={notifications ?? []} />
             <LogoutButton />
           </div>
         </div>
         <p className="text-gray-500 mb-6">Evolution Dance Studio – Trener</p>
-
-        {/* Varsler */}
-        {notifications && notifications.length > 0 && (
-          <div className="mb-6 space-y-2">
-            {notifications.map((n) => (
-              <div key={n.id} className="bg-purple-50 border border-purple-200 rounded-xl p-4 flex gap-3 items-start">
-                <span className="text-purple-500 text-lg">🔔</span>
-                <div>
-                  <p className="text-sm font-medium text-purple-800">{n.message}</p>
-                  <p className="text-xs text-purple-400 mt-0.5">
-                    {new Date(n.created_at).toLocaleDateString("nb-NO", { day: "numeric", month: "short" })}
-                  </p>
-                </div>
-              </div>
-            ))}
-          </div>
-        )}
 
         {/* Timer */}
         <div className="flex justify-between items-center mb-4">
