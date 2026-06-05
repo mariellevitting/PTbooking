@@ -49,6 +49,10 @@ export default function BookingForm({ slots, bookerId, bookerName, bookerRole, d
   const isDouble = (style: string) => DOUBLE_STYLES.includes(style);
 
   const autoFill = isParent && children.length === 1 ? children[0].name : "";
+  const [childrenList, setChildrenList] = useState<Child[]>(children);
+  const [addingChild, setAddingChild] = useState(false);
+  const [newChildName, setNewChildName] = useState("");
+  const [savingChild, setSavingChild] = useState(false);
   const [selectedSlot, setSelectedSlot] = useState<Slot | null>(null);
 
   // Uke-navigasjon
@@ -92,6 +96,22 @@ export default function BookingForm({ slots, bookerId, bookerName, bookerRole, d
   const [step, setStep] = useState<"pick" | "confirm">("pick");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+
+  async function handleAddChild() {
+    if (!newChildName.trim()) return;
+    setSavingChild(true);
+    const supabase = createClient();
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) return;
+    const { data } = await supabase.from("children").insert({ parent_id: user.id, name: newChildName.trim() }).select().single();
+    if (data) {
+      setChildrenList(prev => [...prev, data]);
+      setDancer1(data.name);
+    }
+    setNewChildName("");
+    setAddingChild(false);
+    setSavingChild(false);
+  }
 
   const grouped = groupByDate(slots);
   const needsTwoNames = isDouble(danceStyle);
@@ -188,7 +208,7 @@ export default function BookingForm({ slots, bookerId, bookerName, bookerRole, d
               <label className="text-sm font-medium">
                 {needsTwoNames ? "Danser 1 – navn" : "Danserens navn"}
               </label>
-              {children.length > 1 ? (
+              {childrenList.length > 1 ? (
                 <select
                   value={dancer1}
                   onChange={(e) => setDancer1(e.target.value)}
@@ -196,7 +216,7 @@ export default function BookingForm({ slots, bookerId, bookerName, bookerRole, d
                   required
                 >
                   <option value="">Velg danser</option>
-                  {children.map((c) => (
+                  {childrenList.map((c) => (
                     <option key={c.id} value={c.name}>{c.name}</option>
                   ))}
                 </select>
@@ -206,6 +226,36 @@ export default function BookingForm({ slots, bookerId, bookerName, bookerRole, d
                   onChange={(e) => setDancer1(e.target.value)}
                   placeholder="Navn på danseren"
                 />
+              )}
+
+              {addingChild ? (
+                <div className="flex gap-2 mt-2">
+                  <Input
+                    value={newChildName}
+                    onChange={(e) => setNewChildName(e.target.value)}
+                    placeholder="Navn på danseren"
+                    className="flex-1"
+                  />
+                  <button
+                    type="button"
+                    onClick={handleAddChild}
+                    disabled={savingChild || !newChildName.trim()}
+                    className="text-sm bg-purple-600 text-white px-3 rounded-lg disabled:opacity-50"
+                  >
+                    {savingChild ? "..." : "Legg til"}
+                  </button>
+                  <button type="button" onClick={() => setAddingChild(false)} className="text-sm text-gray-400">
+                    Avbryt
+                  </button>
+                </div>
+              ) : (
+                <button
+                  type="button"
+                  onClick={() => setAddingChild(true)}
+                  className="text-sm text-purple-600 hover:underline mt-1"
+                >
+                  + Legg til danser
+                </button>
               )}
             </div>
           )}
