@@ -228,35 +228,6 @@ export default function BookingForm({ slots, bookerId, bookerName, bookerRole, d
                 />
               )}
 
-              {addingChild ? (
-                <div className="flex gap-2 mt-2">
-                  <Input
-                    value={newChildName}
-                    onChange={(e) => setNewChildName(e.target.value)}
-                    placeholder="Navn på danseren"
-                    className="flex-1"
-                  />
-                  <button
-                    type="button"
-                    onClick={handleAddChild}
-                    disabled={savingChild || !newChildName.trim()}
-                    className="text-sm bg-purple-600 text-white px-3 rounded-lg disabled:opacity-50"
-                  >
-                    {savingChild ? "..." : "Legg til"}
-                  </button>
-                  <button type="button" onClick={() => setAddingChild(false)} className="text-sm text-gray-400">
-                    Avbryt
-                  </button>
-                </div>
-              ) : (
-                <button
-                  type="button"
-                  onClick={() => setAddingChild(true)}
-                  className="text-sm text-purple-600 hover:underline mt-1"
-                >
-                  + Legg til danser
-                </button>
-              )}
             </div>
           )}
 

@@ -4,6 +4,7 @@ import { createClient } from "@/lib/supabase/server";
 import { Button } from "@/components/ui/button";
 import LogoutButton from "@/components/LogoutButton";
 import InfoBox from "@/components/InfoBox";
+import { UserCircle } from "lucide-react";
 
 export default async function DancerDashboard() {
   const supabase = await createClient();
@@ -38,7 +39,12 @@ export default async function DancerDashboard() {
       <div className="max-w-lg mx-auto">
         <div className="flex items-center justify-between mb-1">
           <h1 className="text-2xl font-bold">Hei, {profile.name}!</h1>
-          <LogoutButton />
+          <div className="flex items-center gap-3">
+            <Link href="/dancer/profil" className="text-gray-400 hover:text-purple-600 transition-colors">
+              <UserCircle size={24} />
+            </Link>
+            <LogoutButton />
+          </div>
         </div>
         <p className="text-gray-500 mb-6">Evolution Danseklubb</p>
         <InfoBox />

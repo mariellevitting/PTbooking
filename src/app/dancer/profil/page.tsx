@@ -3,9 +3,8 @@ import { createClient } from "@/lib/supabase/server";
 import Link from "next/link";
 import { ArrowLeft } from "lucide-react";
 import UserProfileForm from "@/components/UserProfileForm";
-import ChildrenForm from "./ChildrenForm";
 
-export default async function ParentProfilPage() {
+export default async function DancerProfilPage() {
   const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) redirect("/login");
@@ -16,18 +15,12 @@ export default async function ParentProfilPage() {
     .eq("id", user.id)
     .single();
 
-  if (!profile || profile.role !== "parent") redirect("/dashboard");
-
-  const { data: children } = await supabase
-    .from("children")
-    .select("*")
-    .eq("parent_id", user.id)
-    .order("created_at");
+  if (!profile || profile.role !== "dancer") redirect("/dashboard");
 
   return (
     <main className="bg-gray-50 p-6">
       <div className="max-w-lg mx-auto">
-        <Link href="/parent/dashboard" className="inline-flex items-center gap-1 text-sm text-purple-600 hover:underline mb-6">
+        <Link href="/dancer/dashboard" className="inline-flex items-center gap-1 text-sm text-purple-600 hover:underline mb-6">
           <ArrowLeft size={16} /> Tilbake
         </Link>
         <h1 className="text-2xl font-bold mb-6">Min profil</h1>
@@ -37,10 +30,6 @@ export default async function ParentProfilPage() {
           phone={profile.phone ?? ""}
           avatarUrl={profile.avatar_url ?? null}
         />
-        <div className="mt-6">
-          <h2 className="text-xl font-bold mb-4">Mine dansere</h2>
-          <ChildrenForm parentId={user.id} children={children ?? []} />
-        </div>
       </div>
     </main>
   );
