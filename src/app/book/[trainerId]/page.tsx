@@ -56,7 +56,7 @@ export default async function TrainerBookPage({ params }: { params: Promise<{ tr
             </div>
             <div>
               <h1 className="text-xl font-bold">{trainer.name}</h1>
-              <p className="text-gray-400 text-sm">Trener – Evolution Dance Studio</p>
+              <p className="text-gray-400 text-sm">Trener – Evolution Danseklubb</p>
             </div>
           </div>
 

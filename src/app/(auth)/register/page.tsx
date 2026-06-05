@@ -49,7 +49,7 @@ export default function RegisterPage() {
       <Card className="w-full max-w-sm">
         <CardHeader className="text-center">
           <CardTitle className="text-2xl">Lag konto</CardTitle>
-          <p className="text-sm text-gray-500">Evolution Dance Studio</p>
+          <p className="text-sm text-gray-500">Evolution Danseklubb</p>
         </CardHeader>
         <CardContent>
           {step === "role" ? (

@@ -34,7 +34,7 @@ export default async function DancerDashboard() {
           <h1 className="text-2xl font-bold">Hei, {profile.name}!</h1>
           <LogoutButton />
         </div>
-        <p className="text-gray-500 mb-8">Evolution Dance Studio</p>
+        <p className="text-gray-500 mb-8">Evolution Danseklubb</p>
 
         <div className="flex justify-between items-center mb-4">
           <h2 className="font-semibold text-lg">Mine timer</h2>

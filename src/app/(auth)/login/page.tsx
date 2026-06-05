@@ -38,7 +38,7 @@ export default function LoginPage() {
       <Card className="w-full max-w-sm">
         <CardHeader className="text-center">
           <CardTitle className="text-2xl">PT Booking</CardTitle>
-          <p className="text-sm text-gray-500">Evolution Dance Studio</p>
+          <p className="text-sm text-gray-500">Evolution Danseklubb</p>
         </CardHeader>
         <CardContent>
           <form onSubmit={handleLogin} className="space-y-4">

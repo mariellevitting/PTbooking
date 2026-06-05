@@ -24,7 +24,7 @@ export default async function ParentDashboard() {
           <h1 className="text-2xl font-bold">Hei, {profile.name}!</h1>
           <LogoutButton />
         </div>
-        <p className="text-gray-500 mb-8">Evolution Dance Studio</p>
+        <p className="text-gray-500 mb-8">Evolution Danseklubb</p>
 
         <div className="bg-white rounded-xl border p-6 text-center text-gray-400">
           <p className="text-lg font-medium mb-2">Ingen bookede timer</p>

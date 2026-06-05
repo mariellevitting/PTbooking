@@ -9,8 +9,8 @@ const poppins = Poppins({
 });
 
 export const metadata: Metadata = {
-  title: "PT Booking – Evolution Dance Studio",
-  description: "Book privattimer hos Evolution Dance Studio",
+  title: "PT Booking – Evolution Danseklubb",
+  description: "Book privattimer hos Evolution Danseklubb",
 };
 
 export default function RootLayout({

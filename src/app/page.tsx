@@ -16,7 +16,7 @@ export default function HomePage() {
       <div className="bg-white border-b px-6 py-4 flex items-center justify-between">
         <div>
           <h1 className="text-xl font-bold">PT Booking</h1>
-          <p className="text-xs text-gray-400">Evolution Dance Studio</p>
+          <p className="text-xs text-gray-400">Evolution Danseklubb</p>
         </div>
         <Link href="/login">
           <Button className="bg-purple-600 hover:bg-purple-700 text-sm">Logg inn</Button>

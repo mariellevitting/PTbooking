@@ -47,7 +47,7 @@ export default async function TrainerDashboard() {
             <LogoutButton />
           </div>
         </div>
-        <p className="text-gray-500 mb-6">Evolution Dance Studio – Trener</p>
+        <p className="text-gray-500 mb-6">Evolution Danseklubb – Trener</p>
 
         {/* Timer */}
         <div className="flex justify-between items-center mb-4">
