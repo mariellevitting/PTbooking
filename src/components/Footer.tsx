@@ -3,7 +3,7 @@ import Link from "next/link";
 
 export default function Footer() {
   return (
-    <footer className="border-t bg-white py-4 px-4 sticky bottom-0 z-10">
+    <footer className="border-t bg-white py-6 px-4 mt-auto">
       <div className="max-w-lg mx-auto flex flex-col items-center gap-2 text-center">
         <p className="text-sm text-gray-500 flex items-center gap-1.5">
           Laget med <Heart size={14} className="text-purple-500 fill-purple-500" /> av{" "}
