@@ -3,6 +3,7 @@ import Link from "next/link";
 import { createClient } from "@/lib/supabase/server";
 import { Button } from "@/components/ui/button";
 import LogoutButton from "@/components/LogoutButton";
+import InfoBox from "@/components/InfoBox";
 
 export default async function ParentDashboard() {
   const supabase = await createClient();
@@ -34,7 +35,8 @@ export default async function ParentDashboard() {
           <h1 className="text-2xl font-bold">Hei, {profile.name}!</h1>
           <LogoutButton />
         </div>
-        <p className="text-gray-500 mb-8">Evolution Danseklubb</p>
+        <p className="text-gray-500 mb-6">Evolution Danseklubb</p>
+        <InfoBox />
 
         <div className="flex justify-between items-center mb-4">
           <h2 className="font-semibold text-lg">Mine timer</h2>
