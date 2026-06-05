@@ -5,7 +5,9 @@ import { useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
 
+const DOUBLE_STYLES = ["Freestyle dobbel", "Slow dobbel"];
 
 interface Slot {
   id: string;
@@ -36,17 +38,24 @@ function groupByDate(slots: Slot[]) {
 
 export default function BookingForm({ slots, bookerId, bookerName, bookerRole, danceStyles }: Props) {
   const router = useRouter();
+  const isParent = bookerRole === "parent";
+  const isDouble = (style: string) => DOUBLE_STYLES.includes(style);
+
   const [selectedSlot, setSelectedSlot] = useState<Slot | null>(null);
-  const [dancerName, setDancerName] = useState(bookerRole === "dancer" ? bookerName : "");
+  const [dancer1, setDancer1] = useState(isParent ? "" : bookerName);
+  const [dancer2, setDancer2] = useState("");
   const [danceStyle, setDanceStyle] = useState("");
   const [step, setStep] = useState<"pick" | "confirm">("pick");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
 
   const grouped = groupByDate(slots);
+  const needsTwoNames = isDouble(danceStyle);
+  const dancerNameForBooking = needsTwoNames ? `${dancer1} & ${dancer2}` : dancer1;
+  const canSubmit = danceStyle && dancer1 && (!needsTwoNames || dancer2);
 
   async function handleBook() {
-    if (!selectedSlot || !danceStyle || !dancerName) return;
+    if (!selectedSlot || !canSubmit) return;
     setLoading(true);
     setError("");
 
@@ -55,7 +64,7 @@ export default function BookingForm({ slots, bookerId, bookerName, bookerRole, d
     const { error: bookError } = await supabase.from("bookings").insert({
       slot_id: selectedSlot.id,
       booker_id: bookerId,
-      dancer_name: dancerName,
+      dancer_name: dancerNameForBooking,
       dance_style: danceStyle,
       status: "confirmed",
     });
@@ -71,7 +80,6 @@ export default function BookingForm({ slots, bookerId, bookerName, bookerRole, d
       .update({ is_booked: true })
       .eq("id", selectedSlot.id);
 
-    // Send varsel til treneren
     const start = new Date(selectedSlot.start_at);
     const tidspunkt = start.toLocaleDateString("nb-NO", { weekday: "long", day: "numeric", month: "long" }) +
       " kl. " + start.toLocaleTimeString("nb-NO", { hour: "2-digit", minute: "2-digit" });
@@ -85,7 +93,7 @@ export default function BookingForm({ slots, bookerId, bookerName, bookerRole, d
     if (slotData) {
       await supabase.from("notifications").insert({
         user_id: slotData.trainer_id,
-        message: `${dancerName} har booket time i ${danceStyle} – ${tidspunkt}`,
+        message: `${dancerNameForBooking} har booket time i ${danceStyle} – ${tidspunkt}`,
       });
     }
 
@@ -112,23 +120,13 @@ export default function BookingForm({ slots, bookerId, bookerName, bookerRole, d
           </div>
 
           <div className="space-y-2">
-            <label className="text-sm font-medium">Danserens navn</label>
-            <input
-              className="w-full border rounded-lg px-3 py-2 text-sm"
-              value={dancerName}
-              onChange={(e) => setDancerName(e.target.value)}
-              placeholder="Navn på danseren"
-            />
-          </div>
-
-          <div className="space-y-2">
             <label className="text-sm font-medium">Dansestil</label>
             <div className="grid grid-cols-2 gap-2">
               {danceStyles.map((style) => (
                 <button
                   key={style}
                   type="button"
-                  onClick={() => setDanceStyle(style)}
+                  onClick={() => { setDanceStyle(style); setDancer2(""); }}
                   className={`py-2 px-3 rounded-lg text-sm border transition-colors ${
                     danceStyle === style
                       ? "bg-purple-600 text-white border-purple-600"
@@ -141,12 +139,38 @@ export default function BookingForm({ slots, bookerId, bookerName, bookerRole, d
             </div>
           </div>
 
+          {isParent && (
+            <div className="space-y-2">
+              <label className="text-sm font-medium">
+                {needsTwoNames ? "Danser 1 – navn" : "Danserens navn"}
+              </label>
+              <Input
+                value={dancer1}
+                onChange={(e) => setDancer1(e.target.value)}
+                placeholder="Navn på danseren"
+              />
+            </div>
+          )}
+
+          {needsTwoNames && (
+            <div className="space-y-2">
+              <label className="text-sm font-medium">
+                {isParent ? "Danser 2 – navn" : "Navn på partner"}
+              </label>
+              <Input
+                value={dancer2}
+                onChange={(e) => setDancer2(e.target.value)}
+                placeholder="Navn på danser nr. 2"
+              />
+            </div>
+          )}
+
           {error && <p className="text-sm text-red-500">{error}</p>}
 
           <Button
             className="w-full bg-purple-600 hover:bg-purple-700"
             onClick={handleBook}
-            disabled={loading || !danceStyle || !dancerName}
+            disabled={loading || !canSubmit}
           >
             {loading ? "Booker..." : "Bekreft booking"}
           </Button>

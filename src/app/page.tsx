@@ -37,6 +37,12 @@ export default function HomePage() {
             tidspunkt for privattimen(e). Deretter starter du bestillingsrutinen og følger
             anvisningene nøye.
           </p>
+          <div className="bg-blue-50 border border-blue-200 rounded-xl p-4">
+            <p className="text-sm font-semibold text-blue-800 mb-1">Betaling</p>
+            <p className="text-sm text-blue-700">
+              Betaling for privattimer skjer inntil videre via <strong>Spond</strong>, på samme måte som før. Du vil motta betalingsforespørsel der etter at timen er booket.
+            </p>
+          </div>
           <div className="bg-amber-50 border border-amber-200 rounded-xl p-4">
             <p className="text-sm font-semibold text-amber-800 mb-1">VIKTIG!</p>
             <p className="text-sm text-amber-700">
