@@ -1,3 +1,7 @@
+"use client";
+
+import { useEffect } from "react";
+import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 
@@ -11,6 +15,16 @@ const TRAINERS = [
 ];
 
 export default function HomePage() {
+  const router = useRouter();
+
+  useEffect(() => {
+    const hasVisited = localStorage.getItem("hasVisited");
+    if (!hasVisited) {
+      localStorage.setItem("hasVisited", "true");
+      router.push("/register");
+    }
+  }, [router]);
+
   return (
     <main className="bg-gray-50">
       <div className="bg-white border-b px-6 py-4 flex items-center justify-between">
@@ -39,9 +53,7 @@ export default function HomePage() {
           </p>
           <div className="bg-blue-50 border border-blue-200 rounded-xl p-4">
             <p className="text-sm font-semibold text-blue-800 mb-1">Betaling</p>
-            <p className="text-sm text-blue-700">
-              Betaling er som før i <strong>Spond</strong>.
-            </p>
+            <p className="text-sm text-blue-700">Betaling er som før i <strong>Spond</strong>.</p>
           </div>
           <div className="bg-amber-50 border border-amber-200 rounded-xl p-4">
             <p className="text-sm font-semibold text-amber-800 mb-1">VIKTIG!</p>
