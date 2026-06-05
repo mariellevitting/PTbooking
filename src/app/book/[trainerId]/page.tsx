@@ -39,7 +39,10 @@ export default async function TrainerBookPage({ params }: { params: Promise<{ tr
     .gte("start_at", new Date().toISOString())
     .order("start_at");
 
-  const styles: string[] = trainerDetails?.dance_styles ?? ["Freestyle", "Slow", "Jazz", "Moderne", "Freestyle dobbel", "Slow dobbel", "Akro", "Hiphop"];
+  const DEFAULT_STYLES = ["Slow", "Freestyle", "Jazz", "Moderne", "Freestyle dobbel", "Slow dobbel", "Akro", "Hiphop"];
+  const styles: string[] = (trainerDetails?.dance_styles?.length ?? 0) > 0
+    ? trainerDetails!.dance_styles
+    : DEFAULT_STYLES;
 
   return (
     <main className="min-h-screen bg-gray-50 p-6">
