@@ -9,7 +9,7 @@ export async function registerUser(
   name: string,
   role: UserRole,
   trainerCode?: string,
-  dancerName?: string
+  dancerNames?: string[]
 ): Promise<{ error?: string }> {
   if (role === "trainer") {
     if (!trainerCode || trainerCode !== process.env.TRAINER_INVITE_CODE) {
@@ -35,11 +35,10 @@ export async function registerUser(
     return { error: "Kunne ikke opprette profil" };
   }
 
-  if (role === "parent" && dancerName) {
-    await supabase.from("children").insert({
-      parent_id: data.user.id,
-      name: dancerName,
-    });
+  if (role === "parent" && dancerNames && dancerNames.length > 0) {
+    await supabase.from("children").insert(
+      dancerNames.map(name => ({ parent_id: data.user.id, name }))
+    );
   }
 
   return {};

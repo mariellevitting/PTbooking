@@ -22,7 +22,7 @@ export default function RegisterPage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [trainerCode, setTrainerCode] = useState("");
-  const [dancerName, setDancerName] = useState("");
+  const [dancerNames, setDancerNames] = useState([""]);
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
 
@@ -32,7 +32,8 @@ export default function RegisterPage() {
     setLoading(true);
     setError("");
 
-    const result = await registerUser(email, password, name, role, trainerCode || undefined, dancerName || undefined);
+    const filteredDancers = dancerNames.filter(n => n.trim() !== "");
+    const result = await registerUser(email, password, name, role, trainerCode || undefined, filteredDancers.length > 0 ? filteredDancers : undefined);
 
     if (result.error) {
       setError(result.error);
@@ -109,15 +110,38 @@ export default function RegisterPage() {
                 <Input type="password" value={password} onChange={(e) => setPassword(e.target.value)} placeholder="Minst 6 tegn" minLength={6} required />
               </div>
               {role === "parent" && (
-                <div className="space-y-1.5">
-                  <label className="text-sm font-medium">Danserens navn</label>
-                  <Input
-                    value={dancerName}
-                    onChange={(e) => setDancerName(e.target.value)}
-                    placeholder="Navn på danseren som skal ha privattime"
-                    required
-                  />
-                  <p className="text-xs text-gray-400">Navnet på barnet ditt som skal ha privattime.</p>
+                <div className="space-y-2">
+                  <label className="text-sm font-medium">Danser(e)</label>
+                  {dancerNames.map((n, i) => (
+                    <div key={i} className="flex gap-2">
+                      <Input
+                        value={n}
+                        onChange={(e) => {
+                          const updated = [...dancerNames];
+                          updated[i] = e.target.value;
+                          setDancerNames(updated);
+                        }}
+                        placeholder={`Danser ${i + 1} sitt navn`}
+                        required={i === 0}
+                      />
+                      {dancerNames.length > 1 && (
+                        <button
+                          type="button"
+                          onClick={() => setDancerNames(dancerNames.filter((_, j) => j !== i))}
+                          className="text-red-400 hover:text-red-600 text-sm px-2"
+                        >
+                          ✕
+                        </button>
+                      )}
+                    </div>
+                  ))}
+                  <button
+                    type="button"
+                    onClick={() => setDancerNames([...dancerNames, ""])}
+                    className="text-sm text-purple-600 hover:underline"
+                  >
+                    + Legg til danser
+                  </button>
                 </div>
               )}
               {role === "trainer" && (
