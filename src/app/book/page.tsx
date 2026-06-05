@@ -49,10 +49,8 @@ export default async function BookPage() {
                     </div>
                     <div className="flex-1 min-w-0">
                       <p className="font-semibold">{trainer.name}</p>
-                      {styles.length > 0 ? (
+                      {styles.length > 0 && (
                         <p className="text-xs text-gray-400 mt-0.5 truncate">{styles.join(" · ")}</p>
-                      ) : (
-                        <p className="text-xs text-gray-300 mt-0.5">Stiler ikke satt opp ennå</p>
                       )}
                     </div>
                     <ChevronRight size={18} className="text-gray-300 shrink-0" />
