@@ -6,7 +6,6 @@ import Link from "next/link";
 import { registerUser } from "@/app/actions/register";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import type { UserRole } from "@/types";
 
 const roles: { value: UserRole; label: string; description: string }[] = [
@@ -45,29 +44,54 @@ export default function RegisterPage() {
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-50 p-4">
-      <Card className="w-full max-w-sm">
-        <CardHeader className="text-center">
-          <CardTitle className="text-2xl">Lag konto</CardTitle>
-          <p className="text-sm text-gray-500">Evolution Danseklubb</p>
-        </CardHeader>
-        <CardContent>
+    <div className="min-h-screen flex flex-col md:flex-row">
+      {/* Venstre – bakgrunnsbilde */}
+      <div
+        className="hidden md:flex md:w-1/2 bg-cover bg-center relative"
+        style={{ backgroundImage: "url('/hero.jpg')" }}
+      >
+        <div className="absolute inset-0 bg-black/50" />
+        <div className="relative z-10 flex flex-col justify-end p-10 text-white">
+          <h1 className="text-4xl font-bold mb-2">Evolution Danseklubb</h1>
+          <p className="text-white/80 text-lg">Book din privattime enkelt og raskt</p>
+        </div>
+      </div>
+
+      {/* Mobil – liten toppdel med bilde */}
+      <div
+        className="md:hidden h-48 bg-cover bg-center relative"
+        style={{ backgroundImage: "url('/hero.jpg')" }}
+      >
+        <div className="absolute inset-0 bg-black/50 flex flex-col justify-end p-6">
+          <h1 className="text-2xl font-bold text-white">Evolution Danseklubb</h1>
+          <p className="text-white/80 text-sm">Book din privattime</p>
+        </div>
+      </div>
+
+      {/* Høyre – registreringsskjema */}
+      <div className="flex flex-1 items-center justify-center bg-gray-50 p-8">
+        <div className="w-full max-w-sm">
+          <div className="mb-8">
+            <h2 className="text-3xl font-bold text-gray-900">Lag konto</h2>
+            <p className="text-gray-500 mt-1 text-sm">Kom i gang på under ett minutt</p>
+          </div>
+
           {step === "role" ? (
             <div className="space-y-3">
-              <p className="text-sm font-medium text-center mb-4">Hvem er du?</p>
+              <p className="text-sm font-medium text-gray-700 mb-3">Hvem er du?</p>
               {roles.map((r) => (
                 <button
                   key={r.value}
                   onClick={() => { setRole(r.value); setStep("details"); }}
-                  className="w-full text-left border rounded-lg p-4 hover:border-purple-500 hover:bg-purple-50 transition-colors"
+                  className="w-full text-left border rounded-xl p-4 bg-white hover:border-purple-500 hover:bg-purple-50 transition-colors"
                 >
-                  <p className="font-medium">{r.label}</p>
+                  <p className="font-semibold text-gray-800">{r.label}</p>
                   <p className="text-sm text-gray-500">{r.description}</p>
                 </button>
               ))}
               <p className="text-center text-sm text-gray-500 mt-4">
                 Har du allerede konto?{" "}
-                <Link href="/login" className="text-purple-600 hover:underline">Logg inn</Link>
+                <Link href="/login" className="text-purple-600 hover:underline font-medium">Logg inn</Link>
               </p>
             </div>
           ) : (
@@ -75,20 +99,20 @@ export default function RegisterPage() {
               <button type="button" onClick={() => setStep("role")} className="text-sm text-purple-600 hover:underline mb-2">
                 ← Endre rolle
               </button>
-              <div className="space-y-2">
+              <div className="space-y-1.5">
                 <label className="text-sm font-medium">Navn</label>
                 <Input value={name} onChange={(e) => setName(e.target.value)} placeholder="Ditt fulle navn" required />
               </div>
-              <div className="space-y-2">
+              <div className="space-y-1.5">
                 <label className="text-sm font-medium">E-post</label>
                 <Input type="email" value={email} onChange={(e) => setEmail(e.target.value)} placeholder="din@epost.no" required />
               </div>
-              <div className="space-y-2">
+              <div className="space-y-1.5">
                 <label className="text-sm font-medium">Passord</label>
                 <Input type="password" value={password} onChange={(e) => setPassword(e.target.value)} placeholder="Minst 6 tegn" minLength={6} required />
               </div>
               {role === "trainer" && (
-                <div className="space-y-2">
+                <div className="space-y-1.5">
                   <label className="text-sm font-medium">Trenerkode</label>
                   <Input
                     type="password"
@@ -101,13 +125,13 @@ export default function RegisterPage() {
                 </div>
               )}
               {error && <p className="text-sm text-red-500">{error}</p>}
-              <Button type="submit" className="w-full" disabled={loading}>
+              <Button type="submit" className="w-full bg-purple-600 hover:bg-purple-700 h-11 text-base" disabled={loading}>
                 {loading ? "Oppretter konto..." : "Lag konto"}
               </Button>
             </form>
           )}
-        </CardContent>
-      </Card>
+        </div>
+      </div>
     </div>
   );
 }

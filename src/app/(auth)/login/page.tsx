@@ -6,7 +6,6 @@ import Link from "next/link";
 import { createClient } from "@/lib/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
 export default function LoginPage() {
   const router = useRouter();
@@ -34,16 +33,41 @@ export default function LoginPage() {
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-50 p-4">
-      <Card className="w-full max-w-sm">
-        <CardHeader className="text-center">
-          <CardTitle className="text-2xl">PT Booking</CardTitle>
-          <p className="text-sm text-gray-500">Evolution Danseklubb</p>
-        </CardHeader>
-        <CardContent>
+    <div className="min-h-screen flex flex-col md:flex-row">
+      {/* Venstre – bakgrunnsbilde */}
+      <div
+        className="hidden md:flex md:w-1/2 bg-cover bg-center relative"
+        style={{ backgroundImage: "url('/hero.jpg')" }}
+      >
+        <div className="absolute inset-0 bg-black/50" />
+        <div className="relative z-10 flex flex-col justify-end p-10 text-white">
+          <h1 className="text-4xl font-bold mb-2">Evolution Danseklubb</h1>
+          <p className="text-white/80 text-lg">Book din privattime enkelt og raskt</p>
+        </div>
+      </div>
+
+      {/* Mobil – liten toppdel med bilde */}
+      <div
+        className="md:hidden h-48 bg-cover bg-center relative"
+        style={{ backgroundImage: "url('/hero.jpg')" }}
+      >
+        <div className="absolute inset-0 bg-black/50 flex flex-col justify-end p-6">
+          <h1 className="text-2xl font-bold text-white">Evolution Danseklubb</h1>
+          <p className="text-white/80 text-sm">Book din privattime</p>
+        </div>
+      </div>
+
+      {/* Høyre – innloggingsskjema */}
+      <div className="flex flex-1 items-center justify-center bg-gray-50 p-8">
+        <div className="w-full max-w-sm">
+          <div className="mb-8">
+            <h2 className="text-3xl font-bold text-gray-900">Logg inn</h2>
+            <p className="text-gray-500 mt-1 text-sm">Velkommen tilbake!</p>
+          </div>
+
           <form onSubmit={handleLogin} className="space-y-4">
-            <div className="space-y-2">
-              <label className="text-sm font-medium">E-post</label>
+            <div className="space-y-1.5">
+              <label className="text-sm font-medium text-gray-700">E-post</label>
               <Input
                 type="email"
                 value={email}
@@ -52,8 +76,8 @@ export default function LoginPage() {
                 required
               />
             </div>
-            <div className="space-y-2">
-              <label className="text-sm font-medium">Passord</label>
+            <div className="space-y-1.5">
+              <label className="text-sm font-medium text-gray-700">Passord</label>
               <Input
                 type="password"
                 value={password}
@@ -63,18 +87,19 @@ export default function LoginPage() {
               />
             </div>
             {error && <p className="text-sm text-red-500">{error}</p>}
-            <Button type="submit" className="w-full" disabled={loading}>
+            <Button type="submit" className="w-full bg-purple-600 hover:bg-purple-700 h-11 text-base" disabled={loading}>
               {loading ? "Logger inn..." : "Logg inn"}
             </Button>
           </form>
-          <p className="text-center text-sm text-gray-500 mt-4">
+
+          <p className="text-center text-sm text-gray-500 mt-6">
             Har du ikke konto?{" "}
-            <Link href="/register" className="text-purple-600 hover:underline">
+            <Link href="/register" className="text-purple-600 hover:underline font-medium">
               Registrer deg
             </Link>
           </p>
-        </CardContent>
-      </Card>
+        </div>
+      </div>
     </div>
   );
 }
