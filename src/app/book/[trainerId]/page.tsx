@@ -39,7 +39,7 @@ export default async function TrainerBookPage({ params }: { params: Promise<{ tr
     .gte("start_at", new Date().toISOString())
     .order("start_at");
 
-  const DEFAULT_STYLES = ["Slow", "Freestyle", "Jazz", "Moderne", "Freestyle dobbel", "Slow dobbel", "Akro", "Hiphop"];
+  const DEFAULT_STYLES = ["Slow", "Freestyle", "Jazz", "Moderne", "Freestyle dobbel", "Slow dobbel", "Akro"];
   const styles: string[] = (trainerDetails?.dance_styles?.length ?? 0) > 0
     ? trainerDetails!.dance_styles
     : DEFAULT_STYLES;
