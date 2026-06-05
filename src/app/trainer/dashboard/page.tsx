@@ -29,7 +29,7 @@ export default async function TrainerDashboard() {
   // Alle fremtidige slots med evt. booking
   const { data: slots } = await supabase
     .from("availability_slots")
-    .select("*, bookings(id, dancer_name, dance_style, booker_id)")
+    .select("*, bookings(id, dancer_name, dance_style, booker_id, profiles(avatar_url))")
     .eq("trainer_id", user.id)
     .gte("start_at", new Date().toISOString())
     .order("start_at");
@@ -85,9 +85,18 @@ export default async function TrainerDashboard() {
                     </p>
                       {booking && (
                       <>
-                        <p className="text-sm font-medium text-purple-700 mt-1">
-                          {booking.dancer_name} · {booking.dance_style}
-                        </p>
+                        <div className="flex items-center gap-2 mt-1">
+                          {(booking.profiles as any)?.avatar_url ? (
+                            <img src={(booking.profiles as any).avatar_url} alt="" className="w-6 h-6 rounded-full object-cover" />
+                          ) : (
+                            <div className="w-6 h-6 rounded-full bg-purple-100 flex items-center justify-center text-purple-600 text-xs font-bold">
+                              {booking.dancer_name.charAt(0)}
+                            </div>
+                          )}
+                          <p className="text-sm font-medium text-purple-700">
+                            {booking.dancer_name} · {booking.dance_style}
+                          </p>
+                        </div>
                         <Link href={`/trainer/avbestill/${booking.id}`} className="text-xs text-red-400 hover:text-red-600 mt-1 inline-block">
                           Avbestill
                         </Link>
