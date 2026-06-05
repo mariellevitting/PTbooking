@@ -35,7 +35,7 @@ export default async function TrainerDashboard() {
     .order("start_at");
 
   return (
-    <main className="min-h-screen bg-gray-50 p-6">
+    <main className="bg-gray-50 p-6">
       <div className="max-w-lg mx-auto">
         <div className="flex items-center justify-between mb-1">
           <h1 className="text-2xl font-bold">Hei, {profile.name}!</h1>

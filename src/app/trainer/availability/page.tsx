@@ -138,7 +138,7 @@ export default function AvailabilityPage() {
   const slots = selectedDate ? getSlotsForDate(selectedDate) : [];
 
   return (
-    <main className="min-h-screen bg-gray-50 p-6">
+    <main className="bg-gray-50 p-6">
       <div className="max-w-lg mx-auto">
         <button onClick={() => router.push("/trainer/dashboard")} className="text-sm text-purple-600 hover:underline mb-6 block">
           ← Tilbake

@@ -31,7 +31,7 @@ export default async function AvbestillPage({ params }: { params: Promise<{ book
   const withinDeadline = hoursUntil < 24;
 
   return (
-    <main className="min-h-screen bg-gray-50 p-6">
+    <main className="bg-gray-50 p-6">
       <div className="max-w-lg mx-auto">
         <h1 className="text-2xl font-bold mb-6">Avbestill time</h1>
         <CancelForm

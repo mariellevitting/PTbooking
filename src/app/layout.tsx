@@ -22,8 +22,10 @@ export default function RootLayout({
   return (
     <html lang="nb" className={`${poppins.variable} h-full antialiased`}>
       <body className="min-h-full flex flex-col font-[family-name:var(--font-poppins)]">
-        {children}
-        <Footer />
+        <div className="flex flex-col min-h-screen">
+          <div className="flex-1">{children}</div>
+          <Footer />
+        </div>
       </body>
     </html>
   );

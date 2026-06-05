@@ -23,7 +23,7 @@ export default async function BookPage() {
     .order("name");
 
   return (
-    <main className="min-h-screen bg-gray-50 p-6">
+    <main className="bg-gray-50 p-6">
       <div className="max-w-lg mx-auto">
         <Link href={backHref} className="inline-flex items-center gap-1 text-sm text-purple-600 hover:underline mb-6">
           <ArrowLeft size={16} /> Tilbake
