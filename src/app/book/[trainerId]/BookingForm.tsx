@@ -6,7 +6,6 @@ import { createClient } from "@/lib/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
-const DANCE_STYLES = ["Slow", "Freestyle", "Jazz", "Moderne", "Freestyle dobbel", "Slow dobbel", "Akro"];
 
 interface Slot {
   id: string;
@@ -20,6 +19,7 @@ interface Props {
   bookerId: string;
   bookerName: string;
   bookerRole: string;
+  danceStyles: string[];
 }
 
 function groupByDate(slots: Slot[]) {
@@ -34,7 +34,7 @@ function groupByDate(slots: Slot[]) {
   return groups;
 }
 
-export default function BookingForm({ slots, bookerId, bookerName, bookerRole }: Props) {
+export default function BookingForm({ slots, bookerId, bookerName, bookerRole, danceStyles }: Props) {
   const router = useRouter();
   const [selectedSlot, setSelectedSlot] = useState<Slot | null>(null);
   const [dancerName, setDancerName] = useState(bookerRole === "dancer" ? bookerName : "");
@@ -124,7 +124,7 @@ export default function BookingForm({ slots, bookerId, bookerName, bookerRole }:
           <div className="space-y-2">
             <label className="text-sm font-medium">Dansestil</label>
             <div className="grid grid-cols-2 gap-2">
-              {DANCE_STYLES.map((style) => (
+              {danceStyles.map((style) => (
                 <button
                   key={style}
                   type="button"

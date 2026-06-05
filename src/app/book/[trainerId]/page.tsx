@@ -24,6 +24,12 @@ export default async function TrainerBookPage({ params }: { params: Promise<{ tr
 
   if (!trainer) redirect("/book");
 
+  const { data: trainerDetails } = await supabase
+    .from("trainers")
+    .select("dance_styles")
+    .eq("id", trainerId)
+    .single();
+
   const { data: slots } = await supabase
     .from("availability_slots")
     .select("*")
@@ -60,6 +66,7 @@ export default async function TrainerBookPage({ params }: { params: Promise<{ tr
             bookerId={user.id}
             bookerName={profile?.name ?? ""}
             bookerRole={profile?.role ?? "dancer"}
+            danceStyles={trainerDetails?.dance_styles ?? ["Freestyle", "Slow", "Jazz", "Moderne", "Freestyle dobbel", "Slow dobbel", "Akro", "Hiphop"]}
           />
         )}
       </div>
