@@ -4,6 +4,12 @@ import ProfilForm from "./ProfilForm";
 import Link from "next/link";
 import { ArrowLeft, Users } from "lucide-react";
 
+const ROLE_LABEL: Record<string, string> = {
+  trainer: "Trener",
+  dancer: "Danser",
+  parent: "Forelder",
+};
+
 export default async function TrainerProfilPage() {
   const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
@@ -23,17 +29,13 @@ export default async function TrainerProfilPage() {
     .eq("id", user.id)
     .single();
 
-  const { data: allTrainers } = await supabase
-    .from("profiles")
-    .select("id, name, phone, trainers(dance_styles)")
-    .eq("role", "trainer")
-    .order("name");
-
   const isAdmin = user.email === "miemarielle@live.no";
 
   const { data: allUsers } = isAdmin ? await supabase
     .from("profiles")
-    .select("role") : { data: null };
+    .select("id, name, role")
+    .order("role")
+    .order("name") : { data: null };
 
   return (
     <main className="min-h-screen bg-gray-50 p-6">
@@ -50,61 +52,48 @@ export default async function TrainerProfilPage() {
           danceStyles={trainerDetails?.dance_styles ?? []}
         />
 
-        {/* Brukerstatistikk – kun synlig for admin */}
-        {isAdmin && (() => {
-          const dancers = allUsers?.filter(u => u.role === "dancer").length ?? 0;
-          const parents = allUsers?.filter(u => u.role === "parent").length ?? 0;
-          const trainers = allUsers?.filter(u => u.role === "trainer").length ?? 0;
-          return (
+        {isAdmin && allUsers && (
+          <>
+            {/* Statistikk */}
             <div className="bg-white rounded-2xl border p-5 mt-6">
               <h2 className="font-semibold text-base flex items-center gap-2 mb-4">
-                Registrerte brukere ({(allUsers?.length ?? 0)})
+                <Users size={16} className="text-purple-500" />
+                Registrerte brukere ({allUsers.length})
               </h2>
-              <div className="grid grid-cols-3 gap-3">
-                <div className="bg-purple-50 rounded-xl p-3 text-center">
-                  <p className="text-2xl font-bold text-purple-600">{trainers}</p>
-                  <p className="text-xs text-gray-500 mt-0.5">Trenere</p>
-                </div>
-                <div className="bg-purple-50 rounded-xl p-3 text-center">
-                  <p className="text-2xl font-bold text-purple-600">{dancers}</p>
-                  <p className="text-xs text-gray-500 mt-0.5">Dansere</p>
-                </div>
-                <div className="bg-purple-50 rounded-xl p-3 text-center">
-                  <p className="text-2xl font-bold text-purple-600">{parents}</p>
-                  <p className="text-xs text-gray-500 mt-0.5">Foreldre</p>
-                </div>
+              <div className="grid grid-cols-3 gap-3 mb-5">
+                {(["trainer", "dancer", "parent"] as const).map((role) => (
+                  <div key={role} className="bg-purple-50 rounded-xl p-3 text-center">
+                    <p className="text-2xl font-bold text-purple-600">
+                      {allUsers.filter(u => u.role === role).length}
+                    </p>
+                    <p className="text-xs text-gray-500 mt-0.5">{ROLE_LABEL[role]}e{role === "trainer" ? "" : ""}</p>
+                  </div>
+                ))}
+              </div>
+
+              {/* Brukerliste */}
+              <div className="space-y-1">
+                {allUsers.map((u) => (
+                  <div key={u.id} className="flex items-center justify-between py-2 border-b last:border-0">
+                    <div className="flex items-center gap-3">
+                      <div className="w-8 h-8 rounded-full bg-purple-100 flex items-center justify-center text-purple-600 font-bold text-xs shrink-0">
+                        {u.name.charAt(0)}
+                      </div>
+                      <p className="text-sm font-medium">{u.name}</p>
+                    </div>
+                    <span className={`text-xs px-2 py-0.5 rounded-full ${
+                      u.role === "trainer" ? "bg-purple-100 text-purple-600" :
+                      u.role === "dancer" ? "bg-blue-100 text-blue-600" :
+                      "bg-green-100 text-green-600"
+                    }`}>
+                      {ROLE_LABEL[u.role]}
+                    </span>
+                  </div>
+                ))}
               </div>
             </div>
-          );
-        })()}
-
-        {/* Registrerte trenere – kun synlig for admin */}
-        {isAdmin && <div className="bg-white rounded-2xl border p-5 mt-6">
-          <h2 className="font-semibold text-base flex items-center gap-2 mb-4">
-            <Users size={16} className="text-purple-500" />
-            Registrerte trenere ({allTrainers?.length ?? 0})
-          </h2>
-          <div className="space-y-3">
-            {allTrainers?.map((t) => {
-              const styles: string[] = (Array.isArray(t.trainers) ? t.trainers[0] : t.trainers as any)?.dance_styles ?? [];
-              return (
-                <div key={t.id} className={`flex items-start gap-3 pb-3 border-b last:border-0 last:pb-0 ${t.id === user.id ? "opacity-60" : ""}`}>
-                  <div className="w-9 h-9 rounded-full bg-purple-100 flex items-center justify-center text-purple-600 font-bold shrink-0 text-sm">
-                    {t.name.charAt(0)}
-                  </div>
-                  <div className="flex-1 min-w-0">
-                    <p className="font-medium text-sm">{t.name} {t.id === user.id && <span className="text-gray-400 font-normal">(deg)</span>}</p>
-                    {styles.length > 0 ? (
-                      <p className="text-xs text-gray-400 mt-0.5">{styles.join(" · ")}</p>
-                    ) : (
-                      <p className="text-xs text-red-300 mt-0.5">Stiler ikke satt opp ennå</p>
-                    )}
-                  </div>
-                </div>
-              );
-            })}
-          </div>
-        </div>}
+          </>
+        )}
       </div>
     </main>
   );
