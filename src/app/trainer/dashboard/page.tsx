@@ -41,8 +41,12 @@ export default async function TrainerDashboard() {
           <h1 className="text-2xl font-bold">Hei, {profile.name}!</h1>
           <div className="flex items-center gap-3">
             <NotificationBell notifications={notifications ?? []} />
-            <Link href="/trainer/profil" className="text-gray-400 hover:text-purple-600 transition-colors">
-              <UserCircle size={24} />
+            <Link href="/trainer/profil" className="hover:opacity-80 transition-opacity">
+              {profile.avatar_url ? (
+                <img src={profile.avatar_url} alt="Profil" className="w-8 h-8 rounded-full object-cover" />
+              ) : (
+                <UserCircle size={28} className="text-gray-400" />
+              )}
             </Link>
             <LogoutButton />
           </div>
