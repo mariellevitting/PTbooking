@@ -28,7 +28,7 @@ export default async function TrainerDashboard() {
   // Alle fremtidige slots med evt. booking
   const { data: slots } = await supabase
     .from("availability_slots")
-    .select("*, bookings(dancer_name, dance_style)")
+    .select("*, bookings(id, dancer_name, dance_style, booker_id)")
     .eq("trainer_id", user.id)
     .gte("start_at", new Date().toISOString())
     .order("start_at");
@@ -75,10 +75,15 @@ export default async function TrainerDashboard() {
                     <p className="text-sm text-gray-500">
                       {start.toLocaleTimeString("nb-NO", { hour: "2-digit", minute: "2-digit" })}–{end.toLocaleTimeString("nb-NO", { hour: "2-digit", minute: "2-digit" })}
                     </p>
-                    {booking && (
-                      <p className="text-sm font-medium text-purple-700 mt-1">
-                        {booking.dancer_name} · {booking.dance_style}
-                      </p>
+                      {booking && (
+                      <>
+                        <p className="text-sm font-medium text-purple-700 mt-1">
+                          {booking.dancer_name} · {booking.dance_style}
+                        </p>
+                        <Link href={`/trainer/avbestill/${booking.id}`} className="text-xs text-red-400 hover:text-red-600 mt-1 inline-block">
+                          Avbestill
+                        </Link>
+                      </>
                     )}
                   </div>
                   {booking ? (

@@ -6,7 +6,7 @@ import { createClient } from "@/lib/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
-const DANCE_STYLES = ["Ballett", "Jazz", "Contemporary", "Hip-hop", "Freestyle", "Akrobatikk", "Annet"];
+const DANCE_STYLES = ["Slow", "Freestyle", "Jazz", "Moderne", "Freestyle dobbel", "Slow dobbel", "Akro"];
 
 interface Slot {
   id: string;
