@@ -5,7 +5,8 @@ import { createClient } from "@/lib/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Check, User, Phone, FileText, Music } from "lucide-react";
+import { Check, User, Phone, FileText, Music, Camera } from "lucide-react";
+import { useRef } from "react";
 
 const ALL_STYLES = [
   "Slow",
@@ -24,16 +25,37 @@ interface Props {
   phone: string;
   bio: string;
   danceStyles: string[];
+  avatarUrl?: string | null;
 }
 
-export default function ProfilForm({ userId, name, phone, bio, danceStyles }: Props) {
+export default function ProfilForm({ userId, name, phone, bio, danceStyles, avatarUrl }: Props) {
   const [nameVal, setNameVal] = useState(name);
   const [phoneVal, setPhoneVal] = useState(phone);
   const [bioVal, setBioVal] = useState(bio);
   const [selected, setSelected] = useState<Set<string>>(new Set(danceStyles));
+  const [avatar, setAvatar] = useState<string | null>(avatarUrl ?? null);
+  const [uploading, setUploading] = useState(false);
   const [saving, setSaving] = useState(false);
   const [success, setSuccess] = useState(false);
   const [error, setError] = useState("");
+  const fileRef = useRef<HTMLInputElement>(null);
+
+  async function handleAvatarUpload(e: React.ChangeEvent<HTMLInputElement>) {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    setUploading(true);
+    const supabase = createClient();
+    const ext = file.name.split(".").pop();
+    const path = `${userId}/avatar.${ext}`;
+    const { error: uploadError } = await supabase.storage.from("avatars").upload(path, file, { upsert: true });
+    if (!uploadError) {
+      const { data } = supabase.storage.from("avatars").getPublicUrl(path);
+      const url = data.publicUrl + "?t=" + Date.now();
+      setAvatar(url);
+      await supabase.from("profiles").update({ avatar_url: data.publicUrl }).eq("id", userId);
+    }
+    setUploading(false);
+  }
 
   function toggleStyle(style: string) {
     setSelected((prev) => {
@@ -75,6 +97,27 @@ export default function ProfilForm({ userId, name, phone, bio, danceStyles }: Pr
 
   return (
     <form onSubmit={handleSave} className="space-y-4">
+      {/* Profilbilde */}
+      <Card>
+        <CardContent className="pt-5 flex flex-col items-center gap-3">
+          <div className="relative">
+            <div className="w-24 h-24 rounded-full bg-purple-100 flex items-center justify-center overflow-hidden">
+              {avatar ? (
+                <img src={avatar} alt="Profilbilde" className="w-full h-full object-cover" />
+              ) : (
+                <span className="text-3xl font-bold text-purple-600">{nameVal.charAt(0)}</span>
+              )}
+            </div>
+            <button type="button" onClick={() => fileRef.current?.click()}
+              className="absolute bottom-0 right-0 bg-purple-600 text-white rounded-full p-1.5 hover:bg-purple-700">
+              <Camera size={14} />
+            </button>
+          </div>
+          <input ref={fileRef} type="file" accept="image/*" className="hidden" onChange={handleAvatarUpload} />
+          {uploading && <p className="text-xs text-gray-400">Laster opp...</p>}
+        </CardContent>
+      </Card>
+
       <Card>
         <CardHeader>
           <CardTitle className="text-base flex items-center gap-2">

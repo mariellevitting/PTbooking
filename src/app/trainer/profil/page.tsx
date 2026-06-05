@@ -50,6 +50,7 @@ export default async function TrainerProfilPage() {
           phone={profile.phone ?? ""}
           bio={trainerDetails?.bio ?? ""}
           danceStyles={trainerDetails?.dance_styles ?? []}
+          avatarUrl={profile.avatar_url ?? null}
         />
 
         {isAdmin && allUsers && (
