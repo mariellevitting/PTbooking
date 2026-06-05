@@ -19,13 +19,13 @@ export default async function DancerDashboard() {
 
   const { data: bookings } = await supabase
     .from("bookings")
-    .select("*, availability_slots(start_at, end_at, trainer_id, profiles(name))")
+    .select("*, availability_slots(start_at, end_at, trainer_id)")
     .eq("booker_id", user.id)
-    .eq("status", "confirmed")
-    .gte("availability_slots.start_at", new Date().toISOString())
-    .order("availability_slots.start_at");
+    .eq("status", "confirmed");
 
-  const upcomingBookings = bookings?.filter(b => b.availability_slots) ?? [];
+  const upcomingBookings = (bookings ?? [])
+    .filter(b => b.availability_slots && new Date(b.availability_slots.start_at) >= new Date())
+    .sort((a, b) => new Date(a.availability_slots.start_at).getTime() - new Date(b.availability_slots.start_at).getTime());
 
   return (
     <main className="min-h-screen bg-gray-50 p-6">
