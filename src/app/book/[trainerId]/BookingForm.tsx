@@ -13,6 +13,7 @@ interface Slot {
   id: string;
   start_at: string;
   end_at: string;
+  is_booked: boolean;
 }
 
 interface Child {
@@ -225,13 +226,17 @@ export default function BookingForm({ slots, bookerId, bookerName, bookerRole, d
               const start = new Date(slot.start_at);
               const time = start.toLocaleTimeString("nb-NO", { hour: "2-digit", minute: "2-digit" });
               const isSelected = selectedSlot?.id === slot.id;
+              const isBooked = slot.is_booked;
               return (
                 <button
                   key={slot.id}
                   type="button"
-                  onClick={() => setSelectedSlot(slot)}
+                  onClick={() => !isBooked && setSelectedSlot(slot)}
+                  disabled={isBooked}
                   className={`py-2 px-3 rounded-lg text-sm font-medium border transition-colors ${
-                    isSelected
+                    isBooked
+                      ? "bg-gray-100 text-gray-400 border-gray-200 cursor-not-allowed line-through"
+                      : isSelected
                       ? "bg-purple-600 text-white border-purple-600"
                       : "bg-white text-gray-700 border-gray-200 hover:border-purple-400"
                   }`}
