@@ -50,6 +50,42 @@ export default function BookingForm({ slots, bookerId, bookerName, bookerRole, d
 
   const autoFill = isParent && children.length === 1 ? children[0].name : "";
   const [selectedSlot, setSelectedSlot] = useState<Slot | null>(null);
+
+  // Uke-navigasjon
+  function getMonday(date: Date) {
+    const d = new Date(date);
+    const day = d.getDay() || 7;
+    d.setDate(d.getDate() - day + 1);
+    d.setHours(0, 0, 0, 0);
+    return d;
+  }
+  function getWeekNumber(date: Date) {
+    const d = new Date(Date.UTC(date.getFullYear(), date.getMonth(), date.getDate()));
+    const dayNum = d.getUTCDay() || 7;
+    d.setUTCDate(d.getUTCDate() + 4 - dayNum);
+    const yearStart = new Date(Date.UTC(d.getUTCFullYear(), 0, 1));
+    return Math.ceil((((d.getTime() - yearStart.getTime()) / 86400000) + 1) / 7);
+  }
+
+  const [weekStart, setWeekStart] = useState(getMonday(new Date()));
+  const weekEnd = new Date(weekStart);
+  weekEnd.setDate(weekStart.getDate() + 6);
+  weekEnd.setHours(23, 59, 59);
+
+  const weekSlots = slots.filter(s => {
+    const d = new Date(s.start_at);
+    return d >= weekStart && d <= weekEnd;
+  });
+
+  const weekGrouped: Record<string, Slot[]> = {};
+  for (const slot of weekSlots) {
+    const date = new Date(slot.start_at).toLocaleDateString("nb-NO", { weekday: "long", day: "numeric", month: "long" });
+    if (!weekGrouped[date]) weekGrouped[date] = [];
+    weekGrouped[date].push(slot);
+  }
+
+  const today = new Date(); today.setHours(0,0,0,0);
+  const canGoPrev = weekStart > getMonday(today);
   const [dancer1, setDancer1] = useState(isParent ? autoFill : bookerName);
   const [dancer2, setDancer2] = useState("");
   const [danceStyle, setDanceStyle] = useState("");
@@ -217,37 +253,59 @@ export default function BookingForm({ slots, bookerId, bookerName, bookerRole, d
 
   return (
     <div className="space-y-6">
-      <h2 className="font-semibold text-lg">Velg tid</h2>
-      {Object.entries(grouped).map(([date, daySlots]) => (
-        <div key={date}>
-          <p className="text-sm font-medium text-gray-500 capitalize mb-2">{date}</p>
-          <div className="grid grid-cols-3 gap-2">
-            {daySlots.map((slot) => {
-              const start = new Date(slot.start_at);
-              const time = start.toLocaleTimeString("nb-NO", { hour: "2-digit", minute: "2-digit" });
-              const isSelected = selectedSlot?.id === slot.id;
-              const isBooked = slot.is_booked;
-              return (
-                <button
-                  key={slot.id}
-                  type="button"
-                  onClick={() => !isBooked && setSelectedSlot(slot)}
-                  disabled={isBooked}
-                  className={`py-2 px-3 rounded-lg text-sm font-medium border transition-colors ${
-                    isBooked
-                      ? "bg-gray-100 text-gray-400 border-gray-200 cursor-not-allowed line-through"
-                      : isSelected
-                      ? "bg-purple-600 text-white border-purple-600"
-                      : "bg-white text-gray-700 border-gray-200 hover:border-purple-400"
-                  }`}
-                >
-                  {time}
-                </button>
-              );
-            })}
-          </div>
+      {/* Uke-navigasjon */}
+      <div className="flex items-center justify-between">
+        <button
+          type="button"
+          onClick={() => { const p = new Date(weekStart); p.setDate(p.getDate()-7); setWeekStart(p); }}
+          disabled={!canGoPrev}
+          className={`text-2xl px-2 ${canGoPrev ? "text-gray-600 hover:text-purple-600" : "text-gray-200"}`}
+        >‹</button>
+        <span className="font-semibold text-gray-700">Uke {getWeekNumber(weekStart)}</span>
+        <button
+          type="button"
+          onClick={() => { const n = new Date(weekStart); n.setDate(n.getDate()+7); setWeekStart(n); }}
+          className="text-2xl px-2 text-gray-600 hover:text-purple-600"
+        >›</button>
+      </div>
+
+      {Object.keys(weekGrouped).length === 0 ? (
+        <div className="bg-white rounded-xl border p-6 text-center text-gray-400">
+          <p className="font-medium">Treneren har ikke lagt ut ledige privattimer ennå</p>
+          <p className="text-sm mt-1">Prøv en annen uke</p>
         </div>
-      ))}
+      ) : (
+        Object.entries(weekGrouped).map(([date, daySlots]) => (
+          <div key={date}>
+            <p className="text-sm font-medium text-gray-500 capitalize mb-2">{date}</p>
+            <div className="grid grid-cols-3 gap-2">
+              {daySlots.map((slot) => {
+                const start = new Date(slot.start_at);
+                const time = start.toLocaleTimeString("nb-NO", { hour: "2-digit", minute: "2-digit" });
+                const isSelected = selectedSlot?.id === slot.id;
+                const isBooked = slot.is_booked;
+                return (
+                  <button
+                    key={slot.id}
+                    type="button"
+                    onClick={() => !isBooked && setSelectedSlot(slot)}
+                    disabled={isBooked}
+                    className={`py-2 px-3 rounded-lg text-sm font-medium border transition-colors ${
+                      isBooked
+                        ? "bg-gray-100 text-gray-400 border-gray-200 cursor-not-allowed line-through"
+                        : isSelected
+                        ? "bg-purple-600 text-white border-purple-600"
+                        : "bg-white text-gray-700 border-gray-200 hover:border-purple-400"
+                    }`}
+                  >
+                    {time}
+                  </button>
+                );
+              })}
+            </div>
+          </div>
+        ))
+      )}
 
       <Button
         className="w-full bg-purple-600 hover:bg-purple-700"
