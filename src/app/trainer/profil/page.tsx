@@ -29,6 +29,10 @@ export default async function TrainerProfilPage() {
     .eq("role", "trainer")
     .order("name");
 
+  const { data: allUsers } = await supabase
+    .from("profiles")
+    .select("role");
+
   return (
     <main className="min-h-screen bg-gray-50 p-6">
       <div className="max-w-lg mx-auto">
@@ -43,6 +47,34 @@ export default async function TrainerProfilPage() {
           bio={trainerDetails?.bio ?? ""}
           danceStyles={trainerDetails?.dance_styles ?? []}
         />
+
+        {/* Brukerstatistikk */}
+        {(() => {
+          const dancers = allUsers?.filter(u => u.role === "dancer").length ?? 0;
+          const parents = allUsers?.filter(u => u.role === "parent").length ?? 0;
+          const trainers = allUsers?.filter(u => u.role === "trainer").length ?? 0;
+          return (
+            <div className="bg-white rounded-2xl border p-5 mt-6">
+              <h2 className="font-semibold text-base flex items-center gap-2 mb-4">
+                Registrerte brukere ({(allUsers?.length ?? 0)})
+              </h2>
+              <div className="grid grid-cols-3 gap-3">
+                <div className="bg-purple-50 rounded-xl p-3 text-center">
+                  <p className="text-2xl font-bold text-purple-600">{trainers}</p>
+                  <p className="text-xs text-gray-500 mt-0.5">Trenere</p>
+                </div>
+                <div className="bg-purple-50 rounded-xl p-3 text-center">
+                  <p className="text-2xl font-bold text-purple-600">{dancers}</p>
+                  <p className="text-xs text-gray-500 mt-0.5">Dansere</p>
+                </div>
+                <div className="bg-purple-50 rounded-xl p-3 text-center">
+                  <p className="text-2xl font-bold text-purple-600">{parents}</p>
+                  <p className="text-xs text-gray-500 mt-0.5">Foreldre</p>
+                </div>
+              </div>
+            </div>
+          );
+        })()}
 
         {/* Registrerte trenere */}
         <div className="bg-white rounded-2xl border p-5 mt-6">
