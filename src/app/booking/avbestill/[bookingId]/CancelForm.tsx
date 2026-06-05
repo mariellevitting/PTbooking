@@ -14,9 +14,10 @@ interface Props {
   danceStyle: string;
   startAt: string;
   withinDeadline: boolean;
+  dashboardUrl: string;
 }
 
-export default function CancelForm({ bookingId, slotId, trainerId, dancerName, danceStyle, startAt, withinDeadline }: Props) {
+export default function CancelForm({ bookingId, slotId, trainerId, dancerName, danceStyle, startAt, withinDeadline, dashboardUrl }: Props) {
   const router = useRouter();
   const [confirmed, setConfirmed] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -52,7 +53,7 @@ export default function CancelForm({ bookingId, slotId, trainerId, dancerName, d
       message: `${dancerName} har avbestilt timen i ${danceStyle} – ${tidspunkt}`,
     });
 
-    router.push("/dancer/dashboard?avbestilt=1");
+    router.push(dashboardUrl);
   }
 
   return (

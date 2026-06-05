@@ -8,6 +8,14 @@ export default async function AvbestillPage({ params }: { params: Promise<{ book
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) redirect("/login");
 
+  const { data: profile } = await supabase
+    .from("profiles")
+    .select("role")
+    .eq("id", user.id)
+    .single();
+
+  const dashboardUrl = profile?.role === "parent" ? "/parent/dashboard" : "/dancer/dashboard";
+
   const { data: booking } = await supabase
     .from("bookings")
     .select("*, availability_slots(start_at, end_at, trainer_id)")
@@ -15,7 +23,7 @@ export default async function AvbestillPage({ params }: { params: Promise<{ book
     .eq("booker_id", user.id)
     .single();
 
-  if (!booking) redirect("/dancer/dashboard");
+  if (!booking) redirect(dashboardUrl);
 
   const start = new Date(booking.availability_slots.start_at);
   const now = new Date();
@@ -34,6 +42,7 @@ export default async function AvbestillPage({ params }: { params: Promise<{ book
           danceStyle={booking.dance_style}
           startAt={booking.availability_slots.start_at}
           withinDeadline={withinDeadline}
+          dashboardUrl={dashboardUrl}
         />
       </div>
     </main>
