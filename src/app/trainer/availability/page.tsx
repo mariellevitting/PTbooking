@@ -6,15 +6,28 @@ import { createClient } from "@/lib/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
-function getNextDays(count: number) {
-  const days = [];
-  const today = new Date();
-  for (let i = 0; i < count; i++) {
-    const d = new Date(today);
-    d.setDate(today.getDate() + i);
-    days.push(d);
-  }
-  return days;
+function getWeekNumber(date: Date) {
+  const d = new Date(Date.UTC(date.getFullYear(), date.getMonth(), date.getDate()));
+  const dayNum = d.getUTCDay() || 7;
+  d.setUTCDate(d.getUTCDate() + 4 - dayNum);
+  const yearStart = new Date(Date.UTC(d.getUTCFullYear(), 0, 1));
+  return Math.ceil((((d.getTime() - yearStart.getTime()) / 86400000) + 1) / 7);
+}
+
+function getMondayOfWeek(date: Date) {
+  const d = new Date(date);
+  const day = d.getDay() || 7;
+  d.setDate(d.getDate() - day + 1);
+  d.setHours(0, 0, 0, 0);
+  return d;
+}
+
+function getWeekDays(monday: Date) {
+  return Array.from({ length: 7 }, (_, i) => {
+    const d = new Date(monday);
+    d.setDate(monday.getDate() + i);
+    return d;
+  });
 }
 
 function isWeekend(date: Date) {
@@ -30,29 +43,50 @@ function getSlotsForDate(date: Date) {
       slots.push(`${String(h).padStart(2, "0")}:${String(m).padStart(2, "0")}`);
     }
   }
-  slots.push("21:00");
   return slots;
-}
-
-function formatDayName(date: Date) {
-  return date.toLocaleDateString("nb-NO", { weekday: "long", day: "numeric", month: "short" });
 }
 
 function dateToISO(date: Date) {
   return date.toISOString().split("T")[0];
 }
 
-const DAYS = getNextDays(14);
+const DAY_NAMES = ["man", "tir", "ons", "tor", "fre", "lør", "søn"];
 
 export default function AvailabilityPage() {
   const router = useRouter();
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+
+  const [weekStart, setWeekStart] = useState(getMondayOfWeek(today));
   const [selectedDate, setSelectedDate] = useState<Date | null>(null);
   const [selected, setSelected] = useState<Set<string>>(new Set());
   const [saving, setSaving] = useState(false);
   const [success, setSuccess] = useState(false);
   const [error, setError] = useState("");
 
+  const weekDays = getWeekDays(weekStart);
+  const weekNumber = getWeekNumber(weekStart);
+
+  function prevWeek() {
+    const prev = new Date(weekStart);
+    prev.setDate(weekStart.getDate() - 7);
+    if (prev >= getMondayOfWeek(today)) {
+      setWeekStart(prev);
+      setSelectedDate(null);
+      setSelected(new Set());
+    }
+  }
+
+  function nextWeek() {
+    const next = new Date(weekStart);
+    next.setDate(weekStart.getDate() + 7);
+    setWeekStart(next);
+    setSelectedDate(null);
+    setSelected(new Set());
+  }
+
   function pickDate(date: Date) {
+    if (date < today) return;
     setSelectedDate(date);
     setSelected(new Set());
     setSuccess(false);
@@ -106,29 +140,35 @@ export default function AvailabilityPage() {
         <h1 className="text-2xl font-bold mb-6">Legg ut ledige tider</h1>
 
         <Card className="mb-4">
-          <CardHeader>
-            <CardTitle className="text-base">Velg dag</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="grid grid-cols-2 gap-2">
-              {DAYS.map((day) => {
+          <CardContent className="pt-4">
+            <div className="flex items-center justify-between mb-4">
+              <button onClick={prevWeek} className="text-gray-400 hover:text-gray-700 px-2 text-xl">‹</button>
+              <span className="font-semibold text-gray-700">Uke {weekNumber}</span>
+              <button onClick={nextWeek} className="text-gray-400 hover:text-gray-700 px-2 text-xl">›</button>
+            </div>
+            <div className="grid grid-cols-7 gap-1">
+              {weekDays.map((day, i) => {
+                const isPast = day < today;
                 const isSelected = selectedDate && dateToISO(day) === dateToISO(selectedDate);
-                const weekend = isWeekend(day);
+                const isToday = dateToISO(day) === dateToISO(today);
                 return (
                   <button
-                    key={dateToISO(day)}
+                    key={i}
                     type="button"
                     onClick={() => pickDate(day)}
-                    className={`py-3 px-4 rounded-lg text-sm text-left border transition-colors ${
+                    disabled={isPast}
+                    className={`flex flex-col items-center py-2 rounded-lg transition-colors ${
                       isSelected
-                        ? "bg-purple-600 text-white border-purple-600"
-                        : "bg-white text-gray-700 border-gray-200 hover:border-purple-400"
+                        ? "bg-purple-600 text-white"
+                        : isPast
+                        ? "text-gray-300 cursor-default"
+                        : isToday
+                        ? "bg-purple-100 text-purple-700 hover:bg-purple-200"
+                        : "hover:bg-gray-100 text-gray-700"
                     }`}
                   >
-                    <span className="font-medium capitalize">{formatDayName(day)}</span>
-                    <span className={`block text-xs mt-0.5 ${isSelected ? "text-purple-200" : "text-gray-400"}`}>
-                      {weekend ? "09:00–21:00" : "14:00–21:00"}
-                    </span>
+                    <span className="text-xs uppercase">{DAY_NAMES[i]}</span>
+                    <span className="text-lg font-semibold">{day.getDate()}</span>
                   </button>
                 );
               })}
@@ -139,12 +179,17 @@ export default function AvailabilityPage() {
         {selectedDate && (
           <Card>
             <CardHeader>
-              <CardTitle className="text-base capitalize">{formatDayName(selectedDate)}</CardTitle>
+              <CardTitle className="text-base capitalize">
+                {selectedDate.toLocaleDateString("nb-NO", { weekday: "long", day: "numeric", month: "long" })}
+                <span className="text-sm font-normal text-gray-400 ml-2">
+                  {isWeekend(selectedDate) ? "09:00–21:00" : "14:00–21:00"}
+                </span>
+              </CardTitle>
             </CardHeader>
             <CardContent>
               <form onSubmit={handleSubmit} className="space-y-4">
                 <div className="grid grid-cols-4 gap-2">
-                  {slots.slice(0, -1).map((slot) => (
+                  {slots.map((slot) => (
                     <button
                       key={slot}
                       type="button"
