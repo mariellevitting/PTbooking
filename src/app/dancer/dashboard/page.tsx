@@ -1,4 +1,5 @@
 import { redirect } from "next/navigation";
+import Link from "next/link";
 import { createClient } from "@/lib/supabase/server";
 import { Button } from "@/components/ui/button";
 
@@ -24,9 +25,11 @@ export default async function DancerDashboard() {
         <div className="bg-white rounded-xl border p-6 text-center text-gray-400">
           <p className="text-lg font-medium mb-2">Ingen bookede timer</p>
           <p className="text-sm mb-6">Finn en trener og book din første privattime</p>
-          <Button className="bg-purple-600 hover:bg-purple-700">
-            Book privattime
-          </Button>
+          <Link href="/book">
+            <Button className="bg-purple-600 hover:bg-purple-700">
+              Book privattime
+            </Button>
+          </Link>
         </div>
       </div>
     </main>
