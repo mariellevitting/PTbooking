@@ -45,24 +45,18 @@ export default function RegisterPage() {
 
   return (
     <div className="min-h-screen flex flex-col md:flex-row">
-      {/* Venstre – bakgrunnsbilde */}
-      <div
-        className="hidden md:flex md:w-1/2 bg-cover bg-center relative"
-        style={{ backgroundImage: "url('/hero.jpg')" }}
-      >
-        <div className="absolute inset-0 bg-black/50" />
+      {/* Venstre – lilla bakgrunn */}
+      <div className="hidden md:flex md:w-1/2 relative bg-purple-600">
+        <div className="absolute inset-0 bg-gradient-to-br from-purple-500 to-purple-800" />
         <div className="relative z-10 flex flex-col justify-end p-10 text-white">
           <h1 className="text-4xl font-bold mb-2">Evolution Danseklubb</h1>
           <p className="text-white/80 text-lg">Book din privattime enkelt og raskt</p>
         </div>
       </div>
 
-      {/* Mobil – liten toppdel med bilde */}
-      <div
-        className="md:hidden h-48 bg-cover bg-center relative"
-        style={{ backgroundImage: "url('/hero.jpg')" }}
-      >
-        <div className="absolute inset-0 bg-black/50 flex flex-col justify-end p-6">
+      {/* Mobil – liten toppdel */}
+      <div className="md:hidden h-48 relative bg-gradient-to-br from-purple-500 to-purple-800">
+        <div className="absolute inset-0 flex flex-col justify-end p-6">
           <h1 className="text-2xl font-bold text-white">Evolution Danseklubb</h1>
           <p className="text-white/80 text-sm">Book din privattime</p>
         </div>
