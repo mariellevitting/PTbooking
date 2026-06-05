@@ -9,9 +9,8 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
 export default function AvailabilityPage() {
   const router = useRouter();
-  const [date, setDate] = useState("");
-  const [startTime, setStartTime] = useState("");
-  const [endTime, setEndTime] = useState("");
+  const [startAt, setStartAt] = useState("");
+  const [endAt, setEndAt] = useState("");
   const [saving, setSaving] = useState(false);
   const [success, setSuccess] = useState(false);
   const [error, setError] = useState("");
@@ -26,10 +25,10 @@ export default function AvailabilityPage() {
     const { data: { user } } = await supabase.auth.getUser();
     if (!user) return;
 
-    const startAt = new Date(`${date}T${startTime}:00`);
-    const endAt = new Date(`${date}T${endTime}:00`);
+    const start = new Date(startAt);
+    const end = new Date(endAt);
 
-    if (endAt <= startAt) {
+    if (end <= start) {
       setError("Slutttid må være etter starttid");
       setSaving(false);
       return;
@@ -37,15 +36,14 @@ export default function AvailabilityPage() {
 
     const { error: insertError } = await supabase
       .from("availability_slots")
-      .insert({ trainer_id: user.id, start_at: startAt.toISOString(), end_at: endAt.toISOString() });
+      .insert({ trainer_id: user.id, start_at: start.toISOString(), end_at: end.toISOString() });
 
     if (insertError) {
       setError("Noe gikk galt, prøv igjen");
     } else {
       setSuccess(true);
-      setDate("");
-      setStartTime("");
-      setEndTime("");
+      setStartAt("");
+      setEndAt("");
     }
     setSaving(false);
   }
@@ -65,34 +63,24 @@ export default function AvailabilityPage() {
           <CardContent>
             <form onSubmit={handleSubmit} className="space-y-4">
               <div className="space-y-2">
-                <label className="text-sm font-medium">Dato</label>
+                <label className="text-sm font-medium">Fra (dato og tid)</label>
                 <Input
-                  type="date"
-                  value={date}
-                  onChange={(e) => setDate(e.target.value)}
-                  min={new Date().toISOString().split("T")[0]}
+                  type="datetime-local"
+                  value={startAt}
+                  onChange={(e) => setStartAt(e.target.value)}
+                  min={new Date().toISOString().slice(0, 16)}
                   required
                 />
               </div>
-              <div className="grid grid-cols-2 gap-4">
-                <div className="space-y-2">
-                  <label className="text-sm font-medium">Fra</label>
-                  <Input
-                    type="time"
-                    value={startTime}
-                    onChange={(e) => setStartTime(e.target.value)}
-                    required
-                  />
-                </div>
-                <div className="space-y-2">
-                  <label className="text-sm font-medium">Til</label>
-                  <Input
-                    type="time"
-                    value={endTime}
-                    onChange={(e) => setEndTime(e.target.value)}
-                    required
-                  />
-                </div>
+              <div className="space-y-2">
+                <label className="text-sm font-medium">Til (dato og tid)</label>
+                <Input
+                  type="datetime-local"
+                  value={endAt}
+                  onChange={(e) => setEndAt(e.target.value)}
+                  min={startAt || new Date().toISOString().slice(0, 16)}
+                  required
+                />
               </div>
               {error && <p className="text-sm text-red-500">{error}</p>}
               {success && <p className="text-sm text-green-600">Ledig tid lagt ut!</p>}
