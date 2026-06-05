@@ -37,7 +37,10 @@ export default async function BookPage() {
         ) : (
           <div className="space-y-3">
             {trainers.map((trainer) => {
-              const styles: string[] = (trainer.trainers as any)?.[0]?.dance_styles ?? [];
+              const trainerData = trainer.trainers as any;
+              const styles: string[] = Array.isArray(trainerData)
+                ? trainerData[0]?.dance_styles ?? []
+                : trainerData?.dance_styles ?? [];
               return (
                 <Link key={trainer.id} href={`/book/${trainer.id}`}>
                   <div className="bg-white rounded-xl border p-4 hover:border-purple-400 hover:shadow-sm transition-all cursor-pointer flex items-center gap-4">
