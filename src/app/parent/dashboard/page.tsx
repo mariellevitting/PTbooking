@@ -1,6 +1,8 @@
 import { redirect } from "next/navigation";
+import Link from "next/link";
 import { createClient } from "@/lib/supabase/server";
 import { Button } from "@/components/ui/button";
+import LogoutButton from "@/components/LogoutButton";
 
 export default async function ParentDashboard() {
   const supabase = await createClient();
@@ -18,7 +20,10 @@ export default async function ParentDashboard() {
   return (
     <main className="min-h-screen bg-gray-50 p-6">
       <div className="max-w-lg mx-auto">
-        <h1 className="text-2xl font-bold mb-1">Hei, {profile.name}!</h1>
+        <div className="flex items-center justify-between mb-1">
+          <h1 className="text-2xl font-bold">Hei, {profile.name}!</h1>
+          <LogoutButton />
+        </div>
         <p className="text-gray-500 mb-8">Evolution Dance Studio</p>
 
         <div className="bg-white rounded-xl border p-6 text-center text-gray-400">

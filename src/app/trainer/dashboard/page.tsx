@@ -2,6 +2,7 @@ import { redirect } from "next/navigation";
 import Link from "next/link";
 import { createClient } from "@/lib/supabase/server";
 import { Button } from "@/components/ui/button";
+import LogoutButton from "@/components/LogoutButton";
 
 export default async function TrainerDashboard() {
   const supabase = await createClient();
@@ -45,6 +46,7 @@ export default async function TrainerDashboard() {
       <div className="max-w-lg mx-auto">
         <div className="flex items-center justify-between mb-1">
           <h1 className="text-2xl font-bold">Hei, {profile.name}!</h1>
+          <LogoutButton />
         </div>
         <p className="text-gray-500 mb-6">Evolution Dance Studio – Trener</p>
 
