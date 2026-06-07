@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import LogoutButton from "@/components/LogoutButton";
 import NotificationBell from "@/components/NotificationBell";
 import { UserCircle } from "lucide-react";
+import { formatDate, formatTime, formatDateKey } from "@/lib/dateUtils";
 
 export default async function TrainerDashboard() {
   const supabase = await createClient();
@@ -72,7 +73,7 @@ export default async function TrainerDashboard() {
           // Grupper slots per dag (YYYY-MM-DD)
           const grouped: Record<string, typeof slots> = {};
           for (const slot of slots) {
-            const key = new Date(slot.start_at).toLocaleDateString("sv-SE"); // "2026-06-08"
+            const key = formatDateKey(new Date(slot.start_at));
             if (!grouped[key]) grouped[key] = [];
             grouped[key].push(slot);
           }
@@ -104,7 +105,7 @@ export default async function TrainerDashboard() {
                     {dateKeys.sort().map((dateKey) => {
                       const daySlots = grouped[dateKey];
                       const dayDate = new Date(dateKey);
-                      const dayLabel = dayDate.toLocaleDateString("nb-NO", { weekday: "long", day: "numeric", month: "long" });
+                      const dayLabel = formatDate(dayDate, { weekday: "long", day: "numeric", month: "long" });
                       return (
                         <div key={dateKey}>
                           <p className="text-sm font-semibold text-gray-700 mb-2 border-b pb-1">
@@ -119,7 +120,7 @@ export default async function TrainerDashboard() {
                                 <div key={slot.id} className={`rounded-xl border p-4 flex justify-between items-center ${booking ? "bg-white border-l-4 border-l-purple-400" : "bg-gray-50 border-dashed border-gray-200"}`}>
                                   <div>
                                     <p className="text-sm text-gray-500">
-                                      {start.toLocaleTimeString("nb-NO", { hour: "2-digit", minute: "2-digit" })}–{end.toLocaleTimeString("nb-NO", { hour: "2-digit", minute: "2-digit" })}
+                                      {formatTime(start)}–{formatTime(end)}
                                     </p>
                                     {booking && (
                                       <>

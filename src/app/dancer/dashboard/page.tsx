@@ -6,6 +6,7 @@ import LogoutButton from "@/components/LogoutButton";
 import InfoBox from "@/components/InfoBox";
 import NotificationBell from "@/components/NotificationBell";
 import { UserCircle } from "lucide-react";
+import { formatDate, formatTime, formatDateKey } from "@/lib/dateUtils";
 
 export default async function DancerDashboard() {
   const supabase = await createClient();
@@ -84,7 +85,7 @@ export default async function DancerDashboard() {
 
           const grouped: Record<string, typeof upcomingBookings> = {};
           for (const booking of upcomingBookings) {
-            const key = new Date(booking.availability_slots.start_at).toLocaleDateString("sv-SE");
+            const key = formatDateKey(new Date(booking.availability_slots.start_at));
             if (!grouped[key]) grouped[key] = [];
             grouped[key].push(booking);
           }
@@ -104,7 +105,7 @@ export default async function DancerDashboard() {
                   <div className="space-y-4">
                     {dateKeys.sort().map((dateKey) => {
                       const dayBookings = grouped[dateKey];
-                      const dayLabel = new Date(dateKey).toLocaleDateString("nb-NO", { weekday: "long", day: "numeric", month: "long" });
+                      const dayLabel = formatDate(new Date(dateKey), { weekday: "long", day: "numeric", month: "long" });
                       return (
                         <div key={dateKey}>
                           <p className="text-sm font-semibold text-gray-700 mb-2 border-b pb-1">
@@ -120,7 +121,7 @@ export default async function DancerDashboard() {
                                   <div className="flex justify-between items-start">
                                     <div>
                                       <p className="text-sm font-semibold text-gray-700">
-                                        {start.toLocaleTimeString("nb-NO", { hour: "2-digit", minute: "2-digit" })}–{end.toLocaleTimeString("nb-NO", { hour: "2-digit", minute: "2-digit" })}
+                                        {formatTime(start)}–{formatTime(end)}
                                       </p>
                                       <p className="text-sm font-medium text-purple-600">{booking.dance_style}</p>
                                       {(booking.availability_slots as any)?.profiles?.name && (
@@ -158,7 +159,7 @@ export default async function DancerDashboard() {
                     {completedBookings.map((booking) => {
                       const start = new Date(booking.availability_slots.start_at);
                       const end = new Date(booking.availability_slots.end_at);
-                      const dayLabel = start.toLocaleDateString("nb-NO", { weekday: "long", day: "numeric", month: "long" });
+                      const dayLabel = formatDate(start, { weekday: "long", day: "numeric", month: "long" });
                       return (
                         <div key={booking.id} className="bg-white rounded-xl border p-4 opacity-60">
                           <div className="flex justify-between items-start">
@@ -167,7 +168,7 @@ export default async function DancerDashboard() {
                                 {dayLabel.charAt(0).toUpperCase() + dayLabel.slice(1)}
                               </p>
                               <p className="text-sm text-gray-400">
-                                {start.toLocaleTimeString("nb-NO", { hour: "2-digit", minute: "2-digit" })}–{end.toLocaleTimeString("nb-NO", { hour: "2-digit", minute: "2-digit" })}
+                                {formatTime(start)}–{formatTime(end)}
                               </p>
                               <p className="text-sm text-gray-400 mt-1">{booking.dance_style}</p>
                               {(booking.availability_slots as any)?.profiles?.name && (
