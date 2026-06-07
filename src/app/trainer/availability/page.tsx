@@ -156,11 +156,11 @@ export default function AvailabilityPage() {
 
     if (insertError) {
       setError("Noe gikk galt, prøv igjen");
+      setSaving(false);
     } else {
-      setSuccess(true);
-      setSelected(new Set());
+      router.push("/trainer/dashboard");
+      router.refresh();
     }
-    setSaving(false);
   }
 
   const slots = selectedDate ? getSlotsForDate(selectedDate) : [];
