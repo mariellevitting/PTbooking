@@ -63,6 +63,7 @@ export default function AvailabilityPage() {
   const [saving, setSaving] = useState(false);
   const [success, setSuccess] = useState(false);
   const [error, setError] = useState("");
+  const [existingSlots, setExistingSlots] = useState<Set<string>>(new Set());
 
   const weekDays = getWeekDays(weekStart);
   const weekNumber = getWeekNumber(weekStart);
@@ -91,12 +92,34 @@ export default function AvailabilityPage() {
     setSuccess(false);
   }
 
-  function pickDate(date: Date) {
+  async function pickDate(date: Date) {
     if (date < today) return;
     setSelectedDate(date);
     setSelected(new Set());
     setSuccess(false);
     setError("");
+
+    // Hent eksisterende slots for denne dagen
+    const supabase = createClient();
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) return;
+
+    const dateStr = dateToISO(date);
+    const dayStart = new Date(`${dateStr}T00:00:00`).toISOString();
+    const dayEnd = new Date(`${dateStr}T23:59:59`).toISOString();
+
+    const { data: slots } = await supabase
+      .from("availability_slots")
+      .select("start_at")
+      .eq("trainer_id", user.id)
+      .gte("start_at", dayStart)
+      .lte("start_at", dayEnd);
+
+    const times = new Set((slots ?? []).map((s) => {
+      const d = new Date(s.start_at);
+      return `${String(d.getHours()).padStart(2, "0")}:${String(d.getMinutes()).padStart(2, "0")}`;
+    }));
+    setExistingSlots(times);
   }
 
   function toggleSlot(slot: string) {
@@ -195,20 +218,28 @@ export default function AvailabilityPage() {
             <CardContent>
               <form onSubmit={handleSubmit} className="space-y-4">
                 <div className="grid grid-cols-4 gap-2">
-                  {slots.map((slot) => (
-                    <button
-                      key={slot}
-                      type="button"
-                      onClick={() => toggleSlot(slot)}
-                      className={`py-2 px-1 rounded-lg text-sm font-medium border transition-colors ${
-                        selected.has(slot)
-                          ? "bg-purple-600 text-white border-purple-600"
-                          : "bg-white text-gray-700 border-gray-200 hover:border-purple-400"
-                      }`}
-                    >
-                      {slot}
-                    </button>
-                  ))}
+                  {slots.map((slot) => {
+                    const isExisting = existingSlots.has(slot);
+                    const isSelected = selected.has(slot);
+                    return (
+                      <button
+                        key={slot}
+                        type="button"
+                        onClick={() => !isExisting && toggleSlot(slot)}
+                        disabled={isExisting}
+                        title={isExisting ? "Allerede publisert" : undefined}
+                        className={`py-2 px-1 rounded-lg text-sm font-medium border transition-colors ${
+                          isExisting
+                            ? "bg-gray-100 text-gray-300 border-gray-100 cursor-not-allowed line-through"
+                            : isSelected
+                            ? "bg-purple-600 text-white border-purple-600"
+                            : "bg-white text-gray-700 border-gray-200 hover:border-purple-400"
+                        }`}
+                      >
+                        {slot}
+                      </button>
+                    );
+                  })}
                 </div>
 
                 {selected.size > 0 && (
