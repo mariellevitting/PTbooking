@@ -108,29 +108,27 @@ export default async function DancerDashboard() {
                               const end = new Date(booking.availability_slots.end_at);
                               const hoursUntil = (start.getTime() - now.getTime()) / (1000 * 60 * 60);
                               return (
-                                <div key={booking.id} className="bg-white rounded-xl border border-l-4 border-l-purple-400 p-4">
+                                <div key={booking.id} className="bg-white rounded-xl border border-l-4 border-l-purple-400 px-4 py-3">
                                   <div className="flex justify-between items-start">
                                     <div>
                                       <p className="text-sm text-gray-500">
                                         {start.toLocaleTimeString("nb-NO", { hour: "2-digit", minute: "2-digit" })}–{end.toLocaleTimeString("nb-NO", { hour: "2-digit", minute: "2-digit" })}
                                       </p>
-                                      <p className="text-sm text-purple-600 mt-1">{booking.dance_style}</p>
+                                      <p className="text-sm text-purple-600">{booking.dance_style}</p>
                                       {(booking.availability_slots as any)?.profiles?.name && (
-                                        <p className="text-xs text-gray-400 mt-0.5">Trener: {(booking.availability_slots as any).profiles.name}</p>
+                                        <p className="text-xs text-gray-400">Trener: {(booking.availability_slots as any).profiles.name}</p>
                                       )}
                                     </div>
-                                    <span className="text-xs bg-green-100 text-green-600 px-2 py-1 rounded-full">Bekreftet</span>
+                                    <div className="flex items-center gap-3">
+                                      <span className="text-xs bg-green-100 text-green-600 px-2 py-1 rounded-full">Bekreftet</span>
+                                      <Link href={`/booking/avbestill/${booking.id}`}>
+                                        <button className="text-xs text-red-400 hover:text-red-600">Avbestill</button>
+                                      </Link>
+                                    </div>
                                   </div>
-                                  <div className="mt-3 pt-3 border-t flex justify-between items-center">
-                                    {hoursUntil < 24 ? (
-                                      <p className="text-xs text-red-400">Under 24t – gebyr ved avbestilling</p>
-                                    ) : (
-                                      <span />
-                                    )}
-                                    <Link href={`/booking/avbestill/${booking.id}`}>
-                                      <button className="text-xs text-red-400 hover:text-red-600">Avbestill</button>
-                                    </Link>
-                                  </div>
+                                  {hoursUntil < 24 && (
+                                    <p className="text-xs text-red-400 mt-1">Under 24t – gebyr ved avbestilling</p>
+                                  )}
                                 </div>
                               );
                             })}
