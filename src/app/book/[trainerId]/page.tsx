@@ -97,6 +97,7 @@ export default async function TrainerBookPage({ params }: { params: Promise<{ tr
           <BookingForm
             slots={slots}
             trainerId={trainerId}
+            trainerName={trainer.name}
             bookerId={user.id}
             bookerName={profile?.name ?? ""}
             bookerRole={profile?.role ?? "dancer"}

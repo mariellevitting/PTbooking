@@ -31,6 +31,7 @@ interface SlotBooking {
 interface Props {
   slots: Slot[];
   trainerId: string;
+  trainerName: string;
   bookerId: string;
   bookerName: string;
   bookerRole: string;
@@ -38,7 +39,7 @@ interface Props {
   children: Child[];
 }
 
-export default function BookingForm({ slots, bookerId, bookerName, bookerRole, danceStyles, children }: Props) {
+export default function BookingForm({ slots, trainerName, bookerId, bookerName, bookerRole, danceStyles, children }: Props) {
   const router = useRouter();
   const isParent = bookerRole === "parent";
   const isDouble = (style: string) => DOUBLE_STYLES.includes(style);
@@ -250,6 +251,7 @@ export default function BookingForm({ slots, bookerId, bookerName, bookerRole, d
             <p className="text-sm text-gray-500">
               {start.toLocaleTimeString("nb-NO", { hour: "2-digit", minute: "2-digit" })}–{end.toLocaleTimeString("nb-NO", { hour: "2-digit", minute: "2-digit" })}
             </p>
+            <p className="text-xs text-gray-400 mt-0.5">Trener: {trainerName}</p>
           </div>
 
           <div className="space-y-2">
@@ -331,6 +333,7 @@ export default function BookingForm({ slots, bookerId, bookerName, bookerRole, d
                   {start.toLocaleTimeString("nb-NO", { hour: "2-digit", minute: "2-digit" })}–{end.toLocaleTimeString("nb-NO", { hour: "2-digit", minute: "2-digit" })}
                 </p>
                 <p className="text-sm text-purple-600">{sb.danceStyle} · {dancerName}</p>
+                <p className="text-xs text-gray-400 mt-0.5">Trener: {trainerName}</p>
               </div>
             );
           })}
