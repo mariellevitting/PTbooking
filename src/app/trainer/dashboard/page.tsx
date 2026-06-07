@@ -144,7 +144,10 @@ export default async function TrainerDashboard() {
                                   {booking ? (
                                     <span className="text-xs bg-purple-100 text-purple-700 px-2 py-1 rounded-full whitespace-nowrap">Opptatt</span>
                                   ) : (
-                                    <span className="text-xs bg-green-100 text-green-600 px-2 py-1 rounded-full">Ledig</span>
+                                    <div className="flex flex-col items-end gap-1">
+                                      <span className="text-xs bg-green-100 text-green-600 px-2 py-1 rounded-full">Ledig</span>
+                                      <Link href={`/trainer/slett-slot/${slot.id}`} className="text-xs text-red-400 hover:text-red-600">Slett</Link>
+                                    </div>
                                   )}
                                 </div>
                               );
