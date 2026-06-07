@@ -153,25 +153,12 @@ export default async function ParentDashboard() {
                 </div>
               ))}
 
-              {completedBookings.length > 0 && (() => {
-                const firstEver = completedBookings[completedBookings.length - 1];
-                const firstDate = new Date(firstEver.availability_slots.start_at)
-                  .toLocaleDateString("nb-NO", { weekday: "long", day: "numeric", month: "long", year: "numeric" });
-                return (
-                  <div className="bg-purple-50 border border-purple-100 rounded-xl px-4 py-3">
-                    <p className="text-sm font-semibold text-purple-700">
-                      {completedBookings.length} {completedBookings.length === 1 ? "privattime" : "privattimer"} totalt 🎉
-                    </p>
-                    <p className="text-xs text-purple-400 mt-0.5">
-                      Første time var {firstDate}
-                    </p>
-                  </div>
-                );
-              })()}
-
               {completedBookings.length > 0 && (
                 <div>
-                  <p className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-3">Gjennomførte timer</p>
+                  <div className="flex items-baseline gap-2 mb-3">
+                    <p className="text-xs font-semibold text-gray-400 uppercase tracking-wider">Gjennomførte timer</p>
+                    <p className="text-xs text-purple-500">{completedBookings.length} totalt 🎉</p>
+                  </div>
                   <div className="space-y-2">
                     {completedBookings.map((booking) => {
                       const start = new Date(booking.availability_slots.start_at);
