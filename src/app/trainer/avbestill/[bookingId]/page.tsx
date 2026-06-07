@@ -17,6 +17,9 @@ export default async function TrainerAvbestillPage({ params }: { params: Promise
 
   if (!booking) redirect("/trainer/dashboard");
 
+  // Ikke tillat avbestilling av gjennomførte timer
+  if (new Date(booking.availability_slots.end_at) < new Date()) redirect("/trainer/dashboard");
+
   return (
     <main className="bg-gray-50 p-6">
       <div className="max-w-lg mx-auto">

@@ -26,7 +26,12 @@ export default async function AvbestillPage({ params }: { params: Promise<{ book
   if (!booking) redirect(dashboardUrl);
 
   const start = new Date(booking.availability_slots.start_at);
+  const end = new Date(booking.availability_slots.end_at);
   const now = new Date();
+
+  // Ikke tillat avbestilling av gjennomførte timer
+  if (end < now) redirect(dashboardUrl);
+
   const hoursUntil = (start.getTime() - now.getTime()) / (1000 * 60 * 60);
   const withinDeadline = hoursUntil < 24;
 
