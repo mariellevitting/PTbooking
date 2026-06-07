@@ -57,13 +57,11 @@ export default function TrainerCancelForm({ bookingId, slotId, bookerId, dancerN
 
   return (
     <div className="space-y-4">
-      <Card>
-        <CardContent className="pt-5 space-y-2">
-          <p className="text-sm text-gray-500">Time som avbestilles</p>
-          <p className="font-semibold capitalize">{tidspunkt}</p>
-          <p className="text-sm text-purple-600">{dancerName} · {danceStyle}</p>
-        </CardContent>
-      </Card>
+      <div className="bg-white border rounded-xl px-4 py-3">
+        <p className="text-xs text-gray-400 mb-1">Time som avbestilles</p>
+        <p className="font-semibold">{tidspunkt}</p>
+        <p className="text-sm text-purple-600">{dancerName} · {danceStyle}</p>
+      </div>
 
       <div className="bg-amber-50 border border-amber-200 rounded-xl p-4">
         <p className="text-sm text-amber-700">
