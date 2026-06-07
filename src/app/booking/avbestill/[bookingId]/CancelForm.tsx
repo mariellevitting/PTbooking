@@ -69,6 +69,10 @@ export default function CancelForm({ bookingId, slotId, trainerId, dancerName, d
         <p className="text-sm text-purple-600">{dancerName} · {danceStyle}</p>
       </div>
 
+      <div className="bg-amber-50 border border-amber-200 rounded-xl px-4 py-3">
+        <p className="text-sm text-amber-700">Treneren får varsel om at timen er avbestilt.</p>
+      </div>
+
       {withinDeadline && (
         <div className="bg-red-50 border border-red-200 rounded-xl p-4">
           <p className="text-sm font-semibold text-red-700 mb-1">Sen avbestilling</p>
