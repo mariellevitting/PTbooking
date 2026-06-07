@@ -111,12 +111,12 @@ export default async function DancerDashboard() {
                                 <div key={booking.id} className="bg-white rounded-xl border border-l-4 border-l-purple-400 px-4 py-3">
                                   <div className="flex justify-between items-start">
                                     <div>
-                                      <p className="text-sm text-gray-500">
+                                      <p className="text-sm font-semibold text-gray-700">
                                         {start.toLocaleTimeString("nb-NO", { hour: "2-digit", minute: "2-digit" })}–{end.toLocaleTimeString("nb-NO", { hour: "2-digit", minute: "2-digit" })}
                                       </p>
-                                      <p className="text-sm text-purple-600">{booking.dance_style}</p>
+                                      <p className="text-sm font-medium text-purple-600">{booking.dance_style}</p>
                                       {(booking.availability_slots as any)?.profiles?.name && (
-                                        <p className="text-xs text-gray-400">Trener: {(booking.availability_slots as any).profiles.name}</p>
+                                        <p className="text-xs font-medium text-gray-500">Trener: {(booking.availability_slots as any).profiles.name}</p>
                                       )}
                                     </div>
                                     <div className="flex items-center gap-3">
