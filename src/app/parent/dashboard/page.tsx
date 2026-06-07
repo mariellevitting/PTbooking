@@ -4,6 +4,7 @@ import { createClient } from "@/lib/supabase/server";
 import { Button } from "@/components/ui/button";
 import LogoutButton from "@/components/LogoutButton";
 import InfoBox from "@/components/InfoBox";
+import NotificationBell from "@/components/NotificationBell";
 import { UserCircle } from "lucide-react";
 
 export default async function ParentDashboard() {
@@ -18,6 +19,12 @@ export default async function ParentDashboard() {
     .single();
 
   if (!profile || profile.role !== "parent") redirect("/dashboard");
+
+  const { data: notifications } = await supabase
+    .from("notifications")
+    .select("*")
+    .eq("user_id", user.id)
+    .order("created_at", { ascending: false });
 
   const { data: bookings } = await supabase
     .from("bookings")
@@ -40,6 +47,7 @@ export default async function ParentDashboard() {
         <div className="flex items-center justify-between mb-1">
           <h1 className="text-2xl font-bold">Hei, {profile.name}!</h1>
           <div className="flex items-center gap-3">
+            <NotificationBell notifications={notifications ?? []} />
             <Link href="/parent/profil" className="hover:opacity-80 transition-opacity">
               {profile.avatar_url ? (
                 <img src={profile.avatar_url} alt="Profil" className="w-8 h-8 rounded-full object-cover" />
