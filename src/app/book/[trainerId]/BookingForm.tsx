@@ -21,6 +21,13 @@ interface Child {
   name: string;
 }
 
+interface SlotBooking {
+  slot: Slot;
+  danceStyle: string;
+  dancer1: string;
+  dancer2: string;
+}
+
 interface Props {
   slots: Slot[];
   trainerId: string;
@@ -35,18 +42,18 @@ export default function BookingForm({ slots, bookerId, bookerName, bookerRole, d
   const router = useRouter();
   const isParent = bookerRole === "parent";
   const isDouble = (style: string) => DOUBLE_STYLES.includes(style);
-
   const autoFill = isParent && children.length === 1 ? children[0].name : "";
+
   const [childrenList, setChildrenList] = useState<Child[]>(children);
-  const [addingChild, setAddingChild] = useState(false);
   const [newChildName, setNewChildName] = useState("");
+  const [addingChild, setAddingChild] = useState(false);
   const [savingChild, setSavingChild] = useState(false);
 
-  const [selectedSlot, setSelectedSlot] = useState<Slot | null>(null);
-  const [danceStyle, setDanceStyle] = useState("");
-  const [dancer1, setDancer1] = useState(isParent ? autoFill : bookerName);
-  const [dancer2, setDancer2] = useState("");
-  const [step, setStep] = useState<"pick" | "confirm">("pick");
+  // Steg: "pick" = velg tider, "configure" = sett stil per time, "confirm" = bekreft alle
+  const [step, setStep] = useState<"pick" | "configure" | "confirm">("pick");
+  const [selectedSlots, setSelectedSlots] = useState<Slot[]>([]);
+  const [slotBookings, setSlotBookings] = useState<SlotBooking[]>([]);
+  const [configIndex, setConfigIndex] = useState(0);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
 
@@ -70,7 +77,6 @@ export default function BookingForm({ slots, bookerId, bookerName, bookerRole, d
   const weekEnd = new Date(weekStart);
   weekEnd.setDate(weekStart.getDate() + 6);
   weekEnd.setHours(23, 59, 59);
-
   const today = new Date(); today.setHours(0, 0, 0, 0);
   const canGoPrev = weekStart > getMonday(today);
 
@@ -78,17 +84,12 @@ export default function BookingForm({ slots, bookerId, bookerName, bookerRole, d
     const d = new Date(s.start_at);
     return d >= weekStart && d <= weekEnd;
   });
-
   const weekGrouped: Record<string, Slot[]> = {};
   for (const slot of weekSlots) {
     const date = new Date(slot.start_at).toLocaleDateString("nb-NO", { weekday: "long", day: "numeric", month: "long" });
     if (!weekGrouped[date]) weekGrouped[date] = [];
     weekGrouped[date].push(slot);
   }
-
-  const needsTwoNames = isDouble(danceStyle);
-  const dancerNameForBooking = needsTwoNames ? `${dancer1} & ${dancer2}` : dancer1;
-  const canSubmit = danceStyle && dancer1 && (!needsTwoNames || dancer2) && selectedSlot;
 
   async function handleAddChild() {
     if (!newChildName.trim()) return;
@@ -97,218 +98,106 @@ export default function BookingForm({ slots, bookerId, bookerName, bookerRole, d
     const { data: { user } } = await supabase.auth.getUser();
     if (!user) return;
     const { data } = await supabase.from("children").insert({ parent_id: user.id, name: newChildName.trim() }).select().single();
-    if (data) {
-      setChildrenList(prev => [...prev, data]);
-      setDancer1(data.name);
+    if (data) setChildrenList(prev => [...prev, data]);
+    setNewChildName(""); setAddingChild(false); setSavingChild(false);
+  }
+
+  function startConfigure() {
+    setSlotBookings(selectedSlots.map(slot => ({
+      slot,
+      danceStyle: "",
+      dancer1: isParent ? autoFill : bookerName,
+      dancer2: "",
+    })));
+    setConfigIndex(0);
+    setStep("configure");
+  }
+
+  function updateCurrent(field: keyof SlotBooking, value: string) {
+    setSlotBookings(prev => prev.map((sb, i) => i === configIndex ? { ...sb, [field]: value } : sb));
+  }
+
+  function nextConfig() {
+    if (configIndex < slotBookings.length - 1) {
+      setConfigIndex(configIndex + 1);
+    } else {
+      setStep("confirm");
     }
-    setNewChildName("");
-    setAddingChild(false);
-    setSavingChild(false);
   }
 
   async function handleBook() {
-    if (!canSubmit || !selectedSlot) return;
     setLoading(true);
     setError("");
-
     const supabase = createClient();
 
-    const { error: bookError } = await supabase.from("bookings").insert({
-      slot_id: selectedSlot.id,
-      booker_id: bookerId,
-      dancer_name: dancerNameForBooking,
-      dance_style: danceStyle,
-      status: "confirmed",
-    });
+    for (const sb of slotBookings) {
+      const dancerName = isDouble(sb.danceStyle) ? `${sb.dancer1} & ${sb.dancer2}` : sb.dancer1;
 
-    if (bookError) {
-      setError("Noe gikk galt, prøv igjen");
-      setLoading(false);
-      return;
-    }
-
-    const start = new Date(selectedSlot.start_at);
-    const tidspunkt = start.toLocaleDateString("nb-NO", { weekday: "long", day: "numeric", month: "long" }) +
-      " kl. " + start.toLocaleTimeString("nb-NO", { hour: "2-digit", minute: "2-digit" });
-
-    const { data: slotData } = await supabase
-      .from("availability_slots")
-      .select("trainer_id")
-      .eq("id", selectedSlot.id)
-      .single();
-
-    if (slotData) {
-      await supabase.from("notifications").insert({
-        user_id: slotData.trainer_id,
-        message: `${dancerNameForBooking} har booket time i ${danceStyle} – ${tidspunkt}`,
+      const { error: bookError } = await supabase.from("bookings").insert({
+        slot_id: sb.slot.id,
+        booker_id: bookerId,
+        dancer_name: dancerName,
+        dance_style: sb.danceStyle,
+        status: "confirmed",
       });
+
+      if (bookError) {
+        setError("Noe gikk galt, prøv igjen");
+        setLoading(false);
+        return;
+      }
+
+      const start = new Date(sb.slot.start_at);
+      const tidspunkt = start.toLocaleDateString("nb-NO", { weekday: "long", day: "numeric", month: "long" }) +
+        " kl. " + start.toLocaleTimeString("nb-NO", { hour: "2-digit", minute: "2-digit" });
+
+      const { data: slotData } = await supabase.from("availability_slots").select("trainer_id").eq("id", sb.slot.id).single();
+      if (slotData) {
+        await supabase.from("notifications").insert({
+          user_id: slotData.trainer_id,
+          message: `${dancerName} har booket time i ${sb.danceStyle} – ${tidspunkt}`,
+        });
+      }
     }
 
     router.push("/booking/kvittering?success=1");
   }
 
-  // Bekreft-steg
-  if (step === "confirm" && selectedSlot) {
-    const start = new Date(selectedSlot.start_at);
-    const end = new Date(selectedSlot.end_at);
-    const dayLabel = start.toLocaleDateString("nb-NO", { weekday: "long", day: "numeric", month: "long" });
-
+  // STEG 1: Velg tider
+  if (step === "pick") {
     return (
-      <Card>
-        <CardHeader>
-          <CardTitle className="text-lg">Bekreft booking</CardTitle>
-        </CardHeader>
-        <CardContent className="space-y-4">
-
-          {/* Valgt tid */}
-          <div className="bg-gray-50 rounded-xl px-4 py-3">
-            <p className="text-xs text-gray-400 mb-1">Tid</p>
-            <p className="font-semibold">{dayLabel.charAt(0).toUpperCase() + dayLabel.slice(1)}</p>
-            <p className="text-sm text-gray-500">
-              {start.toLocaleTimeString("nb-NO", { hour: "2-digit", minute: "2-digit" })}–{end.toLocaleTimeString("nb-NO", { hour: "2-digit", minute: "2-digit" })}
-            </p>
-          </div>
-
-          {/* Dansestil */}
-          <div className="space-y-2">
-            <label className="text-sm font-medium">Dansestil</label>
-            <div className="grid grid-cols-2 gap-2">
-              {danceStyles.map((style) => (
-                <button
-                  key={style}
-                  type="button"
-                  onClick={() => { setDanceStyle(style); setDancer2(""); }}
-                  className={`py-2 px-3 rounded-lg text-sm border transition-colors ${
-                    danceStyle === style
-                      ? "bg-purple-600 text-white border-purple-600"
-                      : "bg-white text-gray-700 border-gray-200 hover:border-purple-400"
-                  }`}
-                >
-                  {style}
-                </button>
-              ))}
-            </div>
-          </div>
-
-          {/* Danserens navn */}
-          {isParent && (
-            <div className="space-y-2">
-              <label className="text-sm font-medium">
-                {needsTwoNames ? "Danser 1 – navn" : "Danserens navn"}
-              </label>
-              {childrenList.length > 1 ? (
-                <select
-                  value={dancer1}
-                  onChange={(e) => setDancer1(e.target.value)}
-                  className="w-full border rounded-lg px-3 py-2 text-sm bg-white"
-                >
-                  <option value="">Velg danser</option>
-                  {childrenList.map((c) => (
-                    <option key={c.id} value={c.name}>{c.name}</option>
-                  ))}
-                </select>
-              ) : (
-                <Input
-                  value={dancer1}
-                  onChange={(e) => setDancer1(e.target.value)}
-                  placeholder="Navn på danseren"
-                />
-              )}
-              {!addingChild && (
-                <button type="button" onClick={() => setAddingChild(true)} className="text-xs text-purple-600 hover:underline">
-                  + Legg til barn
-                </button>
-              )}
-              {addingChild && (
-                <div className="flex gap-2">
-                  <Input value={newChildName} onChange={(e) => setNewChildName(e.target.value)} placeholder="Navn på barn" className="text-sm" />
-                  <Button type="button" onClick={handleAddChild} disabled={savingChild} className="bg-purple-600 hover:bg-purple-700 text-sm px-3">
-                    {savingChild ? "..." : "Legg til"}
-                  </Button>
-                </div>
-              )}
-            </div>
-          )}
-
-          {needsTwoNames && (
-            <div className="space-y-2">
-              <label className="text-sm font-medium">
-                {isParent ? "Danser 2 – navn" : "Navn på partner"}
-              </label>
-              <Input
-                value={dancer2}
-                onChange={(e) => setDancer2(e.target.value)}
-                placeholder="Navn på danser nr. 2"
-              />
-            </div>
-          )}
-
-          {/* Betaling */}
-          <div className="bg-blue-50 border border-blue-200 rounded-xl px-4 py-3">
-            <p className="text-sm font-semibold text-blue-800 mb-1">Betaling</p>
-            <p className="text-sm text-blue-700">Betaling skjer som før i <strong>Spond</strong>.</p>
-          </div>
-
-          {error && <p className="text-sm text-red-500">{error}</p>}
-
-          <Button
-            className="w-full bg-purple-600 hover:bg-purple-700"
-            onClick={handleBook}
-            disabled={loading || !canSubmit}
-          >
-            {loading ? "Booker..." : "Bekreft booking"}
-          </Button>
-          <button
-            type="button"
-            onClick={() => setStep("pick")}
-            className="w-full text-sm text-gray-400 hover:text-gray-600 py-2"
-          >
-            Gå tilbake
-          </button>
-        </CardContent>
-      </Card>
-    );
-  }
-
-  // Velg tid-steg
-  return (
-    <div className="space-y-6">
-      {/* Uke-navigasjon */}
-      <div className="flex items-center justify-between">
-        <button
-          type="button"
-          onClick={() => { const p = new Date(weekStart); p.setDate(p.getDate() - 7); setWeekStart(p); }}
-          disabled={!canGoPrev}
-          className={`text-2xl px-2 ${canGoPrev ? "text-gray-600 hover:text-purple-600" : "text-gray-200"}`}
-        >‹</button>
-        <span className="font-semibold text-gray-700">Uke {getWeekNumber(weekStart)}</span>
-        <button
-          type="button"
-          onClick={() => { const n = new Date(weekStart); n.setDate(n.getDate() + 7); setWeekStart(n); }}
-          className="text-2xl px-2 text-gray-600 hover:text-purple-600"
-        >›</button>
-      </div>
-
-      {Object.keys(weekGrouped).length === 0 ? (
-        <div className="bg-white rounded-xl border p-6 text-center text-gray-400">
-          <p className="font-medium">Treneren har ikke lagt ut ledige privattimer ennå</p>
-          <p className="text-sm mt-1">Prøv en annen uke</p>
+      <div className="space-y-6">
+        <div className="flex items-center justify-between">
+          <button type="button" onClick={() => { const p = new Date(weekStart); p.setDate(p.getDate() - 7); setWeekStart(p); }} disabled={!canGoPrev} className={`text-2xl px-2 ${canGoPrev ? "text-gray-600 hover:text-purple-600" : "text-gray-200"}`}>‹</button>
+          <span className="font-semibold text-gray-700">Uke {getWeekNumber(weekStart)}</span>
+          <button type="button" onClick={() => { const n = new Date(weekStart); n.setDate(n.getDate() + 7); setWeekStart(n); }} className="text-2xl px-2 text-gray-600 hover:text-purple-600">›</button>
         </div>
-      ) : (
-        Object.entries(weekGrouped).map(([date, daySlots]) => {
-          const dateLabel = date.charAt(0).toUpperCase() + date.slice(1);
-          return (
+
+        {Object.keys(weekGrouped).length === 0 ? (
+          <div className="bg-white rounded-xl border p-6 text-center text-gray-400">
+            <p className="font-medium">Treneren har ikke lagt ut ledige privattimer ennå</p>
+            <p className="text-sm mt-1">Prøv en annen uke</p>
+          </div>
+        ) : (
+          Object.entries(weekGrouped).map(([date, daySlots]) => (
             <div key={date}>
-              <p className="text-sm font-semibold text-gray-700 border-b pb-1 mb-2">{dateLabel}</p>
+              <p className="text-sm font-semibold text-gray-700 border-b pb-1 mb-2">{date.charAt(0).toUpperCase() + date.slice(1)}</p>
               <div className="grid grid-cols-3 gap-2">
                 {daySlots.map((slot) => {
                   const time = new Date(slot.start_at).toLocaleTimeString("nb-NO", { hour: "2-digit", minute: "2-digit" });
-                  const isSelected = selectedSlot?.id === slot.id;
+                  const isSelected = selectedSlots.some(s => s.id === slot.id);
                   return (
                     <button
                       key={slot.id}
                       type="button"
-                      onClick={() => !slot.is_booked && setSelectedSlot(isSelected ? null : slot)}
+                      onClick={() => {
+                        if (slot.is_booked) return;
+                        setSelectedSlots(prev =>
+                          prev.some(s => s.id === slot.id)
+                            ? prev.filter(s => s.id !== slot.id)
+                            : [...prev, slot]
+                        );
+                      }}
                       disabled={slot.is_booked}
                       className={`py-2 px-3 rounded-lg text-sm font-medium border transition-colors ${
                         slot.is_booked
@@ -324,17 +213,143 @@ export default function BookingForm({ slots, bookerId, bookerName, bookerRole, d
                 })}
               </div>
             </div>
-          );
-        })
-      )}
+          ))
+        )}
 
-      <Button
-        className="w-full bg-purple-600 hover:bg-purple-700"
-        disabled={!selectedSlot}
-        onClick={() => setStep("confirm")}
-      >
-        Gå videre
-      </Button>
-    </div>
+        {selectedSlots.length > 0 && (
+          <p className="text-sm text-purple-600 text-center">{selectedSlots.length} time{selectedSlots.length !== 1 ? "r" : ""} valgt</p>
+        )}
+
+        <Button className="w-full bg-purple-600 hover:bg-purple-700" disabled={selectedSlots.length === 0} onClick={startConfigure}>
+          Gå videre
+        </Button>
+      </div>
+    );
+  }
+
+  // STEG 2: Sett dansestil per time
+  if (step === "configure") {
+    const current = slotBookings[configIndex];
+    const start = new Date(current.slot.start_at);
+    const end = new Date(current.slot.end_at);
+    const dayLabel = start.toLocaleDateString("nb-NO", { weekday: "long", day: "numeric", month: "long" });
+    const needsTwo = isDouble(current.danceStyle);
+    const canNext = current.danceStyle && current.dancer1 && (!needsTwo || current.dancer2);
+
+    return (
+      <Card>
+        <CardHeader>
+          <CardTitle className="text-lg">
+            Time {configIndex + 1} av {slotBookings.length}
+          </CardTitle>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          <div className="bg-gray-50 rounded-xl px-4 py-3">
+            <p className="text-xs text-gray-400 mb-1">Tid</p>
+            <p className="font-semibold">{dayLabel.charAt(0).toUpperCase() + dayLabel.slice(1)}</p>
+            <p className="text-sm text-gray-500">
+              {start.toLocaleTimeString("nb-NO", { hour: "2-digit", minute: "2-digit" })}–{end.toLocaleTimeString("nb-NO", { hour: "2-digit", minute: "2-digit" })}
+            </p>
+          </div>
+
+          <div className="space-y-2">
+            <label className="text-sm font-medium">Dansestil</label>
+            <div className="grid grid-cols-2 gap-2">
+              {danceStyles.map((style) => (
+                <button
+                  key={style}
+                  type="button"
+                  onClick={() => { updateCurrent("danceStyle", style); updateCurrent("dancer2", ""); }}
+                  className={`py-2 px-3 rounded-lg text-sm border transition-colors ${
+                    current.danceStyle === style
+                      ? "bg-purple-600 text-white border-purple-600"
+                      : "bg-white text-gray-700 border-gray-200 hover:border-purple-400"
+                  }`}
+                >
+                  {style}
+                </button>
+              ))}
+            </div>
+          </div>
+
+          {isParent && (
+            <div className="space-y-2">
+              <label className="text-sm font-medium">{needsTwo ? "Danser 1 – navn" : "Danserens navn"}</label>
+              {childrenList.length > 1 ? (
+                <select value={current.dancer1} onChange={(e) => updateCurrent("dancer1", e.target.value)} className="w-full border rounded-lg px-3 py-2 text-sm bg-white">
+                  <option value="">Velg danser</option>
+                  {childrenList.map((c) => <option key={c.id} value={c.name}>{c.name}</option>)}
+                </select>
+              ) : (
+                <Input value={current.dancer1} onChange={(e) => updateCurrent("dancer1", e.target.value)} placeholder="Navn på danseren" />
+              )}
+              {!addingChild && <button type="button" onClick={() => setAddingChild(true)} className="text-xs text-purple-600 hover:underline">+ Legg til barn</button>}
+              {addingChild && (
+                <div className="flex gap-2">
+                  <Input value={newChildName} onChange={(e) => setNewChildName(e.target.value)} placeholder="Navn på barn" className="text-sm" />
+                  <Button type="button" onClick={handleAddChild} disabled={savingChild} className="bg-purple-600 hover:bg-purple-700 text-sm px-3">{savingChild ? "..." : "Legg til"}</Button>
+                </div>
+              )}
+            </div>
+          )}
+
+          {needsTwo && (
+            <div className="space-y-2">
+              <label className="text-sm font-medium">{isParent ? "Danser 2 – navn" : "Navn på partner"}</label>
+              <Input value={current.dancer2} onChange={(e) => updateCurrent("dancer2", e.target.value)} placeholder="Navn på danser nr. 2" />
+            </div>
+          )}
+
+          <Button className="w-full bg-purple-600 hover:bg-purple-700" disabled={!canNext} onClick={nextConfig}>
+            {configIndex < slotBookings.length - 1 ? "Neste time →" : "Se oppsummering"}
+          </Button>
+          <button type="button" onClick={() => configIndex === 0 ? setStep("pick") : setConfigIndex(configIndex - 1)} className="w-full text-sm text-gray-400 hover:text-gray-600 py-2">
+            Gå tilbake
+          </button>
+        </CardContent>
+      </Card>
+    );
+  }
+
+  // STEG 3: Bekreft alle
+  return (
+    <Card>
+      <CardHeader>
+        <CardTitle className="text-lg">Bekreft booking</CardTitle>
+      </CardHeader>
+      <CardContent className="space-y-4">
+        <div className="space-y-2">
+          {slotBookings.map((sb, i) => {
+            const start = new Date(sb.slot.start_at);
+            const end = new Date(sb.slot.end_at);
+            const dayLabel = start.toLocaleDateString("nb-NO", { weekday: "long", day: "numeric", month: "long" });
+            const dancerName = isDouble(sb.danceStyle) ? `${sb.dancer1} & ${sb.dancer2}` : sb.dancer1;
+            return (
+              <div key={i} className="bg-gray-50 rounded-xl px-4 py-3 border-l-4 border-l-purple-400">
+                <p className="font-semibold text-sm">{dayLabel.charAt(0).toUpperCase() + dayLabel.slice(1)}</p>
+                <p className="text-sm text-gray-500">
+                  {start.toLocaleTimeString("nb-NO", { hour: "2-digit", minute: "2-digit" })}–{end.toLocaleTimeString("nb-NO", { hour: "2-digit", minute: "2-digit" })}
+                </p>
+                <p className="text-sm text-purple-600">{sb.danceStyle} · {dancerName}</p>
+              </div>
+            );
+          })}
+        </div>
+
+        <div className="bg-blue-50 border border-blue-200 rounded-xl px-4 py-3">
+          <p className="text-sm font-semibold text-blue-800 mb-1">Betaling</p>
+          <p className="text-sm text-blue-700">Betaling skjer som før i <strong>Spond</strong>.</p>
+        </div>
+
+        {error && <p className="text-sm text-red-500">{error}</p>}
+
+        <Button className="w-full bg-purple-600 hover:bg-purple-700" onClick={handleBook} disabled={loading}>
+          {loading ? "Booker..." : `Bekreft ${slotBookings.length} booking${slotBookings.length !== 1 ? "er" : ""}`}
+        </Button>
+        <button type="button" onClick={() => { setConfigIndex(slotBookings.length - 1); setStep("configure"); }} className="w-full text-sm text-gray-400 hover:text-gray-600 py-2">
+          Gå tilbake
+        </button>
+      </CardContent>
+    </Card>
   );
 }
