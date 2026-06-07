@@ -29,7 +29,7 @@ export default async function TrainerDashboard() {
   // Alle fremtidige slots med evt. booking
   const { data: slots } = await supabase
     .from("availability_slots")
-    .select("*, bookings(id, dancer_name, dance_style, booker_id, profiles(avatar_url))")
+    .select("*, bookings!left(id, dancer_name, dance_style, booker_id, status, profiles(avatar_url))")
     .eq("trainer_id", user.id)
     .gte("start_at", new Date().toISOString())
     .order("start_at");
@@ -114,7 +114,7 @@ export default async function TrainerDashboard() {
                             {daySlots.map((slot) => {
                               const start = new Date(slot.start_at);
                               const end = new Date(slot.end_at);
-                              const booking = slot.bookings?.[0];
+                              const booking = slot.bookings?.find((b: any) => b.status === "confirmed");
                               return (
                                 <div key={slot.id} className={`rounded-xl border p-4 flex justify-between items-center ${booking ? "bg-white border-l-4 border-l-purple-400" : "bg-gray-50 border-dashed border-gray-200"}`}>
                                   <div>
