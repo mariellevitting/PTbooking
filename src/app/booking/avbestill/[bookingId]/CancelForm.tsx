@@ -43,10 +43,14 @@ export default function CancelForm({ bookingId, slotId, trainerId, dancerName, d
       return;
     }
 
-    await supabase
+    const { error: slotError } = await supabase
       .from("availability_slots")
       .update({ is_booked: false })
       .eq("id", slotId);
+
+    if (slotError) {
+      console.error("Slot update failed:", slotError);
+    }
 
     await supabase.from("notifications").insert({
       user_id: trainerId,
@@ -54,6 +58,7 @@ export default function CancelForm({ bookingId, slotId, trainerId, dancerName, d
     });
 
     router.push(dashboardUrl);
+    router.refresh();
   }
 
   return (
