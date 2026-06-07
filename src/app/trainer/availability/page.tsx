@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
 import { Button } from "@/components/ui/button";
@@ -71,6 +71,34 @@ export default function AvailabilityPage() {
   const weekDays = getWeekDays(weekStart);
   const weekNumber = getWeekNumber(weekStart);
 
+  // Hent eksisterende slots når siden lastes (for dagens dato)
+  useEffect(() => {
+    if (today) fetchExistingSlots(today);
+  }, []);
+
+  async function fetchExistingSlots(date: Date) {
+    const supabase = createClient();
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) return;
+
+    const dateStr = dateToISO(date);
+    const dayStart = new Date(`${dateStr}T00:00:00`).toISOString();
+    const dayEnd = new Date(`${dateStr}T23:59:59`).toISOString();
+
+    const { data: slots } = await supabase
+      .from("availability_slots")
+      .select("start_at")
+      .eq("trainer_id", user.id)
+      .gte("start_at", dayStart)
+      .lte("start_at", dayEnd);
+
+    const times = new Set((slots ?? []).map((s) => {
+      const d = new Date(s.start_at);
+      return `${String(d.getHours()).padStart(2, "0")}:${String(d.getMinutes()).padStart(2, "0")}`;
+    }));
+    setExistingSlots(times);
+  }
+
   function prevWeek() {
     const prev = new Date(weekStart);
     prev.setDate(weekStart.getDate() - 7);
@@ -101,28 +129,7 @@ export default function AvailabilityPage() {
     setSelected(new Set());
     setSuccess(false);
     setError("");
-
-    // Hent eksisterende slots for denne dagen
-    const supabase = createClient();
-    const { data: { user } } = await supabase.auth.getUser();
-    if (!user) return;
-
-    const dateStr = dateToISO(date);
-    const dayStart = new Date(`${dateStr}T00:00:00`).toISOString();
-    const dayEnd = new Date(`${dateStr}T23:59:59`).toISOString();
-
-    const { data: slots } = await supabase
-      .from("availability_slots")
-      .select("start_at")
-      .eq("trainer_id", user.id)
-      .gte("start_at", dayStart)
-      .lte("start_at", dayEnd);
-
-    const times = new Set((slots ?? []).map((s) => {
-      const d = new Date(s.start_at);
-      return `${String(d.getHours()).padStart(2, "0")}:${String(d.getMinutes()).padStart(2, "0")}`;
-    }));
-    setExistingSlots(times);
+    await fetchExistingSlots(date);
   }
 
   function toggleSlot(slot: string) {
