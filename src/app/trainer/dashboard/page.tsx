@@ -135,9 +135,11 @@ export default async function TrainerDashboard() {
                                             {booking.dancer_name} · {booking.dance_style}
                                           </p>
                                         </div>
-                                        <Link href={`/trainer/avbestill/${booking.id}`} className="text-xs text-red-400 hover:text-red-600 mt-1 inline-block">
-                                          Avbestill
-                                        </Link>
+                                        {end > new Date() && (
+                                          <Link href={`/trainer/avbestill/${booking.id}`} className="text-xs text-red-400 hover:text-red-600 mt-1 inline-block">
+                                            Avbestill
+                                          </Link>
+                                        )}
                                       </>
                                     )}
                                   </div>
