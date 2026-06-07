@@ -21,7 +21,7 @@ export default async function DancerDashboard() {
 
   const { data: bookings } = await supabase
     .from("bookings")
-    .select("*, availability_slots(start_at, end_at, trainer_id)")
+    .select("*, availability_slots(start_at, end_at, trainer_id, profiles(name))")
     .eq("booker_id", user.id)
     .eq("status", "confirmed");
 
@@ -115,6 +115,9 @@ export default async function DancerDashboard() {
                                         {start.toLocaleTimeString("nb-NO", { hour: "2-digit", minute: "2-digit" })}–{end.toLocaleTimeString("nb-NO", { hour: "2-digit", minute: "2-digit" })}
                                       </p>
                                       <p className="text-sm text-purple-600 mt-1">{booking.dance_style}</p>
+                                      {(booking.availability_slots as any)?.profiles?.name && (
+                                        <p className="text-xs text-gray-400 mt-0.5">Trener: {(booking.availability_slots as any).profiles.name}</p>
+                                      )}
                                     </div>
                                     <span className="text-xs bg-green-100 text-green-600 px-2 py-1 rounded-full">Bekreftet</span>
                                   </div>
@@ -158,6 +161,9 @@ export default async function DancerDashboard() {
                                 {start.toLocaleTimeString("nb-NO", { hour: "2-digit", minute: "2-digit" })}–{end.toLocaleTimeString("nb-NO", { hour: "2-digit", minute: "2-digit" })}
                               </p>
                               <p className="text-sm text-gray-400 mt-1">{booking.dance_style}</p>
+                              {(booking.availability_slots as any)?.profiles?.name && (
+                                <p className="text-xs text-gray-400 mt-0.5">Trener: {(booking.availability_slots as any).profiles.name}</p>
+                              )}
                             </div>
                             <span className="text-xs bg-gray-100 text-gray-500 px-2 py-1 rounded-full">Fullført</span>
                           </div>
