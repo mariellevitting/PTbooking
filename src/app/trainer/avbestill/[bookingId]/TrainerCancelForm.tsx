@@ -52,6 +52,7 @@ export default function TrainerCancelForm({ bookingId, slotId, bookerId, dancerN
     });
 
     router.push("/trainer/dashboard");
+    router.refresh();
   }
 
   return (
