@@ -124,10 +124,12 @@ export default async function ParentDashboard() {
                                     <span className="text-xs bg-green-100 text-green-600 px-2 py-1 rounded-full">Bekreftet</span>
                                   </div>
                                   <div className="mt-3 pt-3 border-t flex justify-between items-center">
-                                    {hoursUntil < 24 && (
+                                    {hoursUntil < 24 ? (
                                       <p className="text-xs text-red-400">Under 24t – gebyr ved avbestilling</p>
+                                    ) : (
+                                      <span />
                                     )}
-                                    <Link href={`/booking/avbestill/${booking.id}`} className="ml-auto">
+                                    <Link href={`/booking/avbestill/${booking.id}`}>
                                       <button className="text-xs text-red-400 hover:text-red-600">Avbestill</button>
                                     </Link>
                                   </div>
