@@ -47,7 +47,10 @@ function getSlotsForDate(date: Date) {
 }
 
 function dateToISO(date: Date) {
-  return date.toISOString().split("T")[0];
+  const y = date.getFullYear();
+  const m = String(date.getMonth() + 1).padStart(2, "0");
+  const d = String(date.getDate()).padStart(2, "0");
+  return `${y}-${m}-${d}`;
 }
 
 const DAY_NAMES = ["man", "tir", "ons", "tor", "fre", "lør", "søn"];
@@ -142,7 +145,9 @@ export default function AvailabilityPage() {
 
     const dateStr = dateToISO(selectedDate);
     const rows = Array.from(selected).map((time) => {
-      const start = new Date(`${dateStr}T${time}:00`);
+      const [hours, minutes] = time.split(":").map(Number);
+      const start = new Date(selectedDate);
+      start.setHours(hours, minutes, 0, 0);
       const end = new Date(start.getTime() + 30 * 60 * 1000);
       return { trainer_id: user.id, start_at: start.toISOString(), end_at: end.toISOString() };
     });
