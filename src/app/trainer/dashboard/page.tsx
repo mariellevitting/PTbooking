@@ -6,6 +6,7 @@ import LogoutButton from "@/components/LogoutButton";
 import NotificationBell from "@/components/NotificationBell";
 import { UserCircle } from "lucide-react";
 import { formatDate, formatTime, formatDateKey } from "@/lib/dateUtils";
+import NMCountdown from "@/components/NMCountdown";
 
 export default async function TrainerDashboard() {
   const supabase = await createClient();
@@ -53,6 +54,7 @@ export default async function TrainerDashboard() {
           </div>
         </div>
         <p className="text-gray-500 mb-6">Evolution Danseklubb – Trener</p>
+        <NMCountdown />
 
         {/* Timer */}
         <div className="flex justify-between items-center mb-4">

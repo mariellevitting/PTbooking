@@ -7,6 +7,7 @@ import InfoBox from "@/components/InfoBox";
 import NotificationBell from "@/components/NotificationBell";
 import { UserCircle } from "lucide-react";
 import { formatDate, formatTime, formatDateKey } from "@/lib/dateUtils";
+import NMCountdown from "@/components/NMCountdown";
 
 export default async function ParentDashboard() {
   const supabase = await createClient();
@@ -60,6 +61,7 @@ export default async function ParentDashboard() {
           </div>
         </div>
         <p className="text-gray-500 mb-6">Evolution Danseklubb</p>
+        <NMCountdown />
         <InfoBox />
 
         <div className="flex justify-between items-center mb-4">
