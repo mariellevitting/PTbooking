@@ -3,6 +3,7 @@
 import { useState } from "react";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
+import { formatDate, formatTime, formatDateKey } from "@/lib/dateUtils";
 
 interface Booking {
   id: string;
@@ -30,9 +31,6 @@ interface CompletedSlot {
 interface Props {
   slots: Slot[];
   completedSlots: CompletedSlot[];
-  formatTime: (date: Date) => string;
-  formatDate: (date: Date, opts: Intl.DateTimeFormatOptions) => string;
-  formatDateKey: (date: Date) => string;
 }
 
 function getWeekNumber(date: Date) {
@@ -43,7 +41,7 @@ function getWeekNumber(date: Date) {
   return Math.ceil(((d.getTime() - yearStart.getTime()) / 86400000 + 1) / 7);
 }
 
-export default function TrainerDashboardTabs({ slots, completedSlots, formatTime, formatDate, formatDateKey }: Props) {
+export default function TrainerDashboardTabs({ slots, completedSlots }: Props) {
   const [tab, setTab] = useState<"upcoming" | "completed">("upcoming");
 
   const completed = completedSlots.filter(slot =>

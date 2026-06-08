@@ -4,7 +4,6 @@ import { createClient } from "@/lib/supabase/server";
 import LogoutButton from "@/components/LogoutButton";
 import NotificationBell from "@/components/NotificationBell";
 import { UserCircle } from "lucide-react";
-import { formatDate, formatTime, formatDateKey } from "@/lib/dateUtils";
 import NMCountdown from "@/components/NMCountdown";
 import TrainerDashboardTabs from "./TrainerDashboardTabs";
 
@@ -67,9 +66,6 @@ export default async function TrainerDashboard() {
         <TrainerDashboardTabs
           slots={(slots ?? []) as any}
           completedSlots={(completedSlots ?? []) as any}
-          formatTime={formatTime}
-          formatDate={formatDate}
-          formatDateKey={formatDateKey}
         />
       </div>
     </main>
