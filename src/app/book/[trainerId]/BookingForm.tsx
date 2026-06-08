@@ -81,6 +81,17 @@ export default function BookingForm({ slots, trainerName, bookerId, bookerName, 
   const today = new Date(); today.setHours(0, 0, 0, 0);
   const canGoPrev = weekStart > getMonday(today);
 
+  // Finn tilgjengelige måneder basert på faktiske slots
+  const availableMonths = Array.from(
+    new Set(slots.map(s => {
+      const d = new Date(s.start_at);
+      return `${d.getFullYear()}-${d.getMonth()}`;
+    }))
+  ).sort().map(key => {
+    const [year, month] = key.split("-").map(Number);
+    return { year, month };
+  });
+
   const weekSlots = slots.filter(s => {
     const d = new Date(s.start_at);
     return d >= weekStart && d <= weekEnd;
@@ -168,6 +179,25 @@ export default function BookingForm({ slots, trainerName, bookerId, bookerName, 
   if (step === "pick") {
     return (
       <div className="space-y-6">
+        {availableMonths.length > 1 && (
+          <select
+            className="w-full border rounded-lg px-3 py-2 text-sm bg-white text-gray-700"
+            value={`${weekStart.getFullYear()}-${weekStart.getMonth()}`}
+            onChange={(e) => {
+              const [year, month] = e.target.value.split("-").map(Number);
+              const firstOfMonth = new Date(year, month, 1);
+              const monday = getMonday(firstOfMonth < today ? today : firstOfMonth);
+              setWeekStart(monday);
+            }}
+          >
+            {availableMonths.map(({ year, month }) => (
+              <option key={`${year}-${month}`} value={`${year}-${month}`}>
+                {new Date(year, month, 1).toLocaleDateString("nb-NO", { month: "long", year: "numeric" })}
+              </option>
+            ))}
+          </select>
+        )}
+
         <div className="flex items-center justify-between">
           <button type="button" onClick={() => { const p = new Date(weekStart); p.setDate(p.getDate() - 7); setWeekStart(p); }} disabled={!canGoPrev} className={`text-2xl px-2 ${canGoPrev ? "text-gray-600 hover:text-purple-600" : "text-gray-200"}`}>‹</button>
           <span className="font-semibold text-gray-700">Uke {getWeekNumber(weekStart)}</span>
