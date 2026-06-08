@@ -61,6 +61,9 @@ export default function GlemtPassordPage() {
               <p className="text-gray-500 text-sm">
                 Vi har sendt en lenke til <strong>{email}</strong>. Klikk på lenken for å sette nytt passord.
               </p>
+              <p className="text-xs text-gray-400">
+                Finner du ikke e-posten? Sjekk søppelpost/spam-mappen. 🗑️
+              </p>
               <Link href="/login" className="text-purple-600 hover:underline text-sm block">
                 Tilbake til innlogging
               </Link>
