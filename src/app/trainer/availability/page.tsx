@@ -182,6 +182,33 @@ export default function AvailabilityPage() {
 
         <Card className="mb-4">
           <CardContent className="pt-4">
+            {/* Måneds-/årsvelger */}
+            <div className="mb-3">
+              <select
+                className="w-full border rounded-lg px-3 py-2 text-sm bg-white text-gray-700"
+                value={`${weekStart.getFullYear()}-${weekStart.getMonth()}`}
+                onChange={(e) => {
+                  const [year, month] = e.target.value.split("-").map(Number);
+                  const firstOfMonth = new Date(year, month, 1);
+                  const monday = getMondayOfWeek(firstOfMonth < today ? today : firstOfMonth);
+                  setWeekStart(monday);
+                  const firstAvailable = getWeekDays(monday).find(d => d >= today) ?? getWeekDays(monday)[0];
+                  setSelectedDate(firstAvailable);
+                  setSelected(new Set());
+                  fetchExistingSlots(firstAvailable);
+                }}
+              >
+                {Array.from({ length: 12 }, (_, i) => {
+                  const d = new Date(today.getFullYear(), today.getMonth() + i, 1);
+                  return (
+                    <option key={i} value={`${d.getFullYear()}-${d.getMonth()}`}>
+                      {d.toLocaleDateString("nb-NO", { month: "long", year: "numeric" })}
+                    </option>
+                  );
+                })}
+              </select>
+            </div>
+
             <div className="flex items-center justify-between mb-4">
               <button onClick={prevWeek} className="text-gray-400 hover:text-gray-700 px-2 text-xl">‹</button>
               <span className="font-semibold text-gray-700">Uke {weekNumber}</span>
