@@ -36,13 +36,19 @@ export default async function TrainerDashboard() {
     .gte("start_at", new Date().toISOString())
     .order("start_at");
 
-  // Gjennomførte timer (bekreftet + i fortiden)
-  const { data: completedSlots } = await supabase
-    .from("availability_slots")
-    .select("*, bookings(id, dancer_name, dance_style, status)")
-    .eq("trainer_id", user.id)
-    .lt("end_at", new Date().toISOString())
-    .order("start_at", { ascending: false });
+  // Tell gjennomførte timer
+  const { count: completedCount } = await supabase
+    .from("bookings")
+    .select("id", { count: "exact", head: true })
+    .eq("status", "confirmed")
+    .in("slot_id",
+      (await supabase
+        .from("availability_slots")
+        .select("id")
+        .eq("trainer_id", user.id)
+        .lt("end_at", new Date().toISOString())
+      ).data?.map(s => s.id) ?? []
+    );
 
   return (
     <main className="bg-gray-50 p-6">
@@ -175,66 +181,18 @@ export default async function TrainerDashboard() {
             </div>
           );
         })()}
-      {/* Gjennomførte timer */}
-      {(() => {
-        const completed = (completedSlots ?? []).filter(slot =>
-          slot.bookings?.some((b: any) => b.status === "confirmed")
-        );
-        if (completed.length === 0) return null;
-
-        // Grupper per måned
-        const monthGroups: Record<string, typeof completed> = {};
-        for (const slot of completed) {
-          const d = new Date(slot.start_at);
-          const key = formatDate(d, { month: "long", year: "numeric" });
-          if (!monthGroups[key]) monthGroups[key] = [];
-          monthGroups[key].push(slot);
-        }
-
-        return (
-          <div className="mt-8">
-            <div className="flex items-baseline gap-2 mb-4">
-              <h2 className="font-semibold text-lg">Gjennomførte privattimer</h2>
-              <span className="text-sm text-purple-500">{completed.length} totalt</span>
+      {/* Lenke til historikk */}
+      {(completedCount ?? 0) > 0 && (
+        <div className="mt-6">
+          <Link href="/trainer/historikk" className="flex items-center justify-between bg-white rounded-xl border p-4 hover:border-purple-300 transition-colors">
+            <div>
+              <p className="text-sm font-semibold text-gray-700">Gjennomførte privattimer</p>
+              <p className="text-xs text-purple-500">{completedCount} totalt</p>
             </div>
-            <div className="space-y-6">
-              {Object.entries(monthGroups).map(([month, monthSlots]) => (
-                <div key={month}>
-                  <p className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2">{month}</p>
-                  <div className="space-y-2">
-                    {monthSlots.map((slot) => {
-                      const start = new Date(slot.start_at);
-                      const end = new Date(slot.end_at);
-                      const booking = slot.bookings?.find((b: any) => b.status === "confirmed");
-                      const dayLabel = formatDate(start, { weekday: "long", day: "numeric", month: "long" });
-                      return (
-                        <div key={slot.id} className="bg-white rounded-xl border p-4 opacity-70">
-                          <div className="flex justify-between items-start">
-                            <div>
-                              <p className="text-sm font-semibold text-gray-600">
-                                {dayLabel.charAt(0).toUpperCase() + dayLabel.slice(1)}
-                              </p>
-                              <p className="text-sm text-gray-400">
-                                {formatTime(start)}–{formatTime(end)}
-                              </p>
-                              {booking && (
-                                <p className="text-sm text-purple-500 mt-0.5">
-                                  {booking.dancer_name} · {booking.dance_style}
-                                </p>
-                              )}
-                            </div>
-                            <span className="text-xs bg-gray-100 text-gray-500 px-2 py-1 rounded-full">Fullført</span>
-                          </div>
-                        </div>
-                      );
-                    })}
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
-        );
-      })()}
+            <span className="text-gray-400 text-lg">›</span>
+          </Link>
+        </div>
+      )}
       </div>
     </main>
   );
