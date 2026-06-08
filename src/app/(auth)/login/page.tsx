@@ -73,7 +73,12 @@ export default function LoginPage() {
               />
             </div>
             <div className="space-y-1.5">
-              <label className="text-sm font-medium text-gray-700">Passord</label>
+              <div className="flex justify-between items-center">
+                <label className="text-sm font-medium text-gray-700">Passord</label>
+                <Link href="/glemt-passord" className="text-xs text-purple-600 hover:underline">
+                  Glemt passordet?
+                </Link>
+              </div>
               <Input
                 type="password"
                 value={password}
@@ -87,12 +92,6 @@ export default function LoginPage() {
               {loading ? "Logger inn..." : "Logg inn"}
             </Button>
           </form>
-
-          <p className="text-center text-sm mt-3">
-            <Link href="/glemt-passord" className="text-gray-400 hover:text-purple-600 text-sm">
-              Glemt passordet?
-            </Link>
-          </p>
 
           <p className="text-center text-sm text-gray-500 mt-4">
             Har du ikke konto?{" "}
