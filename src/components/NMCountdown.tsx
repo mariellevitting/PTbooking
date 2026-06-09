@@ -71,21 +71,23 @@ export default function NMCountdown() {
   return (
     <div className="mb-6 space-y-2">
       {/* Neste konkurranse – stor nedtelling */}
-      <div className="bg-gradient-to-r from-purple-600 to-purple-800 rounded-2xl p-4 text-white">
-        <p className="text-xs font-semibold uppercase tracking-wider text-purple-200 mb-1">🏆 {next.short}</p>
-        <p className="text-sm font-semibold text-white">{next.name}</p>
-        <p className="text-xs text-purple-200 mb-3">
-          {next.dateLabel}{next.location ? ` · ${next.location}` : " · Lokasjon ikke avklart"}
-        </p>
-        <div className="grid grid-cols-4 gap-2 text-center">
+      <div className="bg-gradient-to-r from-purple-600 to-purple-800 rounded-xl px-4 py-3 text-white">
+        <div className="flex items-center justify-between mb-2">
+          <div>
+            <p className="text-xs text-purple-200">🏆 {next.short} · {next.dateLabel}</p>
+            <p className="text-sm font-semibold">{next.name}</p>
+            {next.location && <p className="text-xs text-purple-200">{next.location}</p>}
+          </div>
+        </div>
+        <div className="grid grid-cols-4 gap-1.5 text-center">
           {[
             { value: timeLeft.days, label: "Dager" },
             { value: timeLeft.hours, label: "Timer" },
             { value: timeLeft.minutes, label: "Min" },
             { value: timeLeft.seconds, label: "Sek" },
           ].map(({ value, label }) => (
-            <div key={label} className="bg-white/20 rounded-xl py-2">
-              <p className="text-2xl font-bold">{String(value).padStart(2, "0")}</p>
+            <div key={label} className="bg-white/20 rounded-lg py-1.5">
+              <p className="text-lg font-bold">{String(value).padStart(2, "0")}</p>
               <p className="text-xs text-purple-200">{label}</p>
             </div>
           ))}
