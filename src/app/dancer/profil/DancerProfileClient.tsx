@@ -234,7 +234,7 @@ export default function DancerProfileClient(props: Props) {
           <Check size={16} /> Profilen er oppdatert!
         </div>
       )}
-      <Button type="submit" className="w-full bg-purple-600 hover:bg-purple-700" disabled={saving}>
+      <Button type="submit" className="w-full bg-purple-600 hover:bg-purple-700" disabled={saving || success}>
         {saving ? "Lagrer..." : "Lagre profil"}
       </Button>
     </form>
