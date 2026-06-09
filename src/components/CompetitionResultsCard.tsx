@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { createClient } from "@/lib/supabase/client";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Medal, Plus, Trash2, Check } from "lucide-react";
@@ -44,6 +44,10 @@ interface Props {
 
 export default function CompetitionResultsCard({ userId, initialResults, childId }: Props) {
   const [results, setResults] = useState<Result[]>(initialResults);
+
+  useEffect(() => {
+    setResults(initialResults);
+  }, [initialResults]);
   const [adding, setAdding] = useState(false);
   const [comp, setComp] = useState(COMPETITIONS[0].name);
   const [placementF, setPlacementF] = useState("");
