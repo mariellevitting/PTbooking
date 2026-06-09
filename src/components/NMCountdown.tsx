@@ -24,6 +24,13 @@ const COMPETITIONS = [
     dateLabel: "19. september",
     location: null,
   },
+  {
+    name: "Freestyle Dance Jam 8",
+    short: "FDJ 8",
+    date: new Date("2026-10-17T00:00:00"),
+    dateLabel: "17. oktober",
+    location: "Fjellhamar Arena, Lørenskog",
+  },
 ];
 
 function getTimeLeft(date: Date) {
