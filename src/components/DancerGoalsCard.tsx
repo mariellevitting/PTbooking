@@ -4,7 +4,7 @@ import { useState } from "react";
 import { createClient } from "@/lib/supabase/client";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Check, Target, Trophy, ChevronUp } from "lucide-react";
+import { Check, Target, Trophy } from "lucide-react";
 
 const LEVELS = ["Rekrutt", "Litt øvet", "Mester", "Champ", "Elite"];
 
@@ -27,7 +27,6 @@ function LevelTracker({ label, points, level, isFreestyle, onPointsChange, onLev
   const needed = getNeeded(level, isFreestyle);
   const current = Math.min(points, needed);
   const percent = needed > 0 ? Math.round((current / needed) * 100) : 100;
-  const canLevelUp = !isChampOrElite && points >= needed;
 
   return (
     <div className="space-y-3">
@@ -71,19 +70,9 @@ function LevelTracker({ label, points, level, isFreestyle, onPointsChange, onLev
           Neste nivå avgjøres av plasseringer på stevner
         </div>
       ) : (
-        <div className="space-y-1">
-          <div className="flex justify-between text-xs text-gray-500">
-            <span>{current} / {needed} poeng mot {LEVELS[level + 1]}</span>
-            <span>{percent}%</span>
-          </div>
-          {canLevelUp && (
-            <button
-              onClick={onLevelUp}
-              className="w-full mt-1 flex items-center justify-center gap-1.5 text-sm font-medium text-white bg-purple-600 hover:bg-purple-700 rounded-lg py-2 transition-colors"
-            >
-              <ChevronUp size={16} /> Rykk opp til {LEVELS[level + 1]}!
-            </button>
-          )}
+        <div className="flex justify-between text-xs text-gray-500">
+          <span>{current} / {needed} poeng mot {LEVELS[level + 1]}</span>
+          <span>{percent}%</span>
         </div>
       )}
     </div>
@@ -108,13 +97,23 @@ export default function DancerGoalsCard({ userId, seasonGoals, pointsFreestyle, 
   const [saving, setSaving] = useState(false);
   const [success, setSuccess] = useState(false);
 
-  function handleLevelUp(discipline: "freestyle" | "slow") {
-    if (discipline === "freestyle") {
+  function handleFreestyleChange(val: number) {
+    const needed = getNeeded(levelF, true);
+    if (levelF < 3 && val >= needed) {
       setLevelF(l => Math.min(l + 1, 4));
       setFreestyle(0);
     } else {
+      setFreestyle(val);
+    }
+  }
+
+  function handleSlowChange(val: number) {
+    const needed = getNeeded(levelS, false);
+    if (levelS < 3 && val >= needed) {
       setLevelS(l => Math.min(l + 1, 4));
       setSlow(0);
+    } else {
+      setSlow(val);
     }
   }
 
@@ -170,8 +169,8 @@ export default function DancerGoalsCard({ userId, seasonGoals, pointsFreestyle, 
             points={freestyle}
             level={levelF}
             isFreestyle={true}
-            onPointsChange={setFreestyle}
-            onLevelUp={() => handleLevelUp("freestyle")}
+            onPointsChange={handleFreestyleChange}
+            onLevelUp={() => {}}
           />
           <div className="border-t pt-6">
             <LevelTracker
@@ -179,8 +178,8 @@ export default function DancerGoalsCard({ userId, seasonGoals, pointsFreestyle, 
               points={slow}
               level={levelS}
               isFreestyle={false}
-              onPointsChange={setSlow}
-              onLevelUp={() => handleLevelUp("slow")}
+              onPointsChange={handleSlowChange}
+              onLevelUp={() => {}}
             />
           </div>
         </CardContent>
