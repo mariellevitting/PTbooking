@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { ChevronDown, ChevronUp } from "lucide-react";
 
 const COMPETITIONS = [
   {
@@ -54,6 +55,7 @@ function getTimeLeft(date: Date) {
 
 export default function NMCountdown() {
   const [tick, setTick] = useState(0);
+  const [open, setOpen] = useState(false);
 
   useEffect(() => {
     const interval = setInterval(() => setTick(t => t + 1), 1000);
@@ -90,18 +92,33 @@ export default function NMCountdown() {
         </div>
       </div>
 
-      {/* Kommende konkurranser */}
-      {upcoming.slice(1).map((comp) => (
-        <div key={comp.name} className="bg-white border border-purple-100 rounded-xl px-4 py-3 flex justify-between items-center">
-          <div>
-            <p className="text-sm font-semibold text-gray-700">{comp.short} – {comp.dateLabel}</p>
-            <p className="text-xs text-gray-400">{comp.location ?? "Lokasjon ikke avklart"}</p>
-          </div>
-          <span className="text-xs text-purple-500 font-medium">
-            {getTimeLeft(comp.date)!.days} dager
-          </span>
+      {/* Kommende konkurranser – dropdown */}
+      {upcoming.slice(1).length > 0 && (
+        <div className="bg-white border border-purple-100 rounded-xl overflow-hidden">
+          <button
+            onClick={() => setOpen(o => !o)}
+            className="w-full flex items-center justify-between px-4 py-3 text-sm font-semibold text-gray-700 hover:bg-purple-50 transition-colors"
+          >
+            <span>Kommende konkurranser ({upcoming.slice(1).length})</span>
+            {open ? <ChevronUp size={16} className="text-purple-500" /> : <ChevronDown size={16} className="text-purple-500" />}
+          </button>
+          {open && (
+            <div className="divide-y divide-gray-100">
+              {upcoming.slice(1).map((comp) => (
+                <div key={comp.name} className="px-4 py-3 flex justify-between items-center">
+                  <div>
+                    <p className="text-sm font-medium text-gray-700">{comp.short} – {comp.dateLabel}</p>
+                    <p className="text-xs text-gray-400">{comp.location ?? "Lokasjon ikke avklart"}</p>
+                  </div>
+                  <span className="text-xs text-purple-500 font-medium whitespace-nowrap ml-2">
+                    {getTimeLeft(comp.date)!.days} dager
+                  </span>
+                </div>
+              ))}
+            </div>
+          )}
         </div>
-      ))}
+      )}
     </div>
   );
 }
