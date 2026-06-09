@@ -20,8 +20,8 @@ function getNeeded(levelIndex: number, isFreestyle: boolean): number {
 type Result = {
   id: string;
   competition_name: string;
-  dance_style: string;
-  placement: string | null;
+  placement_freestyle: string | null;
+  placement_slow: string | null;
   notes: string | null;
 };
 

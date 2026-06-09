@@ -13,43 +13,65 @@ const COMPETITIONS = [
   { name: "Dancer of the Year / FDJ 9", short: "DOTY / FDJ 9" },
 ];
 
-const STYLES = ["Freestyle", "Slow", "Begge"];
+function placementLabel(p: string | null) {
+  if (!p) return null;
+  if (p === "1") return "🥇 1. plass";
+  if (p === "2") return "🥈 2. plass";
+  if (p === "3") return "🥉 3. plass";
+  return p;
+}
+
+function placementColor(p: string | null) {
+  if (p === "1") return "text-yellow-500";
+  if (p === "2") return "text-gray-400";
+  if (p === "3") return "text-amber-600";
+  return "text-purple-600";
+}
 
 type Result = {
   id: string;
   competition_name: string;
-  dance_style: string;
-  placement: string | null;
+  placement_freestyle: string | null;
+  placement_slow: string | null;
   notes: string | null;
 };
 
 interface Props {
   userId: string;
   initialResults: Result[];
+  childId?: string;
 }
 
-export default function CompetitionResultsCard({ userId, initialResults }: Props) {
+export default function CompetitionResultsCard({ userId, initialResults, childId }: Props) {
   const [results, setResults] = useState<Result[]>(initialResults);
   const [adding, setAdding] = useState(false);
   const [comp, setComp] = useState(COMPETITIONS[0].name);
-  const [style, setStyle] = useState(STYLES[0]);
-  const [placement, setPlacement] = useState("");
+  const [placementF, setPlacementF] = useState("");
+  const [placementS, setPlacementS] = useState("");
   const [notes, setNotes] = useState("");
   const [saving, setSaving] = useState(false);
   const [success, setSuccess] = useState(false);
 
   async function handleAdd() {
+    if (!placementF && !placementS) return;
     setSaving(true);
     const supabase = createClient();
     const { data, error } = await supabase
       .from("competition_results")
-      .insert({ user_id: userId, competition_name: comp, dance_style: style, placement: placement || null, notes: notes || null })
+      .insert({
+        user_id: userId,
+        ...(childId ? { child_id: childId } : {}),
+        competition_name: comp,
+        dance_style: placementF && placementS ? "Begge" : placementF ? "Freestyle" : "Slow",
+        placement_freestyle: placementF || null,
+        placement_slow: placementS || null,
+        notes: notes || null,
+      })
       .select()
       .single();
     if (!error && data) {
       setResults(r => [data, ...r]);
-      setPlacement("");
-      setNotes("");
+      setPlacementF(""); setPlacementS(""); setNotes("");
       setAdding(false);
       setSuccess(true);
       setTimeout(() => setSuccess(false), 3000);
@@ -63,13 +85,6 @@ export default function CompetitionResultsCard({ userId, initialResults }: Props
     setResults(r => r.filter(x => x.id !== id));
   }
 
-  const placementColor = (p: string | null) => {
-    if (p === "1") return "text-yellow-500";
-    if (p === "2") return "text-gray-400";
-    if (p === "3") return "text-amber-600";
-    return "text-purple-600";
-  };
-
   return (
     <Card>
       <CardHeader>
@@ -77,75 +92,48 @@ export default function CompetitionResultsCard({ userId, initialResults }: Props
           <CardTitle className="text-base flex items-center gap-2">
             <Medal size={16} className="text-purple-500" /> Konkurranseresultater
           </CardTitle>
-          <button
-            onClick={() => setAdding(a => !a)}
-            className="flex items-center gap-1 text-xs text-purple-600 hover:text-purple-800 font-medium"
-          >
+          <button onClick={() => setAdding(a => !a)} className="flex items-center gap-1 text-xs text-purple-600 hover:text-purple-800 font-medium">
             <Plus size={14} /> Legg til
           </button>
         </div>
       </CardHeader>
       <CardContent className="space-y-4">
 
-        {/* Skjema for nytt resultat */}
         {adding && (
           <div className="border border-purple-200 rounded-xl p-4 space-y-3 bg-purple-50">
             <div className="space-y-1">
               <label className="text-xs font-medium text-gray-600">Konkurranse</label>
-              <select
-                value={comp}
-                onChange={e => setComp(e.target.value)}
-                className="w-full border rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-purple-400 bg-white"
-              >
-                {COMPETITIONS.map(c => (
-                  <option key={c.name} value={c.name}>{c.short}</option>
-                ))}
+              <select value={comp} onChange={e => setComp(e.target.value)}
+                className="w-full border rounded-lg px-3 py-2 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-purple-400">
+                {COMPETITIONS.map(c => <option key={c.name} value={c.name}>{c.short}</option>)}
               </select>
             </div>
             <div className="grid grid-cols-2 gap-3">
               <div className="space-y-1">
-                <label className="text-xs font-medium text-gray-600">Dansestil</label>
-                <select
-                  value={style}
-                  onChange={e => setStyle(e.target.value)}
-                  className="w-full border rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-purple-400 bg-white"
-                >
-                  {STYLES.map(s => <option key={s}>{s}</option>)}
-                </select>
+                <label className="text-xs font-medium text-gray-600">Freestyle-plassering</label>
+                <input type="text" value={placementF} onChange={e => setPlacementF(e.target.value)}
+                  placeholder="f.eks. 1, finalist"
+                  className="w-full border rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-purple-400" />
               </div>
               <div className="space-y-1">
-                <label className="text-xs font-medium text-gray-600">Plassering</label>
-                <input
-                  type="text"
-                  value={placement}
-                  onChange={e => setPlacement(e.target.value)}
-                  placeholder="f.eks. 1, finalist"
-                  className="w-full border rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-purple-400"
-                />
+                <label className="text-xs font-medium text-gray-600">Slow-plassering</label>
+                <input type="text" value={placementS} onChange={e => setPlacementS(e.target.value)}
+                  placeholder="f.eks. 2, semifinalist"
+                  className="w-full border rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-purple-400" />
               </div>
             </div>
             <div className="space-y-1">
               <label className="text-xs font-medium text-gray-600">Notater (valgfritt)</label>
-              <textarea
-                value={notes}
-                onChange={e => setNotes(e.target.value)}
-                rows={2}
+              <textarea value={notes} onChange={e => setNotes(e.target.value)} rows={2}
                 placeholder="Hvordan gikk det? Hva lærte du?"
-                className="w-full border rounded-lg px-3 py-2 text-sm resize-none focus:outline-none focus:ring-2 focus:ring-purple-400"
-              />
+                className="w-full border rounded-lg px-3 py-2 text-sm resize-none focus:outline-none focus:ring-2 focus:ring-purple-400" />
             </div>
             <div className="flex gap-2">
-              <button
-                onClick={handleAdd}
-                disabled={saving}
-                className="flex-1 bg-purple-600 hover:bg-purple-700 text-white text-sm font-medium rounded-lg py-2 transition-colors"
-              >
+              <button onClick={handleAdd} disabled={saving || (!placementF && !placementS)}
+                className="flex-1 bg-purple-600 hover:bg-purple-700 disabled:opacity-50 text-white text-sm font-medium rounded-lg py-2">
                 {saving ? "Lagrer..." : "Lagre resultat"}
               </button>
-              <button
-                onClick={() => setAdding(false)}
-                className="px-4 text-sm text-gray-500 hover:text-gray-700 border rounded-lg"
-              >
+              <button onClick={() => setAdding(false)} className="px-4 text-sm text-gray-500 hover:text-gray-700 border rounded-lg bg-white">
                 Avbryt
               </button>
             </div>
@@ -158,7 +146,6 @@ export default function CompetitionResultsCard({ userId, initialResults }: Props
           </div>
         )}
 
-        {/* Liste over resultater */}
         {results.length === 0 && !adding ? (
           <p className="text-sm text-gray-400 text-center py-4">Ingen resultater ennå. Trykk "Legg til" for å logge ditt første resultat!</p>
         ) : (
@@ -166,23 +153,26 @@ export default function CompetitionResultsCard({ userId, initialResults }: Props
             {results.map(r => (
               <div key={r.id} className="flex items-start justify-between bg-gray-50 rounded-xl px-4 py-3">
                 <div className="flex-1 min-w-0">
-                  <div className="flex items-center gap-2 flex-wrap">
-                    <span className="text-sm font-semibold text-gray-700">
-                      {COMPETITIONS.find(c => c.name === r.competition_name)?.short ?? r.competition_name}
-                    </span>
-                    <span className="text-xs text-gray-400">{r.dance_style}</span>
-                    {r.placement && (
-                      <span className={`text-sm font-bold ${placementColor(r.placement)}`}>
-                        {r.placement === "1" ? "🥇 1. plass" : r.placement === "2" ? "🥈 2. plass" : r.placement === "3" ? "🥉 3. plass" : r.placement}
+                  <p className="text-sm font-semibold text-gray-700 mb-1">
+                    {COMPETITIONS.find(c => c.name === r.competition_name)?.short ?? r.competition_name}
+                  </p>
+                  <div className="flex gap-3 flex-wrap">
+                    {r.placement_freestyle && (
+                      <span className="text-xs">
+                        <span className="text-gray-400">Freestyle: </span>
+                        <span className={`font-bold ${placementColor(r.placement_freestyle)}`}>{placementLabel(r.placement_freestyle)}</span>
+                      </span>
+                    )}
+                    {r.placement_slow && (
+                      <span className="text-xs">
+                        <span className="text-gray-400">Slow: </span>
+                        <span className={`font-bold ${placementColor(r.placement_slow)}`}>{placementLabel(r.placement_slow)}</span>
                       </span>
                     )}
                   </div>
                   {r.notes && <p className="text-xs text-gray-400 mt-1">{r.notes}</p>}
                 </div>
-                <button
-                  onClick={() => handleDelete(r.id)}
-                  className="ml-3 text-gray-300 hover:text-red-400 transition-colors shrink-0"
-                >
+                <button onClick={() => handleDelete(r.id)} className="ml-3 text-gray-300 hover:text-red-400 transition-colors shrink-0">
                   <Trash2 size={15} />
                 </button>
               </div>
