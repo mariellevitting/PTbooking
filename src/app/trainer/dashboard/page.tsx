@@ -60,7 +60,7 @@ export default async function TrainerDashboard() {
             <LogoutButton />
           </div>
         </div>
-        <p className="text-gray-500 mb-6">Evolution Danseklubb – Trener</p>
+        <p className="text-gray-900 font-medium mb-6">Evolution Studio – Trener {profile.name}</p>
         <NMCountdown />
 
         <TrainerDashboardTabs
