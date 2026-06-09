@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { createClient } from "@/lib/supabase/client";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -32,6 +32,10 @@ export default function ChildDancerCard({ parentId, children }: { parentId: stri
   const [resultsLoaded, setResultsLoaded] = useState<string | null>(null);
   const [saving, setSaving] = useState(false);
   const [success, setSuccess] = useState(false);
+
+  useEffect(() => {
+    if (selectedId) loadChild(selectedId);
+  }, []);
 
   async function loadChild(id: string) {
     const c = children.find(x => x.id === id);
