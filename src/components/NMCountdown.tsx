@@ -79,18 +79,11 @@ export default function NMCountdown() {
             {next.location && <p className="text-xs text-purple-200">{next.location}</p>}
           </div>
         </div>
-        <div className="grid grid-cols-4 gap-1.5 text-center">
-          {[
-            { value: timeLeft.days, label: "Dager" },
-            { value: timeLeft.hours, label: "Timer" },
-            { value: timeLeft.minutes, label: "Min" },
-            { value: timeLeft.seconds, label: "Sek" },
-          ].map(({ value, label }) => (
-            <div key={label} className="bg-white/20 rounded-lg py-1.5">
-              <p className="text-lg font-bold">{String(value).padStart(2, "0")}</p>
-              <p className="text-xs text-purple-200">{label}</p>
-            </div>
-          ))}
+        <div className="mt-2">
+          <div className="bg-white/20 rounded-lg py-1.5 text-center">
+            <p className="text-2xl font-bold">{timeLeft.days}</p>
+            <p className="text-xs text-purple-200">Dager igjen</p>
+          </div>
         </div>
       </div>
 
