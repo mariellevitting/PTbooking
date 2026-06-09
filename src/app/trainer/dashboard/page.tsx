@@ -47,7 +47,7 @@ export default async function TrainerDashboard() {
     <main className="bg-gray-50 p-6">
       <div className="max-w-lg mx-auto">
         <div className="flex items-center justify-between mb-1">
-          <h1 className="text-2xl font-bold">Hei, {profile.name}!</h1>
+          <h1 className="text-2xl font-bold">Heihei, {profile.name.split(" ")[0]}! 👋</h1>
           <div className="flex items-center gap-3">
             <NotificationBell notifications={notifications ?? []} />
             <Link href="/trainer/profil" className="hover:opacity-80 transition-opacity">
@@ -60,7 +60,7 @@ export default async function TrainerDashboard() {
             <LogoutButton />
           </div>
         </div>
-        <p className="text-gray-900 font-medium mb-6">Evolution Studio – Trener {profile.name}</p>
+        <p className="text-gray-500 mb-6">Evolution Studio – Trener</p>
         <NMCountdown />
 
         <TrainerDashboardTabs
