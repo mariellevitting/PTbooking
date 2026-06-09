@@ -44,11 +44,14 @@ function LevelTracker({ label, points, level, isFreestyle, onPointsChange, onLev
             <span key={i} className={i <= level ? "text-purple-600 font-semibold" : "text-gray-400"}>{name}</span>
           ))}
         </div>
-        <div className="h-3 bg-gray-100 rounded-full overflow-hidden">
-          <div
-            className="h-full bg-purple-500 rounded-full transition-all duration-500"
-            style={{ width: `${Math.max(2, (level / 4) * 100 + (percent / 100) * (100 / 4))}%` }}
-          />
+        <div style={{ height: "12px", backgroundColor: "#e5e7eb", borderRadius: "9999px", overflow: "hidden" }}>
+          <div style={{
+            height: "100%",
+            backgroundColor: "#7c3aed",
+            borderRadius: "9999px",
+            width: `${Math.max(3, (level / 4) * 100 + (percent / 100) * (100 / 4))}%`,
+            transition: "width 0.5s ease"
+          }} />
         </div>
       </div>
 
