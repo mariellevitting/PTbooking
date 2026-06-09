@@ -27,7 +27,7 @@ Før du gjør noe annet på en ny sesjon:
 
 ## Hva du IKKE skal gjøre
 
-- Ikke push direkte til main (lag PR)
+- Push direkte til main er OK i denne fasen (liten app, én utvikler)
 - Ikke installer pakker som ikke står i `docs/DECISIONS.md` uten å foreslå det først
 - Ikke endre design-skjermene i `docs/design-screens/` – de er referanse
 - Ikke commit hemmeligheter (.env, API-nøkler)

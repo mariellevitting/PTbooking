@@ -60,9 +60,9 @@ export default async function DancerDashboard() {
             <LogoutButton />
           </div>
         </div>
-        <p className="text-gray-500 mb-6">Evolution Danseklubb</p>
-        <NMCountdown />
+        <p className="text-gray-500 mb-6"><a href="https://evolution-studio.no" target="_blank" rel="noopener noreferrer" className="hover:underline">Evolution Danseklubb</a></p>
         <InfoBox />
+        <NMCountdown />
 
         <div className="flex justify-between items-center mb-4">
           <h2 className="font-semibold text-lg">Mine privattimer</h2>

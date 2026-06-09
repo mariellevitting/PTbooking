@@ -3,6 +3,7 @@ import { createClient } from "@/lib/supabase/server";
 import Link from "next/link";
 import { ArrowLeft } from "lucide-react";
 import UserProfileForm from "@/components/UserProfileForm";
+import DancerGoalsCard from "@/components/DancerGoalsCard";
 
 export default async function DancerProfilPage() {
   const supabase = await createClient();
@@ -24,12 +25,22 @@ export default async function DancerProfilPage() {
           <ArrowLeft size={16} /> Tilbake
         </Link>
         <h1 className="text-2xl font-bold mb-6">Min profil</h1>
-        <UserProfileForm
-          userId={user.id}
-          name={profile.name}
-          phone={profile.phone ?? ""}
-          avatarUrl={profile.avatar_url ?? null}
-        />
+        <div className="space-y-4">
+          <UserProfileForm
+            userId={user.id}
+            name={profile.name}
+            phone={profile.phone ?? ""}
+            avatarUrl={profile.avatar_url ?? null}
+          />
+          <DancerGoalsCard
+            userId={user.id}
+            seasonGoals={profile.season_goals ?? ""}
+            pointsFreestyle={profile.points_freestyle ?? 0}
+            pointsSlow={profile.points_slow ?? 0}
+            levelFreestyle={profile.level_freestyle ?? 0}
+            levelSlow={profile.level_slow ?? 0}
+          />
+        </div>
       </div>
     </main>
   );
