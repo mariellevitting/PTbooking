@@ -71,15 +71,15 @@ export default function NMCountdown() {
   return (
     <div className="mb-6 space-y-2">
       {/* Neste konkurranse – stor nedtelling */}
-      <div className="bg-white border border-purple-100 rounded-xl px-4 py-3 flex items-center justify-between">
+      <div className="bg-purple-600 rounded-xl px-4 py-3 flex items-center justify-between">
         <div>
-          <p className="text-xs text-purple-500 font-semibold uppercase tracking-wide">🏆 {next.short}</p>
-          <p className="text-sm font-bold text-gray-800">{next.name}</p>
-          <p className="text-xs text-gray-400">{next.dateLabel}{next.location ? ` · ${next.location}` : ""}</p>
+          <p className="text-xs text-purple-200 font-semibold uppercase tracking-wide">🏆 {next.short}</p>
+          <p className="text-sm font-bold text-white">{next.name}</p>
+          <p className="text-xs text-purple-200">{next.dateLabel}{next.location ? ` · ${next.location}` : ""}</p>
         </div>
         <div className="text-right ml-4">
-          <p className="text-3xl font-bold text-purple-600">{timeLeft.days}</p>
-          <p className="text-xs text-gray-400">dager igjen</p>
+          <p className="text-3xl font-bold text-white">{timeLeft.days}</p>
+          <p className="text-xs text-purple-200">dager igjen</p>
         </div>
       </div>
 
