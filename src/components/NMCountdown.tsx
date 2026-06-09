@@ -31,6 +31,13 @@ const COMPETITIONS = [
     dateLabel: "17. oktober",
     location: "Fjellhamar Arena, Lørenskog",
   },
+  {
+    name: "Dancer of the Year / FDJ 9",
+    short: "DOTY / FDJ 9",
+    date: new Date("2026-11-21T00:00:00"),
+    dateLabel: "21. november",
+    location: null,
+  },
 ];
 
 function getTimeLeft(date: Date) {
