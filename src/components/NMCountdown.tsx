@@ -8,7 +8,7 @@ const COMPETITIONS = [
     short: "NM",
     date: new Date("2026-06-13T00:00:00"),
     dateLabel: "13–14. juni",
-    location: null,
+    location: "Sofiemyrhallen, Sofienmyr",
   },
   {
     name: "Freestyle Dance Jam 6",
