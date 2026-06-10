@@ -143,8 +143,8 @@ export default function ChildDancerCard({ parentId, children }: { parentId: stri
                   <p className="text-sm font-semibold text-gray-700">{label}</p>
                   <div className="flex items-center gap-1">
                     {level > 0 && (
-                      <button type="button" onClick={() => levelDown(disc)} className="p-1 rounded-full hover:bg-gray-100 transition-colors" title="Gå ned nivå">
-                        <ChevronLeft size={14} className="text-gray-400" />
+                      <button type="button" onClick={() => levelDown(disc)} className="text-xs text-gray-400 hover:text-red-400 underline mr-1 transition-colors">
+                        Angre
                       </button>
                     )}
                     <span className="text-xs font-bold text-purple-600 bg-purple-50 px-2 py-0.5 rounded-full">{LEVELS[level]}</span>
