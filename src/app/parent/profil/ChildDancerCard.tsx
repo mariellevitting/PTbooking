@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Target, Trophy, Check, ChevronLeft } from "lucide-react";
 import PointsStepper from "@/components/PointsStepper";
 import CompetitionResultsCard from "@/components/CompetitionResultsCard";
+import GoalsList from "@/components/GoalsList";
 
 const LEVELS = ["Rekrutt", "Litt øvet", "Mester", "Champ", "Elite"];
 
@@ -119,10 +120,8 @@ export default function ChildDancerCard({ parentId, children }: { parentId: stri
           </CardTitle>
         </CardHeader>
         <CardContent>
-          <p className="text-xs text-gray-400 mb-2">F.eks. triks, mål for konkurranser, hva danseren vil jobbe med</p>
-          <textarea value={goals} onChange={e => setGoals(e.target.value)} rows={4}
-            placeholder="Skriv mål for sesongen her..."
-            className="w-full border rounded-lg px-3 py-2 text-sm resize-none focus:outline-none focus:ring-2 focus:ring-purple-400" />
+          <p className="text-xs text-gray-400 mb-3">F.eks. triks, mål for konkurranser, hva danseren vil jobbe med</p>
+          <GoalsList value={goals} onChange={setGoals} />
         </CardContent>
       </Card>
 

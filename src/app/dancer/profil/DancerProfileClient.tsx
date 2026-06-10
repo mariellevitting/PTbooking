@@ -8,6 +8,7 @@ import { Input } from "@/components/ui/input";
 import { User, Phone, Camera, Check, Target, Trophy, ChevronLeft, ChevronRight } from "lucide-react";
 import PointsStepper from "@/components/PointsStepper";
 import CompetitionResultsCard from "@/components/CompetitionResultsCard";
+import GoalsList from "@/components/GoalsList";
 
 const LEVELS = ["Rekrutt", "Litt øvet", "Mester", "Champ", "Elite"];
 
@@ -163,14 +164,8 @@ export default function DancerProfileClient(props: Props) {
           </CardTitle>
         </CardHeader>
         <CardContent>
-          <p className="text-xs text-gray-400 mb-2">F.eks. triks du vil lære, mål for konkurranser, hva du vil jobbe med denne sesongen</p>
-          <textarea
-            value={goals}
-            onChange={e => setGoals(e.target.value)}
-            rows={4}
-            placeholder="Skriv dine mål for sesongen her..."
-            className="w-full border rounded-lg px-3 py-2 text-sm resize-none focus:outline-none focus:ring-2 focus:ring-purple-400"
-          />
+          <p className="text-xs text-gray-400 mb-3">F.eks. triks du vil lære, mål for konkurranser, hva du vil jobbe med denne sesongen</p>
+          <GoalsList value={goals} onChange={setGoals} />
         </CardContent>
       </Card>
 
