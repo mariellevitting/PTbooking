@@ -4,7 +4,7 @@ import { useState, useEffect } from "react";
 import { createClient } from "@/lib/supabase/client";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Target, Trophy, Check } from "lucide-react";
+import { Target, Trophy, Check, ChevronLeft } from "lucide-react";
 import PointsStepper from "@/components/PointsStepper";
 import CompetitionResultsCard from "@/components/CompetitionResultsCard";
 
@@ -68,6 +68,11 @@ export default function ChildDancerCard({ parentId, children }: { parentId: stri
     else setSlow(val);
   }
 
+  function levelDown(discipline: "freestyle" | "slow") {
+    if (discipline === "freestyle") { setLevelF(l => Math.max(0, l - 1)); setFreestyle(0); }
+    else { setLevelS(l => Math.max(0, l - 1)); setSlow(0); }
+  }
+
   async function handleSave() {
     if (!selectedId) return;
     setSaving(true);
@@ -129,14 +134,21 @@ export default function ChildDancerCard({ parentId, children }: { parentId: stri
         </CardHeader>
         <CardContent className="space-y-6">
           {[
-            { label: "Freestyle", points: freestyle, level: levelF, percent: percentF, needed: neededF, onChange: handleFreestyleChange },
-            { label: "Slow", points: slow, level: levelS, percent: percentS, needed: neededS, onChange: handleSlowChange },
-          ].map(({ label, points, level, percent, needed, onChange }, idx) => (
+            { label: "Freestyle", points: freestyle, level: levelF, percent: percentF, needed: neededF, onChange: handleFreestyleChange, disc: "freestyle" as const },
+            { label: "Slow", points: slow, level: levelS, percent: percentS, needed: neededS, onChange: handleSlowChange, disc: "slow" as const },
+          ].map(({ label, points, level, percent, needed, onChange, disc }, idx) => (
             <div key={label} className={idx > 0 ? "border-t pt-6" : ""}>
               <div className="space-y-3">
                 <div className="flex items-center justify-between">
                   <p className="text-sm font-semibold text-gray-700">{label}</p>
-                  <span className="text-xs font-bold text-purple-600 bg-purple-50 px-2 py-0.5 rounded-full">{LEVELS[level]}</span>
+                  <div className="flex items-center gap-1">
+                    {level > 0 && (
+                      <button type="button" onClick={() => levelDown(disc)} className="p-1 rounded-full hover:bg-gray-100 transition-colors" title="Gå ned nivå">
+                        <ChevronLeft size={14} className="text-gray-400" />
+                      </button>
+                    )}
+                    <span className="text-xs font-bold text-purple-600 bg-purple-50 px-2 py-0.5 rounded-full">{LEVELS[level]}</span>
+                  </div>
                 </div>
                 <div className="space-y-1.5">
                   <div className="flex justify-between text-[10px] px-0.5">
