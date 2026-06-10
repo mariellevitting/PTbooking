@@ -13,7 +13,7 @@ export default function PointsStepper({ value, onChange, min = 0 }: Props) {
     <div className="flex items-center gap-3">
       <button
         type="button"
-        onClick={() => onChange(Math.max(min, value - 1))}
+        onClick={() => onChange(value - 1)}
         className="w-10 h-10 rounded-full bg-gray-100 hover:bg-gray-200 active:bg-gray-300 flex items-center justify-center transition-colors"
       >
         <Minus size={18} className="text-gray-600" />

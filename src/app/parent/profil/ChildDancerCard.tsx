@@ -58,20 +58,17 @@ export default function ChildDancerCard({ parentId, children }: { parentId: stri
   }
 
   function handleFreestyleChange(val: number) {
+    if (val < 0) { setLevelF(l => Math.max(0, l - 1)); setFreestyle(0); return; }
     const needed = getNeeded(levelF, true);
     if (levelF < 3 && val >= needed) { setLevelF(l => Math.min(l + 1, 4)); setFreestyle(0); }
     else setFreestyle(val);
   }
 
   function handleSlowChange(val: number) {
+    if (val < 0) { setLevelS(l => Math.max(0, l - 1)); setSlow(0); return; }
     const needed = getNeeded(levelS, false);
     if (levelS < 3 && val >= needed) { setLevelS(l => Math.min(l + 1, 4)); setSlow(0); }
     else setSlow(val);
-  }
-
-  function levelDown(discipline: "freestyle" | "slow") {
-    if (discipline === "freestyle") { setLevelF(l => Math.max(0, l - 1)); setFreestyle(0); }
-    else { setLevelS(l => Math.max(0, l - 1)); setSlow(0); }
   }
 
   async function handleSave() {
@@ -140,14 +137,7 @@ export default function ChildDancerCard({ parentId, children }: { parentId: stri
               <div className="space-y-3">
                 <div className="flex items-center justify-between">
                   <p className="text-sm font-semibold text-gray-700">{label}</p>
-                  <div className="flex items-center gap-1">
-                    {level > 0 && (
-                      <button type="button" onClick={() => levelDown(disc)} className="text-xs text-gray-400 hover:text-red-400 underline mr-1 transition-colors">
-                        Angre
-                      </button>
-                    )}
-                    <span className="text-xs font-bold text-purple-600 bg-purple-50 px-2 py-0.5 rounded-full">{LEVELS[level]}</span>
-                  </div>
+                  <span className="text-xs font-bold text-purple-600 bg-purple-50 px-2 py-0.5 rounded-full">{LEVELS[level]}</span>
                 </div>
                 <div className="space-y-1.5">
                   <div className="flex justify-between text-[10px] px-0.5">
