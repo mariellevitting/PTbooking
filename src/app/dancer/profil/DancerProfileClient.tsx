@@ -6,6 +6,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { User, Phone, Camera, Check, Target, Trophy } from "lucide-react";
+import PointsStepper from "@/components/PointsStepper";
 import CompetitionResultsCard from "@/components/CompetitionResultsCard";
 
 const LEVELS = ["Rekrutt", "Litt øvet", "Mester", "Champ", "Elite"];
@@ -200,14 +201,7 @@ export default function DancerProfileClient(props: Props) {
                     }} />
                   </div>
                 </div>
-                <div className="flex items-center gap-3">
-                  <input
-                    type="number" min={0} value={points}
-                    onChange={e => onChange(Math.max(0, parseInt(e.target.value) || 0))}
-                    className="w-20 text-center border rounded-lg px-2 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-purple-400"
-                  />
-                  <p className="text-xs text-gray-500">poeng dette nivået</p>
-                </div>
+                <PointsStepper value={points} onChange={onChange} />
                 {level >= 3 ? (
                   <div className="flex items-center gap-2 text-sm text-gray-500 bg-yellow-50 border border-yellow-200 rounded-lg px-3 py-2">
                     <Trophy size={14} className="text-yellow-500" />
