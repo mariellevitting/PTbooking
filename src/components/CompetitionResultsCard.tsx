@@ -126,12 +126,6 @@ export default function CompetitionResultsCard({ userId, initialResults, childId
                   className="w-full border rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-purple-400" />
               </div>
             </div>
-            <div className="space-y-1">
-              <label className="text-xs font-medium text-gray-600">Notater (valgfritt)</label>
-              <textarea value={notes} onChange={e => setNotes(e.target.value)} rows={2}
-                placeholder="Hvordan gikk det? Hva lærte du?"
-                className="w-full border rounded-lg px-3 py-2 text-sm resize-none focus:outline-none focus:ring-2 focus:ring-purple-400" />
-            </div>
             <div className="flex gap-2">
               <button onClick={handleAdd} disabled={saving || (!placementF && !placementS)}
                 className="flex-1 bg-purple-600 hover:bg-purple-700 disabled:opacity-50 text-white text-sm font-medium rounded-lg py-2">
