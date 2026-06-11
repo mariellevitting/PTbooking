@@ -24,7 +24,6 @@ export default async function TrainerDashboard() {
     .from("notifications")
     .select("*")
     .eq("user_id", user.id)
-    .eq("read", false)
     .order("created_at", { ascending: false });
 
   // Alle fremtidige slots med evt. booking

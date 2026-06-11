@@ -2,7 +2,7 @@
 
 import { useState, useRef, useEffect } from "react";
 import { createClient } from "@/lib/supabase/client";
-import { Bell } from "lucide-react";
+import { Bell, Trash2 } from "lucide-react";
 
 interface Notification {
   id: string;
@@ -18,6 +18,7 @@ interface Props {
 export default function NotificationBell({ notifications: initial }: Props) {
   const [open, setOpen] = useState(false);
   const [notifications, setNotifications] = useState(initial);
+  const [clearing, setClearing] = useState(false);
   const ref = useRef<HTMLDivElement>(null);
   const unread = notifications.filter((n) => !n.read).length;
 
@@ -41,6 +42,15 @@ export default function NotificationBell({ notifications: initial }: Props) {
     }
   }
 
+  async function handleClear() {
+    setClearing(true);
+    const supabase = createClient();
+    const ids = notifications.map((n) => n.id);
+    await supabase.from("notifications").delete().in("id", ids);
+    setNotifications([]);
+    setClearing(false);
+  }
+
   return (
     <div ref={ref} className="relative">
       <button onClick={handleOpen} className="relative p-1 text-gray-500 hover:text-purple-600 transition-colors">
@@ -54,8 +64,17 @@ export default function NotificationBell({ notifications: initial }: Props) {
 
       {open && (
         <div className="absolute right-0 mt-2 w-80 bg-white rounded-2xl shadow-xl border z-50 overflow-hidden">
-          <div className="px-4 py-3 border-b">
+          <div className="px-4 py-3 border-b flex items-center justify-between">
             <p className="font-semibold text-sm">Varsler</p>
+            {notifications.length > 0 && (
+              <button
+                onClick={handleClear}
+                disabled={clearing}
+                className="flex items-center gap-1 text-xs text-gray-400 hover:text-red-400 transition-colors"
+              >
+                <Trash2 size={13} /> Tøm
+              </button>
+            )}
           </div>
           {notifications.length === 0 ? (
             <div className="px-4 py-6 text-center text-gray-400 text-sm">
