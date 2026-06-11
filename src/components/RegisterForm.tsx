@@ -4,6 +4,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { registerUser } from "@/app/actions/register";
+import { createClient } from "@/lib/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { CheckCircle } from "lucide-react";
@@ -41,13 +42,14 @@ export default function RegisterForm({ prefilledCode, clubName }: Props) {
     setCheckingCode(true);
     setError("");
     try {
-      const controller = new AbortController();
-      const timeout = setTimeout(() => controller.abort(), 8000);
-      const res = await fetch(`/api/clubs?code=${clubCode.toUpperCase()}`, { signal: controller.signal });
-      clearTimeout(timeout);
-      const data = await res.json();
-      if (data.name) {
-        setResolvedClubName(data.name);
+      const supabase = createClient();
+      const { data: club, error } = await supabase
+        .from("clubs")
+        .select("name")
+        .eq("invite_code", clubCode.toUpperCase())
+        .single();
+      if (club?.name) {
+        setResolvedClubName(club.name);
         setStep("role");
       } else {
         setError("Ugyldig klubbkode. Sjekk at du har skrevet riktig.");
