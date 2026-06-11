@@ -162,8 +162,8 @@ export default function DancerDashboardNav(props: Props) {
           </div>
         )}
 
-        {/* NM-nedtelling */}
-        <NMCountdown />
+        {/* NM-nedtelling – skjules på Konkurranser-fanen */}
+        {active !== "konkurranser" && <NMCountdown />}
 
       {/* Mine timer */}
       {active === "timer" && (
@@ -319,22 +319,40 @@ export default function DancerDashboardNav(props: Props) {
       )}
 
       {/* Kommende konkurranser */}
-      {active === "konkurranser" && (
-        <div className="space-y-3">
-          {COMPETITIONS.filter(c => c.date >= new Date()).map(c => (
-            <div key={c.name} className="bg-white rounded-xl border p-4 flex items-center justify-between">
-              <div>
-                <p className="font-semibold text-gray-800">{c.name}</p>
-                <p className="text-sm text-purple-600">{c.dateLabel}</p>
-                {c.location && <p className="text-xs text-gray-400 mt-0.5">{c.location}</p>}
+      {active === "konkurranser" && (() => {
+        const upcoming = COMPETITIONS.filter(c => c.date >= new Date());
+        const next = upcoming[0];
+        const rest = upcoming.slice(1);
+        if (upcoming.length === 0) return <p className="text-sm text-gray-400 text-center py-6">Ingen kommende konkurranser</p>;
+        const daysUntil = (d: Date) => Math.ceil((d.getTime() - new Date().getTime()) / (1000 * 60 * 60 * 24));
+        return (
+          <div className="space-y-3">
+            {/* Neste konkurranse – uthevet */}
+            <div className="bg-purple-600 rounded-2xl px-5 py-4">
+              <p className="text-xs text-purple-200 font-semibold uppercase tracking-wide mb-1">🏆 Neste konkurranse</p>
+              <p className="text-lg font-bold text-white">{next.name}</p>
+              <p className="text-sm text-purple-200 mt-0.5">{next.dateLabel}{next.location ? ` · ${next.location}` : ""}</p>
+              <div className="mt-3 flex items-end gap-1">
+                <p className="text-4xl font-bold text-white">{daysUntil(next.date)}</p>
+                <p className="text-sm text-purple-200 mb-1">dager igjen</p>
               </div>
-              <span className="text-xs font-bold text-purple-600 bg-purple-50 px-2 py-1 rounded-full whitespace-nowrap ml-3">
-                {Math.ceil((c.date.getTime() - new Date().getTime()) / (1000 * 60 * 60 * 24))} dager
-              </span>
             </div>
-          ))}
-        </div>
-      )}
+            {/* Resten */}
+            {rest.map(c => (
+              <div key={c.name} className="bg-white rounded-xl border p-4 flex items-center justify-between">
+                <div>
+                  <p className="font-semibold text-gray-800">{c.name}</p>
+                  <p className="text-sm text-purple-600">{c.dateLabel}</p>
+                  {c.location && <p className="text-xs text-gray-400 mt-0.5">{c.location}</p>}
+                </div>
+                <span className="text-xs font-bold text-purple-600 bg-purple-50 px-2 py-1 rounded-full whitespace-nowrap ml-3">
+                  {daysUntil(c.date)} dager
+                </span>
+              </div>
+            ))}
+          </div>
+        );
+      })()}
 
         {/* Lagre-knapp for mål og nivåer */}
         {(active === "maal" || active === "nivaer") && (
