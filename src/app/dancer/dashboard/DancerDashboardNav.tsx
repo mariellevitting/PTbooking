@@ -175,7 +175,7 @@ export default function DancerDashboardNav(props: Props) {
                 </button>
               </div>
               {/* Profil */}
-              <div className="px-6 pb-6 flex items-center gap-4 border-b">
+              <Link href="/dancer/profil" onClick={() => setMenuOpen(false)} className="px-6 pb-6 flex items-center gap-4 border-b hover:bg-gray-50 transition-colors">
                 <div className="w-14 h-14 rounded-full bg-purple-100 flex items-center justify-center overflow-hidden shrink-0">
                   {props.avatarUrl
                     ? <img src={props.avatarUrl} alt="Profil" className="w-full h-full object-cover" />
@@ -183,9 +183,9 @@ export default function DancerDashboardNav(props: Props) {
                 </div>
                 <div>
                   <p className="font-bold text-gray-800">{props.userName}</p>
-                  <p className="text-xs text-gray-400">Evolution Danseklubb</p>
+                  <p className="text-xs text-purple-500">Se profil →</p>
                 </div>
-              </div>
+              </Link>
               {/* Menyvalg */}
               <div className="flex-1 py-4 overflow-y-auto">
                 {sections.map(s => (
