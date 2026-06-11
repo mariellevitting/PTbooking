@@ -26,7 +26,6 @@ export default function PointsStepper({ value, onChange, min = 0 }: Props) {
       >
         <Plus size={18} className="text-purple-600" />
       </button>
-      <span className="text-xs text-gray-500">poeng dette nivået</span>
     </div>
   );
 }
