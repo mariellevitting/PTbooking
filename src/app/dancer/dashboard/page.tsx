@@ -42,7 +42,7 @@ export default async function DancerDashboard() {
 
   return (
     <main className="bg-gray-50 p-6">
-      <div className="max-w-lg mx-auto">
+      <div className="max-w-4xl mx-auto">
         <div className="flex items-center justify-between mb-1">
           <h1 className="text-2xl font-bold">Heihei, {profile.name.split(" ")[0]}! 👋</h1>
           <div className="flex items-center gap-3">

@@ -127,38 +127,43 @@ export default function DancerDashboardNav(props: Props) {
   const percentS = neededS > 0 ? Math.round((Math.min(slow, neededS) / neededS) * 100) : 100;
 
   return (
-    <div className="space-y-4">
-      {/* Desktop: tabs */}
-      <div className="hidden md:flex gap-1 bg-gray-100 rounded-xl p-1 w-full">
-        {sections.map(s => (
-          <button key={s.id} onClick={() => goTo(s.id)}
-            className={`flex-1 flex items-center justify-center gap-1.5 px-2 py-2 rounded-lg text-xs font-medium transition-colors whitespace-nowrap ${active === s.id ? "bg-white text-purple-700 shadow-sm" : "text-gray-500 hover:text-gray-700"}`}>
-            {s.icon} {s.label}
-          </button>
-        ))}
-      </div>
-
-      {/* Mobil: hamburger */}
-      <div className="flex md:hidden items-center justify-between">
-        <p className="text-sm font-semibold text-gray-700">{sections.find(s => s.id === active)?.label}</p>
-        <button onClick={() => setMenuOpen(o => !o)} className="p-2 rounded-xl bg-white border shadow-sm">
-          {menuOpen ? <X size={20} className="text-gray-600" /> : <Menu size={20} className="text-gray-600" />}
-        </button>
-      </div>
-      {menuOpen && (
-        <div className="md:hidden bg-white border rounded-2xl shadow-lg overflow-hidden">
+    <div className="md:flex md:gap-6">
+      {/* Desktop: vertikal meny til høyre */}
+      <div className="hidden md:flex flex-col gap-1 w-48 shrink-0 order-last">
+        <div className="bg-white border rounded-2xl overflow-hidden shadow-sm sticky top-6">
           {sections.map(s => (
             <button key={s.id} onClick={() => goTo(s.id)}
-              className={`w-full flex items-center gap-3 px-4 py-3.5 text-sm font-medium border-b last:border-0 transition-colors ${active === s.id ? "bg-purple-50 text-purple-700" : "text-gray-700 hover:bg-gray-50"}`}>
+              className={`w-full flex items-center gap-2.5 px-4 py-3 text-sm font-medium border-b last:border-0 transition-colors text-left ${active === s.id ? "bg-purple-50 text-purple-700" : "text-gray-600 hover:bg-gray-50"}`}>
               <span className={active === s.id ? "text-purple-600" : "text-gray-400"}>{s.icon}</span>
               {s.label}
             </button>
           ))}
         </div>
-      )}
+      </div>
 
-      {/* NM-nedtelling – vises etter hamburger/tabs */}
-      <NMCountdown />
+      {/* Innhold */}
+      <div className="flex-1 min-w-0 space-y-4">
+        {/* Mobil: hamburger */}
+        <div className="flex md:hidden items-center justify-between">
+          <p className="text-sm font-semibold text-gray-700">{sections.find(s => s.id === active)?.label}</p>
+          <button onClick={() => setMenuOpen(o => !o)} className="p-2 rounded-xl bg-white border shadow-sm">
+            {menuOpen ? <X size={20} className="text-gray-600" /> : <Menu size={20} className="text-gray-600" />}
+          </button>
+        </div>
+        {menuOpen && (
+          <div className="md:hidden bg-white border rounded-2xl shadow-lg overflow-hidden">
+            {sections.map(s => (
+              <button key={s.id} onClick={() => goTo(s.id)}
+                className={`w-full flex items-center gap-3 px-4 py-3.5 text-sm font-medium border-b last:border-0 transition-colors ${active === s.id ? "bg-purple-50 text-purple-700" : "text-gray-700 hover:bg-gray-50"}`}>
+                <span className={active === s.id ? "text-purple-600" : "text-gray-400"}>{s.icon}</span>
+                {s.label}
+              </button>
+            ))}
+          </div>
+        )}
+
+        {/* NM-nedtelling */}
+        <NMCountdown />
 
       {/* Mine timer */}
       {active === "timer" && (
@@ -331,19 +336,20 @@ export default function DancerDashboardNav(props: Props) {
         </div>
       )}
 
-      {/* Lagre-knapp for mål og nivåer */}
-      {(active === "maal" || active === "nivaer") && (
-        <div className="space-y-2">
-          {saved && (
-            <div className="flex items-center gap-2 text-purple-700 text-sm bg-purple-50 border border-purple-200 rounded-xl p-3">
-              ✓ Lagret!
-            </div>
-          )}
-          <Button onClick={handleSave} className="w-full bg-purple-600 hover:bg-purple-700" disabled={saving || saved}>
-            {saving ? "Lagrer..." : "Lagre"}
-          </Button>
-        </div>
-      )}
+        {/* Lagre-knapp for mål og nivåer */}
+        {(active === "maal" || active === "nivaer") && (
+          <div className="space-y-2">
+            {saved && (
+              <div className="flex items-center gap-2 text-purple-700 text-sm bg-purple-50 border border-purple-200 rounded-xl p-3">
+                ✓ Lagret!
+              </div>
+            )}
+            <Button onClick={handleSave} className="w-full bg-purple-600 hover:bg-purple-700" disabled={saving || saved}>
+              {saving ? "Lagrer..." : "Lagre"}
+            </Button>
+          </div>
+        )}
+      </div>
     </div>
   );
 }
