@@ -126,8 +126,18 @@ export default function DancerProfileClient(props: Props) {
   return (
     <form onSubmit={handleSave} className="space-y-4">
 
-      {/* Hamburger-meny */}
-      <div className="flex items-center justify-between mb-2">
+      {/* Desktop: tabs */}
+      <div className="hidden md:flex gap-1 bg-gray-100 rounded-xl p-1">
+        {sections.map(s => (
+          <button key={s.id} type="button" onClick={() => goTo(s.id)}
+            className={`flex-1 flex items-center justify-center gap-1.5 px-3 py-2 rounded-lg text-sm font-medium transition-colors ${activeSection === s.id ? "bg-white text-purple-700 shadow-sm" : "text-gray-500 hover:text-gray-700"}`}>
+            {s.icon} {s.label}
+          </button>
+        ))}
+      </div>
+
+      {/* Mobil: hamburger */}
+      <div className="flex md:hidden items-center justify-between">
         <p className="text-sm font-semibold text-gray-700">
           {sections.find(s => s.id === activeSection)?.label}
         </p>
@@ -137,9 +147,8 @@ export default function DancerProfileClient(props: Props) {
         </button>
       </div>
 
-      {/* Dropdown-meny */}
       {menuOpen && (
-        <div className="bg-white border rounded-2xl shadow-lg overflow-hidden mb-2">
+        <div className="md:hidden bg-white border rounded-2xl shadow-lg overflow-hidden">
           {sections.map(s => (
             <button key={s.id} type="button" onClick={() => goTo(s.id)}
               className={`w-full flex items-center gap-3 px-4 py-3.5 text-sm font-medium transition-colors border-b last:border-0 ${activeSection === s.id ? "bg-purple-50 text-purple-700" : "text-gray-700 hover:bg-gray-50"}`}>
