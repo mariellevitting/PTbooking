@@ -23,7 +23,7 @@ interface Props {
 
 export default function RegisterForm({ prefilledCode, clubName }: Props) {
   const router = useRouter();
-  const [step, setStep] = useState<"club" | "role" | "details">(prefilledCode ? "role" : "role");
+  const [step, setStep] = useState<"role" | "details">("role");
   const [role, setRole] = useState<UserRole | null>(null);
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
@@ -106,32 +106,7 @@ export default function RegisterForm({ prefilledCode, clubName }: Props) {
             <p className="text-gray-500 mt-1 text-sm">Kom i gang på under ett minutt</p>
           </div>
 
-          {/* Steg 1: Klubbkode (kun hvis ikke pre-fylt) */}
-          {step === "club" && (
-            <form onSubmit={handleCheckCode} className="space-y-4">
-              <div className="space-y-1.5">
-                <label className="text-sm font-medium text-gray-700">Klubbkode</label>
-                <Input
-                  value={clubCode}
-                  onChange={e => setClubCode(e.target.value.toUpperCase())}
-                  placeholder="F.eks. EVOLUTION"
-                  className="uppercase tracking-widest font-mono"
-                  autoFocus
-                />
-                <p className="text-xs text-gray-400">Du får denne fra din danseklubb</p>
-              </div>
-              {error && <p className="text-sm text-red-500">{error}</p>}
-              <Button type="submit" className="w-full bg-purple-600 hover:bg-purple-700 h-11" disabled={checkingCode || !clubCode.trim()}>
-                {checkingCode ? "Sjekker..." : "Fortsett →"}
-              </Button>
-              <p className="text-center text-sm text-gray-500">
-                Har du allerede konto?{" "}
-                <Link href="/login" className="text-purple-600 hover:underline font-medium">Logg inn</Link>
-              </p>
-            </form>
-          )}
-
-          {/* Steg 2: Velg rolle */}
+          {/* Velg rolle */}
           {step === "role" && (
             <div className="space-y-4">
               {/* Klubb bekreftet */}
