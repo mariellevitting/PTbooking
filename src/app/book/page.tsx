@@ -18,7 +18,7 @@ export default async function BookPage() {
   const backHref = profile?.role === "parent" ? "/parent/dashboard" : "/dancer/dashboard";
 
   const [{ data: trainers }, { data: pins }] = await Promise.all([
-    supabase.from("profiles").select("id, name, trainers(dance_styles)").eq("role", "trainer").order("name"),
+    supabase.from("profiles").select("id, name, trainers(dance_styles, price)").eq("role", "trainer").order("name"),
     supabase.from("pinned_trainers").select("trainer_id").eq("user_id", user.id),
   ]);
 
@@ -29,7 +29,8 @@ export default async function BookPage() {
     const styles: string[] = Array.isArray(trainerData)
       ? trainerData[0]?.dance_styles ?? []
       : trainerData?.dance_styles ?? [];
-    return { id: trainer.id, name: trainer.name, styles, isPinned: pinnedIds.has(trainer.id) };
+    const price: number = Array.isArray(trainerData) ? trainerData[0]?.price ?? 100 : trainerData?.price ?? 100;
+    return { id: trainer.id, name: trainer.name, styles, isPinned: pinnedIds.has(trainer.id), price };
   });
 
   return (

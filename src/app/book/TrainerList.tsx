@@ -10,6 +10,7 @@ type Trainer = {
   name: string;
   styles: string[];
   isPinned: boolean;
+  price: number;
 };
 
 function TrainerCard({ trainer }: { trainer: Trainer }) {
@@ -38,7 +39,10 @@ function TrainerCard({ trainer }: { trainer: Trainer }) {
             <p className="text-xs text-gray-400 mt-0.5 truncate">{trainer.styles.join(" · ")}</p>
           )}
         </div>
-        <ChevronRight size={18} className="text-gray-300 shrink-0" />
+        <div className="flex items-center gap-2 shrink-0">
+          <span className="text-sm font-semibold text-purple-600">{trainer.price} kr</span>
+          <ChevronRight size={18} className="text-gray-300" />
+        </div>
       </Link>
     </div>
   );
