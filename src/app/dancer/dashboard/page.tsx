@@ -64,6 +64,8 @@ export default async function DancerDashboard() {
 
         <DancerDashboardNav
           userId={user.id}
+          userName={profile.name}
+          avatarUrl={profile.avatar_url ?? null}
           upcomingBookings={upcomingBookings}
           completedBookings={completedBookings}
           seasonGoals={profile.season_goals ?? ""}

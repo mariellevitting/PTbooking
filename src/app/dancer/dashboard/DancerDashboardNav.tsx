@@ -33,6 +33,8 @@ type Result = { id: string; competition_name: string; placement_freestyle: strin
 
 interface Props {
   userId: string;
+  userName: string;
+  avatarUrl: string | null;
   upcomingBookings: Booking[];
   completedBookings: Booking[];
   seasonGoals: string;
@@ -152,21 +154,49 @@ export default function DancerDashboardNav(props: Props) {
 
       {/* Innhold */}
       <div className="flex-1 min-w-0 space-y-4">
-        {/* Mobil: hamburger */}
+        {/* Mobil: hamburger-knapp */}
         <div className="flex md:hidden justify-start">
-          <button onClick={() => setMenuOpen(o => !o)} className="p-2.5 rounded-xl bg-white border shadow-sm">
-            {menuOpen ? <X size={22} className="text-gray-600" /> : <Menu size={22} className="text-gray-600" />}
+          <button onClick={() => setMenuOpen(true)} className="p-2.5 rounded-xl bg-white border shadow-sm">
+            <Menu size={22} className="text-gray-600" />
           </button>
         </div>
+
+        {/* Mobil: slide-in drawer */}
         {menuOpen && (
-          <div className="md:hidden bg-white border rounded-2xl shadow-lg overflow-hidden">
-            {sections.map(s => (
-              <button key={s.id} onClick={() => goTo(s.id)}
-                className={`w-full flex items-center gap-3 px-4 py-3.5 text-sm font-medium border-b last:border-0 transition-colors ${active === s.id ? "bg-purple-50 text-purple-700" : "text-gray-700 hover:bg-gray-50"}`}>
-                <span className={active === s.id ? "text-purple-600" : "text-gray-400"}>{s.icon}</span>
-                {s.label}
-              </button>
-            ))}
+          <div className="fixed inset-0 z-50 md:hidden">
+            {/* Mørk bakgrunn */}
+            <div className="absolute inset-0 bg-black/50" onClick={() => setMenuOpen(false)} />
+            {/* Drawer */}
+            <div className="absolute left-0 top-0 h-full w-72 bg-white shadow-2xl flex flex-col">
+              {/* Lukk-knapp */}
+              <div className="flex justify-end p-4">
+                <button onClick={() => setMenuOpen(false)} className="p-1.5 rounded-lg hover:bg-gray-100">
+                  <X size={20} className="text-gray-500" />
+                </button>
+              </div>
+              {/* Profil */}
+              <div className="px-6 pb-6 flex items-center gap-4 border-b">
+                <div className="w-14 h-14 rounded-full bg-purple-100 flex items-center justify-center overflow-hidden shrink-0">
+                  {props.avatarUrl
+                    ? <img src={props.avatarUrl} alt="Profil" className="w-full h-full object-cover" />
+                    : <span className="text-2xl font-bold text-purple-600">{props.userName.charAt(0)}</span>}
+                </div>
+                <div>
+                  <p className="font-bold text-gray-800">{props.userName}</p>
+                  <p className="text-xs text-gray-400">Evolution Danseklubb</p>
+                </div>
+              </div>
+              {/* Menyvalg */}
+              <div className="flex-1 py-4 overflow-y-auto">
+                {sections.map(s => (
+                  <button key={s.id} onClick={() => goTo(s.id)}
+                    className={`w-full flex items-center gap-4 px-6 py-3.5 text-sm font-medium transition-colors ${active === s.id ? "bg-purple-50 text-purple-700 border-r-4 border-purple-600" : "text-gray-600 hover:bg-gray-50"}`}>
+                    <span className={active === s.id ? "text-purple-600" : "text-gray-400"}>{s.icon}</span>
+                    {s.label}
+                  </button>
+                ))}
+              </div>
+            </div>
           </div>
         )}
 
