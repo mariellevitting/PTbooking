@@ -22,6 +22,7 @@ export default function RegisterPage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [trainerCode, setTrainerCode] = useState("");
+  const [clubCode, setClubCode] = useState("");
   const [dancerNames, setDancerNames] = useState([""]);
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
@@ -33,7 +34,7 @@ export default function RegisterPage() {
     setError("");
 
     const filteredDancers = dancerNames.filter(n => n.trim() !== "");
-    const result = await registerUser(email, password, name, role, trainerCode || undefined, filteredDancers.length > 0 ? filteredDancers : undefined);
+    const result = await registerUser(email, password, name, role, trainerCode || undefined, filteredDancers.length > 0 ? filteredDancers : undefined, clubCode || undefined);
 
     if (result.error) {
       setError(result.error);
@@ -75,8 +76,18 @@ export default function RegisterPage() {
           </div>
 
           {step === "role" ? (
-            <div className="space-y-3">
-              <p className="text-sm font-medium text-gray-700 mb-3">Hvem er du?</p>
+            <div className="space-y-4">
+              <div className="space-y-1.5">
+                <label className="text-sm font-medium text-gray-700">Klubbkode</label>
+                <Input
+                  value={clubCode}
+                  onChange={e => setClubCode(e.target.value.toUpperCase())}
+                  placeholder="F.eks. EVOLUTION"
+                  className="uppercase"
+                />
+                <p className="text-xs text-gray-400">Du får denne fra din danseklubb</p>
+              </div>
+              <p className="text-sm font-medium text-gray-700">Hvem er du?</p>
               {roles.map((r) => (
                 <button
                   key={r.value}

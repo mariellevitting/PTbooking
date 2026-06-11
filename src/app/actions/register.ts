@@ -9,15 +9,28 @@ export async function registerUser(
   name: string,
   role: UserRole,
   trainerCode?: string,
-  dancerNames?: string[]
+  dancerNames?: string[],
+  clubInviteCode?: string
 ): Promise<{ error?: string }> {
+  const supabase = await createClient();
+
+  // Finn klubb via invitasjonskode
+  const code = (clubInviteCode ?? "EVOLUTION").toUpperCase();
+  const { data: club } = await supabase
+    .from("clubs")
+    .select("id, name")
+    .eq("invite_code", code)
+    .single();
+
+  if (!club) {
+    return { error: "Ugyldig klubbkode. Sjekk at du har skrevet riktig." };
+  }
+
   if (role === "trainer") {
     if (!trainerCode || trainerCode !== process.env.TRAINER_INVITE_CODE) {
       return { error: "Feil trenerkode. Ta kontakt med klubben for å få riktig kode." };
     }
   }
-
-  const supabase = await createClient();
 
   const { data, error: signUpError } = await supabase.auth.signUp({ email, password });
   if (signUpError || !data.user) {
@@ -29,6 +42,7 @@ export async function registerUser(
     name,
     role,
     email,
+    club_id: club.id,
   });
 
   if (profileError) {
