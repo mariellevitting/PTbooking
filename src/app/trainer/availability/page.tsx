@@ -260,16 +260,26 @@ export default function AvailabilityPage() {
                   {slots.map((slot) => {
                     const isExisting = existingSlots.has(slot);
                     const isSelected = selected.has(slot);
+                    const isToday = selectedDate && dateToISO(selectedDate) === dateToISO(today);
+                    const isPastSlot = isToday && (() => {
+                      const [h, m] = slot.split(":").map(Number);
+                      const slotTime = new Date();
+                      slotTime.setHours(h, m, 0, 0);
+                      return slotTime <= new Date();
+                    })();
+                    const disabled = isExisting || isPastSlot;
                     return (
                       <button
                         key={slot}
                         type="button"
-                        onClick={() => !isExisting && toggleSlot(slot)}
-                        disabled={isExisting}
-                        title={isExisting ? "Allerede publisert" : undefined}
+                        onClick={() => !disabled && toggleSlot(slot)}
+                        disabled={disabled}
+                        title={isExisting ? "Allerede publisert" : isPastSlot ? "Tidspunktet er passert" : undefined}
                         className={`py-2 px-1 rounded-lg text-sm font-medium border transition-colors ${
                           isExisting
                             ? "bg-gray-100 text-gray-300 border-gray-100 cursor-not-allowed line-through"
+                            : isPastSlot
+                            ? "bg-gray-50 text-gray-300 border-gray-100 cursor-not-allowed"
                             : isSelected
                             ? "bg-purple-600 text-white border-purple-600"
                             : "bg-white text-gray-700 border-gray-200 hover:border-purple-400"
