@@ -6,7 +6,7 @@ import { createClient } from "@/lib/supabase/client";
 
 export default function LogoutButton() {
   const router = useRouter();
-  const [confirm, setConfirm] = useState(false);
+  const [open, setOpen] = useState(false);
 
   async function handleLogout() {
     const supabase = createClient();
@@ -15,32 +15,40 @@ export default function LogoutButton() {
     router.refresh();
   }
 
-  if (confirm) {
-    return (
-      <div className="flex items-center gap-2">
-        <span className="text-sm text-gray-600">Logge ut?</span>
-        <button
-          onClick={handleLogout}
-          className="text-sm text-red-500 hover:text-red-700 font-medium"
-        >
-          Ja
-        </button>
-        <button
-          onClick={() => setConfirm(false)}
-          className="text-sm text-gray-400 hover:text-gray-600"
-        >
-          Nei
-        </button>
-      </div>
-    );
-  }
-
   return (
-    <button
-      onClick={() => setConfirm(true)}
-      className="text-sm text-gray-400 hover:text-gray-600"
-    >
-      Logg ut
-    </button>
+    <>
+      <button
+        onClick={() => setOpen(true)}
+        className="text-sm text-gray-400 hover:text-gray-600"
+      >
+        Logg ut
+      </button>
+
+      {open && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center">
+          {/* Bakgrunn */}
+          <div className="absolute inset-0 bg-black/40" onClick={() => setOpen(false)} />
+          {/* Boks */}
+          <div className="relative bg-white rounded-2xl shadow-xl p-6 mx-6 w-full max-w-sm">
+            <h2 className="text-lg font-bold text-gray-800 mb-2">Logg ut</h2>
+            <p className="text-sm text-gray-500 mb-6">Er du sikker på at du vil logge ut?</p>
+            <div className="flex gap-3">
+              <button
+                onClick={() => setOpen(false)}
+                className="flex-1 border border-gray-200 rounded-xl py-2.5 text-sm font-medium text-gray-600 hover:bg-gray-50 transition-colors"
+              >
+                Avbryt
+              </button>
+              <button
+                onClick={handleLogout}
+                className="flex-1 bg-red-500 hover:bg-red-600 text-white rounded-xl py-2.5 text-sm font-medium transition-colors"
+              >
+                Logg ut
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+    </>
   );
 }
