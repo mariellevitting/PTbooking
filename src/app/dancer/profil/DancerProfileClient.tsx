@@ -72,6 +72,7 @@ export default function DancerProfileClient(props: Props) {
   }
 
   function handleFreestyleChange(val: number) {
+    setSuccess(false);
     if (val < 0) { setLevelF(l => Math.max(0, l - 1)); setFreestyle(0); return; }
     const needed = getNeeded(levelF, true);
     if (levelF < 3 && val >= needed) { setLevelF(l => Math.min(l + 1, 4)); setFreestyle(0); }
@@ -79,6 +80,7 @@ export default function DancerProfileClient(props: Props) {
   }
 
   function handleSlowChange(val: number) {
+    setSuccess(false);
     if (val < 0) { setLevelS(l => Math.max(0, l - 1)); setSlow(0); return; }
     const needed = getNeeded(levelS, false);
     if (levelS < 3 && val >= needed) { setLevelS(l => Math.min(l + 1, 4)); setSlow(0); }
