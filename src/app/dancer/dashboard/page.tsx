@@ -60,8 +60,6 @@ export default async function DancerDashboard() {
         <p className="text-gray-500 mb-6">
           <a href="https://evolution-studio.no" target="_blank" rel="noopener noreferrer" className="hover:underline">Evolution Danseklubb</a>
         </p>
-        <InfoBox />
-
         <DancerDashboardNav
           userId={user.id}
           userName={profile.name}
