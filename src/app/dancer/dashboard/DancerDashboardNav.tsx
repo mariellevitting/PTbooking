@@ -143,7 +143,7 @@ export default function DancerDashboardNav(props: Props) {
       {/* Innhold */}
       <div className="flex-1 min-w-0 space-y-4">
         {/* Mobil: hamburger */}
-        <div className="flex md:hidden justify-end">
+        <div className="flex md:hidden justify-start">
           <button onClick={() => setMenuOpen(o => !o)} className="p-2.5 rounded-xl bg-white border shadow-sm">
             {menuOpen ? <X size={22} className="text-gray-600" /> : <Menu size={22} className="text-gray-600" />}
           </button>
