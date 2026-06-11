@@ -99,7 +99,14 @@ export default function UserProfileForm({ userId, name, phone, avatarUrl }: Prop
             <label className="text-sm font-medium flex items-center gap-1.5">
               <Phone size={14} className="text-gray-400" /> Telefon
             </label>
-            <Input value={phoneVal} onChange={(e) => setPhoneVal(e.target.value.replace(/[^0-9+\s]/g, ""))} placeholder="+47 000 00 000" type="tel" inputMode="tel" />
+            <Input
+              value={phoneVal}
+              onChange={(e) => setPhoneVal(e.target.value.replace(/[^0-9+\s]/g, ""))}
+              onKeyDown={(e) => { if (!/[0-9+\s]/.test(e.key) && !["Backspace","Delete","ArrowLeft","ArrowRight","Tab"].includes(e.key)) e.preventDefault(); }}
+              placeholder="+47 000 00 000"
+              type="tel"
+              inputMode="numeric"
+            />
           </div>
         </CardContent>
       </Card>
