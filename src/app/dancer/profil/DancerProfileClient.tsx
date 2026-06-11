@@ -5,39 +5,13 @@ import { createClient } from "@/lib/supabase/client";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { User, Phone, Camera, Check, Target, Trophy, ChevronLeft, ChevronRight, Menu, X } from "lucide-react";
-import PointsStepper from "@/components/PointsStepper";
-import CompetitionResultsCard from "@/components/CompetitionResultsCard";
-import GoalsList from "@/components/GoalsList";
-
-const LEVELS = ["Rekrutt", "Litt øvet", "Mester", "Champ", "Elite"];
-
-function getNeeded(levelIndex: number, isFreestyle: boolean): number {
-  if (levelIndex === 0) return 7;
-  if (levelIndex === 1) return 14;
-  if (levelIndex === 2) return isFreestyle ? 21 : 28;
-  return 0;
-}
-
-type Result = {
-  id: string;
-  competition_name: string;
-  placement_freestyle: string | null;
-  placement_slow: string | null;
-  notes: string | null;
-};
+import { User, Phone, Camera, Check } from "lucide-react";
 
 interface Props {
   userId: string;
   name: string;
   phone: string;
   avatarUrl: string | null;
-  seasonGoals: string;
-  pointsFreestyle: number;
-  pointsSlow: number;
-  levelFreestyle: number;
-  levelSlow: number;
-  competitionResults: Result[];
 }
 
 export default function DancerProfileClient(props: Props) {
@@ -45,26 +19,10 @@ export default function DancerProfileClient(props: Props) {
   const [phoneVal, setPhoneVal] = useState(props.phone);
   const [avatar, setAvatar] = useState<string | null>(props.avatarUrl);
   const [uploading, setUploading] = useState(false);
-  const [goals, setGoals] = useState(props.seasonGoals);
-  const [freestyle, setFreestyle] = useState(props.pointsFreestyle);
-  const [slow, setSlow] = useState(props.pointsSlow);
-  const [levelF, setLevelF] = useState(props.levelFreestyle);
-  const [levelS, setLevelS] = useState(props.levelSlow);
   const [saving, setSaving] = useState(false);
   const [success, setSuccess] = useState(false);
   const [error, setError] = useState("");
-  const [menuOpen, setMenuOpen] = useState(false);
-  const [activeSection, setActiveSection] = useState("profil");
   const fileRef = useRef<HTMLInputElement>(null);
-
-  const sections = [
-    { id: "profil", label: "Profil", icon: <User size={16} /> },
-    { id: "maal", label: "Sesongmål", icon: <Target size={16} /> },
-    { id: "nivaer", label: "Poeng og nivåer", icon: <Trophy size={16} /> },
-    { id: "resultater", label: "Konkurranseresultater", icon: <Check size={16} /> },
-  ];
-
-  function goTo(id: string) { setActiveSection(id); setMenuOpen(false); }
 
   async function handleAvatarUpload(e: React.ChangeEvent<HTMLInputElement>) {
     const file = e.target.files?.[0];
@@ -82,22 +40,6 @@ export default function DancerProfileClient(props: Props) {
     setUploading(false);
   }
 
-  function handleFreestyleChange(val: number) {
-    setSuccess(false);
-    if (val < 0) { setLevelF(l => Math.max(0, l - 1)); setFreestyle(0); return; }
-    const needed = getNeeded(levelF, true);
-    if (levelF < 3 && val >= needed) { setLevelF(l => Math.min(l + 1, 4)); setFreestyle(0); }
-    else setFreestyle(val);
-  }
-
-  function handleSlowChange(val: number) {
-    setSuccess(false);
-    if (val < 0) { setLevelS(l => Math.max(0, l - 1)); setSlow(0); return; }
-    const needed = getNeeded(levelS, false);
-    if (levelS < 3 && val >= needed) { setLevelS(l => Math.min(l + 1, 4)); setSlow(0); }
-    else setSlow(val);
-  }
-
   async function handleSave(e: React.FormEvent) {
     e.preventDefault();
     setSaving(true);
@@ -107,59 +49,15 @@ export default function DancerProfileClient(props: Props) {
     const { error: err } = await supabase.from("profiles").update({
       name: nameVal,
       phone: phoneVal,
-      season_goals: goals,
-      points_freestyle: freestyle,
-      points_slow: slow,
-      level_freestyle: levelF,
-      level_slow: levelS,
     }).eq("id", props.userId);
     if (err) setError("Noe gikk galt");
     else setSuccess(true);
     setSaving(false);
   }
 
-  const neededF = getNeeded(levelF, true);
-  const percentF = neededF > 0 ? Math.round((Math.min(freestyle, neededF) / neededF) * 100) : 100;
-  const neededS = getNeeded(levelS, false);
-  const percentS = neededS > 0 ? Math.round((Math.min(slow, neededS) / neededS) * 100) : 100;
-
   return (
     <form onSubmit={handleSave} className="space-y-4">
-
-      {/* Desktop: tabs */}
-      <div className="hidden md:flex gap-1 bg-gray-100 rounded-xl p-1">
-        {sections.map(s => (
-          <button key={s.id} type="button" onClick={() => goTo(s.id)}
-            className={`flex-1 flex items-center justify-center gap-1.5 px-3 py-2 rounded-lg text-sm font-medium transition-colors ${activeSection === s.id ? "bg-white text-purple-700 shadow-sm" : "text-gray-500 hover:text-gray-700"}`}>
-            {s.icon} {s.label}
-          </button>
-        ))}
-      </div>
-
-      {/* Mobil: hamburger */}
-      <div className="flex md:hidden items-center justify-between">
-        <p className="text-sm font-semibold text-gray-700">
-          {sections.find(s => s.id === activeSection)?.label}
-        </p>
-        <button type="button" onClick={() => setMenuOpen(o => !o)}
-          className="p-2 rounded-xl bg-white border shadow-sm hover:bg-gray-50 transition-colors">
-          {menuOpen ? <X size={20} className="text-gray-600" /> : <Menu size={20} className="text-gray-600" />}
-        </button>
-      </div>
-
-      {menuOpen && (
-        <div className="md:hidden bg-white border rounded-2xl shadow-lg overflow-hidden">
-          {sections.map(s => (
-            <button key={s.id} type="button" onClick={() => goTo(s.id)}
-              className={`w-full flex items-center gap-3 px-4 py-3.5 text-sm font-medium transition-colors border-b last:border-0 ${activeSection === s.id ? "bg-purple-50 text-purple-700" : "text-gray-700 hover:bg-gray-50"}`}>
-              <span className={activeSection === s.id ? "text-purple-600" : "text-gray-400"}>{s.icon}</span>
-              {s.label}
-            </button>
-          ))}
-        </div>
-      )}
-
-      {/* Profilbilde – alltid synlig */}
+      {/* Profilbilde */}
       <Card>
         <CardContent className="pt-5 flex flex-col items-center gap-3">
           <div className="relative">
@@ -179,94 +77,32 @@ export default function DancerProfileClient(props: Props) {
       </Card>
 
       {/* Personlig info */}
-      {activeSection === "profil" && (
-        <Card>
-          <CardHeader>
-            <CardTitle className="text-base flex items-center gap-2">
-              <User size={16} className="text-purple-500" /> Personlig informasjon
-            </CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            <div className="space-y-1.5">
-              <label className="text-sm font-medium">Navn</label>
-              <Input value={nameVal} onChange={e => setNameVal(e.target.value)} required />
-            </div>
-            <div className="space-y-1.5">
-              <label className="text-sm font-medium flex items-center gap-1.5">
-                <Phone size={14} className="text-gray-400" /> Telefon
-              </label>
-              <Input value={phoneVal} onChange={e => setPhoneVal(e.target.value)} placeholder="+47 000 00 000" type="tel" />
-            </div>
-          </CardContent>
-        </Card>
-      )}
-
-      {/* Sesongmål */}
-      {activeSection === "maal" && (
-        <Card>
-          <CardHeader>
-            <CardTitle className="text-base flex items-center gap-2">
-              <Target size={16} className="text-purple-500" /> Mine sesongmål
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <p className="text-xs text-gray-400 mb-3">F.eks. triks du vil lære, mål for konkurranser, hva du vil jobbe med denne sesongen</p>
-            <GoalsList value={goals} onChange={setGoals} />
-          </CardContent>
-        </Card>
-      )}
-
-      {/* Poeng og nivåer */}
-      {activeSection === "nivaer" && (
-        <Card>
-          <CardHeader>
-            <CardTitle className="text-base flex items-center gap-2">
-              <Trophy size={16} className="text-purple-500" /> Poeng og nivåer
-            </CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-6">
-            {[
-              { label: "Freestyle", points: freestyle, level: levelF, percent: percentF, needed: neededF, onChange: handleFreestyleChange, disc: "freestyle" as const },
-              { label: "Slow", points: slow, level: levelS, percent: percentS, needed: neededS, onChange: handleSlowChange, disc: "slow" as const },
-            ].map(({ label, points, level, percent, needed, onChange }, idx) => (
-              <div key={label} className={idx > 0 ? "border-t pt-6" : ""}>
-                <div className="space-y-3">
-                  <div className="flex items-center justify-between">
-                    <p className="text-sm font-semibold text-gray-700">{label}</p>
-                    <span className="text-xs font-bold text-purple-600 bg-purple-50 px-2 py-0.5 rounded-full">{LEVELS[level]}</span>
-                  </div>
-                  <div className="space-y-1.5">
-                    <div className="flex justify-between text-[10px] px-0.5">
-                      {LEVELS.map((name, i) => (
-                        <span key={i} className={i <= level ? "text-purple-600 font-semibold" : "text-gray-400"}>{name}</span>
-                      ))}
-                    </div>
-                    <div style={{ height: "12px", backgroundColor: "#e5e7eb", borderRadius: "9999px", overflow: "hidden" }}>
-                      <div style={{ height: "100%", backgroundColor: "#7c3aed", borderRadius: "9999px", width: `${Math.max(3, (level / 4) * 100 + (percent / 100) * (100 / 4))}%`, transition: "width 0.5s ease" }} />
-                    </div>
-                  </div>
-                  <PointsStepper value={points} onChange={onChange} />
-                  {level >= 3 ? (
-                    <div className="flex items-center gap-2 text-sm text-gray-500 bg-yellow-50 border border-yellow-200 rounded-lg px-3 py-2">
-                      <Trophy size={14} className="text-yellow-500" /> Neste nivå avgjøres av plasseringer på stevner
-                    </div>
-                  ) : (
-                    <div className="flex justify-between text-xs text-gray-500">
-                      <span>{Math.min(points, needed)} / {needed} poeng mot {LEVELS[level + 1]}</span>
-                      <span>{percent}%</span>
-                    </div>
-                  )}
-                </div>
-              </div>
-            ))}
-          </CardContent>
-        </Card>
-      )}
-
-      {/* Konkurranseresultater */}
-      {activeSection === "resultater" && (
-        <CompetitionResultsCard userId={props.userId} initialResults={props.competitionResults} />
-      )}
+      <Card>
+        <CardHeader>
+          <CardTitle className="text-base flex items-center gap-2">
+            <User size={16} className="text-purple-500" /> Personlig informasjon
+          </CardTitle>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          <div className="space-y-1.5">
+            <label className="text-sm font-medium">Navn</label>
+            <Input value={nameVal} onChange={e => { setNameVal(e.target.value); setSuccess(false); }} required />
+          </div>
+          <div className="space-y-1.5">
+            <label className="text-sm font-medium flex items-center gap-1.5">
+              <Phone size={14} className="text-gray-400" /> Telefon
+            </label>
+            <Input
+              value={phoneVal}
+              onChange={e => { setPhoneVal(e.target.value.replace(/[^0-9+\s]/g, "")); setSuccess(false); }}
+              onKeyDown={e => { if (!/[0-9+\s]/.test(e.key) && !["Backspace","Delete","ArrowLeft","ArrowRight","Tab"].includes(e.key)) e.preventDefault(); }}
+              placeholder="+47 000 00 000"
+              type="tel"
+              inputMode="numeric"
+            />
+          </div>
+        </CardContent>
+      </Card>
 
       {error && <p className="text-sm text-red-500">{error}</p>}
       {success && (
@@ -274,11 +110,9 @@ export default function DancerProfileClient(props: Props) {
           <Check size={16} /> Profilen er oppdatert!
         </div>
       )}
-      {activeSection !== "resultater" && (
-        <Button type="submit" className="w-full bg-purple-600 hover:bg-purple-700" disabled={saving || success}>
-          {saving ? "Lagrer..." : "Lagre profil"}
-        </Button>
-      )}
+      <Button type="submit" className="w-full bg-purple-600 hover:bg-purple-700" disabled={saving || success}>
+        {saving ? "Lagrer..." : "Lagre profil"}
+      </Button>
     </form>
   );
 }

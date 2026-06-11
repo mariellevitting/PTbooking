@@ -9,10 +9,11 @@ export default async function DancerProfilPage() {
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) redirect("/login");
 
-  const [{ data: profile }, { data: competitionResults }] = await Promise.all([
-    supabase.from("profiles").select("*").eq("id", user.id).single(),
-    supabase.from("competition_results").select("*").eq("user_id", user.id).order("created_at", { ascending: false }),
-  ]);
+  const { data: profile } = await supabase
+    .from("profiles")
+    .select("*")
+    .eq("id", user.id)
+    .single();
 
   if (!profile || profile.role !== "dancer") redirect("/dashboard");
 
@@ -28,12 +29,6 @@ export default async function DancerProfilPage() {
           name={profile.name}
           phone={profile.phone ?? ""}
           avatarUrl={profile.avatar_url ?? null}
-          seasonGoals={profile.season_goals ?? ""}
-          pointsFreestyle={profile.points_freestyle ?? 0}
-          pointsSlow={profile.points_slow ?? 0}
-          levelFreestyle={profile.level_freestyle ?? 0}
-          levelSlow={profile.level_slow ?? 0}
-          competitionResults={competitionResults ?? []}
         />
       </div>
     </main>
