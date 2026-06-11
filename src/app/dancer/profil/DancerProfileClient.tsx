@@ -5,7 +5,7 @@ import { createClient } from "@/lib/supabase/client";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { User, Phone, Camera, Check, Target, Trophy, ChevronLeft, ChevronRight } from "lucide-react";
+import { User, Phone, Camera, Check, Target, Trophy, ChevronLeft, ChevronRight, Menu, X } from "lucide-react";
 import PointsStepper from "@/components/PointsStepper";
 import CompetitionResultsCard from "@/components/CompetitionResultsCard";
 import GoalsList from "@/components/GoalsList";
@@ -53,7 +53,18 @@ export default function DancerProfileClient(props: Props) {
   const [saving, setSaving] = useState(false);
   const [success, setSuccess] = useState(false);
   const [error, setError] = useState("");
+  const [menuOpen, setMenuOpen] = useState(false);
+  const [activeSection, setActiveSection] = useState("profil");
   const fileRef = useRef<HTMLInputElement>(null);
+
+  const sections = [
+    { id: "profil", label: "Profil", icon: <User size={16} /> },
+    { id: "maal", label: "Sesongmål", icon: <Target size={16} /> },
+    { id: "nivaer", label: "Poeng og nivåer", icon: <Trophy size={16} /> },
+    { id: "resultater", label: "Konkurranseresultater", icon: <Check size={16} /> },
+  ];
+
+  function goTo(id: string) { setActiveSection(id); setMenuOpen(false); }
 
   async function handleAvatarUpload(e: React.ChangeEvent<HTMLInputElement>) {
     const file = e.target.files?.[0];
@@ -115,7 +126,31 @@ export default function DancerProfileClient(props: Props) {
   return (
     <form onSubmit={handleSave} className="space-y-4">
 
-      {/* Profilbilde */}
+      {/* Hamburger-meny */}
+      <div className="flex items-center justify-between mb-2">
+        <p className="text-sm font-semibold text-gray-700">
+          {sections.find(s => s.id === activeSection)?.label}
+        </p>
+        <button type="button" onClick={() => setMenuOpen(o => !o)}
+          className="p-2 rounded-xl bg-white border shadow-sm hover:bg-gray-50 transition-colors">
+          {menuOpen ? <X size={20} className="text-gray-600" /> : <Menu size={20} className="text-gray-600" />}
+        </button>
+      </div>
+
+      {/* Dropdown-meny */}
+      {menuOpen && (
+        <div className="bg-white border rounded-2xl shadow-lg overflow-hidden mb-2">
+          {sections.map(s => (
+            <button key={s.id} type="button" onClick={() => goTo(s.id)}
+              className={`w-full flex items-center gap-3 px-4 py-3.5 text-sm font-medium transition-colors border-b last:border-0 ${activeSection === s.id ? "bg-purple-50 text-purple-700" : "text-gray-700 hover:bg-gray-50"}`}>
+              <span className={activeSection === s.id ? "text-purple-600" : "text-gray-400"}>{s.icon}</span>
+              {s.label}
+            </button>
+          ))}
+        </div>
+      )}
+
+      {/* Profilbilde – alltid synlig */}
       <Card>
         <CardContent className="pt-5 flex flex-col items-center gap-3">
           <div className="relative">
@@ -135,91 +170,94 @@ export default function DancerProfileClient(props: Props) {
       </Card>
 
       {/* Personlig info */}
-      <Card>
-        <CardHeader>
-          <CardTitle className="text-base flex items-center gap-2">
-            <User size={16} className="text-purple-500" /> Personlig informasjon
-          </CardTitle>
-        </CardHeader>
-        <CardContent className="space-y-4">
-          <div className="space-y-1.5">
-            <label className="text-sm font-medium">Navn</label>
-            <Input value={nameVal} onChange={e => setNameVal(e.target.value)} required />
-          </div>
-          <div className="space-y-1.5">
-            <label className="text-sm font-medium flex items-center gap-1.5">
-              <Phone size={14} className="text-gray-400" /> Telefon
-            </label>
-            <Input value={phoneVal} onChange={e => setPhoneVal(e.target.value)} placeholder="+47 000 00 000" type="tel" />
-          </div>
-        </CardContent>
-      </Card>
+      {activeSection === "profil" && (
+        <Card>
+          <CardHeader>
+            <CardTitle className="text-base flex items-center gap-2">
+              <User size={16} className="text-purple-500" /> Personlig informasjon
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <div className="space-y-1.5">
+              <label className="text-sm font-medium">Navn</label>
+              <Input value={nameVal} onChange={e => setNameVal(e.target.value)} required />
+            </div>
+            <div className="space-y-1.5">
+              <label className="text-sm font-medium flex items-center gap-1.5">
+                <Phone size={14} className="text-gray-400" /> Telefon
+              </label>
+              <Input value={phoneVal} onChange={e => setPhoneVal(e.target.value)} placeholder="+47 000 00 000" type="tel" />
+            </div>
+          </CardContent>
+        </Card>
+      )}
 
       {/* Sesongmål */}
-      <Card>
-        <CardHeader>
-          <CardTitle className="text-base flex items-center gap-2">
-            <Target size={16} className="text-purple-500" /> Mine sesongmål
-          </CardTitle>
-        </CardHeader>
-        <CardContent>
-          <p className="text-xs text-gray-400 mb-3">F.eks. triks du vil lære, mål for konkurranser, hva du vil jobbe med denne sesongen</p>
-          <GoalsList value={goals} onChange={setGoals} />
-        </CardContent>
-      </Card>
+      {activeSection === "maal" && (
+        <Card>
+          <CardHeader>
+            <CardTitle className="text-base flex items-center gap-2">
+              <Target size={16} className="text-purple-500" /> Mine sesongmål
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <p className="text-xs text-gray-400 mb-3">F.eks. triks du vil lære, mål for konkurranser, hva du vil jobbe med denne sesongen</p>
+            <GoalsList value={goals} onChange={setGoals} />
+          </CardContent>
+        </Card>
+      )}
 
       {/* Poeng og nivåer */}
-      <Card>
-        <CardHeader>
-          <CardTitle className="text-base flex items-center gap-2">
-            <Trophy size={16} className="text-purple-500" /> Poeng og nivåer
-          </CardTitle>
-        </CardHeader>
-        <CardContent className="space-y-6">
-          {[
-            { label: "Freestyle", points: freestyle, level: levelF, percent: percentF, needed: neededF, onChange: handleFreestyleChange, disc: "freestyle" as const },
-            { label: "Slow", points: slow, level: levelS, percent: percentS, needed: neededS, onChange: handleSlowChange, disc: "slow" as const },
-          ].map(({ label, points, level, percent, needed, onChange, disc }, idx) => (
-            <div key={label} className={idx > 0 ? "border-t pt-6" : ""}>
-              <div className="space-y-3">
-                <div className="flex items-center justify-between">
-                  <p className="text-sm font-semibold text-gray-700">{label}</p>
-                  <span className="text-xs font-bold text-purple-600 bg-purple-50 px-2 py-0.5 rounded-full">{LEVELS[level]}</span>
+      {activeSection === "nivaer" && (
+        <Card>
+          <CardHeader>
+            <CardTitle className="text-base flex items-center gap-2">
+              <Trophy size={16} className="text-purple-500" /> Poeng og nivåer
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-6">
+            {[
+              { label: "Freestyle", points: freestyle, level: levelF, percent: percentF, needed: neededF, onChange: handleFreestyleChange, disc: "freestyle" as const },
+              { label: "Slow", points: slow, level: levelS, percent: percentS, needed: neededS, onChange: handleSlowChange, disc: "slow" as const },
+            ].map(({ label, points, level, percent, needed, onChange }, idx) => (
+              <div key={label} className={idx > 0 ? "border-t pt-6" : ""}>
+                <div className="space-y-3">
+                  <div className="flex items-center justify-between">
+                    <p className="text-sm font-semibold text-gray-700">{label}</p>
+                    <span className="text-xs font-bold text-purple-600 bg-purple-50 px-2 py-0.5 rounded-full">{LEVELS[level]}</span>
+                  </div>
+                  <div className="space-y-1.5">
+                    <div className="flex justify-between text-[10px] px-0.5">
+                      {LEVELS.map((name, i) => (
+                        <span key={i} className={i <= level ? "text-purple-600 font-semibold" : "text-gray-400"}>{name}</span>
+                      ))}
+                    </div>
+                    <div style={{ height: "12px", backgroundColor: "#e5e7eb", borderRadius: "9999px", overflow: "hidden" }}>
+                      <div style={{ height: "100%", backgroundColor: "#7c3aed", borderRadius: "9999px", width: `${Math.max(3, (level / 4) * 100 + (percent / 100) * (100 / 4))}%`, transition: "width 0.5s ease" }} />
+                    </div>
+                  </div>
+                  <PointsStepper value={points} onChange={onChange} />
+                  {level >= 3 ? (
+                    <div className="flex items-center gap-2 text-sm text-gray-500 bg-yellow-50 border border-yellow-200 rounded-lg px-3 py-2">
+                      <Trophy size={14} className="text-yellow-500" /> Neste nivå avgjøres av plasseringer på stevner
+                    </div>
+                  ) : (
+                    <div className="flex justify-between text-xs text-gray-500">
+                      <span>{Math.min(points, needed)} / {needed} poeng mot {LEVELS[level + 1]}</span>
+                      <span>{percent}%</span>
+                    </div>
+                  )}
                 </div>
-                <div className="space-y-1.5">
-                  <div className="flex justify-between text-[10px] px-0.5">
-                    {LEVELS.map((name, i) => (
-                      <span key={i} className={i <= level ? "text-purple-600 font-semibold" : "text-gray-400"}>{name}</span>
-                    ))}
-                  </div>
-                  <div style={{ height: "12px", backgroundColor: "#e5e7eb", borderRadius: "9999px", overflow: "hidden" }}>
-                    <div style={{
-                      height: "100%", backgroundColor: "#7c3aed", borderRadius: "9999px",
-                      width: `${Math.max(3, (level / 4) * 100 + (percent / 100) * (100 / 4))}%`,
-                      transition: "width 0.5s ease"
-                    }} />
-                  </div>
-                </div>
-                <PointsStepper value={points} onChange={onChange} />
-                {level >= 3 ? (
-                  <div className="flex items-center gap-2 text-sm text-gray-500 bg-yellow-50 border border-yellow-200 rounded-lg px-3 py-2">
-                    <Trophy size={14} className="text-yellow-500" />
-                    Neste nivå avgjøres av plasseringer på stevner
-                  </div>
-                ) : (
-                  <div className="flex justify-between text-xs text-gray-500">
-                    <span>{Math.min(points, needed)} / {needed} poeng mot {LEVELS[level + 1]}</span>
-                    <span>{percent}%</span>
-                  </div>
-                )}
               </div>
-            </div>
-          ))}
-        </CardContent>
-      </Card>
+            ))}
+          </CardContent>
+        </Card>
+      )}
 
-      {/* Konkurranseresultater – har egne add/delete knapper */}
-      <CompetitionResultsCard userId={props.userId} initialResults={props.competitionResults} />
+      {/* Konkurranseresultater */}
+      {activeSection === "resultater" && (
+        <CompetitionResultsCard userId={props.userId} initialResults={props.competitionResults} />
+      )}
 
       {error && <p className="text-sm text-red-500">{error}</p>}
       {success && (
@@ -227,9 +265,11 @@ export default function DancerProfileClient(props: Props) {
           <Check size={16} /> Profilen er oppdatert!
         </div>
       )}
-      <Button type="submit" className="w-full bg-purple-600 hover:bg-purple-700" disabled={saving || success}>
-        {saving ? "Lagrer..." : "Lagre profil"}
-      </Button>
+      {activeSection !== "resultater" && (
+        <Button type="submit" className="w-full bg-purple-600 hover:bg-purple-700" disabled={saving || success}>
+          {saving ? "Lagrer..." : "Lagre profil"}
+        </Button>
+      )}
     </form>
   );
 }
