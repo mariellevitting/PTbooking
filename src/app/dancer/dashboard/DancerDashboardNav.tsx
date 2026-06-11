@@ -213,6 +213,12 @@ export default function DancerDashboardNav(props: Props) {
                   </button>
                 ))}
               </div>
+              {/* Logg ut – nederst */}
+              <div className="border-t px-6 py-4">
+                <div className="text-gray-400 text-sm">
+                  <LogoutButton />
+                </div>
+              </div>
             </div>
           </div>
         )}
