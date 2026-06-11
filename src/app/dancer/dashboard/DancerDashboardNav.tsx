@@ -127,8 +127,8 @@ export default function DancerDashboardNav(props: Props) {
 
   return (
     <div className="md:flex md:gap-6">
-      {/* Desktop: vertikal meny til høyre */}
-      <div className="hidden md:flex flex-col gap-1 w-48 shrink-0 order-last">
+      {/* Desktop: vertikal meny til venstre */}
+      <div className="hidden md:flex flex-col gap-1 w-48 shrink-0">
         <div className="bg-white border rounded-2xl overflow-hidden shadow-sm sticky top-6">
           {sections.map(s => (
             <button key={s.id} onClick={() => goTo(s.id)}
