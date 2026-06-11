@@ -4,7 +4,7 @@ import { useState } from "react";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Menu, X, Calendar, Target, Trophy, Medal, Star } from "lucide-react";
+import { Menu, X, Calendar, Target, Trophy, Medal, Star, Info } from "lucide-react";
 import GoalsList from "@/components/GoalsList";
 import PointsStepper from "@/components/PointsStepper";
 import CompetitionResultsCard from "@/components/CompetitionResultsCard";
@@ -58,6 +58,16 @@ const sections = [
   { id: "nivaer", label: "Poeng og nivåer", icon: <Trophy size={15} /> },
   { id: "resultater", label: "Resultater", icon: <Medal size={15} /> },
   { id: "konkurranser", label: "Konkurranser", icon: <Star size={15} /> },
+  { id: "om", label: "Om privattimer", icon: <Info size={15} /> },
+];
+
+const TRAINERS = [
+  { name: "Sophie", styles: ["Freestyle", "Slow", "Jazz", "Moderne", "Freestyle dobbel", "Slow dobbel", "Akro"] },
+  { name: "Lova", styles: ["Freestyle", "Slow", "Jazz", "Moderne", "Freestyle dobbel", "Slow dobbel", "Akro"] },
+  { name: "Marielle", styles: ["Freestyle", "Slow", "Akro", "Freestyle dobbel", "Slow dobbel"] },
+  { name: "Marthe", styles: ["Freestyle", "Slow", "Akro", "Freestyle dobbel", "Slow dobbel"] },
+  { name: "Luna Kekstaite", styles: ["Freestyle", "Slow", "Jazz", "Moderne", "Freestyle dobbel", "Slow dobbel", "Akro"] },
+  { name: "Cathrin Jørgensen", styles: ["Hiphop"] },
 ];
 
 export default function DancerDashboardNav(props: Props) {
@@ -349,6 +359,52 @@ export default function DancerDashboardNav(props: Props) {
           </div>
         );
       })()}
+
+        {/* Om privattimer */}
+        {active === "om" && (
+          <div className="space-y-4">
+            <div className="bg-white rounded-2xl border p-5 space-y-4">
+              <h2 className="text-lg font-bold">Bestille privattimer</h2>
+              <p className="text-gray-600 text-sm leading-relaxed">
+                Evolutions instruktører tilbyr privattimer. Disse kan benyttes etter ønske – koreografi, teknikk, akrobatikk o.l. Dette er en flott mulighet for danserne til å utvikle seg og få tett oppfølging av trenerteamet.
+              </p>
+              <p className="text-gray-600 text-sm leading-relaxed">
+                En privattime varer i <strong>30 minutter</strong> og koster <strong>250,-</strong>, <strong>200,-</strong> eller <strong>150,-</strong> avhengig av trener.
+              </p>
+              <div className="bg-blue-50 border border-blue-200 rounded-xl p-4">
+                <p className="text-sm font-semibold text-blue-800 mb-1">Betaling</p>
+                <p className="text-sm text-blue-700">Betaling er som før i <strong>Spond</strong>.</p>
+              </div>
+              <div className="bg-amber-50 border border-amber-200 rounded-xl p-4">
+                <p className="text-sm font-semibold text-amber-800 mb-1">VIKTIG!</p>
+                <p className="text-sm text-amber-700">
+                  Kvitteringen du mottar for betalt privattime må danseren ha med til timen! Du kan også sende bilde av kvitteringen til treneren i forkant.
+                </p>
+              </div>
+              <div className="bg-green-50 border border-green-200 rounded-xl p-4">
+                <p className="text-sm font-semibold text-green-800 mb-1">Booking samme dag?</p>
+                <p className="text-sm text-green-700">Gi treneren beskjed på forhånd via melding (Messenger, Snapchat e.l.) så de er forberedt. 💬</p>
+              </div>
+            </div>
+
+            <div className="bg-white rounded-2xl border p-5">
+              <h3 className="font-semibold text-lg mb-4">Våre trenere</h3>
+              <div className="space-y-1">
+                {TRAINERS.map(t => (
+                  <div key={t.name} className="flex items-start gap-3 py-3 border-b last:border-0">
+                    <div className="w-9 h-9 rounded-full bg-purple-100 flex items-center justify-center text-purple-600 font-bold shrink-0 text-sm">
+                      {t.name.charAt(0)}
+                    </div>
+                    <div>
+                      <p className="font-medium text-sm">{t.name}</p>
+                      <p className="text-xs text-gray-400 mt-0.5">{t.styles.join(" · ")}</p>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+        )}
 
         {/* Lagre-knapp for mål og nivåer */}
         {(active === "maal" || active === "nivaer") && (
