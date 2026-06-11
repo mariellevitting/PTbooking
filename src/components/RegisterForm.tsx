@@ -40,13 +40,20 @@ export default function RegisterForm({ prefilledCode, clubName }: Props) {
     if (!clubCode.trim()) return;
     setCheckingCode(true);
     setError("");
-    const res = await fetch(`/api/clubs?code=${clubCode.toUpperCase()}`);
-    const data = await res.json();
-    if (data.name) {
-      setResolvedClubName(data.name);
-      setStep("role");
-    } else {
-      setError("Ugyldig klubbkode. Sjekk at du har skrevet riktig.");
+    try {
+      const controller = new AbortController();
+      const timeout = setTimeout(() => controller.abort(), 8000);
+      const res = await fetch(`/api/clubs?code=${clubCode.toUpperCase()}`, { signal: controller.signal });
+      clearTimeout(timeout);
+      const data = await res.json();
+      if (data.name) {
+        setResolvedClubName(data.name);
+        setStep("role");
+      } else {
+        setError("Ugyldig klubbkode. Sjekk at du har skrevet riktig.");
+      }
+    } catch (err) {
+      setError("Noe gikk galt. Prøv igjen.");
     }
     setCheckingCode(false);
   }
