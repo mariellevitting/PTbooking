@@ -4,7 +4,7 @@ import { useState } from "react";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Menu, X, Calendar, Target, Trophy, Medal } from "lucide-react";
+import { Menu, X, Calendar, Target, Trophy, Medal, Star } from "lucide-react";
 import GoalsList from "@/components/GoalsList";
 import PointsStepper from "@/components/PointsStepper";
 import CompetitionResultsCard from "@/components/CompetitionResultsCard";
@@ -44,11 +44,20 @@ interface Props {
   now: string;
 }
 
+const COMPETITIONS = [
+  { name: "Norgesmesterskapet 2026", short: "NM 2026", date: new Date("2026-06-13"), dateLabel: "13–14. juni", location: "Sofiemyrhallen, Sofienmyr" },
+  { name: "Freestyle Dance Jam 6", short: "FDJ 6", date: new Date("2026-08-22"), dateLabel: "22. august", location: "Gausdal Arena, Lillehammer" },
+  { name: "Freestyle Dance Jam 7", short: "FDJ 7", date: new Date("2026-09-19"), dateLabel: "19. september", location: null },
+  { name: "Freestyle Dance Jam 8", short: "FDJ 8", date: new Date("2026-10-17"), dateLabel: "17. oktober", location: "Fjellhamar Arena, Lørenskog" },
+  { name: "Dancer of the Year / FDJ 9", short: "DOTY / FDJ 9", date: new Date("2026-11-21"), dateLabel: "21. november", location: null },
+];
+
 const sections = [
   { id: "timer", label: "Mine timer", icon: <Calendar size={15} /> },
   { id: "maal", label: "Sesongmål", icon: <Target size={15} /> },
   { id: "nivaer", label: "Poeng og nivåer", icon: <Trophy size={15} /> },
   { id: "resultater", label: "Resultater", icon: <Medal size={15} /> },
+  { id: "konkurranser", label: "Konkurranser", icon: <Star size={15} /> },
 ];
 
 export default function DancerDashboardNav(props: Props) {
@@ -119,10 +128,10 @@ export default function DancerDashboardNav(props: Props) {
   return (
     <div className="space-y-4">
       {/* Desktop: tabs */}
-      <div className="hidden md:flex gap-1 bg-gray-100 rounded-xl p-1">
+      <div className="hidden md:flex gap-1 bg-gray-100 rounded-xl p-1 w-full">
         {sections.map(s => (
           <button key={s.id} onClick={() => goTo(s.id)}
-            className={`flex-1 flex items-center justify-center gap-1.5 px-3 py-2 rounded-lg text-sm font-medium transition-colors ${active === s.id ? "bg-white text-purple-700 shadow-sm" : "text-gray-500 hover:text-gray-700"}`}>
+            className={`flex-1 flex items-center justify-center gap-1.5 px-2 py-2 rounded-lg text-xs font-medium transition-colors whitespace-nowrap ${active === s.id ? "bg-white text-purple-700 shadow-sm" : "text-gray-500 hover:text-gray-700"}`}>
             {s.icon} {s.label}
           </button>
         ))}
@@ -298,6 +307,24 @@ export default function DancerDashboardNav(props: Props) {
       {/* Konkurranseresultater */}
       {active === "resultater" && (
         <CompetitionResultsCard userId={props.userId} initialResults={props.competitionResults} />
+      )}
+
+      {/* Kommende konkurranser */}
+      {active === "konkurranser" && (
+        <div className="space-y-3">
+          {COMPETITIONS.filter(c => c.date >= new Date()).map(c => (
+            <div key={c.name} className="bg-white rounded-xl border p-4 flex items-center justify-between">
+              <div>
+                <p className="font-semibold text-gray-800">{c.name}</p>
+                <p className="text-sm text-purple-600">{c.dateLabel}</p>
+                {c.location && <p className="text-xs text-gray-400 mt-0.5">{c.location}</p>}
+              </div>
+              <span className="text-xs font-bold text-purple-600 bg-purple-50 px-2 py-1 rounded-full whitespace-nowrap ml-3">
+                {Math.ceil((c.date.getTime() - new Date().getTime()) / (1000 * 60 * 60 * 24))} dager
+              </span>
+            </div>
+          ))}
+        </div>
       )}
 
       {/* Lagre-knapp for mål og nivåer */}
