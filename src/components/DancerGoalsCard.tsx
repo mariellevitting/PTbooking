@@ -189,7 +189,7 @@ export default function DancerGoalsCard({ userId, seasonGoals, pointsFreestyle, 
       </Card>
 
       {success && (
-        <div className="flex items-center gap-2 text-green-600 text-sm bg-green-50 border border-green-200 rounded-xl p-3">
+        <div className="flex items-center gap-2 text-purple-700 text-sm bg-purple-50 border border-purple-200 rounded-xl p-3">
           <Check size={16} /> Lagret!
         </div>
       )}
