@@ -29,7 +29,7 @@ export default async function BookPage() {
     const styles: string[] = Array.isArray(trainerData)
       ? trainerData[0]?.dance_styles ?? []
       : trainerData?.dance_styles ?? [];
-    const price: number = Array.isArray(trainerData) ? trainerData[0]?.price ?? 100 : trainerData?.price ?? 100;
+    const price: number = Array.isArray(trainerData) ? trainerData[0]?.price ?? 150 : trainerData?.price ?? 150;
     return { id: trainer.id, name: trainer.name, styles, isPinned: pinnedIds.has(trainer.id), price };
   });
 
