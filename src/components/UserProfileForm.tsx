@@ -16,7 +16,7 @@ interface Props {
 
 export default function UserProfileForm({ userId, name, phone, avatarUrl }: Props) {
   const [nameVal, setNameVal] = useState(name);
-  const [phoneVal, setPhoneVal] = useState(phone);
+  const [phoneVal, setPhoneVal] = useState(phone.replace(/[^0-9+\s]/g, ""));
   const [avatar, setAvatar] = useState<string | null>(avatarUrl);
   const [uploading, setUploading] = useState(false);
   const [saving, setSaving] = useState(false);
