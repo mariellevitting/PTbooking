@@ -37,7 +37,7 @@ export async function registerUser(
     name,
     role,
     email,
-    club_id: club.id,
+    club_id: club?.id ?? null,
   });
 
   if (profileError) {

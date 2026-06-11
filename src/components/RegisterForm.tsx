@@ -115,8 +115,8 @@ export default function RegisterForm({ prefilledCode, clubName }: Props) {
                 <div className="flex-1">
                   <p className="text-sm font-medium text-purple-700">{resolvedClubName}</p>
                 </div>
-                {!prefilledCode && (
-                  <button onClick={() => setStep("club")} className="text-xs text-gray-400 hover:text-gray-600">Endre</button>
+                {false && (
+                  <button className="text-xs text-gray-400 hover:text-gray-600">Endre</button>
                 )}
               </div>
               <p className="text-sm font-medium text-gray-700">Hvem er du?</p>
