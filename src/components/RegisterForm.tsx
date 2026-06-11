@@ -129,7 +129,7 @@ export default function RegisterForm({ prefilledCode, clubName }: Props) {
               {role === "trainer" && (
                 <div className="space-y-1.5">
                   <label className="text-sm font-medium">Trenerkode</label>
-                  <Input type="password" value={trainerCode} onChange={e => setTrainerCode(e.target.value)}
+                  <Input type="text" value={trainerCode} onChange={e => setTrainerCode(e.target.value)}
                     placeholder="Kode fra klubben" required />
                   <p className="text-xs text-gray-400">Kun trenere med kode kan registrere seg.</p>
                 </div>
