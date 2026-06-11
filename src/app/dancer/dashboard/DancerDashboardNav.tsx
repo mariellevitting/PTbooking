@@ -8,6 +8,7 @@ import { Menu, X, Calendar, Target, Trophy, Medal, Star } from "lucide-react";
 import GoalsList from "@/components/GoalsList";
 import PointsStepper from "@/components/PointsStepper";
 import CompetitionResultsCard from "@/components/CompetitionResultsCard";
+import NMCountdown from "@/components/NMCountdown";
 import { createClient } from "@/lib/supabase/client";
 import { formatDate, formatTime, formatDateKey } from "@/lib/dateUtils";
 
@@ -155,6 +156,9 @@ export default function DancerDashboardNav(props: Props) {
           ))}
         </div>
       )}
+
+      {/* NM-nedtelling – vises etter hamburger/tabs */}
+      <NMCountdown />
 
       {/* Mine timer */}
       {active === "timer" && (

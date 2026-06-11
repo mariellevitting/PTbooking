@@ -61,7 +61,6 @@ export default async function DancerDashboard() {
           <a href="https://evolution-studio.no" target="_blank" rel="noopener noreferrer" className="hover:underline">Evolution Danseklubb</a>
         </p>
         <InfoBox />
-        <NMCountdown />
 
         <DancerDashboardNav
           userId={user.id}
