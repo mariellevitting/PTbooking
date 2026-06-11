@@ -99,7 +99,7 @@ export default function UserProfileForm({ userId, name, phone, avatarUrl }: Prop
             <label className="text-sm font-medium flex items-center gap-1.5">
               <Phone size={14} className="text-gray-400" /> Telefon
             </label>
-            <Input value={phoneVal} onChange={(e) => setPhoneVal(e.target.value)} placeholder="+47 000 00 000" type="tel" />
+            <Input value={phoneVal} onChange={(e) => setPhoneVal(e.target.value.replace(/[^0-9+\s]/g, ""))} placeholder="+47 000 00 000" type="tel" inputMode="tel" />
           </div>
         </CardContent>
       </Card>
