@@ -4,10 +4,8 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { registerUser } from "@/app/actions/register";
-import { createClient } from "@/lib/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { CheckCircle } from "lucide-react";
 import type { UserRole } from "@/types";
 
 const roles: { value: UserRole; label: string; description: string }[] = [
@@ -29,36 +27,9 @@ export default function RegisterForm({ prefilledCode, clubName }: Props) {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [trainerCode, setTrainerCode] = useState("");
-  const [clubCode, setClubCode] = useState(prefilledCode ?? "");
-  const [resolvedClubName, setResolvedClubName] = useState(clubName ?? "");
   const [dancerNames, setDancerNames] = useState([""]);
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
-  const [checkingCode, setCheckingCode] = useState(false);
-
-  async function handleCheckCode(e: React.FormEvent) {
-    e.preventDefault();
-    if (!clubCode.trim()) return;
-    setCheckingCode(true);
-    setError("");
-    try {
-      const supabase = createClient();
-      const { data: club, error } = await supabase
-        .from("clubs")
-        .select("name")
-        .eq("invite_code", clubCode.toUpperCase())
-        .single();
-      if (club?.name) {
-        setResolvedClubName(club.name);
-        setStep("role");
-      } else {
-        setError("Ugyldig klubbkode. Sjekk at du har skrevet riktig.");
-      }
-    } catch (err) {
-      setError("Noe gikk galt. Prøv igjen.");
-    }
-    setCheckingCode(false);
-  }
 
   async function handleRegister(e: React.FormEvent) {
     e.preventDefault();
@@ -69,36 +40,34 @@ export default function RegisterForm({ prefilledCode, clubName }: Props) {
     const result = await registerUser(
       email, password, name, role,
       trainerCode || undefined,
-      filteredDancers.length > 0 ? filteredDancers : undefined,
-      clubCode
+      filteredDancers.length > 0 ? filteredDancers : undefined
     );
     if (result.error) { setError(result.error); setLoading(false); return; }
     router.push("/dashboard");
     router.refresh();
   }
 
+  const displayName = clubName || "Evolution Danseklubb";
+
   return (
     <div className="min-h-screen flex flex-col md:flex-row">
-      {/* Venstre – lilla bakgrunn */}
       <div className="hidden md:flex md:w-1/2 relative bg-purple-600">
         <div className="absolute inset-0 bg-gradient-to-br from-purple-500 to-purple-800" />
         <div className="relative z-10 flex flex-col justify-end p-10 text-white">
           <p className="text-white/90 text-lg italic mb-3">✦ Av dansere, for dansere</p>
-          <h1 className="text-4xl font-bold mb-2">{resolvedClubName || "PT Booking"}</h1>
+          <h1 className="text-4xl font-bold mb-2">{displayName}</h1>
           <p className="text-white/80 text-lg">Book din privattime enkelt og raskt</p>
         </div>
       </div>
 
-      {/* Mobil toppdel */}
       <div className="md:hidden h-48 relative bg-gradient-to-br from-purple-500 to-purple-800">
         <div className="absolute inset-0 flex flex-col justify-end p-6">
           <p className="text-white/90 text-sm italic mb-1">✦ Av dansere, for dansere</p>
-          <h1 className="text-2xl font-bold text-white">{resolvedClubName || "PT Booking"}</h1>
+          <h1 className="text-2xl font-bold text-white">{displayName}</h1>
           <p className="text-white/80 text-sm">Book din privattime</p>
         </div>
       </div>
 
-      {/* Høyre – skjema */}
       <div className="flex flex-1 items-center justify-center bg-gray-50 p-8">
         <div className="w-full max-w-sm">
           <div className="mb-8">
@@ -106,20 +75,9 @@ export default function RegisterForm({ prefilledCode, clubName }: Props) {
             <p className="text-gray-500 mt-1 text-sm">Kom i gang på under ett minutt</p>
           </div>
 
-          {/* Velg rolle */}
           {step === "role" && (
-            <div className="space-y-4">
-              {/* Klubb bekreftet */}
-              <div className="flex items-center gap-2 bg-purple-50 border border-purple-200 rounded-xl px-4 py-2.5">
-                <CheckCircle size={16} className="text-purple-600 shrink-0" />
-                <div className="flex-1">
-                  <p className="text-sm font-medium text-purple-700">{resolvedClubName}</p>
-                </div>
-                {false && (
-                  <button className="text-xs text-gray-400 hover:text-gray-600">Endre</button>
-                )}
-              </div>
-              <p className="text-sm font-medium text-gray-700">Hvem er du?</p>
+            <div className="space-y-3">
+              <p className="text-sm font-medium text-gray-700 mb-3">Hvem er du?</p>
               {roles.map(r => (
                 <button key={r.value} onClick={() => { setRole(r.value); setStep("details"); }}
                   className="w-full text-left border rounded-xl p-4 bg-white hover:border-purple-500 hover:bg-purple-50 transition-colors">
@@ -127,14 +85,13 @@ export default function RegisterForm({ prefilledCode, clubName }: Props) {
                   <p className="text-sm text-gray-500">{r.description}</p>
                 </button>
               ))}
-              <p className="text-center text-sm text-gray-500">
+              <p className="text-center text-sm text-gray-500 mt-4">
                 Har du allerede konto?{" "}
                 <Link href="/login" className="text-purple-600 hover:underline font-medium">Logg inn</Link>
               </p>
             </div>
           )}
 
-          {/* Steg 3: Detaljer */}
           {step === "details" && (
             <form onSubmit={handleRegister} className="space-y-4">
               <button type="button" onClick={() => setStep("role")} className="text-sm text-purple-600 hover:underline mb-2">
@@ -157,19 +114,23 @@ export default function RegisterForm({ prefilledCode, clubName }: Props) {
                   <label className="text-sm font-medium">Danser(e)</label>
                   {dancerNames.map((n, i) => (
                     <div key={i} className="flex gap-2">
-                      <Input value={n} onChange={e => { const u = [...dancerNames]; u[i] = e.target.value; setDancerNames(u); }} placeholder={`Danser ${i + 1}`} required={i === 0} />
+                      <Input value={n} onChange={e => { const u = [...dancerNames]; u[i] = e.target.value; setDancerNames(u); }}
+                        placeholder={`Danser ${i + 1}`} required={i === 0} />
                       {dancerNames.length > 1 && (
-                        <button type="button" onClick={() => setDancerNames(dancerNames.filter((_, j) => j !== i))} className="text-red-400 hover:text-red-600 px-2">✕</button>
+                        <button type="button" onClick={() => setDancerNames(dancerNames.filter((_, j) => j !== i))}
+                          className="text-red-400 hover:text-red-600 px-2">✕</button>
                       )}
                     </div>
                   ))}
-                  <button type="button" onClick={() => setDancerNames([...dancerNames, ""])} className="text-sm text-purple-600 hover:underline">+ Legg til danser</button>
+                  <button type="button" onClick={() => setDancerNames([...dancerNames, ""])}
+                    className="text-sm text-purple-600 hover:underline">+ Legg til danser</button>
                 </div>
               )}
               {role === "trainer" && (
                 <div className="space-y-1.5">
                   <label className="text-sm font-medium">Trenerkode</label>
-                  <Input type="password" value={trainerCode} onChange={e => setTrainerCode(e.target.value)} placeholder="Kode fra klubben" required />
+                  <Input type="password" value={trainerCode} onChange={e => setTrainerCode(e.target.value)}
+                    placeholder="Kode fra klubben" required />
                   <p className="text-xs text-gray-400">Kun trenere med kode kan registrere seg.</p>
                 </div>
               )}
