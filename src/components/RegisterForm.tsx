@@ -23,7 +23,7 @@ interface Props {
 
 export default function RegisterForm({ prefilledCode, clubName }: Props) {
   const router = useRouter();
-  const [step, setStep] = useState<"club" | "role" | "details">(prefilledCode ? "role" : "club");
+  const [step, setStep] = useState<"club" | "role" | "details">(prefilledCode ? "role" : "role");
   const [role, setRole] = useState<UserRole | null>(null);
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
