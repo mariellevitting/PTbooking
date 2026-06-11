@@ -4,10 +4,12 @@ import { useState } from "react";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Menu, X, Calendar, Target, Trophy, Medal, Star, Info } from "lucide-react";
+import { Menu, X, Calendar, Target, Trophy, Medal, Star, Info, UserCircle } from "lucide-react";
 import GoalsList from "@/components/GoalsList";
 import PointsStepper from "@/components/PointsStepper";
 import CompetitionResultsCard from "@/components/CompetitionResultsCard";
+import NotificationBell from "@/components/NotificationBell";
+import LogoutButton from "@/components/LogoutButton";
 import { createClient } from "@/lib/supabase/client";
 import { formatDate, formatTime, formatDateKey } from "@/lib/dateUtils";
 
@@ -44,6 +46,8 @@ interface Props {
   levelSlow: number;
   competitionResults: Result[];
   now: string;
+  notifications?: any[];
+  mobileNavOnly?: boolean;
 }
 
 const COMPETITIONS = [
@@ -138,7 +142,26 @@ export default function DancerDashboardNav(props: Props) {
   const percentS = neededS > 0 ? Math.round((Math.min(slow, neededS) / neededS) * 100) : 100;
 
   return (
-    <div className="md:flex md:gap-6">
+    <div>
+      {/* Mobil: lilla topbar */}
+      <div className="md:hidden sticky top-0 z-40 bg-purple-600 px-4 py-3 flex items-center justify-between shadow-md">
+        <button onClick={() => setMenuOpen(true)} className="p-1.5 rounded-lg hover:bg-purple-700 transition-colors">
+          <Menu size={24} className="text-white" />
+        </button>
+        <p className="text-white font-semibold text-sm">PT Booking</p>
+        <div className="flex items-center gap-2">
+          <div className="[&_button]:text-white [&_svg]:text-white [&_span]:bg-white [&_span]:text-purple-600">
+            <NotificationBell notifications={props.notifications ?? []} />
+          </div>
+          <Link href="/dancer/profil" className="hover:opacity-80 transition-opacity">
+            {props.avatarUrl
+              ? <img src={props.avatarUrl} alt="Profil" className="w-8 h-8 rounded-full object-cover border-2 border-white" />
+              : <UserCircle size={28} className="text-white" />}
+          </Link>
+        </div>
+      </div>
+
+      <div className="md:flex md:gap-6 p-4 md:p-0">
       {/* Desktop: vertikal meny til venstre */}
       <div className="hidden md:flex flex-col gap-1 w-48 shrink-0">
         <div className="bg-white border rounded-2xl overflow-hidden shadow-sm sticky top-6">
@@ -154,12 +177,6 @@ export default function DancerDashboardNav(props: Props) {
 
       {/* Innhold */}
       <div className="flex-1 min-w-0 space-y-4">
-        {/* Mobil: hamburger-knapp */}
-        <div className="flex md:hidden justify-start">
-          <button onClick={() => setMenuOpen(true)} className="p-2.5 rounded-xl bg-white border shadow-sm">
-            <Menu size={22} className="text-gray-600" />
-          </button>
-        </div>
 
         {/* Mobil: slide-in drawer */}
         {menuOpen && (
@@ -449,6 +466,7 @@ export default function DancerDashboardNav(props: Props) {
             </Button>
           </div>
         )}
+      </div>
       </div>
     </div>
   );

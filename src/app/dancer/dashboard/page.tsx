@@ -2,10 +2,8 @@ import { redirect } from "next/navigation";
 import Link from "next/link";
 import { createClient } from "@/lib/supabase/server";
 import LogoutButton from "@/components/LogoutButton";
-import InfoBox from "@/components/InfoBox";
 import NotificationBell from "@/components/NotificationBell";
 import { UserCircle } from "lucide-react";
-import NMCountdown from "@/components/NMCountdown";
 import DancerDashboardNav from "./DancerDashboardNav";
 
 export default async function DancerDashboard() {
@@ -41,8 +39,9 @@ export default async function DancerDashboard() {
     .sort((a, b) => new Date(b.availability_slots.start_at).getTime() - new Date(a.availability_slots.start_at).getTime());
 
   return (
-    <main className="bg-gray-50 p-6">
-      <div className="max-w-4xl mx-auto">
+    <main className="bg-gray-50 min-h-screen">
+      {/* Desktop header */}
+      <div className="hidden md:block max-w-4xl mx-auto px-6 pt-6">
         <div className="flex items-center justify-between mb-1">
           <h1 className="text-2xl font-bold">Heihei, {profile.name.split(" ")[0]}! 👋</h1>
           <div className="flex items-center gap-3">
@@ -60,6 +59,9 @@ export default async function DancerDashboard() {
         <p className="text-gray-500 mb-6">
           <a href="https://evolution-studio.no" target="_blank" rel="noopener noreferrer" className="hover:underline">Evolution Danseklubb</a>
         </p>
+      </div>
+
+      <div className="max-w-4xl mx-auto md:px-6 md:pb-6">
         <DancerDashboardNav
           userId={user.id}
           userName={profile.name}
@@ -73,6 +75,7 @@ export default async function DancerDashboard() {
           levelSlow={profile.level_slow ?? 0}
           competitionResults={competitionResults ?? []}
           now={now.toISOString()}
+          notifications={notifications ?? []}
         />
       </div>
     </main>
