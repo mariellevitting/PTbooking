@@ -50,32 +50,30 @@ export default function TrainerDashboardTabs({ slots, completedSlots }: Props) {
 
   return (
     <div>
-      {/* Tab-header */}
-      <div className="flex justify-between items-center mb-4">
-        <div className="flex gap-1 bg-gray-100 rounded-xl p-1">
-          <button
-            onClick={() => setTab("upcoming")}
-            className={`px-3 py-1.5 rounded-lg text-sm font-medium transition-colors ${tab === "upcoming" ? "bg-white text-purple-700 shadow-sm" : "text-gray-500 hover:text-gray-700"}`}
-          >
-            Kommende
-          </button>
-          <button
-            onClick={() => setTab("completed")}
-            className={`px-3 py-1.5 rounded-lg text-sm font-medium transition-colors ${tab === "completed" ? "bg-white text-purple-700 shadow-sm" : "text-gray-500 hover:text-gray-700"}`}
-          >
-            Gjennomførte {completed.length > 0 && <span className="text-xs text-purple-400 ml-1">{completed.length}</span>}
-          </button>
-        </div>
-        {tab === "upcoming" && (
-          <div className="flex gap-2">
-            <Link href="/trainer/book-for-dancer">
-              <Button variant="outline" className="text-sm border-purple-300 text-purple-700 hover:bg-purple-50">+ Book for danser</Button>
-            </Link>
-            <Link href="/trainer/availability">
-              <Button className="bg-purple-600 hover:bg-purple-700 text-sm">+ Legg ut tid</Button>
-            </Link>
-          </div>
-        )}
+      {/* Knapper */}
+      <div className="flex gap-2 mb-3">
+        <Link href="/trainer/book-for-dancer" className="flex-1">
+          <Button variant="outline" className="w-full text-sm border-purple-300 text-purple-700 hover:bg-purple-50">+ Book for danser</Button>
+        </Link>
+        <Link href="/trainer/availability" className="flex-1">
+          <Button className="w-full bg-purple-600 hover:bg-purple-700 text-sm">+ Legg ut tid</Button>
+        </Link>
+      </div>
+
+      {/* Tabs */}
+      <div className="flex gap-1 bg-gray-100 rounded-xl p-1 mb-4">
+        <button
+          onClick={() => setTab("upcoming")}
+          className={`flex-1 px-3 py-1.5 rounded-lg text-sm font-medium transition-colors ${tab === "upcoming" ? "bg-white text-purple-700 shadow-sm" : "text-gray-500 hover:text-gray-700"}`}
+        >
+          Kommende
+        </button>
+        <button
+          onClick={() => setTab("completed")}
+          className={`flex-1 px-3 py-1.5 rounded-lg text-sm font-medium transition-colors ${tab === "completed" ? "bg-white text-purple-700 shadow-sm" : "text-gray-500 hover:text-gray-700"}`}
+        >
+          Gjennomførte
+        </button>
       </div>
 
       {/* Kommende timer */}
