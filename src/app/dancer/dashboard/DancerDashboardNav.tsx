@@ -80,6 +80,7 @@ const TRAINERS = [
 export default function DancerDashboardNav(props: Props) {
   const [active, setActive] = useState("timer");
   const [menuOpen, setMenuOpen] = useState(false);
+  const [bookingTab, setBookingTab] = useState<"kommende" | "gjennomforte">("kommende");
   const [goals, setGoals] = useState(props.seasonGoals);
   const [freestyle, setFreestyle] = useState(props.pointsFreestyle);
   const [slow, setSlow] = useState(props.pointsSlow);
@@ -258,87 +259,107 @@ export default function DancerDashboardNav(props: Props) {
       {/* Mine timer */}
       {active === "timer" && (
         <div>
-          <div className="flex justify-between items-center mb-4">
+          <div className="flex justify-between items-center mb-3">
             <h2 className="font-semibold text-lg">Mine privattimer</h2>
             <Link href="/book">
               <Button className="bg-purple-600 hover:bg-purple-700 text-sm">+ Book time</Button>
             </Link>
           </div>
-          {props.upcomingBookings.length === 0 && props.completedBookings.length === 0 ? (
-            <div className="bg-white rounded-xl border p-6 text-center text-gray-400">
-              <p className="text-lg font-medium mb-2">Ingen bookede timer</p>
-              <p className="text-sm mb-6">Finn en trener og book din første privattime</p>
-            </div>
-          ) : (
-            <div className="space-y-6">
-              {Object.entries(weekGroups).map(([week, dateKeys]) => (
-                <div key={week}>
-                  <p className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-3">Uke {week}</p>
-                  <div className="space-y-4">
-                    {dateKeys.sort().map(dateKey => {
-                      const dayBookings = grouped[dateKey];
-                      const dayLabel = formatDate(new Date(dateKey), { weekday: "long", day: "numeric", month: "long" });
-                      return (
-                        <div key={dateKey}>
-                          <p className="text-sm font-semibold text-gray-700 mb-2 border-b pb-1">
-                            {dayLabel.charAt(0).toUpperCase() + dayLabel.slice(1)}
-                          </p>
-                          <div className="space-y-2">
-                            {dayBookings.map(booking => {
-                              const start = new Date(booking.availability_slots.start_at);
-                              const end = new Date(booking.availability_slots.end_at);
-                              const hoursUntil = (start.getTime() - now.getTime()) / (1000 * 60 * 60);
-                              return (
-                                <div key={booking.id} className="bg-white rounded-xl border border-l-4 border-l-purple-400 px-4 py-3">
-                                  <div className="flex justify-between items-start">
-                                    <div>
-                                      <p className="text-sm font-semibold text-gray-700">{formatTime(start)}–{formatTime(end)}</p>
-                                      <p className="text-sm font-medium text-purple-600">{booking.dance_style}</p>
-                                      {booking.availability_slots?.profiles?.name && (
-                                        <p className="text-xs text-gray-500">Trener: {booking.availability_slots.profiles.name}</p>
-                                      )}
+
+          <div className="flex gap-1 bg-gray-100 rounded-xl p-1 mb-4">
+            <button onClick={() => setBookingTab("kommende")}
+              className={`flex-1 px-3 py-1.5 rounded-lg text-sm font-medium transition-colors ${bookingTab === "kommende" ? "bg-white text-purple-700 shadow-sm" : "text-gray-500"}`}>
+              Kommende
+            </button>
+            <button onClick={() => setBookingTab("gjennomforte")}
+              className={`flex-1 px-3 py-1.5 rounded-lg text-sm font-medium transition-colors ${bookingTab === "gjennomforte" ? "bg-white text-purple-700 shadow-sm" : "text-gray-500"}`}>
+              Gjennomførte
+            </button>
+          </div>
+
+          {bookingTab === "kommende" && (
+            props.upcomingBookings.length === 0 ? (
+              <div className="bg-white rounded-xl border p-6 text-center text-gray-400">
+                <p className="text-lg font-medium mb-2">Ingen kommende timer</p>
+                <p className="text-sm mb-4">Finn en trener og book din første privattime</p>
+                <Link href="/book"><Button className="bg-purple-600 hover:bg-purple-700">Book privattime</Button></Link>
+              </div>
+            ) : (
+              <div className="space-y-6">
+                {Object.entries(weekGroups).map(([week, dateKeys]) => (
+                  <div key={week}>
+                    <p className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-3">Uke {week}</p>
+                    <div className="space-y-4">
+                      {(dateKeys as string[]).sort().map(dateKey => {
+                        const dayBookings = grouped[dateKey];
+                        const dayLabel = formatDate(new Date(dateKey), { weekday: "long", day: "numeric", month: "long" });
+                        return (
+                          <div key={dateKey}>
+                            <p className="text-sm font-semibold text-gray-700 mb-2 border-b pb-1">{dayLabel.charAt(0).toUpperCase() + dayLabel.slice(1)}</p>
+                            <div className="space-y-2">
+                              {dayBookings.map((booking: Booking) => {
+                                const start = new Date(booking.availability_slots.start_at);
+                                const end = new Date(booking.availability_slots.end_at);
+                                const hoursUntil = (start.getTime() - now.getTime()) / (1000 * 60 * 60);
+                                return (
+                                  <div key={booking.id} className="bg-white rounded-xl border border-l-4 border-l-purple-400 px-4 py-3">
+                                    <div className="flex justify-between items-start">
+                                      <div>
+                                        <p className="text-sm font-semibold text-gray-700">{formatTime(start)}–{formatTime(end)}</p>
+                                        <p className="text-sm font-medium text-purple-600">{booking.dance_style}</p>
+                                        {booking.availability_slots?.profiles?.name && (
+                                          <p className="text-xs text-gray-500">Trener: {booking.availability_slots.profiles.name}</p>
+                                        )}
+                                      </div>
+                                      <div className="flex items-center gap-3">
+                                        <span className="text-xs bg-green-100 text-green-600 px-2 py-1 rounded-full">Bekreftet</span>
+                                        <Link href={`/booking/avbestill/${booking.id}`}>
+                                          <button className="text-xs text-red-400 hover:text-red-600">Avbestill</button>
+                                        </Link>
+                                      </div>
                                     </div>
-                                    <div className="flex items-center gap-3">
-                                      <span className="text-xs bg-green-100 text-green-600 px-2 py-1 rounded-full">Bekreftet</span>
-                                      <Link href={`/booking/avbestill/${booking.id}`}>
-                                        <button className="text-xs text-red-400 hover:text-red-600">Avbestill</button>
-                                      </Link>
-                                    </div>
+                                    {hoursUntil < 24 && <p className="text-xs text-red-400 mt-1">Under 24t – gebyr ved avbestilling</p>}
                                   </div>
-                                  {hoursUntil < 24 && <p className="text-xs text-red-400 mt-1">Under 24t – gebyr ved avbestilling</p>}
-                                </div>
-                              );
-                            })}
+                                );
+                              })}
+                            </div>
                           </div>
+                        );
+                      })}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )
+          )}
+
+          {bookingTab === "gjennomforte" && (
+            props.completedBookings.length === 0 ? (
+              <div className="bg-white rounded-xl border p-6 text-center text-gray-400 text-sm">Ingen gjennomførte timer ennå</div>
+            ) : (
+              <div className="space-y-2">
+                {props.completedBookings.map((booking: Booking) => {
+                  const start = new Date(booking.availability_slots.start_at);
+                  const end = new Date(booking.availability_slots.end_at);
+                  const dayLabel = formatDate(start, { weekday: "long", day: "numeric", month: "long" });
+                  return (
+                    <div key={booking.id} className="bg-white rounded-xl border p-4 opacity-60">
+                      <div className="flex justify-between items-start">
+                        <div>
+                          <p className="text-sm font-semibold text-gray-500">{dayLabel.charAt(0).toUpperCase() + dayLabel.slice(1)}</p>
+                          <p className="text-sm text-gray-400">{formatTime(start)}–{formatTime(end)}</p>
+                          <p className="text-sm text-gray-400 mt-0.5">{booking.dance_style}</p>
+                          {booking.availability_slots?.profiles?.name && (
+                            <p className="text-xs text-gray-400">Trener: {booking.availability_slots.profiles.name}</p>
+                          )}
                         </div>
-                      );
-                    })}
-                  </div>
-                </div>
-              ))}
-              {props.completedBookings.length > 0 && (
-                <div>
-                  <div className="flex items-baseline gap-2 mb-3">
-                    <p className="text-xs font-semibold text-gray-400 uppercase tracking-wider">Gjennomførte timer</p>
-                    <p className="text-xs text-purple-500">{props.completedBookings.length} totalt 🎉</p>
-                  </div>
-                  <div className="space-y-2 opacity-60">
-                    {props.completedBookings.slice(0, 5).map(booking => {
-                      const start = new Date(booking.availability_slots.start_at);
-                      const end = new Date(booking.availability_slots.end_at);
-                      const dayLabel = formatDate(start, { weekday: "long", day: "numeric", month: "long" });
-                      return (
-                        <div key={booking.id} className="bg-white rounded-xl border px-4 py-3">
-                          <p className="text-xs text-gray-400">{dayLabel.charAt(0).toUpperCase() + dayLabel.slice(1)}</p>
-                          <p className="text-sm font-semibold text-gray-600">{formatTime(start)}–{formatTime(end)}</p>
-                          <p className="text-sm text-gray-500">{booking.dance_style}</p>
-                        </div>
-                      );
-                    })}
-                  </div>
-                </div>
-              )}
-            </div>
+                        <span className="text-xs bg-gray-100 text-gray-500 px-2 py-1 rounded-full">Fullført</span>
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            )
           )}
         </div>
       )}
