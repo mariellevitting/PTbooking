@@ -254,12 +254,11 @@ export default function DancerDashboardNav(props: Props) {
 
       <h1 className="text-2xl font-bold hidden md:block">Heihei, {props.userName.split(" ")[0]}! 👋</h1>
 
-      <NMCountdown />
-
       {/* Mine timer */}
       {active === "timer" && (
         <div>
-          <div className="flex justify-between items-center mb-3">
+          <NMCountdown />
+          <div className="flex justify-between items-center mb-3 mt-4">
             <h2 className="font-semibold text-lg">Mine privattimer</h2>
             <Link href="/book">
               <Button className="bg-purple-600 hover:bg-purple-700 text-sm">+ Book time</Button>
@@ -432,24 +431,12 @@ export default function DancerDashboardNav(props: Props) {
       {/* Kommende konkurranser */}
       {active === "konkurranser" && (() => {
         const upcoming = COMPETITIONS.filter(c => c.date >= new Date());
-        const next = upcoming[0];
-        const rest = upcoming.slice(1);
-        if (upcoming.length === 0) return <p className="text-sm text-gray-400 text-center py-6">Ingen kommende konkurranser</p>;
-        const daysUntil = (d: Date) => Math.ceil((d.getTime() - new Date().getTime()) / (1000 * 60 * 60 * 24));
+        const daysLeft = (d: Date) => Math.ceil((d.getTime() - new Date().getTime()) / (1000 * 60 * 60 * 24));
         return (
           <div className="space-y-3">
-            {/* Neste konkurranse – uthevet */}
-            <div className="bg-purple-600 rounded-2xl px-5 py-4">
-              <p className="text-xs text-purple-200 font-semibold uppercase tracking-wide mb-1">🏆 Neste konkurranse</p>
-              <p className="text-lg font-bold text-white">{next.short}</p>
-              <p className="text-sm text-purple-200 mt-0.5">{next.dateLabel}{next.location ? ` · ${next.location}` : ""}</p>
-              <div className="mt-3 flex items-end gap-1">
-                <p className="text-4xl font-bold text-white">{daysUntil(next.date)}</p>
-                <p className="text-sm text-purple-200 mb-1">dager igjen</p>
-              </div>
-            </div>
-            {/* Resten */}
-            {rest.map(c => (
+            <NMCountdown />
+            {upcoming.length === 0 && <p className="text-sm text-gray-400 text-center py-6">Ingen kommende konkurranser</p>}
+            {upcoming.map(c => (
               <div key={c.name} className="bg-white rounded-xl border p-4 flex items-center justify-between">
                 <div>
                   <p className="font-semibold text-gray-800">{c.short}</p>
@@ -457,7 +444,7 @@ export default function DancerDashboardNav(props: Props) {
                   {c.location && <p className="text-xs text-gray-400 mt-0.5">{c.location}</p>}
                 </div>
                 <span className="text-xs font-bold text-purple-600 bg-purple-50 px-2 py-1 rounded-full whitespace-nowrap ml-3">
-                  {daysUntil(c.date)} dager
+                  {daysLeft(c.date)} dager
                 </span>
               </div>
             ))}

@@ -291,12 +291,11 @@ export default function ParentDashboardNav({ userName, avatarUrl, notifications,
 
           <h1 className="text-2xl font-bold hidden md:block">Heihei, {userName.split(" ")[0]}! 👋</h1>
 
-          <NMCountdown />
-
           {/* Mine privattimer */}
           {active === "timer" && (
             <div>
-              <div className="flex justify-between items-center mb-3">
+              <NMCountdown />
+              <div className="flex justify-between items-center mb-3 mt-4">
                 <h2 className="font-semibold text-lg">Mine privattimer</h2>
                 <Link href="/book">
                   <Button className="bg-purple-600 hover:bg-purple-700 text-sm">+ Book time</Button>
@@ -451,19 +450,9 @@ export default function ParentDashboardNav({ userName, avatarUrl, notifications,
           {active === "konkurranser" && (
             <div className="space-y-3">
               <h2 className="font-semibold text-lg mb-1">Kommende konkurranser</h2>
+              <NMCountdown />
               {upcomingComps.length === 0 && <p className="text-sm text-gray-400">Ingen kommende konkurranser</p>}
-              {upcomingComps[0] && (
-                <div className="bg-purple-600 rounded-2xl px-5 py-4">
-                  <p className="text-xs text-purple-200 font-semibold uppercase tracking-wide mb-1">🏆 Neste konkurranse</p>
-                  <p className="text-lg font-bold text-white">{upcomingComps[0].short}</p>
-                  <p className="text-sm text-purple-200 mt-0.5">{upcomingComps[0].dateLabel}{upcomingComps[0].location ? ` · ${upcomingComps[0].location}` : ""}</p>
-                  <div className="mt-3 flex items-end gap-1">
-                    <p className="text-4xl font-bold text-white">{daysUntil(upcomingComps[0].date)}</p>
-                    <p className="text-sm text-purple-200 mb-1">dager igjen</p>
-                  </div>
-                </div>
-              )}
-              {upcomingComps.slice(1).map(c => (
+              {upcomingComps.map(c => (
                 <div key={c.short} className="bg-white rounded-xl border p-4 flex items-center justify-between">
                   <div>
                     <p className="font-semibold text-gray-800">{c.short}</p>
