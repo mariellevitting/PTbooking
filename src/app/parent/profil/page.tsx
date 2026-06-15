@@ -3,6 +3,7 @@ import { createClient } from "@/lib/supabase/server";
 import Link from "next/link";
 import { ArrowLeft } from "lucide-react";
 import UserProfileForm from "@/components/UserProfileForm";
+import ChildrenForm from "./ChildrenForm";
 import ChildDancerCard from "./ChildDancerCard";
 
 export default async function ParentProfilPage() {
@@ -38,11 +39,9 @@ export default async function ParentProfilPage() {
             phone={profile.phone ?? ""}
             avatarUrl={profile.avatar_url ?? null}
           />
+          <ChildrenForm parentId={user.id} children={(children ?? []).map(c => ({ id: c.id, name: c.name }))} />
           {children && children.length > 0 && (
             <ChildDancerCard parentId={user.id} children={children} />
-          )}
-          {(!children || children.length === 0) && (
-            <p className="text-sm text-gray-400 text-center py-4">Ingen dansere registrert ennå. Legg til via "Mine dansere" på dashboardet.</p>
           )}
         </div>
       </div>
