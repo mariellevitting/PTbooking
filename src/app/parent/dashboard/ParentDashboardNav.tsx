@@ -1,6 +1,7 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { createClient } from "@/lib/supabase/client";
 import Link from "next/link";
 import { Menu, X, Calendar, Trophy, Medal, Star, Info, UserCircle, User } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -38,15 +39,32 @@ const sections = [
 
 type Child = { id: string; name: string; season_goals: string | null; points_freestyle: number | null; points_slow: number | null; level_freestyle: number | null; level_slow: number | null };
 
+type Result = { id: string; competition_name: string; placement_freestyle: string | null; placement_slow: string | null; notes: string | null };
+
 function ParentResultsSection({ parentId, children }: { parentId: string; children: Child[] }) {
   const [selectedId, setSelectedId] = useState(children[0]?.id ?? "");
+  const [results, setResults] = useState<Result[]>([]);
+  const [loaded, setLoaded] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (!selectedId || loaded === selectedId) return;
+    const supabase = createClient();
+    supabase.from("competition_results").select("*").eq("child_id", selectedId).order("created_at", { ascending: false })
+      .then(({ data }) => { setResults(data ?? []); setLoaded(selectedId); });
+  }, [selectedId]);
+
+  function handleChildSelect(id: string) {
+    setSelectedId(id);
+    if (loaded !== id) { setResults([]); setLoaded(null); }
+  }
+
   return (
     <div className="space-y-4">
       <h2 className="font-semibold text-lg">Konkurranseresultater</h2>
       {children.length > 1 && (
         <div className="flex gap-2 flex-wrap">
           {children.map(c => (
-            <button key={c.id} onClick={() => setSelectedId(c.id)}
+            <button key={c.id} onClick={() => handleChildSelect(c.id)}
               className={`px-3 py-1.5 rounded-full text-sm font-medium border transition-colors ${selectedId === c.id ? "bg-purple-600 text-white border-purple-600" : "bg-white text-gray-700 border-gray-200 hover:border-purple-400"}`}>
               {c.name}
             </button>
@@ -54,7 +72,7 @@ function ParentResultsSection({ parentId, children }: { parentId: string; childr
         </div>
       )}
       {children.length === 1 && <p className="text-sm font-medium text-gray-700">{children[0].name}</p>}
-      <CompetitionResultsCard userId={parentId} childId={selectedId} initialResults={[]} />
+      <CompetitionResultsCard userId={parentId} childId={selectedId} initialResults={results} />
     </div>
   );
 }
