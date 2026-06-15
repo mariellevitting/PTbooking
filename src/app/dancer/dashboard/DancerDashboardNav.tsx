@@ -61,7 +61,7 @@ const COMPETITIONS = [
 
 const sections = [
   { id: "timer", label: "Mine timer", icon: <Calendar size={15} /> },
-  { id: "maal", label: "Mine poeng", icon: <Target size={15} /> },
+  { id: "maal", label: "Mine sesongmål", icon: <Target size={15} /> },
   { id: "nivaer", label: "Poeng og nivåer", icon: <Trophy size={15} /> },
   { id: "resultater", label: "Resultater", icon: <Medal size={15} /> },
   { id: "konkurranser", label: "Konkurranser", icon: <Star size={15} /> },
