@@ -50,16 +50,6 @@ export default function TrainerDashboardTabs({ slots, completedSlots }: Props) {
 
   return (
     <div>
-      {/* Knapper */}
-      <div className="flex gap-2 mb-3">
-        <Link href="/trainer/book-for-dancer" className="flex-1">
-          <Button variant="outline" className="w-full text-sm border-purple-300 text-purple-700 hover:bg-purple-50">+ Book for danser</Button>
-        </Link>
-        <Link href="/trainer/availability" className="flex-1">
-          <Button className="w-full bg-purple-600 hover:bg-purple-700 text-sm">+ Legg ut tid</Button>
-        </Link>
-      </div>
-
       {/* Tabs */}
       <div className="flex gap-1 bg-gray-100 rounded-xl p-1 mb-4">
         <button
