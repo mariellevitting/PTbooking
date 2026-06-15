@@ -197,7 +197,7 @@ export default function DancerDashboardNav(props: Props) {
 
       <div className="md:ml-56 p-4 md:p-6">
       {/* Innhold */}
-      <div className="max-w-2xl space-y-4">
+      <div className="max-w-lg mx-auto space-y-4">
 
         {/* Mobil: slide-in drawer */}
         {menuOpen && (
