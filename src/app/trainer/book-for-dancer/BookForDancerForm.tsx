@@ -139,7 +139,7 @@ export default function BookForDancerForm({ trainerId, danceStyles }: Props) {
       slot_id: slot.id,
       booker_id: trainerId,
       dancer_name: dancerName,
-      dance_style: style || null,
+      dance_style: style || "",
       status: "confirmed",
     });
 
