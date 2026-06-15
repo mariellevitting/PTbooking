@@ -21,7 +21,7 @@ function getNeeded(level: number, isFreestyle: boolean) {
 type Result = { id: string; competition_name: string; placement_freestyle: string | null; placement_slow: string | null; notes: string | null };
 type Child = { id: string; name: string; season_goals: string | null; points_freestyle: number | null; points_slow: number | null; level_freestyle: number | null; level_slow: number | null };
 
-export default function ChildDancerCard({ parentId, children }: { parentId: string; children: Child[] }) {
+export default function ChildDancerCard({ parentId, children, hideResults }: { parentId: string; children: Child[]; hideResults?: boolean }) {
   const [selectedId, setSelectedId] = useState(children[0]?.id ?? "");
   const child = children.find(c => c.id === selectedId);
 
@@ -166,7 +166,7 @@ export default function ChildDancerCard({ parentId, children }: { parentId: stri
         </CardContent>
       </Card>
 
-      <CompetitionResultsCard userId={parentId} childId={selectedId} initialResults={results} />
+      {!hideResults && <CompetitionResultsCard userId={parentId} childId={selectedId} initialResults={results} />}
 
       {success && (
         <div className="flex items-center gap-2 text-purple-700 text-sm bg-purple-50 border border-purple-200 rounded-xl p-3">

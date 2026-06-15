@@ -8,7 +8,17 @@ import LogoutButton from "@/components/LogoutButton";
 import NotificationBell from "@/components/NotificationBell";
 import NMCountdown from "@/components/NMCountdown";
 import ChildDancerCard from "@/app/parent/profil/ChildDancerCard";
+import CompetitionResultsCard from "@/components/CompetitionResultsCard";
 import { formatDate, formatTime, formatDateKey } from "@/lib/dateUtils";
+
+const TRAINERS = [
+  { name: "Sophie", styles: ["Freestyle", "Slow", "Jazz", "Moderne", "Freestyle dobbel", "Slow dobbel", "Akro"] },
+  { name: "Lova", styles: ["Freestyle", "Slow", "Jazz", "Moderne", "Freestyle dobbel", "Slow dobbel", "Akro"] },
+  { name: "Marielle", styles: ["Freestyle", "Slow", "Akro", "Freestyle dobbel", "Slow dobbel"] },
+  { name: "Marthe", styles: ["Freestyle", "Slow", "Akro", "Freestyle dobbel", "Slow dobbel"] },
+  { name: "Luna Kekstaite", styles: ["Freestyle", "Slow", "Jazz", "Moderne", "Freestyle dobbel", "Slow dobbel", "Akro"] },
+  { name: "Cathrin Jørgensen", styles: ["Hiphop"] },
+];
 
 const COMPETITIONS = [
   { short: "NM 2026", date: new Date("2026-06-13"), dateLabel: "13–14. juni", location: "Sofiemyrhallen, Sofienmyr" },
@@ -25,6 +35,29 @@ const sections = [
   { id: "konkurranser", label: "Konkurranser", icon: <Star size={15} /> },
   { id: "om", label: "Om privattimer", icon: <Info size={15} /> },
 ];
+
+type Child = { id: string; name: string; season_goals: string | null; points_freestyle: number | null; points_slow: number | null; level_freestyle: number | null; level_slow: number | null };
+
+function ParentResultsSection({ parentId, children }: { parentId: string; children: Child[] }) {
+  const [selectedId, setSelectedId] = useState(children[0]?.id ?? "");
+  return (
+    <div className="space-y-4">
+      <h2 className="font-semibold text-lg">Konkurranseresultater</h2>
+      {children.length > 1 && (
+        <div className="flex gap-2 flex-wrap">
+          {children.map(c => (
+            <button key={c.id} onClick={() => setSelectedId(c.id)}
+              className={`px-3 py-1.5 rounded-full text-sm font-medium border transition-colors ${selectedId === c.id ? "bg-purple-600 text-white border-purple-600" : "bg-white text-gray-700 border-gray-200 hover:border-purple-400"}`}>
+              {c.name}
+            </button>
+          ))}
+        </div>
+      )}
+      {children.length === 1 && <p className="text-sm font-medium text-gray-700">{children[0].name}</p>}
+      <CompetitionResultsCard userId={parentId} childId={selectedId} initialResults={[]} />
+    </div>
+  );
+}
 
 function getWeekNumber(date: Date) {
   const d = new Date(Date.UTC(date.getFullYear(), date.getMonth(), date.getDate()));
@@ -300,18 +333,33 @@ export default function ParentDashboardNav({ userName, avatarUrl, notifications,
             </div>
           )}
 
-          {/* Poeng og nivåer + Resultater */}
-          {(active === "nivaer" || active === "resultater") && (
+          {/* Poeng og nivåer */}
+          {active === "nivaer" && (
             children.length === 0 ? (
               <div className="space-y-4">
-                <h2 className="font-semibold text-lg">{active === "nivaer" ? "Poeng og nivåer" : "Resultater"}</h2>
+                <h2 className="font-semibold text-lg">Poeng og nivåer</h2>
                 <div className="bg-white rounded-xl border p-6 text-center text-gray-400 text-sm">
                   <p className="mb-1">Ingen barn lagt til ennå</p>
                   <Link href="/parent/profil"><span className="text-purple-600 text-sm underline">Legg til barn i profilen →</span></Link>
                 </div>
               </div>
             ) : (
-              <ChildDancerCard parentId={parentId} children={children} />
+              <ChildDancerCard parentId={parentId} children={children} hideResults />
+            )
+          )}
+
+          {/* Resultater */}
+          {active === "resultater" && (
+            children.length === 0 ? (
+              <div className="space-y-4">
+                <h2 className="font-semibold text-lg">Resultater</h2>
+                <div className="bg-white rounded-xl border p-6 text-center text-gray-400 text-sm">
+                  <p className="mb-1">Ingen barn lagt til ennå</p>
+                  <Link href="/parent/profil"><span className="text-purple-600 text-sm underline">Legg til barn i profilen →</span></Link>
+                </div>
+              </div>
+            ) : (
+              <ParentResultsSection parentId={parentId} children={children} />
             )
           )}
 
@@ -346,13 +394,45 @@ export default function ParentDashboardNav({ userName, avatarUrl, notifications,
 
           {/* Om privattimer */}
           {active === "om" && (
-            <div className="bg-white rounded-2xl border p-5 space-y-4">
-              <h2 className="text-lg font-bold">Om privattimer</h2>
-              <p className="text-gray-600 text-sm leading-relaxed">Evolutions instruktører tilbyr privattimer – koreografi, teknikk, akrobatikk o.l.</p>
-              <p className="text-gray-600 text-sm leading-relaxed">En privattime varer i <strong>30 minutter</strong> og koster <strong>250,-</strong>, <strong>200,-</strong> eller <strong>150,-</strong> avhengig av trener.</p>
-              <div className="bg-blue-50 border border-blue-200 rounded-xl p-4">
-                <p className="text-sm font-semibold text-blue-800 mb-1">Betaling</p>
-                <p className="text-sm text-blue-700">Betaling skjer i <strong>Spond</strong>.</p>
+            <div className="space-y-4">
+              <div className="bg-white rounded-2xl border p-5 space-y-4">
+                <h2 className="text-lg font-bold">Bestille privattimer</h2>
+                <p className="text-gray-600 text-sm leading-relaxed">
+                  Evolutions instruktører tilbyr privattimer. Disse kan benyttes etter ønske – koreografi, teknikk, akrobatikk o.l. Dette er en flott mulighet for danserne til å utvikle seg og få tett oppfølging av trenerteamet.
+                </p>
+                <p className="text-gray-600 text-sm leading-relaxed">
+                  En privattime varer i <strong>30 minutter</strong> og koster <strong>250,-</strong>, <strong>200,-</strong> eller <strong>150,-</strong> avhengig av trener.
+                </p>
+                <div className="bg-blue-50 border border-blue-200 rounded-xl p-4">
+                  <p className="text-sm font-semibold text-blue-800 mb-1">Betaling</p>
+                  <p className="text-sm text-blue-700">Betaling er som før i <strong>Spond</strong>.</p>
+                </div>
+                <div className="bg-amber-50 border border-amber-200 rounded-xl p-4">
+                  <p className="text-sm font-semibold text-amber-800 mb-1">VIKTIG!</p>
+                  <p className="text-sm text-amber-700">
+                    Kvitteringen du mottar for betalt privattime må danseren ha med til timen! Du kan også sende bilde av kvitteringen til treneren i forkant.
+                  </p>
+                </div>
+                <div className="bg-green-50 border border-green-200 rounded-xl p-4">
+                  <p className="text-sm font-semibold text-green-800 mb-1">Booking samme dag?</p>
+                  <p className="text-sm text-green-700">Gi treneren beskjed på forhånd via melding (Messenger, Snapchat e.l.) så de er forberedt. 💬</p>
+                </div>
+              </div>
+              <div className="bg-white rounded-2xl border p-5">
+                <h3 className="font-semibold text-lg mb-4">Våre trenere</h3>
+                <div className="space-y-1">
+                  {TRAINERS.map(t => (
+                    <div key={t.name} className="flex items-start gap-3 py-3 border-b last:border-0">
+                      <div className="w-9 h-9 rounded-full bg-purple-100 flex items-center justify-center text-purple-600 font-bold shrink-0 text-sm">
+                        {t.name.charAt(0)}
+                      </div>
+                      <div>
+                        <p className="font-medium text-sm">{t.name}</p>
+                        <p className="text-xs text-gray-400 mt-0.5">{t.styles.join(" · ")}</p>
+                      </div>
+                    </div>
+                  ))}
+                </div>
               </div>
             </div>
           )}
