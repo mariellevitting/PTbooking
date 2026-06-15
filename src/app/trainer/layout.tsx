@@ -31,7 +31,7 @@ export default async function TrainerLayout({ children }: { children: React.Reac
         unreadCount={unreadCount}
       />
       {/* Innhold – skyv til høyre for sidebar på desktop, legg til padding under for mobilnav */}
-      <div className="flex-1 md:ml-56 pb-20 md:pb-0">
+      <div className="flex-1 md:ml-56 pt-14 md:pt-0">
         {children}
       </div>
     </div>
