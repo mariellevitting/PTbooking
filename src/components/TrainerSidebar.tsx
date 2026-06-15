@@ -104,7 +104,7 @@ export default function TrainerSidebar({ name, avatarUrl, notifications }: Props
       <aside className="hidden md:flex flex-col fixed left-0 top-0 bottom-0 w-56 bg-white border-r border-gray-200 z-30">
         <div className="p-4 border-b border-gray-100">
           <div className="flex items-center justify-between">
-            <div className="flex items-center gap-3 min-w-0">
+            <Link href="/trainer/profil" className="flex items-center gap-3 min-w-0 hover:opacity-80 transition-opacity">
               {avatarUrl ? (
                 <img src={avatarUrl} alt="" className="w-9 h-9 rounded-full object-cover shrink-0" />
               ) : (
@@ -116,7 +116,7 @@ export default function TrainerSidebar({ name, avatarUrl, notifications }: Props
                 <p className="text-sm font-semibold text-gray-800 truncate">{firstName}</p>
                 <p className="text-xs text-gray-400">Trener</p>
               </div>
-            </div>
+            </Link>
             <NotificationBell notifications={notifications} />
           </div>
         </div>

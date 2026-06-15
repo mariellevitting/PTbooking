@@ -167,7 +167,7 @@ export default function DancerDashboardNav(props: Props) {
       <aside className="hidden md:flex flex-col fixed left-0 top-0 bottom-0 w-56 bg-white border-r border-gray-200 z-30">
         <div className="p-4 border-b border-gray-100">
           <div className="flex items-center justify-between">
-            <div className="flex items-center gap-3 min-w-0">
+            <Link href="/dancer/profil" className="flex items-center gap-3 min-w-0 hover:opacity-80 transition-opacity">
               {props.avatarUrl ? (
                 <img src={props.avatarUrl} alt="" className="w-9 h-9 rounded-full object-cover shrink-0" />
               ) : (
@@ -179,7 +179,7 @@ export default function DancerDashboardNav(props: Props) {
                 <p className="text-sm font-semibold text-gray-800 truncate">{props.userName.split(" ")[0]}</p>
                 <p className="text-xs text-gray-400">Danser</p>
               </div>
-            </div>
+            </Link>
             <NotificationBell notifications={props.notifications ?? []} />
           </div>
         </div>
