@@ -4,7 +4,7 @@ import { useState } from "react";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Menu, X, Calendar, Target, Trophy, Medal, Star, Info, UserCircle } from "lucide-react";
+import { Menu, X, Calendar, Target, Trophy, Medal, Star, Info, UserCircle, User } from "lucide-react";
 import GoalsList from "@/components/GoalsList";
 import PointsStepper from "@/components/PointsStepper";
 import CompetitionResultsCard from "@/components/CompetitionResultsCard";
@@ -189,6 +189,11 @@ export default function DancerDashboardNav(props: Props) {
               {s.label}
             </button>
           ))}
+          <Link href="/dancer/profil"
+            className="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-colors text-left text-gray-600 hover:bg-gray-100">
+            <span className="text-gray-400"><User size={15} /></span>
+            Profil
+          </Link>
         </nav>
         <div className="p-3 border-t border-gray-100">
           <LogoutButton />
