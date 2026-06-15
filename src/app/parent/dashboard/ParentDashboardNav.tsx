@@ -3,7 +3,8 @@
 import { useState, useEffect } from "react";
 import { createClient } from "@/lib/supabase/client";
 import Link from "next/link";
-import { Menu, X, Calendar, Trophy, Medal, Star, Info, UserCircle, User } from "lucide-react";
+import { Menu, X, Calendar, Trophy, Medal, Star, Info, UserCircle, User, Target } from "lucide-react";
+import GoalsList from "@/components/GoalsList";
 import { Button } from "@/components/ui/button";
 import LogoutButton from "@/components/LogoutButton";
 import NotificationBell from "@/components/NotificationBell";
@@ -31,7 +32,8 @@ const COMPETITIONS = [
 
 const sections = [
   { id: "timer", label: "Mine privattimer", icon: <Calendar size={15} /> },
-  { id: "nivaer", label: "Poeng og nivåer", icon: <Trophy size={15} /> },
+  { id: "maal", label: "Sesongmål", icon: <Target size={15} /> },
+  { id: "nivaer", label: "Poeng og nivå", icon: <Trophy size={15} /> },
   { id: "resultater", label: "Resultater", icon: <Medal size={15} /> },
   { id: "konkurranser", label: "Konkurranser", icon: <Star size={15} /> },
   { id: "om", label: "Om privattimer", icon: <Info size={15} /> },
@@ -73,6 +75,55 @@ function ParentResultsSection({ parentId, children }: { parentId: string; childr
       )}
       {children.length === 1 && <p className="text-sm font-medium text-gray-700">{children[0].name}</p>}
       <CompetitionResultsCard userId={parentId} childId={selectedId} initialResults={results} />
+    </div>
+  );
+}
+
+function ParentGoalsSection({ children }: { children: Child[] }) {
+  const [selectedId, setSelectedId] = useState(children[0]?.id ?? "");
+  const [goals, setGoals] = useState(children[0]?.season_goals ?? "");
+  const [saving, setSaving] = useState(false);
+  const [saved, setSaved] = useState(false);
+
+  function handleChildSelect(id: string) {
+    const c = children.find(x => x.id === id);
+    setSelectedId(id);
+    setGoals(c?.season_goals ?? "");
+    setSaved(false);
+  }
+
+  async function handleSave() {
+    setSaving(true);
+    setSaved(false);
+    const supabase = createClient();
+    await supabase.from("children").update({ season_goals: goals }).eq("id", selectedId);
+    setSaving(false);
+    setSaved(true);
+  }
+
+  return (
+    <div className="space-y-4">
+      <h2 className="font-semibold text-lg">Sesongmål</h2>
+      {children.length > 1 && (
+        <div className="flex gap-2 flex-wrap">
+          {children.map(c => (
+            <button key={c.id} onClick={() => handleChildSelect(c.id)}
+              className={`px-3 py-1.5 rounded-full text-sm font-medium border transition-colors ${selectedId === c.id ? "bg-purple-600 text-white border-purple-600" : "bg-white text-gray-700 border-gray-200 hover:border-purple-400"}`}>
+              {c.name}
+            </button>
+          ))}
+        </div>
+      )}
+      {children.length === 1 && <p className="text-sm font-medium text-gray-700">{children[0].name}</p>}
+      <div className="bg-white rounded-2xl border p-5 space-y-3">
+        <p className="text-xs text-gray-400">F.eks. triks, mål for konkurranser, hva danseren vil jobbe med</p>
+        <GoalsList value={goals} onChange={g => { setGoals(g); setSaved(false); }} />
+      </div>
+      {saved && <div className="flex items-center gap-2 text-purple-700 text-sm bg-purple-50 border border-purple-200 rounded-xl p-3">✓ Lagret!</div>}
+      <button onClick={handleSave} disabled={saving || saved}
+        className="w-full py-2.5 rounded-xl bg-purple-600 hover:bg-purple-700 text-white text-sm font-semibold transition-colors disabled:opacity-60">
+        {saving ? "Lagrer..." : "Lagre"}
+      </button>
     </div>
   );
 }
@@ -351,18 +402,33 @@ export default function ParentDashboardNav({ userName, avatarUrl, notifications,
             </div>
           )}
 
-          {/* Poeng og nivåer */}
-          {active === "nivaer" && (
+          {/* Sesongmål */}
+          {active === "maal" && (
             children.length === 0 ? (
               <div className="space-y-4">
-                <h2 className="font-semibold text-lg">Poeng og nivåer</h2>
+                <h2 className="font-semibold text-lg">Sesongmål</h2>
                 <div className="bg-white rounded-xl border p-6 text-center text-gray-400 text-sm">
                   <p className="mb-1">Ingen barn lagt til ennå</p>
                   <Link href="/parent/profil"><span className="text-purple-600 text-sm underline">Legg til barn i profilen →</span></Link>
                 </div>
               </div>
             ) : (
-              <ChildDancerCard parentId={parentId} children={children} hideResults />
+              <ParentGoalsSection children={children} />
+            )
+          )}
+
+          {/* Poeng og nivå */}
+          {active === "nivaer" && (
+            children.length === 0 ? (
+              <div className="space-y-4">
+                <h2 className="font-semibold text-lg">Poeng og nivå</h2>
+                <div className="bg-white rounded-xl border p-6 text-center text-gray-400 text-sm">
+                  <p className="mb-1">Ingen barn lagt til ennå</p>
+                  <Link href="/parent/profil"><span className="text-purple-600 text-sm underline">Legg til barn i profilen →</span></Link>
+                </div>
+              </div>
+            ) : (
+              <ChildDancerCard parentId={parentId} children={children} hideResults hideGoals />
             )
           )}
 

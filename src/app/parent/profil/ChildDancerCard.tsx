@@ -21,7 +21,7 @@ function getNeeded(level: number, isFreestyle: boolean) {
 type Result = { id: string; competition_name: string; placement_freestyle: string | null; placement_slow: string | null; notes: string | null };
 type Child = { id: string; name: string; season_goals: string | null; points_freestyle: number | null; points_slow: number | null; level_freestyle: number | null; level_slow: number | null };
 
-export default function ChildDancerCard({ parentId, children, hideResults }: { parentId: string; children: Child[]; hideResults?: boolean }) {
+export default function ChildDancerCard({ parentId, children, hideResults, hideGoals }: { parentId: string; children: Child[]; hideResults?: boolean; hideGoals?: boolean }) {
   const [selectedId, setSelectedId] = useState(children[0]?.id ?? "");
   const child = children.find(c => c.id === selectedId);
 
@@ -112,17 +112,19 @@ export default function ChildDancerCard({ parentId, children, hideResults }: { p
       )}
       {children.length === 1 && <p className="text-base font-semibold text-gray-700">{children[0].name}</p>}
 
-      <Card>
-        <CardHeader>
-          <CardTitle className="text-base flex items-center gap-2">
-            <Target size={16} className="text-purple-500" /> Sesongmål
-          </CardTitle>
-        </CardHeader>
-        <CardContent>
-          <p className="text-xs text-gray-400 mb-3">F.eks. triks, mål for konkurranser, hva danseren vil jobbe med</p>
-          <GoalsList value={goals} onChange={setGoals} />
-        </CardContent>
-      </Card>
+      {!hideGoals && (
+        <Card>
+          <CardHeader>
+            <CardTitle className="text-base flex items-center gap-2">
+              <Target size={16} className="text-purple-500" /> Sesongmål
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <p className="text-xs text-gray-400 mb-3">F.eks. triks, mål for konkurranser, hva danseren vil jobbe med</p>
+            <GoalsList value={goals} onChange={setGoals} />
+          </CardContent>
+        </Card>
+      )}
 
       <Card>
         <CardHeader>
