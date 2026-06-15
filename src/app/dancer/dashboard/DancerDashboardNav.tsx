@@ -389,7 +389,7 @@ export default function DancerDashboardNav(props: Props) {
             {/* Neste konkurranse – uthevet */}
             <div className="bg-purple-600 rounded-2xl px-5 py-4">
               <p className="text-xs text-purple-200 font-semibold uppercase tracking-wide mb-1">🏆 Neste konkurranse</p>
-              <p className="text-lg font-bold text-white">{next.name}</p>
+              <p className="text-lg font-bold text-white">{next.short}</p>
               <p className="text-sm text-purple-200 mt-0.5">{next.dateLabel}{next.location ? ` · ${next.location}` : ""}</p>
               <div className="mt-3 flex items-end gap-1">
                 <p className="text-4xl font-bold text-white">{daysUntil(next.date)}</p>
@@ -400,7 +400,7 @@ export default function DancerDashboardNav(props: Props) {
             {rest.map(c => (
               <div key={c.name} className="bg-white rounded-xl border p-4 flex items-center justify-between">
                 <div>
-                  <p className="font-semibold text-gray-800">{c.name}</p>
+                  <p className="font-semibold text-gray-800">{c.short}</p>
                   <p className="text-sm text-purple-600">{c.dateLabel}</p>
                   {c.location && <p className="text-xs text-gray-400 mt-0.5">{c.location}</p>}
                 </div>
