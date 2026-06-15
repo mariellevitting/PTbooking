@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { ChevronDown, ChevronUp } from "lucide-react";
+import Link from "next/link";
 
 const COMPETITIONS = [
   {
@@ -47,15 +47,15 @@ function getTimeLeft(date: Date) {
   if (diff <= 0) return null;
   return {
     days: Math.floor(diff / (1000 * 60 * 60 * 24)),
-    hours: Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60)),
-    minutes: Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60)),
-    seconds: Math.floor((diff % (1000 * 60)) / 1000),
   };
 }
 
-export default function NMCountdown() {
+interface Props {
+  href?: string;
+}
+
+export default function NMCountdown({ href }: Props) {
   const [tick, setTick] = useState(0);
-  const [open, setOpen] = useState(false);
 
   useEffect(() => {
     const interval = setInterval(() => setTick(t => t + 1), 1000);
@@ -68,21 +68,23 @@ export default function NMCountdown() {
   const next = upcoming[0];
   const timeLeft = getTimeLeft(next.date)!;
 
-  return (
-    <div className="mb-6 space-y-2">
-      {/* Neste konkurranse – stor nedtelling */}
-      <div className="bg-purple-600 rounded-xl px-4 py-3 flex items-center justify-between">
-        <div>
-          <p className="text-xs text-purple-200 font-semibold uppercase tracking-wide">🏆 {next.short}</p>
-          <p className="text-sm font-bold text-white">{next.name}</p>
-          <p className="text-xs text-purple-200">{next.dateLabel}{next.location ? ` · ${next.location}` : ""}</p>
-        </div>
-        <div className="text-right ml-4">
-          <p className="text-3xl font-bold text-white">{timeLeft.days}</p>
-          <p className="text-xs text-purple-200">dager igjen</p>
-        </div>
+  const box = (
+    <div className="bg-purple-600 rounded-xl px-4 py-3 flex items-center justify-between">
+      <div>
+        <p className="text-xs text-purple-200 font-semibold uppercase tracking-wide">🏆 {next.short}</p>
+        <p className="text-sm font-bold text-white">{next.short}</p>
+        <p className="text-xs text-purple-200">{next.dateLabel}{next.location ? ` · ${next.location}` : ""}</p>
       </div>
+      <div className="text-right ml-4">
+        <p className="text-3xl font-bold text-white">{timeLeft.days}</p>
+        <p className="text-xs text-purple-200">dager igjen</p>
+      </div>
+    </div>
+  );
 
+  return (
+    <div className="mb-6">
+      {href ? <Link href={href}>{box}</Link> : box}
     </div>
   );
 }
