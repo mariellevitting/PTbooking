@@ -10,7 +10,8 @@ export async function registerUser(
   role: UserRole,
   trainerCode?: string,
   dancerNames?: string[],
-  clubInviteCode?: string
+  clubInviteCode?: string,
+  memberCode?: string
 ): Promise<{ error?: string }> {
   const supabase = await createClient();
 
@@ -26,6 +27,13 @@ export async function registerUser(
       return { error: "Feil trenerkode. Ta kontakt med klubben for å få riktig kode." };
     }
   }
+
+  // EVOKODE: disabled during testing – re-enable when Mie says "evokode"
+  // if (role === "dancer" || role === "parent") {
+  //   if (!memberCode || memberCode.toUpperCase() !== process.env.MEMBER_INVOKE_CODE?.toUpperCase()) {
+  //     return { error: "Feil klubbkode. Du får koden av Evolution via Spond eller e-post." };
+  //   }
+  // }
 
   const { data, error: signUpError } = await supabase.auth.signUp({ email, password });
   if (signUpError || !data.user) {
