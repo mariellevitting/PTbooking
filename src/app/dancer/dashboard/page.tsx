@@ -20,10 +20,12 @@ export default async function DancerDashboard() {
     { data: notifications },
     { data: bookings },
     { data: competitionResults },
+    { data: trainers },
   ] = await Promise.all([
     supabase.from("notifications").select("*").eq("user_id", user.id).order("created_at", { ascending: false }),
     supabase.from("bookings").select("*, availability_slots(start_at, end_at, trainer_id, profiles(name))").eq("booker_id", user.id).eq("status", "confirmed"),
     supabase.from("competition_results").select("*").eq("user_id", user.id).order("created_at", { ascending: false }),
+    supabase.from("profiles").select("id, name, trainers(dance_styles)").eq("role", "trainer").order("name"),
   ]);
 
   const now = new Date();
@@ -53,6 +55,7 @@ export default async function DancerDashboard() {
           competitionResults={competitionResults ?? []}
           now={now.toISOString()}
           notifications={notifications ?? []}
+          trainers={(trainers ?? []).map(t => ({ name: t.name, styles: (Array.isArray(t.trainers) ? t.trainers[0]?.dance_styles : (t.trainers as any)?.dance_styles) ?? [] }))}
         />
       </div>
     </main>

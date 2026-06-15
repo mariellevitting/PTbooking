@@ -49,6 +49,7 @@ interface Props {
   now: string;
   notifications?: any[];
   mobileNavOnly?: boolean;
+  trainers?: { name: string; styles: string[] }[];
 }
 
 const COMPETITIONS = [
@@ -68,14 +69,6 @@ const sections = [
   { id: "om", label: "Om privattimer", icon: <Info size={15} /> },
 ];
 
-const TRAINERS = [
-  { name: "Sophie", styles: ["Freestyle", "Slow", "Jazz", "Moderne", "Freestyle dobbel", "Slow dobbel", "Akro"] },
-  { name: "Lova", styles: ["Freestyle", "Slow", "Jazz", "Moderne", "Freestyle dobbel", "Slow dobbel", "Akro"] },
-  { name: "Marielle", styles: ["Freestyle", "Slow", "Akro", "Freestyle dobbel", "Slow dobbel"] },
-  { name: "Marthe", styles: ["Freestyle", "Slow", "Akro", "Freestyle dobbel", "Slow dobbel"] },
-  { name: "Luna Kekstaite", styles: ["Freestyle", "Slow", "Jazz", "Moderne", "Freestyle dobbel", "Slow dobbel", "Akro"] },
-  { name: "Cathrin Jørgensen", styles: ["Hiphop"] },
-];
 
 export default function DancerDashboardNav(props: Props) {
   const [active, setActive] = useState("timer");
@@ -482,7 +475,7 @@ export default function DancerDashboardNav(props: Props) {
             <div className="bg-white rounded-2xl border p-5">
               <h3 className="font-semibold text-lg mb-4">Våre trenere</h3>
               <div className="space-y-1">
-                {TRAINERS.map(t => (
+                {(props.trainers ?? []).map(t => (
                   <div key={t.name} className="flex items-start gap-3 py-3 border-b last:border-0">
                     <div className="w-9 h-9 rounded-full bg-purple-100 flex items-center justify-center text-purple-600 font-bold shrink-0 text-sm">
                       {t.name.charAt(0)}

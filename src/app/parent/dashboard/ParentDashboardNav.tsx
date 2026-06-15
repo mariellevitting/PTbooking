@@ -13,14 +13,6 @@ import ChildDancerCard from "@/app/parent/profil/ChildDancerCard";
 import CompetitionResultsCard from "@/components/CompetitionResultsCard";
 import { formatDate, formatTime, formatDateKey } from "@/lib/dateUtils";
 
-const TRAINERS = [
-  { name: "Sophie", styles: ["Freestyle", "Slow", "Jazz", "Moderne", "Freestyle dobbel", "Slow dobbel", "Akro"] },
-  { name: "Lova", styles: ["Freestyle", "Slow", "Jazz", "Moderne", "Freestyle dobbel", "Slow dobbel", "Akro"] },
-  { name: "Marielle", styles: ["Freestyle", "Slow", "Akro", "Freestyle dobbel", "Slow dobbel"] },
-  { name: "Marthe", styles: ["Freestyle", "Slow", "Akro", "Freestyle dobbel", "Slow dobbel"] },
-  { name: "Luna Kekstaite", styles: ["Freestyle", "Slow", "Jazz", "Moderne", "Freestyle dobbel", "Slow dobbel", "Akro"] },
-  { name: "Cathrin Jørgensen", styles: ["Hiphop"] },
-];
 
 const COMPETITIONS = [
   { short: "NM 2026", date: new Date("2026-06-13"), dateLabel: "13–14. juni", location: "Sofiemyrhallen, Sofienmyr" },
@@ -159,9 +151,10 @@ interface Props {
   completedBookings: Booking[];
   parentId: string;
   children: { id: string; name: string; season_goals: string | null; points_freestyle: number | null; points_slow: number | null; level_freestyle: number | null; level_slow: number | null }[];
+  trainers?: { name: string; styles: string[] }[];
 }
 
-export default function ParentDashboardNav({ userName, avatarUrl, notifications, upcomingBookings, completedBookings, parentId, children }: Props) {
+export default function ParentDashboardNav({ userName, avatarUrl, notifications, upcomingBookings, completedBookings, parentId, children, trainers = [] }: Props) {
   const [active, setActive] = useState("timer");
   const [bookingTab, setBookingTab] = useState<"kommende" | "gjennomforte">("kommende");
   const [menuOpen, setMenuOpen] = useState(false);
@@ -494,7 +487,7 @@ export default function ParentDashboardNav({ userName, avatarUrl, notifications,
               <div className="bg-white rounded-2xl border p-5">
                 <h3 className="font-semibold text-lg mb-4">Våre trenere</h3>
                 <div className="space-y-1">
-                  {TRAINERS.map(t => (
+                  {trainers.map(t => (
                     <div key={t.name} className="flex items-start gap-3 py-3 border-b last:border-0">
                       <div className="w-9 h-9 rounded-full bg-purple-100 flex items-center justify-center text-purple-600 font-bold shrink-0 text-sm">
                         {t.name.charAt(0)}

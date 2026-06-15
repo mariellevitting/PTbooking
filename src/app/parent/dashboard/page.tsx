@@ -19,9 +19,11 @@ export default async function ParentDashboard() {
   const [
     { data: notifications },
     { data: children },
+    { data: trainers },
   ] = await Promise.all([
     supabase.from("notifications").select("*").eq("user_id", user.id).order("created_at", { ascending: false }),
     supabase.from("children").select("id, name, season_goals, points_freestyle, points_slow, level_freestyle, level_slow").eq("parent_id", user.id).order("created_at"),
+    supabase.from("profiles").select("id, name, trainers(dance_styles)").eq("role", "trainer").order("name"),
   ]);
 
   const { data: bookings } = await supabase
@@ -51,6 +53,7 @@ export default async function ParentDashboard() {
           upcomingBookings={upcomingBookings}
           completedBookings={completedBookings}
           children={children ?? []}
+          trainers={(trainers ?? []).map(t => ({ name: t.name, styles: (Array.isArray(t.trainers) ? t.trainers[0]?.dance_styles : (t.trainers as any)?.dance_styles) ?? [] }))}
         />
       </div>
     </main>
