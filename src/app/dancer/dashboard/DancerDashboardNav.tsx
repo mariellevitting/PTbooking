@@ -10,6 +10,7 @@ import PointsStepper from "@/components/PointsStepper";
 import CompetitionResultsCard from "@/components/CompetitionResultsCard";
 import NotificationBell from "@/components/NotificationBell";
 import LogoutButton from "@/components/LogoutButton";
+import NMCountdown from "@/components/NMCountdown";
 import { createClient } from "@/lib/supabase/client";
 import { formatDate, formatTime, formatDateKey } from "@/lib/dateUtils";
 
@@ -249,6 +250,10 @@ export default function DancerDashboardNav(props: Props) {
           </div>
         )}
 
+
+      <h1 className="text-2xl font-bold hidden md:block">Heihei, {props.userName.split(" ")[0]}! 👋</h1>
+
+      <NMCountdown />
 
       {/* Mine timer */}
       {active === "timer" && (
