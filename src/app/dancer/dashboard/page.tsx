@@ -5,6 +5,7 @@ import LogoutButton from "@/components/LogoutButton";
 import NotificationBell from "@/components/NotificationBell";
 import { UserCircle } from "lucide-react";
 import DancerDashboardNav from "./DancerDashboardNav";
+import OnboardingOverlay from "@/components/OnboardingOverlay";
 
 export default async function DancerDashboard() {
   const supabase = await createClient();
@@ -40,6 +41,7 @@ export default async function DancerDashboard() {
 
   return (
     <main className="bg-gray-50 min-h-screen">
+      <OnboardingOverlay />
       {/* Desktop header */}
       <div className="hidden md:block max-w-4xl mx-auto px-6 pt-6">
         <div className="flex items-center justify-between mb-1">

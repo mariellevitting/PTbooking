@@ -8,6 +8,7 @@ import NotificationBell from "@/components/NotificationBell";
 import { UserCircle } from "lucide-react";
 import { formatDate, formatTime, formatDateKey } from "@/lib/dateUtils";
 import NMCountdown from "@/components/NMCountdown";
+import OnboardingOverlay from "@/components/OnboardingOverlay";
 
 export default async function ParentDashboard() {
   const supabase = await createClient();
@@ -45,6 +46,7 @@ export default async function ParentDashboard() {
 
   return (
     <main className="bg-gray-50 p-6">
+      <OnboardingOverlay />
       <div className="max-w-lg mx-auto">
         <div className="flex items-center justify-between mb-1">
           <h1 className="text-2xl font-bold">Heihei, {profile.name.split(" ")[0]}! 👋</h1>
