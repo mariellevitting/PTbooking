@@ -103,18 +103,21 @@ export default function TrainerSidebar({ name, avatarUrl, notifications }: Props
       {/* Desktop sidebar */}
       <aside className="hidden md:flex flex-col fixed left-0 top-0 bottom-0 w-56 bg-white border-r border-gray-200 z-30">
         <div className="p-4 border-b border-gray-100">
-          <div className="flex items-center gap-3">
-            {avatarUrl ? (
-              <img src={avatarUrl} alt="" className="w-9 h-9 rounded-full object-cover" />
-            ) : (
-              <div className="w-9 h-9 rounded-full bg-purple-100 flex items-center justify-center text-purple-700 font-bold text-sm">
-                {firstName.charAt(0)}
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-3 min-w-0">
+              {avatarUrl ? (
+                <img src={avatarUrl} alt="" className="w-9 h-9 rounded-full object-cover shrink-0" />
+              ) : (
+                <div className="w-9 h-9 rounded-full bg-purple-100 flex items-center justify-center text-purple-700 font-bold text-sm shrink-0">
+                  {firstName.charAt(0)}
+                </div>
+              )}
+              <div className="min-w-0">
+                <p className="text-sm font-semibold text-gray-800 truncate">{firstName}</p>
+                <p className="text-xs text-gray-400">Trener</p>
               </div>
-            )}
-            <div className="min-w-0">
-              <p className="text-sm font-semibold text-gray-800 truncate">{firstName}</p>
-              <p className="text-xs text-gray-400">Trener</p>
             </div>
+            <NotificationBell notifications={notifications} />
           </div>
         </div>
         <nav className="flex-1 p-3 space-y-1 overflow-y-auto">
@@ -134,8 +137,7 @@ export default function TrainerSidebar({ name, avatarUrl, notifications }: Props
             );
           })}
         </nav>
-        <div className="p-3 border-t border-gray-100 flex items-center justify-between">
-          <NotificationBell notifications={notifications} />
+        <div className="p-3 border-t border-gray-100">
           <LogoutButton />
         </div>
       </aside>

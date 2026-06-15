@@ -84,11 +84,11 @@ export default function ParentDashboardNav({ userName, avatarUrl, notifications,
       <div className="md:flex md:gap-6 p-4 md:p-0">
         {/* Desktop: vertikal meny til venstre */}
         <div className="hidden md:flex flex-col gap-1 w-48 shrink-0">
-          <div className="bg-white border rounded-2xl overflow-hidden shadow-sm sticky top-6">
+          <div className="bg-white border rounded-2xl overflow-hidden shadow-sm sticky top-6 p-2 space-y-0.5">
             {sections.map(s => (
               <button key={s.id} onClick={() => goTo(s.id)}
-                className={`w-full flex items-center gap-2.5 px-4 py-3 text-sm font-medium border-b last:border-0 transition-colors text-left ${active === s.id ? "bg-purple-50 text-purple-700" : "text-gray-600 hover:bg-gray-50"}`}>
-                <span className={active === s.id ? "text-purple-600" : "text-gray-400"}>{s.icon}</span>
+                className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-colors text-left ${active === s.id ? "bg-purple-600 text-white" : "text-gray-600 hover:bg-gray-100"}`}>
+                <span className={active === s.id ? "text-white" : "text-gray-400"}>{s.icon}</span>
                 {s.label}
               </button>
             ))}
