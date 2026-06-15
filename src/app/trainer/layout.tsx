@@ -17,20 +17,17 @@ export default async function TrainerLayout({ children }: { children: React.Reac
 
   const { data: notifications } = await supabase
     .from("notifications")
-    .select("id, read")
+    .select("*")
     .eq("user_id", user.id)
-    .eq("read", false);
-
-  const unreadCount = notifications?.length ?? 0;
+    .order("created_at", { ascending: false });
 
   return (
     <div className="min-h-screen bg-gray-50 flex">
       <TrainerSidebar
         name={profile.name}
         avatarUrl={profile.avatar_url ?? null}
-        unreadCount={unreadCount}
+        notifications={notifications ?? []}
       />
-      {/* Innhold – skyv til høyre for sidebar på desktop, legg til padding under for mobilnav */}
       <div className="flex-1 md:ml-56 pt-14 md:pt-0">
         {children}
       </div>

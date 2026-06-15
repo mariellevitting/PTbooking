@@ -5,6 +5,7 @@ import { usePathname } from "next/navigation";
 import { Calendar, Clock, UserCircle, Trophy, History, PlusCircle, Menu, X } from "lucide-react";
 import { useState } from "react";
 import LogoutButton from "@/components/LogoutButton";
+import NotificationBell from "@/components/NotificationBell";
 
 const NAV = [
   { href: "/trainer/dashboard", label: "Mine timer", icon: Calendar },
@@ -18,10 +19,10 @@ const NAV = [
 interface Props {
   name: string;
   avatarUrl: string | null;
-  unreadCount: number;
+  notifications: any[];
 }
 
-export default function TrainerSidebar({ name, avatarUrl, unreadCount }: Props) {
+export default function TrainerSidebar({ name, avatarUrl, notifications }: Props) {
   const pathname = usePathname();
   const [menuOpen, setMenuOpen] = useState(false);
   const firstName = name.split(" ")[0];
@@ -39,12 +40,17 @@ export default function TrainerSidebar({ name, avatarUrl, unreadCount }: Props) 
           <Menu size={24} className="text-white" />
         </button>
         <p className="text-white font-semibold text-sm">PT Booking</p>
-        <Link href="/trainer/profil" className="hover:opacity-80 transition-opacity">
-          {avatarUrl
-            ? <img src={avatarUrl} alt="Profil" className="w-8 h-8 rounded-full object-cover border-2 border-white" />
-            : <div className="w-8 h-8 rounded-full bg-purple-400 flex items-center justify-center text-white font-bold text-sm">{firstName.charAt(0)}</div>
-          }
-        </Link>
+        <div className="flex items-center gap-2">
+          <div className="[&_button]:text-white [&_svg]:text-white [&_span]:bg-white [&_span]:text-purple-600">
+            <NotificationBell notifications={notifications} />
+          </div>
+          <Link href="/trainer/profil" className="hover:opacity-80 transition-opacity">
+            {avatarUrl
+              ? <img src={avatarUrl} alt="Profil" className="w-8 h-8 rounded-full object-cover border-2 border-white" />
+              : <div className="w-8 h-8 rounded-full bg-purple-400 flex items-center justify-center text-white font-bold text-sm">{firstName.charAt(0)}</div>
+            }
+          </Link>
+        </div>
       </div>
 
       {/* Mobil: slide-in drawer */}
@@ -128,7 +134,8 @@ export default function TrainerSidebar({ name, avatarUrl, unreadCount }: Props) 
             );
           })}
         </nav>
-        <div className="p-3 border-t border-gray-100">
+        <div className="p-3 border-t border-gray-100 flex items-center justify-between">
+          <NotificationBell notifications={notifications} />
           <LogoutButton />
         </div>
       </aside>
