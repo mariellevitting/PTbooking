@@ -67,9 +67,14 @@ export default function TrainerDashboardTabs({ slots, completedSlots }: Props) {
           </button>
         </div>
         {tab === "upcoming" && (
-          <Link href="/trainer/availability">
-            <Button className="bg-purple-600 hover:bg-purple-700 text-sm">+ Legg ut tid</Button>
-          </Link>
+          <div className="flex gap-2">
+            <Link href="/trainer/book-for-dancer">
+              <Button variant="outline" className="text-sm border-purple-300 text-purple-700 hover:bg-purple-50">+ Book for danser</Button>
+            </Link>
+            <Link href="/trainer/availability">
+              <Button className="bg-purple-600 hover:bg-purple-700 text-sm">+ Legg ut tid</Button>
+            </Link>
+          </div>
         )}
       </div>
 
