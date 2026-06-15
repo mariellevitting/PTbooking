@@ -16,11 +16,13 @@ export default async function ParentDashboard() {
 
   if (!profile || profile.role !== "parent") redirect("/dashboard");
 
-  const { data: notifications } = await supabase
-    .from("notifications")
-    .select("*")
-    .eq("user_id", user.id)
-    .order("created_at", { ascending: false });
+  const [
+    { data: notifications },
+    { data: children },
+  ] = await Promise.all([
+    supabase.from("notifications").select("*").eq("user_id", user.id).order("created_at", { ascending: false }),
+    supabase.from("children").select("id, name, season_goals, points_freestyle, points_slow, level_freestyle, level_slow").eq("parent_id", user.id).order("created_at"),
+  ]);
 
   const { data: bookings } = await supabase
     .from("bookings")
@@ -42,11 +44,13 @@ export default async function ParentDashboard() {
       <OnboardingOverlay />
       <div>
         <ParentDashboardNav
+          parentId={user.id}
           userName={profile.name}
           avatarUrl={profile.avatar_url ?? null}
           notifications={notifications ?? []}
           upcomingBookings={upcomingBookings}
           completedBookings={completedBookings}
+          children={children ?? []}
         />
       </div>
     </main>

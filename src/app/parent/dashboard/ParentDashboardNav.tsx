@@ -7,9 +7,8 @@ import { Button } from "@/components/ui/button";
 import LogoutButton from "@/components/LogoutButton";
 import NotificationBell from "@/components/NotificationBell";
 import NMCountdown from "@/components/NMCountdown";
+import ChildDancerCard from "@/app/parent/profil/ChildDancerCard";
 import { formatDate, formatTime, formatDateKey } from "@/lib/dateUtils";
-
-const LEVELS = ["Rekrutt", "Litt øvet", "Mester", "Champ", "Elite"];
 
 const COMPETITIONS = [
   { short: "NM 2026", date: new Date("2026-06-13"), dateLabel: "13–14. juni", location: "Sofiemyrhallen, Sofienmyr" },
@@ -56,20 +55,14 @@ interface Props {
   notifications: any[];
   upcomingBookings: Booking[];
   completedBookings: Booking[];
+  parentId: string;
+  children: { id: string; name: string; season_goals: string | null; points_freestyle: number | null; points_slow: number | null; level_freestyle: number | null; level_slow: number | null }[];
 }
 
-export default function ParentDashboardNav({ userName, avatarUrl, notifications, upcomingBookings, completedBookings }: Props) {
+export default function ParentDashboardNav({ userName, avatarUrl, notifications, upcomingBookings, completedBookings, parentId, children }: Props) {
   const [active, setActive] = useState("timer");
   const [bookingTab, setBookingTab] = useState<"kommende" | "gjennomforte">("kommende");
   const [menuOpen, setMenuOpen] = useState(false);
-
-  // Hent unike barnenavn fra bookinger
-  const childNames = Array.from(new Set([
-    ...upcomingBookings.map(b => b.dancer_name.split(" & ")[0]),
-    ...completedBookings.map(b => b.dancer_name.split(" & ")[0]),
-  ])).filter(Boolean);
-
-  const [selectedChild, setSelectedChild] = useState<string>(childNames[0] ?? "");
 
   function goTo(id: string) { setActive(id); setMenuOpen(false); }
 
@@ -302,56 +295,19 @@ export default function ParentDashboardNav({ userName, avatarUrl, notifications,
             </div>
           )}
 
-          {/* Poeng og nivåer */}
-          {active === "nivaer" && (
-            <div className="space-y-4">
-              <h2 className="font-semibold text-lg">Poeng og nivåer</h2>
-
-              {childNames.length > 1 && (
-                <div className="flex gap-2 flex-wrap">
-                  {childNames.map(name => (
-                    <button key={name} onClick={() => setSelectedChild(name)}
-                      className={`px-3 py-1.5 rounded-full text-sm font-medium border transition-colors ${selectedChild === name ? "bg-purple-600 text-white border-purple-600" : "bg-white text-gray-700 border-gray-200 hover:border-purple-400"}`}>
-                      {name}
-                    </button>
-                  ))}
+          {/* Poeng og nivåer + Resultater */}
+          {(active === "nivaer" || active === "resultater") && (
+            children.length === 0 ? (
+              <div className="space-y-4">
+                <h2 className="font-semibold text-lg">{active === "nivaer" ? "Poeng og nivåer" : "Resultater"}</h2>
+                <div className="bg-white rounded-xl border p-6 text-center text-gray-400 text-sm">
+                  <p className="mb-1">Ingen barn lagt til ennå</p>
+                  <Link href="/parent/profil"><span className="text-purple-600 text-sm underline">Legg til barn i profilen →</span></Link>
                 </div>
-              )}
-
-              {childNames.length === 0 ? (
-                <div className="bg-white rounded-xl border p-6 text-center text-gray-400 text-sm">Book en time først for å logge poeng</div>
-              ) : (
-                <div className="bg-white rounded-2xl border p-5 space-y-4">
-                  <p className="text-sm font-medium text-gray-600">Poeng for <span className="text-purple-600 font-semibold">{selectedChild}</span> registreres av treneren etter hver time.</p>
-                  <div className="bg-purple-50 rounded-xl p-4">
-                    <p className="text-xs font-semibold text-purple-700 mb-2">Nivåer</p>
-                    <div className="flex flex-wrap gap-2">
-                      {LEVELS.map((level, i) => (
-                        <span key={level} className={`px-3 py-1.5 rounded-full text-xs font-semibold border ${
-                          i === 0 ? "bg-gray-100 text-gray-500 border-gray-200"
-                          : i === 1 ? "bg-blue-50 text-blue-600 border-blue-100"
-                          : i === 2 ? "bg-purple-50 text-purple-600 border-purple-100"
-                          : i === 3 ? "bg-yellow-50 text-yellow-600 border-yellow-100"
-                          : "bg-orange-50 text-orange-600 border-orange-100"
-                        }`}>{i === 4 ? "⭐ " : ""}{level}</span>
-                      ))}
-                    </div>
-                    <p className="text-xs text-gray-400 mt-2">Kontakt treneren for å se barnets nåværende nivå og poeng.</p>
-                  </div>
-                </div>
-              )}
-            </div>
-          )}
-
-          {/* Resultater */}
-          {active === "resultater" && (
-            <div className="space-y-4">
-              <h2 className="font-semibold text-lg">Konkurranseresultater</h2>
-              <div className="bg-white rounded-xl border p-6 text-center text-gray-400 text-sm">
-                <p className="mb-1">Ingen resultater loggført ennå</p>
-                <p className="text-xs">Loggfør plasseringer etter konkurranser her</p>
               </div>
-            </div>
+            ) : (
+              <ChildDancerCard parentId={parentId} children={children} />
+            )
           )}
 
           {/* Konkurranser */}
