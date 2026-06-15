@@ -51,7 +51,7 @@ export default function TrainerDashboardTabs({ slots, completedSlots }: Props) {
   return (
     <div>
       {/* Tabs */}
-      <div className="flex gap-1 bg-gray-100 rounded-xl p-1 mb-4">
+      <div className="flex gap-1 bg-gray-100 rounded-xl p-1 mb-3">
         <button
           onClick={() => setTab("upcoming")}
           className={`flex-1 px-3 py-1.5 rounded-lg text-sm font-medium transition-colors ${tab === "upcoming" ? "bg-white text-purple-700 shadow-sm" : "text-gray-500 hover:text-gray-700"}`}
@@ -65,6 +65,11 @@ export default function TrainerDashboardTabs({ slots, completedSlots }: Props) {
           Gjennomførte
         </button>
       </div>
+
+      {/* Legg ut tid-knapp */}
+      <Link href="/trainer/availability" className="block mb-4">
+        <Button className="w-full bg-purple-600 hover:bg-purple-700">+ Legg ut tid</Button>
+      </Link>
 
       {/* Kommende timer */}
       {tab === "upcoming" && (() => {
