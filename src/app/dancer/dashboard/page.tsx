@@ -1,9 +1,5 @@
 import { redirect } from "next/navigation";
-import Link from "next/link";
 import { createClient } from "@/lib/supabase/server";
-import LogoutButton from "@/components/LogoutButton";
-import NotificationBell from "@/components/NotificationBell";
-import { UserCircle } from "lucide-react";
 import DancerDashboardNav from "./DancerDashboardNav";
 import OnboardingOverlay from "@/components/OnboardingOverlay";
 
@@ -40,30 +36,9 @@ export default async function DancerDashboard() {
     .sort((a, b) => new Date(b.availability_slots.start_at).getTime() - new Date(a.availability_slots.start_at).getTime());
 
   return (
-    <main className="bg-gray-50 min-h-screen">
+    <main className="bg-gray-50 min-h-screen pt-14 md:pt-0">
       <OnboardingOverlay />
-      {/* Desktop header */}
-      <div className="hidden md:block max-w-4xl mx-auto px-6 pt-6">
-        <div className="flex items-center justify-between mb-1">
-          <h1 className="text-2xl font-bold">Heihei, {profile.name.split(" ")[0]}! 👋</h1>
-          <div className="flex items-center gap-3">
-            <NotificationBell notifications={notifications ?? []} />
-            <Link href="/dancer/profil" className="hover:opacity-80 transition-opacity">
-              {profile.avatar_url ? (
-                <img src={profile.avatar_url} alt="Profil" className="w-8 h-8 rounded-full object-cover" />
-              ) : (
-                <UserCircle size={28} className="text-gray-400" />
-              )}
-            </Link>
-            <LogoutButton />
-          </div>
-        </div>
-        <p className="text-gray-500 mb-6">
-          <a href="https://evolution-studio.no" target="_blank" rel="noopener noreferrer" className="hover:underline">Evolution Danseklubb</a>
-        </p>
-      </div>
-
-      <div className="max-w-4xl mx-auto md:px-6 md:pb-6">
+      <div>
         <DancerDashboardNav
           userId={user.id}
           userName={profile.name}

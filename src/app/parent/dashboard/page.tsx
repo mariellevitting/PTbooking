@@ -38,9 +38,9 @@ export default async function ParentDashboard() {
     .sort((a, b) => new Date(b.availability_slots.start_at).getTime() - new Date(a.availability_slots.start_at).getTime());
 
   return (
-    <main className="bg-gray-50 min-h-screen">
+    <main className="bg-gray-50 min-h-screen pt-14 md:pt-0">
       <OnboardingOverlay />
-      <div className="max-w-4xl mx-auto md:px-6 md:pb-6">
+      <div>
         <ParentDashboardNav
           userName={profile.name}
           avatarUrl={profile.avatar_url ?? null}

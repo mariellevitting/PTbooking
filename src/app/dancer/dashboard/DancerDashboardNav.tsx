@@ -161,10 +161,27 @@ export default function DancerDashboardNav(props: Props) {
         </div>
       </div>
 
-      <div className="md:flex md:gap-6 p-4 md:p-0">
-      {/* Desktop: vertikal meny til venstre */}
-      <div className="hidden md:flex flex-col gap-1 w-48 shrink-0">
-        <div className="bg-white border rounded-2xl overflow-hidden shadow-sm sticky top-6 p-2 space-y-0.5">
+      {/* Desktop: fast sidebar til venstre */}
+      <aside className="hidden md:flex flex-col fixed left-0 top-0 bottom-0 w-56 bg-white border-r border-gray-200 z-30">
+        <div className="p-4 border-b border-gray-100">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-3 min-w-0">
+              {props.avatarUrl ? (
+                <img src={props.avatarUrl} alt="" className="w-9 h-9 rounded-full object-cover shrink-0" />
+              ) : (
+                <div className="w-9 h-9 rounded-full bg-purple-100 flex items-center justify-center text-purple-700 font-bold text-sm shrink-0">
+                  {props.userName.charAt(0)}
+                </div>
+              )}
+              <div className="min-w-0">
+                <p className="text-sm font-semibold text-gray-800 truncate">{props.userName.split(" ")[0]}</p>
+                <p className="text-xs text-gray-400">Danser</p>
+              </div>
+            </div>
+            <NotificationBell notifications={props.notifications ?? []} />
+          </div>
+        </div>
+        <nav className="flex-1 p-3 space-y-1 overflow-y-auto">
           {sections.map(s => (
             <button key={s.id} onClick={() => goTo(s.id)}
               className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-colors text-left ${active === s.id ? "bg-purple-600 text-white" : "text-gray-600 hover:bg-gray-100"}`}>
@@ -172,11 +189,15 @@ export default function DancerDashboardNav(props: Props) {
               {s.label}
             </button>
           ))}
+        </nav>
+        <div className="p-3 border-t border-gray-100">
+          <LogoutButton />
         </div>
-      </div>
+      </aside>
 
+      <div className="md:ml-56 p-4 md:p-6">
       {/* Innhold */}
-      <div className="flex-1 min-w-0 space-y-4">
+      <div className="max-w-2xl space-y-4">
 
         {/* Mobil: slide-in drawer */}
         {menuOpen && (
@@ -477,3 +498,4 @@ export default function DancerDashboardNav(props: Props) {
     </div>
   );
 }
+
