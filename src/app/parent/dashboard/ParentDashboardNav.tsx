@@ -452,7 +452,7 @@ export default function ParentDashboardNav({ userName, avatarUrl, notifications,
               <h2 className="font-semibold text-lg mb-1">Kommende konkurranser</h2>
               <NMCountdown />
               {upcomingComps.length === 0 && <p className="text-sm text-gray-400">Ingen kommende konkurranser</p>}
-              {upcomingComps.map(c => (
+              {upcomingComps.slice(1).map(c => (
                 <div key={c.short} className="bg-white rounded-xl border p-4 flex items-center justify-between">
                   <div>
                     <p className="font-semibold text-gray-800">{c.short}</p>

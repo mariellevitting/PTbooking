@@ -436,7 +436,7 @@ export default function DancerDashboardNav(props: Props) {
           <div className="space-y-3">
             <NMCountdown />
             {upcoming.length === 0 && <p className="text-sm text-gray-400 text-center py-6">Ingen kommende konkurranser</p>}
-            {upcoming.map(c => (
+            {upcoming.slice(1).map(c => (
               <div key={c.name} className="bg-white rounded-xl border p-4 flex items-center justify-between">
                 <div>
                   <p className="font-semibold text-gray-800">{c.short}</p>
