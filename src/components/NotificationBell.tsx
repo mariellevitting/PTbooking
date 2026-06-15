@@ -19,12 +19,17 @@ export default function NotificationBell({ notifications: initial }: Props) {
   const [open, setOpen] = useState(false);
   const [notifications, setNotifications] = useState(initial);
   const [clearing, setClearing] = useState(false);
-  const ref = useRef<HTMLDivElement>(null);
+  const [dropdownPos, setDropdownPos] = useState({ top: 0, left: 0 });
+  const buttonRef = useRef<HTMLButtonElement>(null);
+  const dropdownRef = useRef<HTMLDivElement>(null);
   const unread = notifications.filter((n) => !n.read).length;
 
   useEffect(() => {
     function handleClick(e: MouseEvent) {
-      if (ref.current && !ref.current.contains(e.target as Node)) {
+      if (
+        buttonRef.current && !buttonRef.current.contains(e.target as Node) &&
+        dropdownRef.current && !dropdownRef.current.contains(e.target as Node)
+      ) {
         setOpen(false);
       }
     }
@@ -33,6 +38,13 @@ export default function NotificationBell({ notifications: initial }: Props) {
   }, []);
 
   async function handleOpen() {
+    if (!open && buttonRef.current) {
+      const rect = buttonRef.current.getBoundingClientRect();
+      setDropdownPos({
+        top: rect.bottom + 8,
+        left: Math.min(rect.right - 320, window.innerWidth - 328),
+      });
+    }
     setOpen((v) => !v);
     if (!open && unread > 0) {
       const supabase = createClient();
@@ -52,8 +64,8 @@ export default function NotificationBell({ notifications: initial }: Props) {
   }
 
   return (
-    <div ref={ref} className="relative">
-      <button onClick={handleOpen} className="relative p-1 text-gray-500 hover:text-purple-600 transition-colors">
+    <div className="relative">
+      <button ref={buttonRef} onClick={handleOpen} className="relative p-1 text-gray-500 hover:text-purple-600 transition-colors">
         <Bell size={22} />
         {unread > 0 && (
           <span className="absolute -top-1 -right-1 bg-purple-600 text-white text-xs w-5 h-5 rounded-full flex items-center justify-center font-bold">
@@ -63,7 +75,11 @@ export default function NotificationBell({ notifications: initial }: Props) {
       </button>
 
       {open && (
-        <div className="absolute right-0 mt-2 w-80 bg-white rounded-2xl shadow-xl border z-50 overflow-hidden">
+        <div
+          ref={dropdownRef}
+          className="fixed w-80 bg-white rounded-2xl shadow-xl border z-[200] overflow-hidden"
+          style={{ top: dropdownPos.top, left: dropdownPos.left }}
+        >
           <div className="px-4 py-3 border-b flex items-center justify-between">
             <p className="font-semibold text-sm">Varsler</p>
             {notifications.length > 0 && (
