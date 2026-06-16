@@ -3,6 +3,7 @@ import Link from "next/link";
 import { createClient } from "@/lib/supabase/server";
 import { ArrowLeft } from "lucide-react";
 import { formatDate, formatTime } from "@/lib/dateUtils";
+import DancerSearch from "./DancerSearch";
 
 export default async function TrainerHistorikkPage() {
   const supabase = await createClient();
@@ -43,6 +44,13 @@ export default async function TrainerHistorikkPage() {
         <Link href="/trainer/dashboard" className="inline-flex items-center gap-1 text-sm text-purple-600 hover:underline mb-6">
           <ArrowLeft size={16} /> Tilbake
         </Link>
+
+        <DancerSearch slots={(completedSlots ?? []).map(s => ({
+          id: s.id,
+          start_at: s.start_at,
+          end_at: s.end_at,
+          bookings: s.bookings ?? null,
+        }))} />
 
         <div className="flex items-baseline gap-2 mb-6">
           <h1 className="text-2xl font-bold">Gjennomførte privattimer</h1>
