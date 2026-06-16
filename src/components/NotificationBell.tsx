@@ -42,7 +42,7 @@ export default function NotificationBell({ notifications: initial }: Props) {
       const rect = buttonRef.current.getBoundingClientRect();
       setDropdownPos({
         top: rect.bottom + 8,
-        left: Math.min(rect.right - 320, window.innerWidth - 328),
+        left: Math.max(8, Math.min(rect.right - 320, window.innerWidth - 328)),
       });
     }
     setOpen((v) => !v);
