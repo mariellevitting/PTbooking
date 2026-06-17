@@ -1,11 +1,12 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
+import { Search, X } from "lucide-react";
 
 const DOUBLE_STYLES = ["Freestyle dobbel", "Slow dobbel"];
 
@@ -21,11 +22,18 @@ interface Child {
   name: string;
 }
 
+interface LinkedUser {
+  id: string;
+  name: string;
+  role: string;
+}
+
 interface SlotBooking {
   slot: Slot;
   danceStyle: string;
   dancer1: string;
   dancer2: string;
+  linkedUserId: string | null;
 }
 
 interface Props {
@@ -50,7 +58,6 @@ export default function BookingForm({ slots, trainerName, bookerId, bookerName, 
   const [addingChild, setAddingChild] = useState(false);
   const [savingChild, setSavingChild] = useState(false);
 
-  // Steg: "pick" = velg tider, "configure" = sett stil per time, "confirm" = bekreft alle
   const [step, setStep] = useState<"pick" | "configure" | "confirm">("pick");
   const [selectedSlots, setSelectedSlots] = useState<Slot[]>([]);
   const [slotBookings, setSlotBookings] = useState<SlotBooking[]>([]);
@@ -58,7 +65,66 @@ export default function BookingForm({ slots, trainerName, bookerId, bookerName, 
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
 
-  // Uke-navigasjon
+  // Partner search state
+  const [partnerQuery, setPartnerQuery] = useState("");
+  const [partnerResults, setPartnerResults] = useState<LinkedUser[]>([]);
+  const [searching, setSearching] = useState(false);
+  const [linkedPartner, setLinkedPartner] = useState<LinkedUser | null>(null);
+  const searchRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const trimmed = partnerQuery.trim();
+    if (trimmed.length < 2) { setPartnerResults([]); return; }
+    const timeout = setTimeout(async () => {
+      setSearching(true);
+      const supabase = createClient();
+      const { data } = await supabase
+        .from("profiles")
+        .select("id, name, role")
+        .in("role", ["dancer", "parent"])
+        .ilike("name", `%${trimmed}%`)
+        .neq("id", bookerId)
+        .limit(6);
+      setPartnerResults(data ?? []);
+      setSearching(false);
+    }, 250);
+    return () => clearTimeout(timeout);
+  }, [partnerQuery, bookerId]);
+
+  useEffect(() => {
+    function handleClick(e: MouseEvent) {
+      if (searchRef.current && !searchRef.current.contains(e.target as Node)) {
+        setPartnerResults([]);
+      }
+    }
+    document.addEventListener("mousedown", handleClick);
+    return () => document.removeEventListener("mousedown", handleClick);
+  }, []);
+
+  function selectPartner(user: LinkedUser) {
+    setLinkedPartner(user);
+    updateCurrent("dancer2", user.name);
+    updateCurrent("linkedUserId", user.id);
+    setPartnerQuery("");
+    setPartnerResults([]);
+  }
+
+  function clearPartner() {
+    setLinkedPartner(null);
+    updateCurrent("dancer2", "");
+    updateCurrent("linkedUserId", null);
+  }
+
+  // Reset partner search when switching config step
+  useEffect(() => {
+    const current = slotBookings[configIndex];
+    if (current) {
+      setLinkedPartner(current.linkedUserId ? { id: current.linkedUserId, name: current.dancer2, role: "" } : null);
+      setPartnerQuery("");
+      setPartnerResults([]);
+    }
+  }, [configIndex]);
+
   function getMonday(date: Date) {
     const d = new Date(date);
     const day = d.getDay() || 7;
@@ -81,7 +147,6 @@ export default function BookingForm({ slots, trainerName, bookerId, bookerName, 
   const today = new Date(); today.setHours(0, 0, 0, 0);
   const canGoPrev = weekStart > getMonday(today);
 
-  // Finn tilgjengelige måneder basert på faktiske slots
   const availableMonths = Array.from(
     new Set(slots.map(s => {
       const d = new Date(s.start_at);
@@ -120,12 +185,14 @@ export default function BookingForm({ slots, trainerName, bookerId, bookerName, 
       danceStyle: "",
       dancer1: isParent ? autoFill : bookerName,
       dancer2: "",
+      linkedUserId: null,
     })));
     setConfigIndex(0);
+    setLinkedPartner(null);
     setStep("configure");
   }
 
-  function updateCurrent(field: keyof SlotBooking, value: string) {
+  function updateCurrent(field: keyof SlotBooking, value: string | null) {
     setSlotBookings(prev => prev.map((sb, i) => i === configIndex ? { ...sb, [field]: value } : sb));
   }
 
@@ -151,6 +218,7 @@ export default function BookingForm({ slots, trainerName, bookerId, bookerName, 
         dancer_name: dancerName,
         dance_style: sb.danceStyle,
         status: "confirmed",
+        linked_user_id: sb.linkedUserId ?? null,
       });
 
       if (bookError) {
@@ -291,7 +359,13 @@ export default function BookingForm({ slots, trainerName, bookerId, bookerName, 
                 <button
                   key={style}
                   type="button"
-                  onClick={() => { updateCurrent("danceStyle", style); updateCurrent("dancer2", ""); }}
+                  onClick={() => {
+                    updateCurrent("danceStyle", style);
+                    updateCurrent("dancer2", "");
+                    updateCurrent("linkedUserId", null);
+                    setLinkedPartner(null);
+                    setPartnerQuery("");
+                  }}
                   className={`py-2 px-3 rounded-lg text-sm border transition-colors ${
                     current.danceStyle === style
                       ? "bg-purple-600 text-white border-purple-600"
@@ -328,7 +402,56 @@ export default function BookingForm({ slots, trainerName, bookerId, bookerName, 
           {needsTwo && (
             <div className="space-y-2">
               <label className="text-sm font-medium">{isParent ? "Danser 2 – navn" : "Navn på partner"}</label>
-              <Input value={current.dancer2} onChange={(e) => updateCurrent("dancer2", e.target.value)} placeholder="Navn på danser nr. 2" />
+
+              {linkedPartner ? (
+                <div className="flex items-center justify-between bg-purple-50 rounded-lg px-3 py-2.5">
+                  <div>
+                    <p className="text-sm font-semibold text-purple-800">{linkedPartner.name}</p>
+                    <p className="text-xs text-purple-500">Koblet til profil – timen dukker opp hos dem</p>
+                  </div>
+                  <button type="button" onClick={clearPartner} className="text-purple-400 hover:text-purple-700 ml-2">
+                    <X size={16} />
+                  </button>
+                </div>
+              ) : (
+                <div ref={searchRef} className="relative space-y-2">
+                  <div className="relative">
+                    <Search size={15} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
+                    <input
+                      type="text"
+                      value={partnerQuery}
+                      onChange={e => setPartnerQuery(e.target.value)}
+                      placeholder="Søk på navn for å koble til profil..."
+                      className="w-full border rounded-lg pl-9 pr-3 py-2 text-sm bg-white"
+                    />
+                  </div>
+                  {(partnerResults.length > 0 || (searching && partnerQuery.trim().length >= 2)) && (
+                    <div className="absolute z-10 w-full bg-white border rounded-xl shadow-lg overflow-hidden">
+                      {searching && <p className="text-sm text-gray-400 px-4 py-3">Søker...</p>}
+                      {!searching && partnerResults.map(u => (
+                        <button
+                          key={u.id}
+                          type="button"
+                          onClick={() => selectPartner(u)}
+                          className="w-full text-left px-4 py-2.5 hover:bg-purple-50 flex items-center justify-between border-t first:border-t-0"
+                        >
+                          <span className="text-sm font-medium text-gray-800">{u.name}</span>
+                          <span className="text-xs text-gray-400">{u.role === "parent" ? "Forelder" : "Danser"}</span>
+                        </button>
+                      ))}
+                      {!searching && partnerResults.length === 0 && partnerQuery.trim().length >= 2 && (
+                        <p className="text-sm text-gray-400 px-4 py-3">Ingen brukere funnet</p>
+                      )}
+                    </div>
+                  )}
+                  <Input
+                    value={current.dancer2}
+                    onChange={(e) => { updateCurrent("dancer2", e.target.value); setLinkedPartner(null); updateCurrent("linkedUserId", null); }}
+                    placeholder="Eller skriv inn navn manuelt"
+                  />
+                  <p className="text-xs text-gray-400">Søk for å koble timen til partnerens profil, eller skriv navn direkte</p>
+                </div>
+              )}
             </div>
           )}
 
@@ -364,6 +487,9 @@ export default function BookingForm({ slots, trainerName, bookerId, bookerName, 
                 </p>
                 <p className="text-sm text-purple-600">{sb.danceStyle} · {dancerName}</p>
                 <p className="text-xs text-gray-400 mt-0.5">Trener: {trainerName}</p>
+                {sb.linkedUserId && (
+                  <p className="text-xs text-green-600 mt-0.5">✓ Koblet til {sb.dancer2}s profil</p>
+                )}
               </div>
             );
           })}
