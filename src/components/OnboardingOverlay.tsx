@@ -11,7 +11,7 @@ const SLIDES = [
   { id: "maal" },
 ];
 
-const STORAGE_KEY = "ptbooking_onboarding_done";
+const STORAGE_KEY = "danceitude_onboarding_done";
 
 export default function OnboardingOverlay() {
   const [visible, setVisible] = useState(false);
