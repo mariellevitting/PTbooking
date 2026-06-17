@@ -238,6 +238,13 @@ export default function BookingForm({ slots, trainerName, bookerId, bookerName, 
           message: `${dancerName} har booket time i ${sb.danceStyle} – ${tidspunkt}`,
         });
       }
+
+      if (sb.linkedUserId) {
+        await supabase.from("notifications").insert({
+          user_id: sb.linkedUserId,
+          message: `${sb.dancer1} har booket en dobbel privattime med deg i ${sb.danceStyle} – ${tidspunkt}`,
+        });
+      }
     }
 
     router.push("/booking/kvittering?success=1");

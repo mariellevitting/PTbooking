@@ -203,6 +203,15 @@ export default function BookForDancerForm({ trainerId, danceStyles }: Props) {
       return;
     }
 
+    if (linkedUser) {
+      const tidspunkt = start.toLocaleDateString("nb-NO", { weekday: "long", day: "numeric", month: "long" }) +
+        " kl. " + start.toLocaleTimeString("nb-NO", { hour: "2-digit", minute: "2-digit" });
+      await supabase.from("notifications").insert({
+        user_id: linkedUser.id,
+        message: `Treneren har booket en privattime for deg i ${style || "ukjent stil"} – ${tidspunkt}`,
+      });
+    }
+
     router.push("/trainer/dashboard");
     router.refresh();
   }
