@@ -62,7 +62,7 @@ export default function AvailabilityPage() {
 
   const [weekStart, setWeekStart] = useState(getMondayOfWeek(today));
   const [selectedDate, setSelectedDate] = useState<Date | null>(today);
-  const [selected, setSelected] = useState<Set<string>>(new Set());
+  const [selected, setSelected] = useState<Map<string, Set<string>>>(new Map());
   const [saving, setSaving] = useState(false);
   const [success, setSuccess] = useState(false);
   const [error, setError] = useState("");
@@ -107,8 +107,8 @@ export default function AvailabilityPage() {
       const days = getWeekDays(prev);
       const firstAvailable = days.find((d) => d >= today) ?? days[0];
       setSelectedDate(firstAvailable);
-      setSelected(new Set());
       setSuccess(false);
+      fetchExistingSlots(firstAvailable);
     }
   }
 
@@ -119,30 +119,35 @@ export default function AvailabilityPage() {
     const days = getWeekDays(next);
     const firstAvailable = days.find((d) => d >= today) ?? days[0];
     setSelectedDate(firstAvailable);
-    setSelected(new Set());
     setSuccess(false);
+    fetchExistingSlots(firstAvailable);
   }
 
   async function pickDate(date: Date) {
     if (date < today) return;
     setSelectedDate(date);
-    setSelected(new Set());
     setSuccess(false);
     setError("");
     await fetchExistingSlots(date);
   }
 
   function toggleSlot(slot: string) {
+    if (!selectedDate) return;
+    const dateKey = dateToISO(selectedDate);
     setSelected((prev) => {
-      const next = new Set(prev);
-      next.has(slot) ? next.delete(slot) : next.add(slot);
+      const next = new Map(prev);
+      const daySlots = new Set(next.get(dateKey) ?? []);
+      daySlots.has(slot) ? daySlots.delete(slot) : daySlots.add(slot);
+      if (daySlots.size === 0) next.delete(dateKey); else next.set(dateKey, daySlots);
       return next;
     });
   }
 
+  const totalSelected = Array.from(selected.values()).reduce((sum, s) => sum + s.size, 0);
+
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
-    if (!selectedDate || selected.size === 0) return;
+    if (totalSelected === 0) return;
     setSaving(true);
     setError("");
 
@@ -150,14 +155,17 @@ export default function AvailabilityPage() {
     const { data: { user } } = await supabase.auth.getUser();
     if (!user) return;
 
-    const dateStr = dateToISO(selectedDate);
-    const rows = Array.from(selected).map((time) => {
-      const [hours, minutes] = time.split(":").map(Number);
-      const start = new Date(selectedDate);
-      start.setHours(hours, minutes, 0, 0);
-      const end = new Date(start.getTime() + 30 * 60 * 1000);
-      return { trainer_id: user.id, start_at: start.toISOString(), end_at: end.toISOString() };
-    });
+    const rows: { trainer_id: string; start_at: string; end_at: string }[] = [];
+    for (const [dateKey, times] of selected.entries()) {
+      const baseDate = new Date(`${dateKey}T00:00:00`);
+      for (const time of times) {
+        const [hours, minutes] = time.split(":").map(Number);
+        const start = new Date(baseDate);
+        start.setHours(hours, minutes, 0, 0);
+        const end = new Date(start.getTime() + 30 * 60 * 1000);
+        rows.push({ trainer_id: user.id, start_at: start.toISOString(), end_at: end.toISOString() });
+      }
+    }
 
     const { error: insertError } = await supabase.from("availability_slots").insert(rows);
 
@@ -194,7 +202,6 @@ export default function AvailabilityPage() {
                   setWeekStart(monday);
                   const firstAvailable = getWeekDays(monday).find(d => d >= today) ?? getWeekDays(monday)[0];
                   setSelectedDate(firstAvailable);
-                  setSelected(new Set());
                   fetchExistingSlots(firstAvailable);
                 }}
               >
@@ -259,7 +266,7 @@ export default function AvailabilityPage() {
                 <div className="grid grid-cols-4 gap-2">
                   {slots.map((slot) => {
                     const isExisting = existingSlots.has(slot);
-                    const isSelected = selected.has(slot);
+                    const isSelected = selectedDate ? (selected.get(dateToISO(selectedDate))?.has(slot) ?? false) : false;
                     const isToday = selectedDate && dateToISO(selectedDate) === dateToISO(today);
                     const isPastSlot = isToday && (() => {
                       const [h, m] = slot.split(":").map(Number);
@@ -291,8 +298,10 @@ export default function AvailabilityPage() {
                   })}
                 </div>
 
-                {selected.size > 0 && (
-                  <p className="text-sm text-purple-600">{selected.size} time{selected.size !== 1 ? "r" : ""} valgt</p>
+                {selectedDate && (selected.get(dateToISO(selectedDate))?.size ?? 0) > 0 && (
+                  <p className="text-sm text-purple-600">
+                    {selected.get(dateToISO(selectedDate))!.size} valgt denne dagen
+                  </p>
                 )}
 
                 {error && <p className="text-sm text-red-500">{error}</p>}
@@ -301,9 +310,9 @@ export default function AvailabilityPage() {
                 <Button
                   type="submit"
                   className="w-full bg-purple-600 hover:bg-purple-700"
-                  disabled={saving || selected.size === 0}
+                  disabled={saving || totalSelected === 0}
                 >
-                  {saving ? "Lagrer..." : `Legg ut ${selected.size > 0 ? selected.size + " " : ""}time${selected.size !== 1 ? "r" : ""}`}
+                  {saving ? "Lagrer..." : `Legg ut ${totalSelected > 0 ? totalSelected + " " : ""}time${totalSelected !== 1 ? "r" : ""}`}
                 </Button>
               </form>
             </CardContent>
