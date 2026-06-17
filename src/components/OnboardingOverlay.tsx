@@ -173,7 +173,7 @@ function WelcomeSlide({ onNext }: { onNext: () => void }) {
       <div style={{ animation: "fadeUp 0.6s ease forwards", animationDelay: "0.2s", opacity: 0 }}>
         <p className="text-purple-200 text-sm font-semibold uppercase tracking-widest mb-3">Evolution Dance Studio</p>
         <h1 className="text-4xl font-bold text-white leading-tight mb-4">
-          Velkommen til<br />PT Booking
+          Velkommen til<br />Danceitude
         </h1>
         <p className="text-purple-200 text-base leading-relaxed max-w-xs mx-auto">
           Din app for privattimer, fremgang og konkurranser

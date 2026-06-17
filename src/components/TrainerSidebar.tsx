@@ -39,7 +39,7 @@ export default function TrainerSidebar({ name, avatarUrl, notifications }: Props
         <button onClick={() => setMenuOpen(true)} className="p-1.5 rounded-lg hover:bg-purple-700 transition-colors">
           <Menu size={24} className="text-white" />
         </button>
-        <p className="text-white font-semibold text-sm">PT Booking</p>
+        <p className="text-white font-semibold text-sm">Danceitude</p>
         <div className="flex items-center gap-2">
           <div className="[&_button]:text-white [&_svg]:text-white [&_span]:bg-white [&_span]:text-purple-600">
             <NotificationBell notifications={notifications} />
