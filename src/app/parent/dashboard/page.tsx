@@ -29,7 +29,7 @@ export default async function ParentDashboard() {
   const { data: bookings } = await supabase
     .from("bookings")
     .select("*, availability_slots(start_at, end_at, trainer_id, profiles(name))")
-    .eq("booker_id", user.id)
+    .or(`booker_id.eq.${user.id},linked_user_id.eq.${user.id}`)
     .eq("status", "confirmed");
 
   const now = new Date();

@@ -23,7 +23,7 @@ export default async function DancerDashboard() {
     { data: trainers },
   ] = await Promise.all([
     supabase.from("notifications").select("*").eq("user_id", user.id).order("created_at", { ascending: false }),
-    supabase.from("bookings").select("*, availability_slots(start_at, end_at, trainer_id, profiles(name))").eq("booker_id", user.id).eq("status", "confirmed"),
+    supabase.from("bookings").select("*, availability_slots(start_at, end_at, trainer_id, profiles(name))").or(`booker_id.eq.${user.id},linked_user_id.eq.${user.id}`).eq("status", "confirmed"),
     supabase.from("competition_results").select("*").eq("user_id", user.id).order("created_at", { ascending: false }),
     supabase.from("profiles").select("id, name, trainers(dance_styles)").eq("role", "trainer").order("name"),
   ]);

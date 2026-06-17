@@ -20,7 +20,7 @@ export default async function AvbestillPage({ params }: { params: Promise<{ book
     .from("bookings")
     .select("*, availability_slots(start_at, end_at, trainer_id)")
     .eq("id", bookingId)
-    .eq("booker_id", user.id)
+    .or(`booker_id.eq.${user.id},linked_user_id.eq.${user.id}`)
     .single();
 
   if (!booking) redirect(dashboardUrl);
