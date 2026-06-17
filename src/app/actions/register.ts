@@ -28,12 +28,11 @@ export async function registerUser(
     }
   }
 
-  // EVOKODE: disabled during testing – re-enable when Mie says "evokode"
-  // if (role === "dancer" || role === "parent") {
-  //   if (!memberCode || memberCode.toUpperCase() !== process.env.MEMBER_INVOKE_CODE?.toUpperCase()) {
-  //     return { error: "Feil klubbkode. Du får koden av Evolution via Spond eller e-post." };
-  //   }
-  // }
+  if (role === "dancer" || role === "parent") {
+    if (!memberCode || memberCode.toUpperCase() !== process.env.MEMBER_INVITE_CODE?.toUpperCase()) {
+      return { error: "Feil klubbkode. Du får koden av Evolution via Spond eller e-post." };
+    }
+  }
 
   const { data, error: signUpError } = await supabase.auth.signUp({ email, password });
   if (signUpError || !data.user) {
