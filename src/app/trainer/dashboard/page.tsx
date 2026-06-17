@@ -20,7 +20,7 @@ export default async function TrainerDashboard() {
 
   const { data: slots } = await supabase
     .from("availability_slots")
-    .select("*, bookings(id, dancer_name, dance_style, booker_id, status, profiles(avatar_url))")
+    .select("*, bookings(id, dancer_name, dance_style, booker_id, status, profiles!bookings_booker_id_fkey(avatar_url))")
     .eq("trainer_id", user.id)
     .gte("start_at", new Date().toISOString())
     .order("start_at");
