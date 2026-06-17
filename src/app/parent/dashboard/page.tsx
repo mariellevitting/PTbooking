@@ -3,6 +3,8 @@ import { createClient } from "@/lib/supabase/server";
 import OnboardingOverlay from "@/components/OnboardingOverlay";
 import ParentDashboardNav from "./ParentDashboardNav";
 
+export const dynamic = "force-dynamic";
+
 export default async function ParentDashboard() {
   const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
