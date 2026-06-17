@@ -369,8 +369,11 @@ export default function BookingForm({ slots, trainerName, bookerId, bookerName, 
           })}
         </div>
 
-        <div className="bg-blue-50 border border-blue-200 rounded-xl px-4 py-3">
-          <p className="text-sm font-semibold text-blue-800 mb-1">Betaling</p>
+        <div className="bg-blue-50 border border-blue-200 rounded-xl px-4 py-3 space-y-2">
+          <div className="flex justify-between items-center">
+            <p className="text-sm font-semibold text-blue-800">Betaling</p>
+            <p className="text-sm font-bold text-blue-800">{slotBookings.length} × 150 kr = <span className="text-base">{slotBookings.length * 150} kr</span></p>
+          </div>
           <p className="text-sm text-blue-700">Betaling skjer som før i <strong>Spond</strong>. Husk å send kvittering til <strong>{trainerName}</strong> etter betaling.</p>
         </div>
 
