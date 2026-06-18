@@ -176,20 +176,33 @@ export default function BookForDancerForm({ trainerId, danceStyles }: Props) {
     const end = new Date(start.getTime() + 30 * 60 * 1000);
     const dancerName = double ? `${dancer1} & ${dancer2}` : dancer1;
 
-    const { data: slot, error: slotError } = await supabase
+    // Bruk eksisterende ledig slot på dette tidspunktet hvis den finnes
+    const { data: existing } = await supabase
       .from("availability_slots")
-      .insert({ trainer_id: trainerId, start_at: start.toISOString(), end_at: end.toISOString() })
       .select("id")
-      .single();
+      .eq("trainer_id", trainerId)
+      .eq("start_at", start.toISOString())
+      .maybeSingle();
 
-    if (slotError || !slot) {
-      setError("Klarte ikke opprette time. Kanskje det allerede finnes en ledig tid på dette tidspunktet?");
-      setLoading(false);
-      return;
+    let slotId: string;
+    if (existing) {
+      slotId = existing.id;
+    } else {
+      const { data: newSlot, error: slotError } = await supabase
+        .from("availability_slots")
+        .insert({ trainer_id: trainerId, start_at: start.toISOString(), end_at: end.toISOString() })
+        .select("id")
+        .single();
+      if (slotError || !newSlot) {
+        setError("Klarte ikke opprette time. Prøv igjen.");
+        setLoading(false);
+        return;
+      }
+      slotId = newSlot.id;
     }
 
     const { error: bookError } = await supabase.from("bookings").insert({
-      slot_id: slot.id,
+      slot_id: slotId,
       booker_id: trainerId,
       dancer_name: dancerName,
       dance_style: style || "",
