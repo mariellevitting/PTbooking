@@ -353,20 +353,32 @@ export default function BookForDancerForm({ trainerId, danceStyles }: Props) {
             {selectedDate.toLocaleDateString("nb-NO", { weekday: "long", day: "numeric", month: "long" })}
           </p>
           <div className="grid grid-cols-4 gap-2">
-            {timeSlots.map((slot) => (
-              <button
-                key={slot}
-                type="button"
-                onClick={() => setTime(slot)}
-                className={`py-2 px-1 rounded-lg text-sm font-medium border transition-colors ${
-                  time === slot
-                    ? "bg-purple-600 text-white border-purple-600"
-                    : "bg-white text-gray-700 border-gray-200 hover:border-purple-400"
-                }`}
-              >
-                {slot}
-              </button>
-            ))}
+            {timeSlots.map((slot) => {
+              const isToday = dateToISO(selectedDate) === dateToISO(new Date());
+              const isPastSlot = isToday && (() => {
+                const [h, m] = slot.split(":").map(Number);
+                const slotTime = new Date();
+                slotTime.setHours(h, m, 0, 0);
+                return slotTime <= new Date();
+              })();
+              return (
+                <button
+                  key={slot}
+                  type="button"
+                  onClick={() => !isPastSlot && setTime(slot)}
+                  disabled={isPastSlot}
+                  className={`py-2 px-1 rounded-lg text-sm font-medium border transition-colors ${
+                    isPastSlot
+                      ? "bg-gray-50 text-gray-300 border-gray-100 cursor-not-allowed"
+                      : time === slot
+                      ? "bg-purple-600 text-white border-purple-600"
+                      : "bg-white text-gray-700 border-gray-200 hover:border-purple-400"
+                  }`}
+                >
+                  {slot}
+                </button>
+              );
+            })}
           </div>
         </CardContent>
       </Card>
