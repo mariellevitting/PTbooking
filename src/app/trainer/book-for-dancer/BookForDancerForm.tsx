@@ -233,67 +233,47 @@ export default function BookForDancerForm({ trainerId, danceStyles }: Props) {
     <form onSubmit={handleSubmit} className="space-y-4">
       <Card>
         <CardContent className="pt-5 space-y-3">
-          {!linkedUser ? (
-            <div ref={searchRef} className="relative">
-              <label className="block text-sm font-medium text-gray-700 mb-1">
-                Søk opp registrert bruker <span className="text-gray-400 font-normal">(valgfritt)</span>
-              </label>
-              <div className="relative">
-                <Search size={15} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
-                <input
-                  type="text"
-                  value={searchQuery}
-                  onChange={e => setSearchQuery(e.target.value)}
-                  placeholder="Søk på navn..."
-                  className="w-full border rounded-lg pl-9 pr-3 py-2 text-sm bg-white"
-                />
-              </div>
-              {(searchResults.length > 0 || (searching && searchQuery.trim().length >= 2)) && (
-                <div className="absolute z-10 mt-1 w-full bg-white border rounded-xl shadow-lg overflow-hidden">
-                  {searching && <p className="text-sm text-gray-400 px-4 py-3">Søker...</p>}
-                  {!searching && searchResults.map(u => (
-                    <button
-                      key={u.id}
-                      type="button"
-                      onClick={() => selectUser(u)}
-                      className="w-full text-left px-4 py-2.5 hover:bg-purple-50 flex items-center justify-between border-t first:border-t-0"
-                    >
-                      <span className="text-sm font-medium text-gray-800">{u.name}</span>
-                      <span className="text-xs text-gray-400">{u.role === "parent" ? "Forelder" : "Danser"}</span>
-                    </button>
-                  ))}
-                  {!searching && searchResults.length === 0 && searchQuery.trim().length >= 2 && (
-                    <p className="text-sm text-gray-400 px-4 py-3">Ingen brukere funnet</p>
-                  )}
-                </div>
-              )}
-              <p className="text-xs text-gray-400 mt-1">Kobler timen til brukerens profil så den dukker opp hos dem</p>
-            </div>
-          ) : (
-            <div className="flex items-center justify-between bg-purple-50 rounded-lg px-3 py-2.5">
-              <div>
-                <p className="text-sm font-semibold text-purple-800">{linkedUser.name}</p>
-                <p className="text-xs text-purple-500">{linkedUser.role === "parent" ? "Forelder" : "Danser"} · koblet til profil</p>
-              </div>
-              <button type="button" onClick={clearLinkedUser} className="text-purple-400 hover:text-purple-700 ml-2">
-                <X size={16} />
-              </button>
-            </div>
-          )}
-
-          <div>
+          {/* Danser 1 – kombinert søk + navn */}
+          <div ref={searchRef} className="relative">
             <label className="block text-sm font-medium text-gray-700 mb-1">
               {double ? "Danser 1" : "Danserens navn"}
             </label>
-            <input
-              type="text"
-              value={dancer1}
-              onChange={(e) => { setDancer1(e.target.value); if (linkedUser) setLinkedUser(null); }}
-              placeholder="Fullt navn"
-              className="w-full border rounded-lg px-3 py-2 text-sm bg-white"
-              required
-            />
+            {linkedUser ? (
+              <div className="flex items-center justify-between bg-purple-50 border border-purple-200 rounded-lg px-3 py-2.5">
+                <div>
+                  <p className="text-sm font-semibold text-purple-800">{linkedUser.name}</p>
+                  <p className="text-xs text-purple-500">Koblet til profil · får varsel</p>
+                </div>
+                <button type="button" onClick={clearLinkedUser} className="text-purple-400 hover:text-purple-700 ml-2">
+                  <X size={16} />
+                </button>
+              </div>
+            ) : (
+              <>
+                <input
+                  type="text"
+                  value={dancer1}
+                  onChange={e => { setDancer1(e.target.value); setSearchQuery(e.target.value); }}
+                  onFocus={() => dancer1.length >= 2 && setSearchQuery(dancer1)}
+                  placeholder="Skriv navn..."
+                  className="w-full border rounded-lg px-3 py-2 text-sm bg-white"
+                  required
+                />
+                {searchResults.length > 0 && (
+                  <div className="absolute z-10 mt-1 w-full bg-white border rounded-xl shadow-lg overflow-hidden">
+                    {searchResults.map(u => (
+                      <button key={u.id} type="button" onClick={() => selectUser(u)}
+                        className="w-full text-left px-4 py-2.5 hover:bg-purple-50 flex items-center justify-between border-t first:border-t-0">
+                        <span className="text-sm font-medium text-gray-800">{u.name}</span>
+                        <span className="text-xs text-purple-500">Koble til profil</span>
+                      </button>
+                    ))}
+                  </div>
+                )}
+              </>
+            )}
           </div>
+
           {double && (
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">Danser 2</label>

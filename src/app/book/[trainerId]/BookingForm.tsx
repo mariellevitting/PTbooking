@@ -411,31 +411,33 @@ export default function BookingForm({ slots, trainerName, bookerId, bookerName, 
               <label className="text-sm font-medium">{isParent ? "Danser 2 – navn" : "Navn på partner"}</label>
 
               {linkedPartner ? (
-                <div className="flex items-center justify-between bg-purple-50 rounded-lg px-3 py-2.5">
+                <div className="flex items-center justify-between bg-purple-50 border border-purple-200 rounded-lg px-3 py-2.5">
                   <div>
                     <p className="text-sm font-semibold text-purple-800">{linkedPartner.name}</p>
-                    <p className="text-xs text-purple-500">Koblet til profil – timen dukker opp hos dem</p>
+                    <p className="text-xs text-purple-500">Koblet til profil · får varsel</p>
                   </div>
                   <button type="button" onClick={clearPartner} className="text-purple-400 hover:text-purple-700 ml-2">
                     <X size={16} />
                   </button>
                 </div>
               ) : (
-                <div ref={searchRef} className="relative space-y-2">
-                  <div className="relative">
-                    <Search size={15} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
-                    <input
-                      type="text"
-                      value={partnerQuery}
-                      onChange={e => setPartnerQuery(e.target.value)}
-                      placeholder="Søk på navn for å koble til profil..."
-                      className="w-full border rounded-lg pl-9 pr-3 py-2 text-sm bg-white"
-                    />
-                  </div>
-                  {(partnerResults.length > 0 || (searching && partnerQuery.trim().length >= 2)) && (
-                    <div className="absolute z-10 w-full bg-white border rounded-xl shadow-lg overflow-hidden">
-                      {searching && <p className="text-sm text-gray-400 px-4 py-3">Søker...</p>}
-                      {!searching && partnerResults.map(u => (
+                <div ref={searchRef} className="relative">
+                  <input
+                    type="text"
+                    value={current.dancer2}
+                    onChange={e => {
+                      updateCurrent("dancer2", e.target.value);
+                      setPartnerQuery(e.target.value);
+                      setLinkedPartner(null);
+                      updateCurrent("linkedUserId", null);
+                    }}
+                    placeholder="Skriv navn..."
+                    className="w-full border rounded-lg px-3 py-2 text-sm bg-white"
+                    required
+                  />
+                  {partnerResults.length > 0 && (
+                    <div className="absolute z-10 mt-1 w-full bg-white border rounded-xl shadow-lg overflow-hidden">
+                      {partnerResults.map(u => (
                         <button
                           key={u.id}
                           type="button"
@@ -443,20 +445,11 @@ export default function BookingForm({ slots, trainerName, bookerId, bookerName, 
                           className="w-full text-left px-4 py-2.5 hover:bg-purple-50 flex items-center justify-between border-t first:border-t-0"
                         >
                           <span className="text-sm font-medium text-gray-800">{u.name}</span>
-                          <span className="text-xs text-gray-400">{u.role === "parent" ? "Forelder" : "Danser"}</span>
+                          <span className="text-xs text-purple-500">Koble til profil</span>
                         </button>
                       ))}
-                      {!searching && partnerResults.length === 0 && partnerQuery.trim().length >= 2 && (
-                        <p className="text-sm text-gray-400 px-4 py-3">Ingen brukere funnet</p>
-                      )}
                     </div>
                   )}
-                  <Input
-                    value={current.dancer2}
-                    onChange={(e) => { updateCurrent("dancer2", e.target.value); setLinkedPartner(null); updateCurrent("linkedUserId", null); }}
-                    placeholder="Eller skriv inn navn manuelt"
-                  />
-                  <p className="text-xs text-gray-400">Søk for å koble timen til partnerens profil, eller skriv navn direkte</p>
                 </div>
               )}
             </div>
