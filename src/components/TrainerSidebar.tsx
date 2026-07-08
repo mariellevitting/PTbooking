@@ -6,6 +6,7 @@ import { Calendar, Clock, UserCircle, Trophy, History, PlusCircle, Menu, X } fro
 import { useState } from "react";
 import LogoutButton from "@/components/LogoutButton";
 import NotificationBell from "@/components/NotificationBell";
+import ThemeToggle from "@/components/ThemeToggle";
 
 const NAV = [
   { href: "/trainer/dashboard", label: "Mine timer", icon: Calendar },
@@ -42,6 +43,7 @@ export default function TrainerSidebar({ name, avatarUrl, notifications }: Props
         <p className="text-white font-semibold text-sm">Danceitude</p>
         <div className="flex items-center gap-2">
           <div className="[&_button]:text-white [&_svg]:text-white [&_span]:bg-white [&_span]:text-purple-600">
+            <ThemeToggle />
             <NotificationBell notifications={notifications} />
           </div>
           <Link href="/trainer/profil" className="hover:opacity-80 transition-opacity">
@@ -117,6 +119,7 @@ export default function TrainerSidebar({ name, avatarUrl, notifications }: Props
                 <p className="text-xs text-gray-400">Trener</p>
               </div>
             </Link>
+            <ThemeToggle />
             <NotificationBell notifications={notifications} />
           </div>
         </div>

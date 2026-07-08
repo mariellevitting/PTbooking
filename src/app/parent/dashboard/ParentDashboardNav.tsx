@@ -8,6 +8,7 @@ import GoalsList from "@/components/GoalsList";
 import { Button } from "@/components/ui/button";
 import LogoutButton from "@/components/LogoutButton";
 import NotificationBell from "@/components/NotificationBell";
+import ThemeToggle from "@/components/ThemeToggle";
 import NMCountdown from "@/components/NMCountdown";
 import ChildDancerCard from "@/app/parent/profil/ChildDancerCard";
 import CompetitionResultsCard from "@/components/CompetitionResultsCard";
@@ -193,6 +194,7 @@ export default function ParentDashboardNav({ userName, avatarUrl, notifications,
               <p className="text-xs text-gray-400">Forelder</p>
             </div>
           </Link>
+          <ThemeToggle />
           <NotificationBell notifications={notifications} />
         </div>
       </div>
@@ -226,7 +228,8 @@ export default function ParentDashboardNav({ userName, avatarUrl, notifications,
         <p className="text-white font-semibold text-sm">Danceitude</p>
         <div className="flex items-center gap-2">
           <div className="[&_button]:text-white [&_svg]:text-white [&_span]:bg-white [&_span]:text-purple-600">
-            <NotificationBell notifications={notifications} />
+            <ThemeToggle />
+          <NotificationBell notifications={notifications} />
           </div>
           <Link href="/parent/profil" className="hover:opacity-80 transition-opacity">
             {avatarUrl

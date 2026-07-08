@@ -10,6 +10,7 @@ import PointsStepper from "@/components/PointsStepper";
 import CompetitionResultsCard from "@/components/CompetitionResultsCard";
 import NotificationBell from "@/components/NotificationBell";
 import LogoutButton from "@/components/LogoutButton";
+import ThemeToggle from "@/components/ThemeToggle";
 import NMCountdown from "@/components/NMCountdown";
 import { createClient } from "@/lib/supabase/client";
 import { formatDate, formatTime, formatDateKey } from "@/lib/dateUtils";
@@ -146,6 +147,7 @@ export default function DancerDashboardNav(props: Props) {
         <p className="text-white font-semibold text-sm">Danceitude</p>
         <div className="flex items-center gap-2">
           <div className="[&_button]:text-white [&_svg]:text-white [&_span]:bg-white [&_span]:text-purple-600">
+            <ThemeToggle />
             <NotificationBell notifications={props.notifications ?? []} />
           </div>
           <Link href="/dancer/profil" className="hover:opacity-80 transition-opacity">
@@ -173,6 +175,7 @@ export default function DancerDashboardNav(props: Props) {
                 <p className="text-xs text-gray-400">Danser</p>
               </div>
             </Link>
+            <ThemeToggle />
             <NotificationBell notifications={props.notifications ?? []} />
           </div>
         </div>
