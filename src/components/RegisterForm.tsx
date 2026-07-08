@@ -1,7 +1,6 @@
 "use client";
 
 import { useState } from "react";
-import Image from "next/image";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { registerUser } from "@/app/actions/register";
@@ -53,9 +52,90 @@ export default function RegisterForm({ prefilledCode, clubName }: Props) {
 
   const displayName = clubName || "Evolution Danseklubb";
 
+  const formContent = (
+    <>
+      {step === "role" && (
+        <div className="space-y-3">
+          <p className="text-sm font-medium text-gray-700 mb-3">Hvem er du?</p>
+          {roles.map(r => (
+            <button key={r.value} onClick={() => { setRole(r.value); setStep("details"); }}
+              className="w-full text-left border rounded-xl p-4 bg-white hover:border-purple-500 hover:bg-purple-50 transition-colors">
+              <p className="font-semibold text-gray-800">{r.label}</p>
+              <p className="text-sm text-gray-500">{r.description}</p>
+            </button>
+          ))}
+          <p className="text-center text-sm text-gray-500 mt-4">
+            Har du allerede konto?{" "}
+            <Link href="/login" className="text-purple-600 hover:underline font-medium">Logg inn</Link>
+          </p>
+        </div>
+      )}
+
+      {step === "details" && (
+        <form onSubmit={handleRegister} className="space-y-4">
+          <button type="button" onClick={() => setStep("role")} className="text-sm text-purple-600 hover:underline mb-2">
+            ← Endre rolle
+          </button>
+          <div className="space-y-1.5">
+            <label className="text-sm font-medium">Navn</label>
+            <Input value={name} onChange={e => setName(e.target.value)} placeholder="Ditt fulle navn" required />
+          </div>
+          <div className="space-y-1.5">
+            <label className="text-sm font-medium">E-post</label>
+            <Input type="email" value={email} onChange={e => setEmail(e.target.value)} placeholder="din@epost.no" required />
+          </div>
+          <div className="space-y-1.5">
+            <label className="text-sm font-medium">Passord</label>
+            <Input type="password" value={password} onChange={e => setPassword(e.target.value)} placeholder="Minst 6 tegn" minLength={6} required />
+          </div>
+          {role === "parent" && (
+            <div className="space-y-2">
+              <label className="text-sm font-medium">Danser(e)</label>
+              {dancerNames.map((n, i) => (
+                <div key={i} className="flex gap-2">
+                  <Input value={n} onChange={e => { const u = [...dancerNames]; u[i] = e.target.value; setDancerNames(u); }}
+                    placeholder={`Danser ${i + 1}`} required={i === 0} />
+                  {dancerNames.length > 1 && (
+                    <button type="button" onClick={() => setDancerNames(dancerNames.filter((_, j) => j !== i))}
+                      className="text-red-400 hover:text-red-600 px-2">✕</button>
+                  )}
+                </div>
+              ))}
+              <button type="button" onClick={() => setDancerNames([...dancerNames, ""])}
+                className="text-sm text-purple-600 hover:underline">+ Legg til danser</button>
+            </div>
+          )}
+          {(role === "dancer" || role === "parent") && (
+            <div className="space-y-1.5">
+              <label className="text-sm font-medium">Klubbkode</label>
+              <Input type="text" value={memberCode} onChange={e => setMemberCode(e.target.value)}
+                placeholder="Kode fra Evolution" required />
+              <p className="text-xs text-gray-400">Du får koden av klubben via Spond eller e-post.</p>
+            </div>
+          )}
+          {role === "trainer" && (
+            <div className="space-y-1.5">
+              <label className="text-sm font-medium">Trenerkode</label>
+              <Input type="text" value={trainerCode} onChange={e => setTrainerCode(e.target.value)}
+                placeholder="Kode fra klubben" required />
+              <p className="text-xs text-gray-400">Kun trenere med kode kan registrere seg.</p>
+            </div>
+          )}
+          {error && <p className="text-sm text-red-500">{error}</p>}
+          <Button type="submit" className="w-full bg-purple-600 hover:bg-purple-700 h-11 text-base" disabled={loading}>
+            {loading ? "Oppretter konto..." : "Lag konto"}
+          </Button>
+        </form>
+      )}
+    </>
+  );
+
   return (
     <div className="min-h-screen flex flex-col md:flex-row">
+
+      {/* Desktop – venstre bildekolonne */}
       <div className="hidden md:flex md:w-1/2 relative min-h-screen" style={{ backgroundImage: "url('/dans2.jpg')", backgroundSize: "cover", backgroundPosition: "center" }}>
+        <div className="absolute inset-0 bg-black/30" />
         <div className="relative z-10 flex flex-col justify-end p-10 text-white">
           <p className="text-white/90 text-lg italic mb-3">✦ Av dansere, for dansere</p>
           <h1 className="text-5xl font-bold mb-1">Danceitude</h1>
@@ -64,97 +144,31 @@ export default function RegisterForm({ prefilledCode, clubName }: Props) {
         </div>
       </div>
 
-      <div className="md:hidden h-48 relative" style={{ backgroundImage: "url('/dans2.jpg')", backgroundSize: "cover", backgroundPosition: "center" }}>
-        <div className="absolute inset-0 flex flex-col justify-end p-6">
-          <p className="text-white/90 text-sm italic mb-1">✦ Av dansere, for dansere</p>
-          <h1 className="text-2xl font-bold text-white">Danceitude</h1>
-          <p className="text-white/70 text-xs">{displayName}</p>
-          <p className="text-white/80 text-sm">Book din privattime</p>
+      {/* Mobil – fullt bakgrunnsbilde med skjema-kort oppå */}
+      <div className="md:hidden relative min-h-screen flex items-end" style={{ backgroundImage: "url('/dans2.jpg')", backgroundSize: "cover", backgroundPosition: "center top" }}>
+        <div className="absolute inset-0 bg-black/30" />
+        <div className="relative z-10 w-full px-4 pb-4 pt-16">
+          <p className="text-white/90 text-sm italic mb-1 px-2">✦ Av dansere, for dansere</p>
+          <h1 className="text-3xl font-bold text-white mb-4 px-2">Danceitude</h1>
+          <div className="bg-white rounded-2xl p-6 shadow-xl">
+            <h2 className="text-2xl font-bold text-gray-900 mb-1">Lag konto</h2>
+            <p className="text-gray-500 text-sm mb-5">Kom i gang på under ett minutt</p>
+            {formContent}
+          </div>
         </div>
       </div>
 
-      <div className="flex flex-1 items-center justify-center bg-gray-50 p-8">
+      {/* Desktop – høyre skjemakolonne */}
+      <div className="hidden md:flex flex-1 items-center justify-center bg-gray-50 p-8">
         <div className="w-full max-w-sm">
           <div className="mb-8">
             <h2 className="text-3xl font-bold text-gray-900">Lag konto</h2>
             <p className="text-gray-500 mt-1 text-sm">Kom i gang på under ett minutt</p>
           </div>
-
-          {step === "role" && (
-            <div className="space-y-3">
-              <p className="text-sm font-medium text-gray-700 mb-3">Hvem er du?</p>
-              {roles.map(r => (
-                <button key={r.value} onClick={() => { setRole(r.value); setStep("details"); }}
-                  className="w-full text-left border rounded-xl p-4 bg-white hover:border-purple-500 hover:bg-purple-50 transition-colors">
-                  <p className="font-semibold text-gray-800">{r.label}</p>
-                  <p className="text-sm text-gray-500">{r.description}</p>
-                </button>
-              ))}
-              <p className="text-center text-sm text-gray-500 mt-4">
-                Har du allerede konto?{" "}
-                <Link href="/login" className="text-purple-600 hover:underline font-medium">Logg inn</Link>
-              </p>
-            </div>
-          )}
-
-          {step === "details" && (
-            <form onSubmit={handleRegister} className="space-y-4">
-              <button type="button" onClick={() => setStep("role")} className="text-sm text-purple-600 hover:underline mb-2">
-                ← Endre rolle
-              </button>
-              <div className="space-y-1.5">
-                <label className="text-sm font-medium">Navn</label>
-                <Input value={name} onChange={e => setName(e.target.value)} placeholder="Ditt fulle navn" required />
-              </div>
-              <div className="space-y-1.5">
-                <label className="text-sm font-medium">E-post</label>
-                <Input type="email" value={email} onChange={e => setEmail(e.target.value)} placeholder="din@epost.no" required />
-              </div>
-              <div className="space-y-1.5">
-                <label className="text-sm font-medium">Passord</label>
-                <Input type="password" value={password} onChange={e => setPassword(e.target.value)} placeholder="Minst 6 tegn" minLength={6} required />
-              </div>
-              {role === "parent" && (
-                <div className="space-y-2">
-                  <label className="text-sm font-medium">Danser(e)</label>
-                  {dancerNames.map((n, i) => (
-                    <div key={i} className="flex gap-2">
-                      <Input value={n} onChange={e => { const u = [...dancerNames]; u[i] = e.target.value; setDancerNames(u); }}
-                        placeholder={`Danser ${i + 1}`} required={i === 0} />
-                      {dancerNames.length > 1 && (
-                        <button type="button" onClick={() => setDancerNames(dancerNames.filter((_, j) => j !== i))}
-                          className="text-red-400 hover:text-red-600 px-2">✕</button>
-                      )}
-                    </div>
-                  ))}
-                  <button type="button" onClick={() => setDancerNames([...dancerNames, ""])}
-                    className="text-sm text-purple-600 hover:underline">+ Legg til danser</button>
-                </div>
-              )}
-              {(role === "dancer" || role === "parent") && (
-                <div className="space-y-1.5">
-                  <label className="text-sm font-medium">Klubbkode</label>
-                  <Input type="text" value={memberCode} onChange={e => setMemberCode(e.target.value)}
-                    placeholder="Kode fra Evolution" required />
-                  <p className="text-xs text-gray-400">Du får koden av klubben via Spond eller e-post.</p>
-                </div>
-              )}
-              {role === "trainer" && (
-                <div className="space-y-1.5">
-                  <label className="text-sm font-medium">Trenerkode</label>
-                  <Input type="text" value={trainerCode} onChange={e => setTrainerCode(e.target.value)}
-                    placeholder="Kode fra klubben" required />
-                  <p className="text-xs text-gray-400">Kun trenere med kode kan registrere seg.</p>
-                </div>
-              )}
-              {error && <p className="text-sm text-red-500">{error}</p>}
-              <Button type="submit" className="w-full bg-purple-600 hover:bg-purple-700 h-11 text-base" disabled={loading}>
-                {loading ? "Oppretter konto..." : "Lag konto"}
-              </Button>
-            </form>
-          )}
+          {formContent}
         </div>
       </div>
+
     </div>
   );
 }
