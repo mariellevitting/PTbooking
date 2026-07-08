@@ -151,8 +151,10 @@ export default function RegisterForm({ prefilledCode, clubName }: Props) {
           <p className="text-white/90 text-sm italic mb-1 px-2">✦ Av dansere, for dansere</p>
           <h1 className="text-3xl font-bold text-white mb-4 px-2">Danceitude</h1>
           <div className="bg-white rounded-2xl p-6 shadow-xl">
-            <h2 className="text-2xl font-bold text-gray-900 mb-1">Lag konto</h2>
-            <p className="text-gray-500 text-sm mb-5">Kom i gang på under ett minutt</p>
+            <div className="flex bg-gray-100 rounded-xl p-1 mb-6">
+              <Link href="/login" className="flex-1 text-center py-2 rounded-lg text-sm font-medium text-gray-500">Logg inn</Link>
+              <span className="flex-1 text-center py-2 rounded-lg bg-white text-sm font-semibold text-gray-900 shadow-sm">Registrer</span>
+            </div>
             {formContent}
           </div>
         </div>

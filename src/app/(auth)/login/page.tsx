@@ -54,8 +54,10 @@ export default function LoginPage() {
           <p className="text-white/90 text-sm italic mb-1 px-2">✦ Av dansere, for dansere</p>
           <h1 className="text-3xl font-bold text-white mb-4 px-2">Danceitude</h1>
           <div className="bg-white rounded-2xl p-6 shadow-xl">
-            <h2 className="text-2xl font-bold text-gray-900 mb-1">Logg inn</h2>
-            <p className="text-gray-500 text-sm mb-5">Velkommen tilbake!</p>
+            <div className="flex bg-gray-100 rounded-xl p-1 mb-6">
+              <span className="flex-1 text-center py-2 rounded-lg bg-white text-sm font-semibold text-gray-900 shadow-sm">Logg inn</span>
+              <Link href="/register" className="flex-1 text-center py-2 rounded-lg text-sm font-medium text-gray-500">Registrer</Link>
+            </div>
             <form onSubmit={handleLogin} className="space-y-4">
               <div className="space-y-1.5">
                 <label className="text-sm font-medium text-gray-700">E-post</label>
