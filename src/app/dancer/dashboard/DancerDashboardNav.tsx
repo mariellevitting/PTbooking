@@ -11,6 +11,7 @@ import CompetitionResultsCard from "@/components/CompetitionResultsCard";
 import NotificationBell from "@/components/NotificationBell";
 import LogoutButton from "@/components/LogoutButton";
 import ThemeToggle from "@/components/ThemeToggle";
+import FeedbackButton from "@/components/FeedbackButton";
 import NMCountdown from "@/components/NMCountdown";
 import { createClient } from "@/lib/supabase/client";
 import { formatDate, formatTime, formatDateKey } from "@/lib/dateUtils";
@@ -139,6 +140,7 @@ export default function DancerDashboardNav(props: Props) {
 
   return (
     <div>
+      <FeedbackButton userId={props.userId} userName={props.userName} role="dancer" />
       {/* Mobil: lilla topbar */}
       <div className="md:hidden sticky top-0 z-40 bg-purple-600 px-4 py-3 flex items-center justify-between shadow-md">
         <button onClick={() => setMenuOpen(true)} className="p-1.5 rounded-lg hover:bg-purple-700 transition-colors">

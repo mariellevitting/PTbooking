@@ -25,6 +25,7 @@ export default async function TrainerLayout({ children }: { children: React.Reac
     <div className="min-h-screen bg-gray-50 dark:bg-gray-950 flex">
       <TrainerSidebar
         name={profile.name}
+        userId={user.id}
         avatarUrl={profile.avatar_url ?? null}
         notifications={notifications ?? []}
       />

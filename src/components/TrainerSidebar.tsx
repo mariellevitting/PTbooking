@@ -7,6 +7,7 @@ import { useState } from "react";
 import LogoutButton from "@/components/LogoutButton";
 import NotificationBell from "@/components/NotificationBell";
 import ThemeToggle from "@/components/ThemeToggle";
+import FeedbackButton from "@/components/FeedbackButton";
 
 const NAV = [
   { href: "/trainer/dashboard", label: "Mine timer", icon: Calendar },
@@ -19,11 +20,12 @@ const NAV = [
 
 interface Props {
   name: string;
+  userId: string;
   avatarUrl: string | null;
   notifications: any[];
 }
 
-export default function TrainerSidebar({ name, avatarUrl, notifications }: Props) {
+export default function TrainerSidebar({ name, userId, avatarUrl, notifications }: Props) {
   const pathname = usePathname();
   const [menuOpen, setMenuOpen] = useState(false);
   const firstName = name.split(" ")[0];
@@ -35,6 +37,7 @@ export default function TrainerSidebar({ name, avatarUrl, notifications }: Props
 
   return (
     <>
+      <FeedbackButton userId={userId} userName={name} role="trainer" />
       {/* Mobil: lilla topbar */}
       <div className="md:hidden fixed top-0 left-0 right-0 z-40 bg-purple-600 px-4 py-3 flex items-center justify-between shadow-md">
         <button onClick={() => setMenuOpen(true)} className="p-1.5 rounded-lg hover:bg-purple-700 transition-colors">

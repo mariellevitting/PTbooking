@@ -8,6 +8,7 @@ import GoalsList from "@/components/GoalsList";
 import { Button } from "@/components/ui/button";
 import LogoutButton from "@/components/LogoutButton";
 import NotificationBell from "@/components/NotificationBell";
+import FeedbackButton from "@/components/FeedbackButton";
 import ThemeToggle from "@/components/ThemeToggle";
 import NMCountdown from "@/components/NMCountdown";
 import ChildDancerCard from "@/app/parent/profil/ChildDancerCard";
@@ -157,6 +158,7 @@ interface Props {
 
 export default function ParentDashboardNav({ userName, avatarUrl, notifications, upcomingBookings, completedBookings, parentId, children, trainers = [] }: Props) {
   const [active, setActive] = useState("timer");
+  // parentId brukes som userId for feedback
   const [bookingTab, setBookingTab] = useState<"kommende" | "gjennomforte">("kommende");
   const [menuOpen, setMenuOpen] = useState(false);
 
@@ -223,6 +225,7 @@ export default function ParentDashboardNav({ userName, avatarUrl, notifications,
 
   return (
     <>
+      <FeedbackButton userId={parentId} userName={userName} role="parent" />
       {/* Mobil: lilla topbar */}
       <div className="md:hidden sticky top-0 z-40 bg-purple-600 px-4 py-3 flex items-center justify-between shadow-md">
         <button onClick={() => setMenuOpen(true)} className="p-1.5 rounded-lg hover:bg-purple-700 transition-colors">
