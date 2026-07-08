@@ -42,10 +42,10 @@ export default function DancerSearch({ slots }: { slots: Slot[] }) {
 
   return (
     <div className="mb-8">
-      <div className="bg-white rounded-xl border p-4 space-y-3">
-        <p className="text-sm font-semibold text-gray-700">Søk etter danser</p>
+      <div className="bg-white dark:bg-gray-900 rounded-xl border dark:border-gray-700 p-4 space-y-3">
+        <p className="text-sm font-semibold text-gray-700 dark:text-gray-300">Søk etter danser</p>
         <div className="relative">
-          <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
+          <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 dark:text-gray-500" />
           <Input
             value={query}
             onChange={e => setQuery(e.target.value)}
@@ -68,11 +68,11 @@ export default function DancerSearch({ slots }: { slots: Slot[] }) {
         {showResults && (
           <div className="pt-1">
             {matches.length === 0 ? (
-              <p className="text-sm text-gray-400">Ingen treff på «{query.trim()}»</p>
+              <p className="text-sm text-gray-400 dark:text-gray-500">Ingen treff på «{query.trim()}»</p>
             ) : (
               <>
                 <div className="flex items-baseline gap-2 mb-3">
-                  <p className="text-sm font-semibold text-gray-800">
+                  <p className="text-sm font-semibold text-gray-800 dark:text-gray-100">
                     {matches.length} {matches.length === 1 ? "privattime" : "privattimer"} med {matches[0].bookings?.find(b => b.status === "confirmed")?.dancer_name ?? query.trim()}
                   </p>
                 </div>
@@ -83,10 +83,10 @@ export default function DancerSearch({ slots }: { slots: Slot[] }) {
                     const end = new Date(slot.end_at);
                     const dayLabel = formatDate(start, { weekday: "long", day: "numeric", month: "long", year: "numeric" });
                     return (
-                      <div key={slot.id} className="flex justify-between items-center text-sm border-t pt-2">
+                      <div key={slot.id} className="flex justify-between items-center text-sm border-t dark:border-gray-700 pt-2">
                         <div>
-                          <p className="text-gray-700 capitalize">{dayLabel}</p>
-                          <p className="text-gray-400">{formatTime(start)}–{formatTime(end)} · {booking?.dance_style}</p>
+                          <p className="text-gray-700 dark:text-gray-300 capitalize">{dayLabel}</p>
+                          <p className="text-gray-400 dark:text-gray-500">{formatTime(start)}–{formatTime(end)} · {booking?.dance_style}</p>
                         </div>
                       </div>
                     );

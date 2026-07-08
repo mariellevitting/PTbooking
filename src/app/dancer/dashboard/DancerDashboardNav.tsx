@@ -159,8 +159,8 @@ export default function DancerDashboardNav(props: Props) {
       </div>
 
       {/* Desktop: fast sidebar til venstre */}
-      <aside className="hidden md:flex flex-col fixed left-0 top-0 bottom-0 w-56 bg-white border-r border-gray-200 z-30">
-        <div className="p-4 border-b border-gray-100">
+      <aside className="hidden md:flex flex-col fixed left-0 top-0 bottom-0 w-56 bg-white dark:bg-gray-900 border-r border-gray-200 dark:border-gray-700 z-30">
+        <div className="p-4 border-b border-gray-100 dark:border-gray-800">
           <div className="flex items-center justify-between">
             <Link href="/dancer/profil" className="flex items-center gap-3 min-w-0 hover:opacity-80 transition-opacity">
               {props.avatarUrl ? (
@@ -171,8 +171,8 @@ export default function DancerDashboardNav(props: Props) {
                 </div>
               )}
               <div className="min-w-0">
-                <p className="text-sm font-semibold text-gray-800 truncate">{props.userName.split(" ")[0]}</p>
-                <p className="text-xs text-gray-400">Danser</p>
+                <p className="text-sm font-semibold text-gray-800 dark:text-gray-100 truncate">{props.userName.split(" ")[0]}</p>
+                <p className="text-xs text-gray-400 dark:text-gray-500">Danser</p>
               </div>
             </Link>
             <ThemeToggle />
@@ -182,18 +182,18 @@ export default function DancerDashboardNav(props: Props) {
         <nav className="flex-1 p-3 space-y-1 overflow-y-auto">
           {sections.map(s => (
             <button key={s.id} onClick={() => goTo(s.id)}
-              className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-colors text-left ${active === s.id ? "bg-purple-600 text-white" : "text-gray-600 hover:bg-gray-100"}`}>
-              <span className={active === s.id ? "text-white" : "text-gray-400"}>{s.icon}</span>
+              className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-colors text-left ${active === s.id ? "bg-purple-600 text-white" : "text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800"}`}>
+              <span className={active === s.id ? "text-white" : "text-gray-400 dark:text-gray-500"}>{s.icon}</span>
               {s.label}
             </button>
           ))}
           <Link href="/dancer/profil"
-            className="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-colors text-left text-gray-600 hover:bg-gray-100">
-            <span className="text-gray-400"><User size={15} /></span>
+            className="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-colors text-left text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800">
+            <span className="text-gray-400 dark:text-gray-500"><User size={15} /></span>
             Profil
           </Link>
         </nav>
-        <div className="p-3 border-t border-gray-100">
+        <div className="p-3 border-t border-gray-100 dark:border-gray-800">
           <LogoutButton />
         </div>
       </aside>
@@ -208,22 +208,22 @@ export default function DancerDashboardNav(props: Props) {
             {/* Mørk bakgrunn */}
             <div className="absolute inset-0 bg-black/50" onClick={() => setMenuOpen(false)} />
             {/* Drawer */}
-            <div className="absolute left-0 top-0 h-full w-72 bg-white shadow-2xl flex flex-col">
+            <div className="absolute left-0 top-0 h-full w-72 bg-white dark:bg-gray-900 shadow-2xl flex flex-col">
               {/* Lukk-knapp */}
               <div className="flex justify-end p-4">
-                <button onClick={() => setMenuOpen(false)} className="p-1.5 rounded-lg hover:bg-gray-100">
-                  <X size={20} className="text-gray-500" />
+                <button onClick={() => setMenuOpen(false)} className="p-1.5 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800">
+                  <X size={20} className="text-gray-500 dark:text-gray-400" />
                 </button>
               </div>
               {/* Profil */}
-              <Link href="/dancer/profil" onClick={() => setMenuOpen(false)} className="px-6 pb-6 flex items-center gap-4 border-b hover:bg-gray-50 transition-colors">
+              <Link href="/dancer/profil" onClick={() => setMenuOpen(false)} className="px-6 pb-6 flex items-center gap-4 border-b hover:bg-gray-50 dark:hover:bg-gray-950 transition-colors">
                 <div className="w-14 h-14 rounded-full bg-purple-100 flex items-center justify-center overflow-hidden shrink-0">
                   {props.avatarUrl
                     ? <img src={props.avatarUrl} alt="Profil" className="w-full h-full object-cover" />
                     : <span className="text-2xl font-bold text-purple-600">{props.userName.charAt(0)}</span>}
                 </div>
                 <div>
-                  <p className="font-bold text-gray-800">{props.userName}</p>
+                  <p className="font-bold text-gray-800 dark:text-gray-100">{props.userName}</p>
                   <p className="text-xs text-purple-500">Se profil →</p>
                 </div>
               </Link>
@@ -231,15 +231,15 @@ export default function DancerDashboardNav(props: Props) {
               <div className="flex-1 py-4 overflow-y-auto">
                 {sections.map(s => (
                   <button key={s.id} onClick={() => goTo(s.id)}
-                    className={`w-full flex items-center gap-4 px-6 py-3.5 text-sm font-medium transition-colors ${active === s.id ? "bg-purple-50 text-purple-700 border-r-4 border-purple-600" : "text-gray-600 hover:bg-gray-50"}`}>
-                    <span className={active === s.id ? "text-purple-600" : "text-gray-400"}>{s.icon}</span>
+                    className={`w-full flex items-center gap-4 px-6 py-3.5 text-sm font-medium transition-colors ${active === s.id ? "bg-purple-50 text-purple-700 border-r-4 border-purple-600" : "text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-950"}`}>
+                    <span className={active === s.id ? "text-purple-600" : "text-gray-400 dark:text-gray-500"}>{s.icon}</span>
                     {s.label}
                   </button>
                 ))}
               </div>
               {/* Logg ut – nederst */}
-              <div className="border-t px-6 py-4">
-                <div className="text-gray-400 text-sm">
+              <div className="border-t dark:border-gray-700 px-6 py-4">
+                <div className="text-gray-400 dark:text-gray-500 text-sm">
                   <LogoutButton />
                 </div>
               </div>
@@ -261,20 +261,20 @@ export default function DancerDashboardNav(props: Props) {
             </Link>
           </div>
 
-          <div className="flex gap-1 bg-gray-100 rounded-xl p-1 mb-4">
+          <div className="flex gap-1 bg-gray-100 dark:bg-gray-800 rounded-xl p-1 mb-4">
             <button onClick={() => setBookingTab("kommende")}
-              className={`flex-1 px-3 py-1.5 rounded-lg text-sm font-medium transition-colors ${bookingTab === "kommende" ? "bg-white text-purple-700 shadow-sm" : "text-gray-500"}`}>
+              className={`flex-1 px-3 py-1.5 rounded-lg text-sm font-medium transition-colors ${bookingTab === "kommende" ? "bg-white dark:bg-gray-900 text-purple-700 shadow-sm" : "text-gray-500 dark:text-gray-400"}`}>
               Kommende
             </button>
             <button onClick={() => setBookingTab("gjennomforte")}
-              className={`flex-1 px-3 py-1.5 rounded-lg text-sm font-medium transition-colors ${bookingTab === "gjennomforte" ? "bg-white text-purple-700 shadow-sm" : "text-gray-500"}`}>
+              className={`flex-1 px-3 py-1.5 rounded-lg text-sm font-medium transition-colors ${bookingTab === "gjennomforte" ? "bg-white dark:bg-gray-900 text-purple-700 shadow-sm" : "text-gray-500 dark:text-gray-400"}`}>
               Gjennomførte
             </button>
           </div>
 
           {bookingTab === "kommende" && (
             props.upcomingBookings.length === 0 ? (
-              <div className="bg-white rounded-xl border p-6 text-center text-gray-400">
+              <div className="bg-white dark:bg-gray-900 rounded-xl border dark:border-gray-700 p-6 text-center text-gray-400 dark:text-gray-500">
                 <p className="text-lg font-medium mb-2">Ingen kommende timer</p>
                 <p className="text-sm mb-4">Finn en trener og book din første privattime</p>
                 <Link href="/book"><Button className="bg-purple-600 hover:bg-purple-700">Book privattime</Button></Link>
@@ -283,27 +283,27 @@ export default function DancerDashboardNav(props: Props) {
               <div className="space-y-6">
                 {Object.entries(weekGroups).map(([week, dateKeys]) => (
                   <div key={week}>
-                    <p className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-3">Uke {week}</p>
+                    <p className="text-xs font-semibold text-gray-400 dark:text-gray-500 uppercase tracking-wider mb-3">Uke {week}</p>
                     <div className="space-y-4">
                       {(dateKeys as string[]).sort().map(dateKey => {
                         const dayBookings = grouped[dateKey];
                         const dayLabel = formatDate(new Date(dateKey), { weekday: "long", day: "numeric", month: "long" });
                         return (
                           <div key={dateKey}>
-                            <p className="text-sm font-semibold text-gray-700 mb-2 border-b pb-1">{dayLabel.charAt(0).toUpperCase() + dayLabel.slice(1)}</p>
+                            <p className="text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2 border-b dark:border-gray-700 pb-1">{dayLabel.charAt(0).toUpperCase() + dayLabel.slice(1)}</p>
                             <div className="space-y-2">
                               {dayBookings.map((booking: Booking) => {
                                 const start = new Date(booking.availability_slots.start_at);
                                 const end = new Date(booking.availability_slots.end_at);
                                 const hoursUntil = (start.getTime() - now.getTime()) / (1000 * 60 * 60);
                                 return (
-                                  <div key={booking.id} className="bg-white rounded-xl border border-l-4 border-l-purple-400 px-4 py-3">
+                                  <div key={booking.id} className="bg-white dark:bg-gray-900 rounded-xl border dark:border-gray-700 border-l-4 border-l-purple-400 px-4 py-3">
                                     <div className="flex justify-between items-start">
                                       <div>
-                                        <p className="text-sm font-semibold text-gray-700">{formatTime(start)}–{formatTime(end)}</p>
+                                        <p className="text-sm font-semibold text-gray-700 dark:text-gray-300">{formatTime(start)}–{formatTime(end)}</p>
                                         <p className="text-sm font-medium text-purple-600">{booking.dance_style}</p>
                                         {booking.availability_slots?.profiles?.name && (
-                                          <p className="text-xs text-gray-500">Trener: {booking.availability_slots.profiles.name}</p>
+                                          <p className="text-xs text-gray-500 dark:text-gray-400">Trener: {booking.availability_slots.profiles.name}</p>
                                         )}
                                       </div>
                                       <div className="flex items-center gap-3">
@@ -330,7 +330,7 @@ export default function DancerDashboardNav(props: Props) {
 
           {bookingTab === "gjennomforte" && (
             props.completedBookings.length === 0 ? (
-              <div className="bg-white rounded-xl border p-6 text-center text-gray-400 text-sm">Ingen gjennomførte timer ennå</div>
+              <div className="bg-white dark:bg-gray-900 rounded-xl border dark:border-gray-700 p-6 text-center text-gray-400 dark:text-gray-500 text-sm">Ingen gjennomførte timer ennå</div>
             ) : (
               <div className="space-y-2">
                 {props.completedBookings.map((booking: Booking) => {
@@ -338,17 +338,17 @@ export default function DancerDashboardNav(props: Props) {
                   const end = new Date(booking.availability_slots.end_at);
                   const dayLabel = formatDate(start, { weekday: "long", day: "numeric", month: "long" });
                   return (
-                    <div key={booking.id} className="bg-white rounded-xl border p-4 opacity-60">
+                    <div key={booking.id} className="bg-white dark:bg-gray-900 rounded-xl border dark:border-gray-700 p-4 opacity-60">
                       <div className="flex justify-between items-start">
                         <div>
-                          <p className="text-sm font-semibold text-gray-500">{dayLabel.charAt(0).toUpperCase() + dayLabel.slice(1)}</p>
-                          <p className="text-sm text-gray-400">{formatTime(start)}–{formatTime(end)}</p>
-                          <p className="text-sm text-gray-400 mt-0.5">{booking.dance_style}</p>
+                          <p className="text-sm font-semibold text-gray-500 dark:text-gray-400">{dayLabel.charAt(0).toUpperCase() + dayLabel.slice(1)}</p>
+                          <p className="text-sm text-gray-400 dark:text-gray-500">{formatTime(start)}–{formatTime(end)}</p>
+                          <p className="text-sm text-gray-400 dark:text-gray-500 mt-0.5">{booking.dance_style}</p>
                           {booking.availability_slots?.profiles?.name && (
-                            <p className="text-xs text-gray-400">Trener: {booking.availability_slots.profiles.name}</p>
+                            <p className="text-xs text-gray-400 dark:text-gray-500">Trener: {booking.availability_slots.profiles.name}</p>
                           )}
                         </div>
-                        <span className="text-xs bg-gray-100 text-gray-500 px-2 py-1 rounded-full">Fullført</span>
+                        <span className="text-xs bg-gray-100 dark:bg-gray-800 text-gray-500 dark:text-gray-400 px-2 py-1 rounded-full">Fullført</span>
                       </div>
                     </div>
                   );
@@ -368,7 +368,7 @@ export default function DancerDashboardNav(props: Props) {
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <p className="text-xs text-gray-400 mb-3">F.eks. triks du vil lære, mål for konkurranser, hva du vil jobbe med denne sesongen</p>
+            <p className="text-xs text-gray-400 dark:text-gray-500 mb-3">F.eks. triks du vil lære, mål for konkurranser, hva du vil jobbe med denne sesongen</p>
             <GoalsList value={goals} onChange={g => { setGoals(g); setSaved(false); }} />
           </CardContent>
         </Card>
@@ -390,12 +390,12 @@ export default function DancerDashboardNav(props: Props) {
               <div key={label} className={idx > 0 ? "border-t pt-6" : ""}>
                 <div className="space-y-3">
                   <div className="flex items-center justify-between">
-                    <p className="text-sm font-semibold text-gray-700">{label}</p>
+                    <p className="text-sm font-semibold text-gray-700 dark:text-gray-300">{label}</p>
                     <span className="text-xs font-bold text-purple-600 bg-purple-50 px-2 py-0.5 rounded-full">{LEVELS[level]}</span>
                   </div>
                   <div className="space-y-1.5">
                     <div className="flex justify-between text-[10px] px-0.5">
-                      {LEVELS.map((name, i) => <span key={i} className={i <= level ? "text-purple-600 font-semibold" : "text-gray-400"}>{name}</span>)}
+                      {LEVELS.map((name, i) => <span key={i} className={i <= level ? "text-purple-600 font-semibold" : "text-gray-400 dark:text-gray-500"}>{name}</span>)}
                     </div>
                     <div style={{ height: "12px", backgroundColor: "#e5e7eb", borderRadius: "9999px", overflow: "hidden" }}>
                       <div style={{ height: "100%", backgroundColor: "#7c3aed", borderRadius: "9999px", width: `${Math.max(3, (level / 4) * 100 + (percent / 100) * (100 / 4))}%`, transition: "width 0.5s ease" }} />
@@ -403,11 +403,11 @@ export default function DancerDashboardNav(props: Props) {
                   </div>
                   <PointsStepper value={points} onChange={onChange} />
                   {level >= 3 ? (
-                    <div className="flex items-center gap-2 text-sm text-gray-500 bg-yellow-50 border border-yellow-200 rounded-lg px-3 py-2">
+                    <div className="flex items-center gap-2 text-sm text-gray-500 dark:text-gray-400 bg-yellow-50 border border-yellow-200 rounded-lg px-3 py-2">
                       <Trophy size={14} className="text-yellow-500" /> Neste nivå avgjøres av plasseringer på stevner
                     </div>
                   ) : (
-                    <div className="flex justify-between text-xs text-gray-500">
+                    <div className="flex justify-between text-xs text-gray-500 dark:text-gray-400">
                       <span>{Math.min(points, needed)} / {needed} poeng mot {LEVELS[level + 1]}</span>
                       <span>{percent}%</span>
                     </div>
@@ -431,13 +431,13 @@ export default function DancerDashboardNav(props: Props) {
         return (
           <div className="space-y-3">
             <NMCountdown />
-            {upcoming.length === 0 && <p className="text-sm text-gray-400 text-center py-6">Ingen kommende konkurranser</p>}
+            {upcoming.length === 0 && <p className="text-sm text-gray-400 dark:text-gray-500 text-center py-6">Ingen kommende konkurranser</p>}
             {upcoming.slice(1).map(c => (
-              <div key={c.name} className="bg-white rounded-xl border p-4 flex items-center justify-between">
+              <div key={c.name} className="bg-white dark:bg-gray-900 rounded-xl border dark:border-gray-700 p-4 flex items-center justify-between">
                 <div>
-                  <p className="font-semibold text-gray-800">{c.short}</p>
+                  <p className="font-semibold text-gray-800 dark:text-white">{c.short}</p>
                   <p className="text-sm text-purple-600">{c.dateLabel}</p>
-                  {c.location && <p className="text-xs text-gray-400 mt-0.5">{c.location}</p>}
+                  {c.location && <p className="text-xs text-gray-400 dark:text-gray-500 mt-0.5">{c.location}</p>}
                 </div>
                 <span className="text-xs font-bold text-purple-600 bg-purple-50 px-2 py-1 rounded-full whitespace-nowrap ml-3">
                   {daysLeft(c.date)} dager
@@ -451,12 +451,12 @@ export default function DancerDashboardNav(props: Props) {
         {/* Om privattimer */}
         {active === "om" && (
           <div className="space-y-4">
-            <div className="bg-white rounded-2xl border p-5 space-y-4">
+            <div className="bg-white dark:bg-gray-900 rounded-2xl border dark:border-gray-700 p-5 space-y-4">
               <h2 className="text-lg font-bold">Bestille privattimer</h2>
-              <p className="text-gray-600 text-sm leading-relaxed">
+              <p className="text-gray-600 dark:text-gray-400 text-sm leading-relaxed">
                 Evolutions instruktører tilbyr privattimer. Disse kan benyttes etter ønske – koreografi, teknikk, akrobatikk o.l. Dette er en flott mulighet for danserne til å utvikle seg og få tett oppfølging av trenerteamet.
               </p>
-              <p className="text-gray-600 text-sm leading-relaxed">
+              <p className="text-gray-600 dark:text-gray-400 text-sm leading-relaxed">
                 En privattime varer i <strong>30 minutter</strong> og koster <strong>250,-</strong>, <strong>200,-</strong> eller <strong>150,-</strong> avhengig av trener.
               </p>
               <div className="bg-blue-50 border border-blue-200 rounded-xl p-4">
@@ -475,17 +475,17 @@ export default function DancerDashboardNav(props: Props) {
               </div>
             </div>
 
-            <div className="bg-white rounded-2xl border p-5">
+            <div className="bg-white dark:bg-gray-900 rounded-2xl border dark:border-gray-700 p-5">
               <h3 className="font-semibold text-lg mb-4">Våre trenere</h3>
               <div className="space-y-1">
                 {(props.trainers ?? []).map(t => (
-                  <div key={t.name} className="flex items-start gap-3 py-3 border-b last:border-0">
+                  <div key={t.name} className="flex items-start gap-3 py-3 border-b dark:border-gray-700 last:border-0">
                     <div className="w-9 h-9 rounded-full bg-purple-100 flex items-center justify-center text-purple-600 font-bold shrink-0 text-sm">
                       {t.name.charAt(0)}
                     </div>
                     <div>
                       <p className="font-medium text-sm">{t.name}</p>
-                      <p className="text-xs text-gray-400 mt-0.5">{t.styles.join(" · ")}</p>
+                      <p className="text-xs text-gray-400 dark:text-gray-500 mt-0.5">{t.styles.join(" · ")}</p>
                     </div>
                   </div>
                 ))}

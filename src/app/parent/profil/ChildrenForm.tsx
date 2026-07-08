@@ -44,14 +44,14 @@ export default function ChildrenForm({ parentId, children: initial }: { parentId
 
   return (
     <div className="space-y-4">
-      <div className="bg-white rounded-2xl border p-5">
+      <div className="bg-white dark:bg-gray-900 rounded-2xl border dark:border-gray-700 p-5">
         <h2 className="font-semibold text-base mb-4">Registrerte dansere</h2>
         {children.length === 0 ? (
-          <p className="text-sm text-gray-400">Ingen dansere lagt til ennå</p>
+          <p className="text-sm text-gray-400 dark:text-gray-500">Ingen dansere lagt til ennå</p>
         ) : (
           <div className="space-y-2">
             {children.map((c) => (
-              <div key={c.id} className="flex items-center justify-between py-2 border-b last:border-0">
+              <div key={c.id} className="flex items-center justify-between py-2 border-b dark:border-gray-700 last:border-0">
                 <div className="flex items-center gap-3">
                   <div className="w-9 h-9 rounded-full bg-purple-100 flex items-center justify-center text-purple-600 font-bold text-sm">
                     {c.name.charAt(0)}
@@ -61,7 +61,7 @@ export default function ChildrenForm({ parentId, children: initial }: { parentId
                 <button
                   type="button"
                   onClick={() => handleDelete(c.id)}
-                  className="text-gray-300 hover:text-red-400 transition-colors"
+                  className="text-gray-300 dark:text-gray-600 hover:text-red-400 transition-colors"
                 >
                   <Trash2 size={16} />
                 </button>

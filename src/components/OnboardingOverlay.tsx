@@ -56,12 +56,12 @@ export default function OnboardingOverlay() {
   if (!visible) return null;
 
   return (
-    <div className="fixed inset-0 z-[100] bg-white flex flex-col">
+    <div className="fixed inset-0 z-[100] bg-white dark:bg-gray-900 flex flex-col">
       {/* Skip-knapp */}
       {slide > 0 && (
         <button
           onClick={done}
-          className="absolute top-4 right-4 z-10 flex items-center gap-1 text-sm text-gray-400 hover:text-gray-600 transition-colors"
+          className="absolute top-4 right-4 z-10 flex items-center gap-1 text-sm text-gray-400 dark:text-gray-500 hover:text-gray-600 transition-colors"
         >
           Hopp over <X size={16} />
         </button>
@@ -128,7 +128,7 @@ export default function OnboardingOverlay() {
               <div
                 key={i}
                 className={`rounded-full transition-all duration-300 ${
-                  i === slide - 1 ? "w-6 h-2 bg-purple-600" : "w-2 h-2 bg-gray-200"
+                  i === slide - 1 ? "w-6 h-2 bg-purple-600" : "w-2 h-2 bg-gray-200 dark:bg-gray-700"
                 }`}
               />
             ))}
@@ -220,8 +220,8 @@ function FeatureSlide({ icon, emoji, title, description, color, highlight, level
       </div>
 
       <div style={{ animation: "fadeUp 0.4s ease forwards", animationDelay: "0.1s", opacity: 0 }}>
-        <h2 className="text-2xl font-bold text-gray-900 mb-3 leading-tight">{title}</h2>
-        <p className="text-gray-500 text-base leading-relaxed max-w-xs mx-auto">{description}</p>
+        <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-3 leading-tight">{title}</h2>
+        <p className="text-gray-500 dark:text-gray-400 text-base leading-relaxed max-w-xs mx-auto">{description}</p>
       </div>
 
       {/* Highlight-boks */}
@@ -244,7 +244,7 @@ function FeatureSlide({ icon, emoji, title, description, color, highlight, level
             <span
               key={level}
               className={`px-3 py-1.5 rounded-full text-xs font-semibold border ${
-                i === 0 ? "bg-gray-100 text-gray-500 border-gray-200"
+                i === 0 ? "bg-gray-100 dark:bg-gray-800 text-gray-500 dark:text-gray-400 border-gray-200 dark:border-gray-700"
                 : i === 1 ? "bg-blue-50 text-blue-600 border-blue-100"
                 : i === 2 ? "bg-purple-50 text-purple-600 border-purple-100"
                 : i === 3 ? "bg-yellow-50 text-yellow-600 border-yellow-100"
@@ -254,7 +254,7 @@ function FeatureSlide({ icon, emoji, title, description, color, highlight, level
               {i === 4 ? "⭐ " : ""}{level}
             </span>
           ))}
-          <p className="w-full text-xs text-gray-400 mt-1">Freestyle og slow – separat</p>
+          <p className="w-full text-xs text-gray-400 dark:text-gray-500 mt-1">Freestyle og slow – separat</p>
         </div>
       )}
 
@@ -274,10 +274,10 @@ function FeatureSlide({ icon, emoji, title, description, color, highlight, level
               <p className="text-xs text-purple-200">dager igjen</p>
             </div>
           </div>
-          <div className="bg-white rounded-xl border px-4 py-2.5 flex items-center justify-between">
+          <div className="bg-white dark:bg-gray-900 rounded-xl border dark:border-gray-700 px-4 py-2.5 flex items-center justify-between">
             <div className="text-left">
-              <p className="text-xs font-semibold text-gray-700">🥇 NM 2025</p>
-              <p className="text-xs text-gray-400">1. plass Freestyle</p>
+              <p className="text-xs font-semibold text-gray-700 dark:text-gray-300">🥇 NM 2025</p>
+              <p className="text-xs text-gray-400 dark:text-gray-500">1. plass Freestyle</p>
             </div>
             <span className="text-xs bg-yellow-50 text-yellow-600 font-semibold px-2 py-1 rounded-full">Loggført</span>
           </div>

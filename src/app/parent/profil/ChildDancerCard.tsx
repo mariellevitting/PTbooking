@@ -104,13 +104,13 @@ export default function ChildDancerCard({ parentId, children, hideResults, hideG
         <div className="flex gap-2 flex-wrap">
           {children.map(c => (
             <button key={c.id} onClick={() => loadChild(c.id)}
-              className={`px-4 py-1.5 rounded-full text-sm font-medium border transition-colors ${selectedId === c.id ? "bg-purple-600 text-white border-purple-600" : "bg-white text-gray-600 border-gray-200 hover:border-purple-400"}`}>
+              className={`px-4 py-1.5 rounded-full text-sm font-medium border transition-colors ${selectedId === c.id ? "bg-purple-600 text-white border-purple-600" : "bg-white dark:bg-gray-900 text-gray-600 dark:text-gray-400 border-gray-200 dark:border-gray-700 hover:border-purple-400"}`}>
               {c.name}
             </button>
           ))}
         </div>
       )}
-      {children.length === 1 && <p className="text-base font-semibold text-gray-700">{children[0].name}</p>}
+      {children.length === 1 && <p className="text-base font-semibold text-gray-700 dark:text-gray-300">{children[0].name}</p>}
 
       {!hideGoals && (
         <Card>
@@ -120,7 +120,7 @@ export default function ChildDancerCard({ parentId, children, hideResults, hideG
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <p className="text-xs text-gray-400 mb-3">F.eks. triks, mål for konkurranser, hva danseren vil jobbe med</p>
+            <p className="text-xs text-gray-400 dark:text-gray-500 mb-3">F.eks. triks, mål for konkurranser, hva danseren vil jobbe med</p>
             <GoalsList value={goals} onChange={setGoals} />
           </CardContent>
         </Card>
@@ -137,15 +137,15 @@ export default function ChildDancerCard({ parentId, children, hideResults, hideG
             { label: "Freestyle", points: freestyle, level: levelF, percent: percentF, needed: neededF, onChange: handleFreestyleChange, disc: "freestyle" as const },
             { label: "Slow", points: slow, level: levelS, percent: percentS, needed: neededS, onChange: handleSlowChange, disc: "slow" as const },
           ].map(({ label, points, level, percent, needed, onChange, disc }, idx) => (
-            <div key={label} className={idx > 0 ? "border-t pt-6" : ""}>
+            <div key={label} className={idx > 0 ? "border-t dark:border-gray-700 pt-6" : ""}>
               <div className="space-y-3">
                 <div className="flex items-center justify-between">
-                  <p className="text-sm font-semibold text-gray-700">{label}</p>
+                  <p className="text-sm font-semibold text-gray-700 dark:text-gray-300">{label}</p>
                   <span className="text-xs font-bold text-purple-600 bg-purple-50 px-2 py-0.5 rounded-full">{LEVELS[level]}</span>
                 </div>
                 <div className="space-y-1.5">
                   <div className="flex justify-between text-[10px] px-0.5">
-                    {LEVELS.map((name, i) => <span key={i} className={i <= level ? "text-purple-600 font-semibold" : "text-gray-400"}>{name}</span>)}
+                    {LEVELS.map((name, i) => <span key={i} className={i <= level ? "text-purple-600 font-semibold" : "text-gray-400 dark:text-gray-500"}>{name}</span>)}
                   </div>
                   <div style={{ height: "12px", backgroundColor: "#e5e7eb", borderRadius: "9999px", overflow: "hidden" }}>
                     <div style={{ height: "100%", backgroundColor: "#7c3aed", borderRadius: "9999px", width: `${Math.max(3, (level / 4) * 100 + (percent / 100) * (100 / 4))}%`, transition: "width 0.5s ease" }} />
@@ -153,11 +153,11 @@ export default function ChildDancerCard({ parentId, children, hideResults, hideG
                 </div>
                 <PointsStepper value={points} onChange={onChange} />
                 {level >= 3 ? (
-                  <div className="flex items-center gap-2 text-sm text-gray-500 bg-yellow-50 border border-yellow-200 rounded-lg px-3 py-2">
+                  <div className="flex items-center gap-2 text-sm text-gray-500 dark:text-gray-400 bg-yellow-50 border border-yellow-200 rounded-lg px-3 py-2">
                     <Trophy size={14} className="text-yellow-500" /> Neste nivå avgjøres av plasseringer på stevner
                   </div>
                 ) : (
-                  <div className="flex justify-between text-xs text-gray-500">
+                  <div className="flex justify-between text-xs text-gray-500 dark:text-gray-400">
                     <span>{Math.min(points, needed)} / {needed} poeng mot {LEVELS[level + 1]}</span>
                     <span>{percent}%</span>
                   </div>

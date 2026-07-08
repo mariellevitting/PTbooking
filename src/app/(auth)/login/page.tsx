@@ -72,13 +72,13 @@ export default function LoginPage() {
   }
 
   const tabs = (
-    <div className="flex bg-gray-100 rounded-xl p-1 mb-6">
+    <div className="flex bg-gray-100 dark:bg-gray-800 rounded-xl p-1 mb-6">
       <button onClick={() => switchTab("login")}
-        className={`flex-1 text-center py-2 rounded-lg text-sm font-semibold transition-all ${tab === "login" ? "bg-white text-gray-900 shadow-sm" : "text-gray-500"}`}>
+        className={`flex-1 text-center py-2 rounded-lg text-sm font-semibold transition-all ${tab === "login" ? "bg-white dark:bg-gray-900 text-gray-900 dark:text-white shadow-sm" : "text-gray-500 dark:text-gray-400"}`}>
         Logg inn
       </button>
       <button onClick={() => switchTab("register")}
-        className={`flex-1 text-center py-2 rounded-lg text-sm font-semibold transition-all ${tab === "register" ? "bg-white text-gray-900 shadow-sm" : "text-gray-500"}`}>
+        className={`flex-1 text-center py-2 rounded-lg text-sm font-semibold transition-all ${tab === "register" ? "bg-white dark:bg-gray-900 text-gray-900 dark:text-white shadow-sm" : "text-gray-500 dark:text-gray-400"}`}>
         Registrer
       </button>
     </div>
@@ -87,12 +87,12 @@ export default function LoginPage() {
   const loginForm = (
     <form onSubmit={handleLogin} className="space-y-4">
       <div className="space-y-1.5">
-        <label className="text-sm font-medium text-gray-700">E-post</label>
+        <label className="text-sm font-medium text-gray-700 dark:text-gray-300">E-post</label>
         <Input type="email" value={email} onChange={e => setEmail(e.target.value)} placeholder="din@epost.no" required />
       </div>
       <div className="space-y-1.5">
         <div className="flex justify-between items-center">
-          <label className="text-sm font-medium text-gray-700">Passord</label>
+          <label className="text-sm font-medium text-gray-700 dark:text-gray-300">Passord</label>
           <a href="/glemt-passord" className="text-xs text-purple-600 hover:underline">Glemt passordet?</a>
         </div>
         <Input type="password" value={password} onChange={e => setPassword(e.target.value)} placeholder="••••••••" required />
@@ -108,12 +108,12 @@ export default function LoginPage() {
     <>
       {step === "role" && (
         <div className="space-y-3">
-          <p className="text-sm font-medium text-gray-700 mb-3">Hvem er du?</p>
+          <p className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-3">Hvem er du?</p>
           {roles.map(r => (
             <button key={r.value} onClick={() => { setRole(r.value); setStep("details"); }}
-              className="w-full text-left border rounded-xl p-4 bg-white hover:border-purple-500 hover:bg-purple-50 transition-colors">
-              <p className="font-semibold text-gray-800">{r.label}</p>
-              <p className="text-sm text-gray-500">{r.description}</p>
+              className="w-full text-left border dark:border-gray-700 rounded-xl p-4 bg-white dark:bg-gray-900 hover:border-purple-500 hover:bg-purple-50 transition-colors">
+              <p className="font-semibold text-gray-800 dark:text-gray-100">{r.label}</p>
+              <p className="text-sm text-gray-500 dark:text-gray-400">{r.description}</p>
             </button>
           ))}
         </div>
@@ -154,14 +154,14 @@ export default function LoginPage() {
             <div className="space-y-1.5">
               <label className="text-sm font-medium">Klubbkode</label>
               <Input type="text" value={memberCode} onChange={e => setMemberCode(e.target.value)} placeholder="Kode fra Evolution" required />
-              <p className="text-xs text-gray-400">Du får koden av klubben via Spond eller e-post.</p>
+              <p className="text-xs text-gray-400 dark:text-gray-500">Du får koden av klubben via Spond eller e-post.</p>
             </div>
           )}
           {role === "trainer" && (
             <div className="space-y-1.5">
               <label className="text-sm font-medium">Trenerkode</label>
               <Input type="text" value={trainerCode} onChange={e => setTrainerCode(e.target.value)} placeholder="Kode fra klubben" required />
-              <p className="text-xs text-gray-400">Kun trenere med kode kan registrere seg.</p>
+              <p className="text-xs text-gray-400 dark:text-gray-500">Kun trenere med kode kan registrere seg.</p>
             </div>
           )}
           {regError && <p className="text-sm text-red-500">{regError}</p>}
@@ -193,7 +193,7 @@ export default function LoginPage() {
         <div className="relative z-10 w-full px-4 pb-4 pt-8">
           <p className="text-white/90 text-sm italic mb-1 px-2">✦ Av dansere, for dansere</p>
           <h1 className="text-3xl font-bold text-white mb-4 px-2">Danceitude</h1>
-          <div className="bg-white rounded-2xl p-6 shadow-xl">
+          <div className="bg-white dark:bg-gray-900 rounded-2xl p-6 shadow-xl">
             {tabs}
             {tab === "login" ? loginForm : registerForm}
           </div>
@@ -201,14 +201,14 @@ export default function LoginPage() {
       </div>
 
       {/* Desktop – høyre skjemakolonne */}
-      <div className="hidden md:flex flex-1 items-center justify-center bg-gray-50 p-8">
+      <div className="hidden md:flex flex-1 items-center justify-center bg-gray-50 dark:bg-gray-950 p-8">
         <div className="w-full max-w-sm">
           <div className="mb-8">
-            <h2 className="text-3xl font-bold text-gray-900">Logg inn</h2>
-            <p className="text-gray-500 mt-1 text-sm">Velkommen tilbake!</p>
+            <h2 className="text-3xl font-bold text-gray-900 dark:text-white">Logg inn</h2>
+            <p className="text-gray-500 dark:text-gray-400 mt-1 text-sm">Velkommen tilbake!</p>
           </div>
           {loginForm}
-          <p className="text-center text-sm text-gray-500 mt-4">
+          <p className="text-center text-sm text-gray-500 dark:text-gray-400 mt-4">
             Har du ikke konto?{" "}
             <a href="/register" className="text-purple-600 hover:underline font-medium">Registrer deg</a>
           </p>

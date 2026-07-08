@@ -18,7 +18,7 @@ export default async function DancerProfilPage() {
   if (!profile || profile.role !== "dancer") redirect("/dashboard");
 
   return (
-    <main className="bg-gray-50 p-6">
+    <main className="bg-gray-50 dark:bg-gray-950 p-6">
       <div className="max-w-lg mx-auto">
         <Link href="/dancer/dashboard" className="inline-flex items-center gap-1 text-sm text-purple-600 hover:underline mb-6">
           <ArrowLeft size={16} /> Tilbake

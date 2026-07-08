@@ -114,7 +114,7 @@ export default function ProfilForm({ userId, name, phone, bio, danceStyles, avat
             </button>
           </div>
           <input ref={fileRef} type="file" accept="image/*" className="hidden" onChange={handleAvatarUpload} />
-          {uploading && <p className="text-xs text-gray-400">Laster opp...</p>}
+          {uploading && <p className="text-xs text-gray-400 dark:text-gray-500">Laster opp...</p>}
         </CardContent>
       </Card>
 
@@ -131,20 +131,20 @@ export default function ProfilForm({ userId, name, phone, bio, danceStyles, avat
           </div>
           <div className="space-y-1.5">
             <label className="text-sm font-medium flex items-center gap-1.5">
-              <Phone size={14} className="text-gray-400" /> Telefon
+              <Phone size={14} className="text-gray-400 dark:text-gray-500" /> Telefon
             </label>
             <Input value={phoneVal} onChange={(e) => setPhoneVal(e.target.value)} placeholder="+47 000 00 000" type="tel" />
           </div>
           <div className="space-y-1.5">
             <label className="text-sm font-medium flex items-center gap-1.5">
-              <FileText size={14} className="text-gray-400" /> Bio (valgfritt)
+              <FileText size={14} className="text-gray-400 dark:text-gray-500" /> Bio (valgfritt)
             </label>
             <textarea
               value={bioVal}
               onChange={(e) => setBioVal(e.target.value)}
               rows={3}
               placeholder="Kort beskrivelse av deg som trener..."
-              className="w-full border rounded-lg px-3 py-2 text-sm resize-none focus:outline-none focus:ring-2 focus:ring-purple-300"
+              className="w-full border dark:border-gray-700 bg-white dark:bg-gray-900 text-gray-900 dark:text-white rounded-lg px-3 py-2 text-sm resize-none focus:outline-none focus:ring-2 focus:ring-purple-300"
             />
           </div>
         </CardContent>
@@ -168,11 +168,11 @@ export default function ProfilForm({ userId, name, phone, bio, danceStyles, avat
                   className={`flex items-center gap-2 px-3 py-2.5 rounded-xl border text-sm font-medium transition-colors ${
                     isSelected
                       ? "bg-purple-600 text-white border-purple-600"
-                      : "bg-white text-gray-700 border-gray-200 hover:border-purple-300"
+                      : "bg-white dark:bg-gray-900 text-gray-700 dark:text-gray-300 border-gray-200 dark:border-gray-700 hover:border-purple-300"
                   }`}
                 >
                   <div className={`w-4 h-4 rounded border flex items-center justify-center shrink-0 ${
-                    isSelected ? "bg-white border-white" : "border-gray-300"
+                    isSelected ? "bg-white border-white" : "border-gray-300 dark:border-gray-600"
                   }`}>
                     {isSelected && <Check size={11} className="text-purple-600" strokeWidth={3} />}
                   </div>

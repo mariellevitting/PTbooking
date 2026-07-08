@@ -57,16 +57,16 @@ export default function NyttPassordPage() {
         </div>
       </div>
 
-      <div className="flex flex-1 items-center justify-center bg-gray-50 p-8">
+      <div className="flex flex-1 items-center justify-center bg-gray-50 dark:bg-gray-950 p-8">
         <div className="w-full max-w-sm">
           <div className="mb-8">
-            <h2 className="text-3xl font-bold text-gray-900">Nytt passord</h2>
-            <p className="text-gray-500 mt-1 text-sm">Velg et nytt passord for kontoen din.</p>
+            <h2 className="text-3xl font-bold text-gray-900 dark:text-white">Nytt passord</h2>
+            <p className="text-gray-500 dark:text-gray-400 mt-1 text-sm">Velg et nytt passord for kontoen din.</p>
           </div>
 
           <form onSubmit={handleSubmit} className="space-y-4">
             <div className="space-y-1.5">
-              <label className="text-sm font-medium text-gray-700">Nytt passord</label>
+              <label className="text-sm font-medium text-gray-700 dark:text-gray-300">Nytt passord</label>
               <Input
                 type="password"
                 value={password}
@@ -76,7 +76,7 @@ export default function NyttPassordPage() {
               />
             </div>
             <div className="space-y-1.5">
-              <label className="text-sm font-medium text-gray-700">Bekreft passord</label>
+              <label className="text-sm font-medium text-gray-700 dark:text-gray-300">Bekreft passord</label>
               <Input
                 type="password"
                 value={confirm}

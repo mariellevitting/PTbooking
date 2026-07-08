@@ -31,13 +31,13 @@ export default function GoalsList({ value, onChange }: Props) {
   return (
     <div className="space-y-2">
       {goals.length === 0 && (
-        <p className="text-sm text-gray-400 py-1">Ingen mål lagt til ennå</p>
+        <p className="text-sm text-gray-400 dark:text-gray-500 py-1">Ingen mål lagt til ennå</p>
       )}
       {goals.map((goal, idx) => (
         <div key={idx} className="flex items-start gap-2 bg-purple-50 rounded-lg px-3 py-2">
           <span className="text-purple-400 mt-0.5 shrink-0">•</span>
-          <span className="text-sm text-gray-700 flex-1">{goal}</span>
-          <button type="button" onClick={() => removeGoal(idx)} className="text-gray-300 hover:text-red-400 transition-colors shrink-0 mt-0.5">
+          <span className="text-sm text-gray-700 dark:text-gray-300 flex-1">{goal}</span>
+          <button type="button" onClick={() => removeGoal(idx)} className="text-gray-300 dark:text-gray-600 hover:text-red-400 transition-colors shrink-0 mt-0.5">
             <X size={14} />
           </button>
         </div>
@@ -49,7 +49,7 @@ export default function GoalsList({ value, onChange }: Props) {
           onChange={e => setNewGoal(e.target.value)}
           onKeyDown={handleKeyDown}
           placeholder="Legg til et mål..."
-          className="flex-1 border rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-purple-400"
+          className="flex-1 border dark:border-gray-700 bg-white dark:bg-gray-900 dark:text-white rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-purple-400"
         />
         <button
           type="button"

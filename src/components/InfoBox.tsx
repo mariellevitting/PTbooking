@@ -20,11 +20,11 @@ export default function InfoBox() {
         <div className="mt-3 bg-purple-50 border border-purple-100 rounded-2xl p-4 space-y-3 relative">
           <button
             onClick={() => setOpen(false)}
-            className="absolute top-3 right-3 text-gray-400 hover:text-gray-600"
+            className="absolute top-3 right-3 text-gray-400 dark:text-gray-500 hover:text-gray-600"
           >
             <X size={16} />
           </button>
-          <p className="text-sm text-gray-700 leading-relaxed">
+          <p className="text-sm text-gray-700 dark:text-gray-300 leading-relaxed">
             Evolutions instruktører tilbyr privattimer – koreografi, teknikk, akrobatikk o.l.
             En privattime varer <strong>30 minutter</strong> og koster <strong>250,-</strong>, <strong>200,-</strong> eller <strong>150,-</strong> avhengig av trener.
           </p>

@@ -19,7 +19,7 @@ export default async function SlettSlotPage({ params }: { params: Promise<{ slot
   if (!slot) redirect("/trainer/dashboard");
 
   return (
-    <main className="bg-gray-50 p-6">
+    <main className="bg-gray-50 dark:bg-gray-950 p-6">
       <div className="max-w-lg mx-auto">
         <h1 className="text-2xl font-bold mb-6">Slett ledig tid</h1>
         <DeleteSlotForm slotId={slotId} startAt={slot.start_at} endAt={slot.end_at} />

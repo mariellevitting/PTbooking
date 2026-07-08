@@ -34,7 +34,7 @@ export default async function BookPage() {
   });
 
   return (
-    <main className="bg-gray-50 p-6">
+    <main className="bg-gray-50 dark:bg-gray-950 p-6">
       <div className="max-w-lg mx-auto">
         <Link href={backHref} className="inline-flex items-center gap-1 text-sm text-purple-600 hover:underline mb-6">
           <ArrowLeft size={16} /> Tilbake
@@ -42,7 +42,7 @@ export default async function BookPage() {
         <h1 className="text-2xl font-bold mb-6">Velg trener</h1>
 
         {trainerList.length === 0 ? (
-          <div className="bg-white rounded-xl border p-6 text-center text-gray-400">
+          <div className="bg-white dark:bg-gray-900 rounded-xl border dark:border-gray-700 p-6 text-center text-gray-400 dark:text-gray-500">
             <p>Ingen trenere tilgjengelig ennå</p>
           </div>
         ) : (

@@ -256,7 +256,7 @@ export default function BookingForm({ slots, trainerName, bookerId, bookerName, 
       <div className="space-y-6">
         {availableMonths.length > 1 && (
           <select
-            className="w-full border rounded-lg px-3 py-2 text-sm bg-white text-gray-700"
+            className="w-full border dark:border-gray-700 rounded-lg px-3 py-2 text-sm bg-white dark:bg-gray-900 text-gray-700 dark:text-gray-300"
             value={`${weekStart.getFullYear()}-${weekStart.getMonth()}`}
             onChange={(e) => {
               const [year, month] = e.target.value.split("-").map(Number);
@@ -274,20 +274,20 @@ export default function BookingForm({ slots, trainerName, bookerId, bookerName, 
         )}
 
         <div className="flex items-center justify-between">
-          <button type="button" onClick={() => { const p = new Date(weekStart); p.setDate(p.getDate() - 7); setWeekStart(p); }} disabled={!canGoPrev} className={`text-2xl px-2 ${canGoPrev ? "text-gray-600 hover:text-purple-600" : "text-gray-200"}`}>‹</button>
-          <span className="font-semibold text-gray-700">Uke {getWeekNumber(weekStart)}</span>
-          <button type="button" onClick={() => { const n = new Date(weekStart); n.setDate(n.getDate() + 7); setWeekStart(n); }} className="text-2xl px-2 text-gray-600 hover:text-purple-600">›</button>
+          <button type="button" onClick={() => { const p = new Date(weekStart); p.setDate(p.getDate() - 7); setWeekStart(p); }} disabled={!canGoPrev} className={`text-2xl px-2 ${canGoPrev ? "text-gray-600 dark:text-gray-400 hover:text-purple-600" : "text-gray-200 dark:text-gray-700"}`}>‹</button>
+          <span className="font-semibold text-gray-700 dark:text-gray-300">Uke {getWeekNumber(weekStart)}</span>
+          <button type="button" onClick={() => { const n = new Date(weekStart); n.setDate(n.getDate() + 7); setWeekStart(n); }} className="text-2xl px-2 text-gray-600 dark:text-gray-400 hover:text-purple-600">›</button>
         </div>
 
         {Object.keys(weekGrouped).length === 0 ? (
-          <div className="bg-white rounded-xl border p-6 text-center text-gray-400">
+          <div className="bg-white dark:bg-gray-900 rounded-xl border dark:border-gray-700 p-6 text-center text-gray-400 dark:text-gray-500">
             <p className="font-medium">Treneren har ikke lagt ut ledige privattimer ennå</p>
             <p className="text-sm mt-1">Prøv en annen uke</p>
           </div>
         ) : (
           Object.entries(weekGrouped).map(([date, daySlots]) => (
             <div key={date}>
-              <p className="text-sm font-semibold text-gray-700 border-b pb-1 mb-2">{date.charAt(0).toUpperCase() + date.slice(1)}</p>
+              <p className="text-sm font-semibold text-gray-700 dark:text-gray-300 border-b dark:border-gray-700 pb-1 mb-2">{date.charAt(0).toUpperCase() + date.slice(1)}</p>
               <div className="grid grid-cols-3 gap-2">
                 {daySlots.map((slot) => {
                   const time = new Date(slot.start_at).toLocaleTimeString("nb-NO", { hour: "2-digit", minute: "2-digit" });
@@ -307,10 +307,10 @@ export default function BookingForm({ slots, trainerName, bookerId, bookerName, 
                       disabled={slot.is_booked}
                       className={`py-2 px-3 rounded-lg text-sm font-medium border transition-colors ${
                         slot.is_booked
-                          ? "bg-gray-100 text-gray-400 border-gray-200 cursor-not-allowed line-through"
+                          ? "bg-gray-100 dark:bg-gray-800 text-gray-400 dark:text-gray-600 border-gray-200 dark:border-gray-700 cursor-not-allowed line-through"
                           : isSelected
                           ? "bg-purple-600 text-white border-purple-600"
-                          : "bg-white text-gray-700 border-gray-200 hover:border-purple-400"
+                          : "bg-white dark:bg-gray-900 text-gray-700 dark:text-gray-300 border-gray-200 dark:border-gray-700 hover:border-purple-400"
                       }`}
                     >
                       {time}
@@ -350,13 +350,13 @@ export default function BookingForm({ slots, trainerName, bookerId, bookerName, 
           </CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">
-          <div className="bg-gray-50 rounded-xl px-4 py-3">
-            <p className="text-xs text-gray-400 mb-1">Tid</p>
+          <div className="bg-gray-50 dark:bg-gray-800 rounded-xl px-4 py-3">
+            <p className="text-xs text-gray-400 dark:text-gray-500 mb-1">Tid</p>
             <p className="font-semibold">{dayLabel.charAt(0).toUpperCase() + dayLabel.slice(1)}</p>
-            <p className="text-sm text-gray-500">
+            <p className="text-sm text-gray-500 dark:text-gray-400">
               {start.toLocaleTimeString("nb-NO", { hour: "2-digit", minute: "2-digit" })}–{end.toLocaleTimeString("nb-NO", { hour: "2-digit", minute: "2-digit" })}
             </p>
-            <p className="text-xs text-gray-400 mt-0.5">Trener: {trainerName}</p>
+            <p className="text-xs text-gray-400 dark:text-gray-500 mt-0.5">Trener: {trainerName}</p>
           </div>
 
           <div className="space-y-2">
@@ -376,7 +376,7 @@ export default function BookingForm({ slots, trainerName, bookerId, bookerName, 
                   className={`py-2 px-3 rounded-lg text-sm border transition-colors ${
                     current.danceStyle === style
                       ? "bg-purple-600 text-white border-purple-600"
-                      : "bg-white text-gray-700 border-gray-200 hover:border-purple-400"
+                      : "bg-white dark:bg-gray-900 text-gray-700 dark:text-gray-300 border-gray-200 dark:border-gray-700 hover:border-purple-400"
                   }`}
                 >
                   {style}
@@ -389,7 +389,7 @@ export default function BookingForm({ slots, trainerName, bookerId, bookerName, 
             <div className="space-y-2">
               <label className="text-sm font-medium">{needsTwo ? "Danser 1 – navn" : "Danserens navn"}</label>
               {childrenList.length > 1 ? (
-                <select value={current.dancer1} onChange={(e) => updateCurrent("dancer1", e.target.value)} className="w-full border rounded-lg px-3 py-2 text-sm bg-white">
+                <select value={current.dancer1} onChange={(e) => updateCurrent("dancer1", e.target.value)} className="w-full border dark:border-gray-700 rounded-lg px-3 py-2 text-sm bg-white dark:bg-gray-900 dark:text-gray-300">
                   <option value="">Velg danser</option>
                   {childrenList.map((c) => <option key={c.id} value={c.name}>{c.name}</option>)}
                 </select>
@@ -432,19 +432,19 @@ export default function BookingForm({ slots, trainerName, bookerId, bookerName, 
                       updateCurrent("linkedUserId", null);
                     }}
                     placeholder="Skriv navn..."
-                    className="w-full border rounded-lg px-3 py-2 text-sm bg-white"
+                    className="w-full border dark:border-gray-700 rounded-lg px-3 py-2 text-sm bg-white dark:bg-gray-900"
                     required
                   />
                   {partnerResults.length > 0 && (
-                    <div className="absolute z-10 mt-1 w-full bg-white border rounded-xl shadow-lg overflow-hidden">
+                    <div className="absolute z-10 mt-1 w-full bg-white dark:bg-gray-900 border dark:border-gray-700 rounded-xl shadow-lg overflow-hidden">
                       {partnerResults.map(u => (
                         <button
                           key={u.id}
                           type="button"
                           onClick={() => selectPartner(u)}
-                          className="w-full text-left px-4 py-2.5 hover:bg-purple-50 flex items-center justify-between border-t first:border-t-0"
+                          className="w-full text-left px-4 py-2.5 hover:bg-purple-50 dark:hover:bg-purple-950/30 flex items-center justify-between border-t dark:border-gray-700 first:border-t-0"
                         >
-                          <span className="text-sm font-medium text-gray-800">{u.name}</span>
+                          <span className="text-sm font-medium text-gray-800 dark:text-gray-100">{u.name}</span>
                           <span className="text-xs text-purple-500">Koble til profil</span>
                         </button>
                       ))}
@@ -458,7 +458,7 @@ export default function BookingForm({ slots, trainerName, bookerId, bookerName, 
           <Button className="w-full bg-purple-600 hover:bg-purple-700" disabled={!canNext} onClick={nextConfig}>
             {configIndex < slotBookings.length - 1 ? "Neste time →" : "Se oppsummering"}
           </Button>
-          <button type="button" onClick={() => configIndex === 0 ? setStep("pick") : setConfigIndex(configIndex - 1)} className="w-full text-sm text-gray-400 hover:text-gray-600 py-2">
+          <button type="button" onClick={() => configIndex === 0 ? setStep("pick") : setConfigIndex(configIndex - 1)} className="w-full text-sm text-gray-400 dark:text-gray-500 hover:text-gray-600 dark:hover:text-gray-300 py-2">
             Gå tilbake
           </button>
         </CardContent>
@@ -480,13 +480,13 @@ export default function BookingForm({ slots, trainerName, bookerId, bookerName, 
             const dayLabel = start.toLocaleDateString("nb-NO", { weekday: "long", day: "numeric", month: "long" });
             const dancerName = isDouble(sb.danceStyle) ? `${sb.dancer1} & ${sb.dancer2}` : sb.dancer1;
             return (
-              <div key={i} className="bg-gray-50 rounded-xl px-4 py-3 border-l-4 border-l-purple-400">
+              <div key={i} className="bg-gray-50 dark:bg-gray-800 rounded-xl px-4 py-3 border-l-4 border-l-purple-400">
                 <p className="font-semibold text-sm">{dayLabel.charAt(0).toUpperCase() + dayLabel.slice(1)}</p>
-                <p className="text-sm text-gray-500">
+                <p className="text-sm text-gray-500 dark:text-gray-400">
                   {start.toLocaleTimeString("nb-NO", { hour: "2-digit", minute: "2-digit" })}–{end.toLocaleTimeString("nb-NO", { hour: "2-digit", minute: "2-digit" })}
                 </p>
                 <p className="text-sm text-purple-600">{sb.danceStyle} · {dancerName}</p>
-                <p className="text-xs text-gray-400 mt-0.5">Trener: {trainerName}</p>
+                <p className="text-xs text-gray-400 dark:text-gray-500 mt-0.5">Trener: {trainerName}</p>
                 {sb.linkedUserId && (
                   <p className="text-xs text-green-600 mt-0.5">✓ Koblet til {sb.dancer2}s profil</p>
                 )}
@@ -508,7 +508,7 @@ export default function BookingForm({ slots, trainerName, bookerId, bookerName, 
         <Button className="w-full bg-purple-600 hover:bg-purple-700" onClick={handleBook} disabled={loading}>
           {loading ? "Booker..." : `Bekreft ${slotBookings.length} booking${slotBookings.length !== 1 ? "er" : ""}`}
         </Button>
-        <button type="button" onClick={() => { setConfigIndex(slotBookings.length - 1); setStep("configure"); }} className="w-full text-sm text-gray-400 hover:text-gray-600 py-2">
+        <button type="button" onClick={() => { setConfigIndex(slotBookings.length - 1); setStep("configure"); }} className="w-full text-sm text-gray-400 dark:text-gray-500 hover:text-gray-600 dark:hover:text-gray-300 py-2">
           Gå tilbake
         </button>
       </CardContent>

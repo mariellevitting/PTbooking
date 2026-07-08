@@ -33,10 +33,10 @@ export default async function TrainerDashboard() {
     .order("start_at", { ascending: false });
 
   return (
-    <main className="bg-gray-50 p-6">
+    <main className="bg-gray-50 dark:bg-gray-950 p-6">
       <div className="max-w-lg mx-auto">
         <h1 className="text-2xl font-bold mb-1">Heihei, {profile.name.split(" ")[0]}! 👋</h1>
-        <p className="text-gray-500 mb-6 text-sm">Evolution Studio – Trener</p>
+        <p className="text-gray-500 dark:text-gray-400 mb-6 text-sm">Evolution Studio – Trener</p>
         <NMCountdown href="/trainer/konkurranser" />
         <TrainerDashboardTabs
           slots={(slots ?? []) as any}

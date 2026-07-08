@@ -63,8 +63,8 @@ export default function CancelForm({ bookingId, slotId, trainerId, dancerName, d
 
   return (
     <div className="space-y-4">
-      <div className="bg-white border rounded-xl px-4 py-3">
-        <p className="text-xs text-gray-400 mb-1">Time som avbestilles</p>
+      <div className="bg-white dark:bg-gray-900 border dark:border-gray-700 rounded-xl px-4 py-3">
+        <p className="text-xs text-gray-400 dark:text-gray-500 mb-1">Time som avbestilles</p>
         <p className="font-semibold">{tidspunkt}</p>
         <p className="text-sm text-purple-600">{dancerName} · {danceStyle}</p>
       </div>
@@ -82,7 +82,7 @@ export default function CancelForm({ bookingId, slotId, trainerId, dancerName, d
         </div>
       )}
 
-      <div className="bg-white border rounded-xl p-4">
+      <div className="bg-white dark:bg-gray-900 border dark:border-gray-700 rounded-xl p-4">
         <label className="flex items-start gap-3 cursor-pointer">
           <input
             type="checkbox"
@@ -90,7 +90,7 @@ export default function CancelForm({ bookingId, slotId, trainerId, dancerName, d
             onChange={(e) => setConfirmed(e.target.checked)}
             className="mt-0.5 accent-purple-600 w-4 h-4"
           />
-          <span className="text-sm text-gray-700">
+          <span className="text-sm text-gray-700 dark:text-gray-300">
             {withinDeadline
               ? "Jeg forstår at timen må betales i sin helhet og ønsker likevel å avbestille."
               : "Jeg bekrefter at jeg ønsker å avbestille denne timen."}
@@ -111,7 +111,7 @@ export default function CancelForm({ bookingId, slotId, trainerId, dancerName, d
       <button
         type="button"
         onClick={() => router.back()}
-        className="w-full text-sm text-gray-400 hover:text-gray-600 py-2"
+        className="w-full text-sm text-gray-400 dark:text-gray-500 hover:text-gray-600 py-2"
       >
         Gå tilbake
       </button>

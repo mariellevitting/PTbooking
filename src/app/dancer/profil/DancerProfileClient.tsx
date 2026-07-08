@@ -72,7 +72,7 @@ export default function DancerProfileClient(props: Props) {
             </button>
           </div>
           <input ref={fileRef} type="file" accept="image/*" className="hidden" onChange={handleAvatarUpload} />
-          {uploading && <p className="text-xs text-gray-400">Laster opp...</p>}
+          {uploading && <p className="text-xs text-gray-400 dark:text-gray-500">Laster opp...</p>}
         </CardContent>
       </Card>
 
@@ -90,7 +90,7 @@ export default function DancerProfileClient(props: Props) {
           </div>
           <div className="space-y-1.5">
             <label className="text-sm font-medium flex items-center gap-1.5">
-              <Phone size={14} className="text-gray-400" /> Telefon
+              <Phone size={14} className="text-gray-400 dark:text-gray-500" /> Telefon
             </label>
             <Input
               value={phoneVal}

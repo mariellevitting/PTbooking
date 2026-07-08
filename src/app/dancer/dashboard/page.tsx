@@ -40,7 +40,7 @@ export default async function DancerDashboard() {
     .sort((a, b) => new Date(b.availability_slots.start_at).getTime() - new Date(a.availability_slots.start_at).getTime());
 
   return (
-    <main className="bg-gray-50 min-h-screen pt-14 md:pt-0">
+    <main className="bg-gray-50 dark:bg-gray-950 min-h-screen pt-14 md:pt-0">
       <OnboardingOverlay />
       <div>
         <DancerDashboardNav

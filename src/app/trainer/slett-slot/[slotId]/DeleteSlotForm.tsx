@@ -47,8 +47,8 @@ export default function DeleteSlotForm({ slotId, startAt, endAt }: Props) {
 
   return (
     <div className="space-y-4">
-      <div className="bg-white border rounded-xl px-4 py-3">
-        <p className="text-xs text-gray-400 mb-1">Tid som slettes</p>
+      <div className="bg-white dark:bg-gray-900 border dark:border-gray-700 rounded-xl px-4 py-3">
+        <p className="text-xs text-gray-400 dark:text-gray-500 mb-1">Tid som slettes</p>
         <p className="font-semibold">{tidspunkt.charAt(0).toUpperCase() + tidspunkt.slice(1)}</p>
       </div>
 
@@ -69,7 +69,7 @@ export default function DeleteSlotForm({ slotId, startAt, endAt }: Props) {
       <button
         type="button"
         onClick={() => router.back()}
-        className="w-full text-sm text-gray-400 hover:text-gray-600 py-2"
+        className="w-full text-sm text-gray-400 dark:text-gray-500 hover:text-gray-600 py-2"
       >
         Gå tilbake
       </button>

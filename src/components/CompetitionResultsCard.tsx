@@ -106,24 +106,24 @@ export default function CompetitionResultsCard({ userId, initialResults, childId
         {adding && (
           <div className="border border-purple-200 rounded-xl p-4 space-y-3 bg-purple-50">
             <div className="space-y-1">
-              <label className="text-xs font-medium text-gray-600">Konkurranse</label>
+              <label className="text-xs font-medium text-gray-600 dark:text-gray-400">Konkurranse</label>
               <select value={comp} onChange={e => setComp(e.target.value)}
-                className="w-full border rounded-lg px-3 py-2 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-purple-400">
+                className="w-full border dark:border-gray-700 rounded-lg px-3 py-2 text-sm bg-white dark:bg-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-purple-400">
                 {COMPETITIONS.map(c => <option key={c.name} value={c.name}>{c.short}</option>)}
               </select>
             </div>
             <div className="grid grid-cols-2 gap-3">
               <div className="space-y-1">
-                <label className="text-xs font-medium text-gray-600">Freestyle-plassering</label>
+                <label className="text-xs font-medium text-gray-600 dark:text-gray-400">Freestyle-plassering</label>
                 <input type="text" value={placementF} onChange={e => setPlacementF(e.target.value)}
                   placeholder="f.eks. 1, finalist"
-                  className="w-full border rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-purple-400" />
+                  className="w-full border dark:border-gray-700 bg-white dark:bg-gray-900 dark:text-white rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-purple-400" />
               </div>
               <div className="space-y-1">
-                <label className="text-xs font-medium text-gray-600">Slow-plassering</label>
+                <label className="text-xs font-medium text-gray-600 dark:text-gray-400">Slow-plassering</label>
                 <input type="text" value={placementS} onChange={e => setPlacementS(e.target.value)}
                   placeholder="f.eks. 2, semifinalist"
-                  className="w-full border rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-purple-400" />
+                  className="w-full border dark:border-gray-700 bg-white dark:bg-gray-900 dark:text-white rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-purple-400" />
               </div>
             </div>
             <div className="flex gap-2">
@@ -131,7 +131,7 @@ export default function CompetitionResultsCard({ userId, initialResults, childId
                 className="flex-1 bg-purple-600 hover:bg-purple-700 disabled:opacity-50 text-white text-sm font-medium rounded-lg py-2">
                 {saving ? "Lagrer..." : "Lagre resultat"}
               </button>
-              <button onClick={() => setAdding(false)} className="px-4 text-sm text-gray-500 hover:text-gray-700 border rounded-lg bg-white">
+              <button onClick={() => setAdding(false)} className="px-4 text-sm text-gray-500 dark:text-gray-400 hover:text-gray-700 border dark:border-gray-700 rounded-lg bg-white dark:bg-gray-900">
                 Avbryt
               </button>
             </div>
@@ -145,32 +145,32 @@ export default function CompetitionResultsCard({ userId, initialResults, childId
         )}
 
         {results.length === 0 && !adding ? (
-          <p className="text-sm text-gray-400 text-center py-4">Ingen resultater ennå. Trykk "Legg til" for å logge ditt første resultat!</p>
+          <p className="text-sm text-gray-400 dark:text-gray-500 text-center py-4">Ingen resultater ennå. Trykk "Legg til" for å logge ditt første resultat!</p>
         ) : (
           <div className="space-y-2">
             {results.map(r => (
-              <div key={r.id} className="flex items-start justify-between bg-gray-50 rounded-xl px-4 py-3">
+              <div key={r.id} className="flex items-start justify-between bg-gray-50 dark:bg-gray-800 rounded-xl px-4 py-3">
                 <div className="flex-1 min-w-0">
-                  <p className="text-sm font-semibold text-gray-700 mb-1">
+                  <p className="text-sm font-semibold text-gray-700 dark:text-gray-300 mb-1">
                     {COMPETITIONS.find(c => c.name === r.competition_name)?.short ?? r.competition_name}
                   </p>
                   <div className="flex gap-3 flex-wrap">
                     {r.placement_freestyle && (
                       <span className="text-xs">
-                        <span className="text-gray-400">Freestyle: </span>
+                        <span className="text-gray-400 dark:text-gray-500">Freestyle: </span>
                         <span className={`font-bold ${placementColor(r.placement_freestyle)}`}>{placementLabel(r.placement_freestyle)}</span>
                       </span>
                     )}
                     {r.placement_slow && (
                       <span className="text-xs">
-                        <span className="text-gray-400">Slow: </span>
+                        <span className="text-gray-400 dark:text-gray-500">Slow: </span>
                         <span className={`font-bold ${placementColor(r.placement_slow)}`}>{placementLabel(r.placement_slow)}</span>
                       </span>
                     )}
                   </div>
-                  {r.notes && <p className="text-xs text-gray-400 mt-1">{r.notes}</p>}
+                  {r.notes && <p className="text-xs text-gray-400 dark:text-gray-500 mt-1">{r.notes}</p>}
                 </div>
-                <button onClick={() => handleDelete(r.id)} className="ml-3 text-gray-300 hover:text-red-400 transition-colors shrink-0">
+                <button onClick={() => handleDelete(r.id)} className="ml-3 text-gray-300 dark:text-gray-600 hover:text-red-400 transition-colors shrink-0">
                   <Trash2 size={15} />
                 </button>
               </div>

@@ -51,16 +51,16 @@ export default function TrainerDashboardTabs({ slots, completedSlots }: Props) {
   return (
     <div>
       {/* Tabs */}
-      <div className="flex gap-1 bg-gray-100 rounded-xl p-1 mb-3">
+      <div className="flex gap-1 bg-gray-100 dark:bg-gray-800 rounded-xl p-1 mb-3">
         <button
           onClick={() => setTab("upcoming")}
-          className={`flex-1 px-3 py-1.5 rounded-lg text-sm font-medium transition-colors ${tab === "upcoming" ? "bg-white text-purple-700 shadow-sm" : "text-gray-500 hover:text-gray-700"}`}
+          className={`flex-1 px-3 py-1.5 rounded-lg text-sm font-medium transition-colors ${tab === "upcoming" ? "bg-white dark:bg-gray-900 text-purple-700 shadow-sm" : "text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300"}`}
         >
           Kommende
         </button>
         <button
           onClick={() => setTab("completed")}
-          className={`flex-1 px-3 py-1.5 rounded-lg text-sm font-medium transition-colors ${tab === "completed" ? "bg-white text-purple-700 shadow-sm" : "text-gray-500 hover:text-gray-700"}`}
+          className={`flex-1 px-3 py-1.5 rounded-lg text-sm font-medium transition-colors ${tab === "completed" ? "bg-white dark:bg-gray-900 text-purple-700 shadow-sm" : "text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300"}`}
         >
           Gjennomførte
         </button>
@@ -75,7 +75,7 @@ export default function TrainerDashboardTabs({ slots, completedSlots }: Props) {
       {tab === "upcoming" && (() => {
         if (!slots || slots.length === 0) {
           return (
-            <div className="bg-white rounded-xl border p-5 text-center text-gray-400">
+            <div className="bg-white dark:bg-gray-900 rounded-xl border dark:border-gray-700 p-5 text-center text-gray-400 dark:text-gray-500">
               <p className="font-medium">Ingen tider lagt ut</p>
               <p className="text-sm mt-1">Legg ut ledige tider så dansere kan booke deg</p>
             </div>
@@ -99,14 +99,14 @@ export default function TrainerDashboardTabs({ slots, completedSlots }: Props) {
           <div className="space-y-6">
             {Object.entries(weekGroups).map(([week, dateKeys]) => (
               <div key={week}>
-                <p className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-3">Uke {week}</p>
+                <p className="text-xs font-semibold text-gray-400 dark:text-gray-500 uppercase tracking-wider mb-3">Uke {week}</p>
                 <div className="space-y-4">
                   {dateKeys.sort().map((dateKey) => {
                     const daySlots = grouped[dateKey];
                     const dayLabel = formatDate(new Date(dateKey), { weekday: "long", day: "numeric", month: "long" });
                     return (
                       <div key={dateKey}>
-                        <p className="text-sm font-semibold text-gray-700 mb-2 border-b pb-1">
+                        <p className="text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2 border-b dark:border-gray-700 pb-1">
                           {dayLabel.charAt(0).toUpperCase() + dayLabel.slice(1)}
                         </p>
                         <div className="space-y-2">
@@ -115,9 +115,9 @@ export default function TrainerDashboardTabs({ slots, completedSlots }: Props) {
                             const end = new Date(slot.end_at);
                             const booking = slot.bookings?.find(b => b.status === "confirmed");
                             return (
-                              <div key={slot.id} className={`rounded-xl border p-4 flex justify-between items-center ${booking ? "bg-white border-l-4 border-l-purple-400" : "bg-gray-50 border-dashed border-gray-200"}`}>
+                              <div key={slot.id} className={`rounded-xl border p-4 flex justify-between items-center ${booking ? "bg-white dark:bg-gray-900 border-l-4 border-l-purple-400" : "bg-gray-50 dark:bg-gray-950 border-dashed border-gray-200 dark:border-gray-700"}`}>
                                 <div>
-                                  <p className="text-sm text-gray-500">{formatTime(start)}–{formatTime(end)}</p>
+                                  <p className="text-sm text-gray-500 dark:text-gray-400">{formatTime(start)}–{formatTime(end)}</p>
                                   {booking && (
                                     <>
                                       <div className="flex items-center gap-2 mt-1">
@@ -162,7 +162,7 @@ export default function TrainerDashboardTabs({ slots, completedSlots }: Props) {
       {tab === "completed" && (() => {
         if (completed.length === 0) {
           return (
-            <div className="bg-white rounded-xl border p-5 text-center text-gray-400">
+            <div className="bg-white dark:bg-gray-900 rounded-xl border dark:border-gray-700 p-5 text-center text-gray-400 dark:text-gray-500">
               <p className="font-medium">Ingen gjennomførte timer ennå</p>
             </div>
           );
@@ -181,7 +181,7 @@ export default function TrainerDashboardTabs({ slots, completedSlots }: Props) {
             <p className="text-xs text-purple-500">{completed.length} gjennomførte privattimer totalt</p>
             {Object.entries(monthGroups).map(([month, monthSlots]) => (
               <div key={month}>
-                <p className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2">{month}</p>
+                <p className="text-xs font-semibold text-gray-400 dark:text-gray-500 uppercase tracking-wider mb-2">{month}</p>
                 <div className="space-y-2">
                   {monthSlots.map((slot) => {
                     const start = new Date(slot.start_at);
@@ -189,14 +189,14 @@ export default function TrainerDashboardTabs({ slots, completedSlots }: Props) {
                     const booking = slot.bookings?.find(b => b.status === "confirmed");
                     const dayLabel = formatDate(start, { weekday: "long", day: "numeric", month: "long" });
                     return (
-                      <div key={slot.id} className="bg-white rounded-xl border p-4 opacity-80">
+                      <div key={slot.id} className="bg-white dark:bg-gray-900 rounded-xl border dark:border-gray-700 p-4 opacity-80">
                         <div className="flex justify-between items-start">
                           <div>
-                            <p className="text-sm font-semibold text-gray-600">{dayLabel.charAt(0).toUpperCase() + dayLabel.slice(1)}</p>
-                            <p className="text-sm text-gray-400">{formatTime(start)}–{formatTime(end)}</p>
+                            <p className="text-sm font-semibold text-gray-600 dark:text-gray-400">{dayLabel.charAt(0).toUpperCase() + dayLabel.slice(1)}</p>
+                            <p className="text-sm text-gray-400 dark:text-gray-500">{formatTime(start)}–{formatTime(end)}</p>
                             {booking && <p className="text-sm text-purple-500 mt-0.5">{booking.dancer_name} · {booking.dance_style}</p>}
                           </div>
-                          <span className="text-xs bg-gray-100 text-gray-500 px-2 py-1 rounded-full">Fullført</span>
+                          <span className="text-xs bg-gray-100 dark:bg-gray-800 text-gray-500 dark:text-gray-400 px-2 py-1 rounded-full">Fullført</span>
                         </div>
                       </div>
                     );

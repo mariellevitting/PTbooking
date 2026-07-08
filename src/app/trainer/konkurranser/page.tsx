@@ -28,7 +28,7 @@ export default async function TrainerKonkurranserPage() {
   const rest = upcoming.slice(1);
 
   return (
-    <main className="bg-gray-50 p-6 min-h-screen">
+    <main className="bg-gray-50 dark:bg-gray-950 p-6 min-h-screen">
       <div className="max-w-lg mx-auto">
         <Link href="/trainer/dashboard" className="inline-flex items-center gap-1 text-sm text-purple-600 hover:underline mb-6">
           <ArrowLeft size={16} /> Tilbake
@@ -36,7 +36,7 @@ export default async function TrainerKonkurranserPage() {
         <h1 className="text-2xl font-bold mb-6">Kommende konkurranser</h1>
 
         {upcoming.length === 0 && (
-          <p className="text-sm text-gray-400 text-center py-10">Ingen kommende konkurranser</p>
+          <p className="text-sm text-gray-400 dark:text-gray-500 text-center py-10">Ingen kommende konkurranser</p>
         )}
 
         {next && (
@@ -53,11 +53,11 @@ export default async function TrainerKonkurranserPage() {
 
         <div className="space-y-3">
           {rest.map(c => (
-            <div key={c.short} className="bg-white rounded-xl border p-4 flex items-center justify-between">
+            <div key={c.short} className="bg-white dark:bg-gray-900 rounded-xl border dark:border-gray-700 p-4 flex items-center justify-between">
               <div>
-                <p className="font-semibold text-gray-800">{c.short}</p>
+                <p className="font-semibold text-gray-800 dark:text-gray-100">{c.short}</p>
                 <p className="text-sm text-purple-600">{c.dateLabel}</p>
-                {c.location && <p className="text-xs text-gray-400 mt-0.5">{c.location}</p>}
+                {c.location && <p className="text-xs text-gray-400 dark:text-gray-500 mt-0.5">{c.location}</p>}
               </div>
               <span className="text-xs font-bold text-purple-600 bg-purple-50 px-2 py-1 rounded-full whitespace-nowrap ml-3">
                 {daysUntil(c.date)} dager

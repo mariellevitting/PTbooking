@@ -49,26 +49,26 @@ export default async function TrainerBookPage({ params }: { params: Promise<{ tr
     : DEFAULT_STYLES;
 
   return (
-    <main className="bg-gray-50 p-6">
+    <main className="bg-gray-50 dark:bg-gray-950 p-6">
       <div className="max-w-lg mx-auto">
         <Link href="/book" className="inline-flex items-center gap-1 text-sm text-purple-600 hover:underline mb-6">
           <ArrowLeft size={16} /> Velg annen trener
         </Link>
 
         {/* Trener-kort */}
-        <div className="bg-white rounded-2xl border p-5 mb-6">
+        <div className="bg-white dark:bg-gray-900 rounded-2xl border dark:border-gray-700 p-5 mb-6">
           <div className="flex items-center gap-4 mb-4">
             <div className="w-14 h-14 rounded-full bg-purple-100 flex items-center justify-center text-purple-600 font-bold text-xl shrink-0">
               {trainer.name.charAt(0)}
             </div>
             <div>
               <h1 className="text-xl font-bold">{trainer.name}</h1>
-              <p className="text-gray-400 text-sm">Trener – Evolution Danseklubb</p>
+              <p className="text-gray-400 dark:text-gray-500 text-sm">Trener – Evolution Danseklubb</p>
             </div>
           </div>
 
           {trainerDetails?.bio && (
-            <p className="text-sm text-gray-600 mb-4">{trainerDetails.bio}</p>
+            <p className="text-sm text-gray-600 dark:text-gray-400 mb-4">{trainerDetails.bio}</p>
           )}
 
           {styles.length > 0 && (
@@ -82,14 +82,14 @@ export default async function TrainerBookPage({ params }: { params: Promise<{ tr
           )}
 
           {trainer.phone && (
-            <a href={`tel:${trainer.phone}`} className="inline-flex items-center gap-2 text-sm text-gray-500 hover:text-purple-600">
+            <a href={`tel:${trainer.phone}`} className="inline-flex items-center gap-2 text-sm text-gray-500 dark:text-gray-400 hover:text-purple-600">
               <Phone size={14} /> {trainer.phone}
             </a>
           )}
         </div>
 
         {!slots || slots.length === 0 ? (
-          <div className="bg-white rounded-xl border p-6 text-center text-gray-400">
+          <div className="bg-white dark:bg-gray-900 rounded-xl border dark:border-gray-700 p-6 text-center text-gray-400 dark:text-gray-500">
             <p className="font-medium mb-1">Ingen ledige tider</p>
             <p className="text-sm">Treneren har ikke lagt ut ledige tider ennå</p>
           </div>

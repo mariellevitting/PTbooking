@@ -21,7 +21,7 @@ export default async function TrainerAvbestillPage({ params }: { params: Promise
   if (new Date(booking.availability_slots.end_at) < new Date()) redirect("/trainer/dashboard");
 
   return (
-    <main className="bg-gray-50 p-6">
+    <main className="bg-gray-50 dark:bg-gray-950 p-6">
       <div className="max-w-lg mx-auto">
         <h1 className="text-2xl font-bold mb-6">Avbestill time</h1>
         <TrainerCancelForm

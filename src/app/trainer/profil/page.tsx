@@ -38,7 +38,7 @@ export default async function TrainerProfilPage() {
     .order("name") : { data: null };
 
   return (
-    <main className="bg-gray-50 p-6">
+    <main className="bg-gray-50 dark:bg-gray-950 p-6">
       <div className="max-w-lg mx-auto">
         <Link href="/trainer/dashboard" className="inline-flex items-center gap-1 text-sm text-purple-600 hover:underline mb-6">
           <ArrowLeft size={16} /> Tilbake
@@ -56,7 +56,7 @@ export default async function TrainerProfilPage() {
         {isAdmin && allUsers && (
           <>
             {/* Statistikk */}
-            <div className="bg-white rounded-2xl border p-5 mt-6">
+            <div className="bg-white dark:bg-gray-900 rounded-2xl border dark:border-gray-700 p-5 mt-6">
               <h2 className="font-semibold text-base flex items-center gap-2 mb-4">
                 <Users size={16} className="text-purple-500" />
                 Registrerte brukere ({allUsers.length})
@@ -67,7 +67,7 @@ export default async function TrainerProfilPage() {
                     <p className="text-2xl font-bold text-purple-600">
                       {allUsers.filter(u => u.role === role).length}
                     </p>
-                    <p className="text-xs text-gray-500 mt-0.5">{ROLE_LABEL[role]}e{role === "trainer" ? "" : ""}</p>
+                    <p className="text-xs text-gray-500 dark:text-gray-400 mt-0.5">{ROLE_LABEL[role]}e{role === "trainer" ? "" : ""}</p>
                   </div>
                 ))}
               </div>
@@ -75,14 +75,14 @@ export default async function TrainerProfilPage() {
               {/* Brukerliste */}
               <div className="space-y-1">
                 {allUsers.map((u) => (
-                  <div key={u.id} className="flex items-center justify-between py-2 border-b last:border-0">
+                  <div key={u.id} className="flex items-center justify-between py-2 border-b dark:border-gray-700 last:border-0">
                     <div className="flex items-center gap-3">
                       <div className="w-8 h-8 rounded-full bg-purple-100 flex items-center justify-center text-purple-600 font-bold text-xs shrink-0">
                         {u.name.charAt(0)}
                       </div>
                         <div>
                         <p className="text-sm font-medium">{u.name}</p>
-                        {u.email && <p className="text-xs text-gray-400">{u.email}</p>}
+                        {u.email && <p className="text-xs text-gray-400 dark:text-gray-500">{u.email}</p>}
                       </div>
                     </div>
                     <span className={`text-xs px-2 py-0.5 rounded-full shrink-0 ${

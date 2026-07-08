@@ -50,18 +50,18 @@ export default function GlemtPassordPage() {
         </div>
       </div>
 
-      <div className="flex flex-1 items-center justify-center bg-gray-50 p-8">
+      <div className="flex flex-1 items-center justify-center bg-gray-50 dark:bg-gray-950 p-8">
         <div className="w-full max-w-sm">
           {sent ? (
             <div className="text-center space-y-4">
               <div className="w-16 h-16 bg-purple-100 rounded-full flex items-center justify-center mx-auto">
                 <span className="text-3xl">📧</span>
               </div>
-              <h2 className="text-2xl font-bold text-gray-900">Sjekk e-posten din</h2>
-              <p className="text-gray-500 text-sm">
+              <h2 className="text-2xl font-bold text-gray-900 dark:text-white">Sjekk e-posten din</h2>
+              <p className="text-gray-500 dark:text-gray-400 text-sm">
                 Vi har sendt en lenke til <strong>{email}</strong>. Klikk på lenken for å sette nytt passord.
               </p>
-              <p className="text-xs text-gray-400">
+              <p className="text-xs text-gray-400 dark:text-gray-500">
                 Finner du ikke e-posten? Sjekk søppelpost/spam-mappen. 🗑️
               </p>
               <Link href="/login" className="text-purple-600 hover:underline text-sm block">
@@ -71,13 +71,13 @@ export default function GlemtPassordPage() {
           ) : (
             <>
               <div className="mb-8">
-                <h2 className="text-3xl font-bold text-gray-900">Glemt passord?</h2>
-                <p className="text-gray-500 mt-1 text-sm">Skriv inn e-posten din så sender vi en lenke.</p>
+                <h2 className="text-3xl font-bold text-gray-900 dark:text-white">Glemt passord?</h2>
+                <p className="text-gray-500 dark:text-gray-400 mt-1 text-sm">Skriv inn e-posten din så sender vi en lenke.</p>
               </div>
 
               <form onSubmit={handleSubmit} className="space-y-4">
                 <div className="space-y-1.5">
-                  <label className="text-sm font-medium text-gray-700">E-post</label>
+                  <label className="text-sm font-medium text-gray-700 dark:text-gray-300">E-post</label>
                   <Input
                     type="email"
                     value={email}
@@ -92,7 +92,7 @@ export default function GlemtPassordPage() {
                 </Button>
               </form>
 
-              <p className="text-center text-sm text-gray-500 mt-6">
+              <p className="text-center text-sm text-gray-500 dark:text-gray-400 mt-6">
                 <Link href="/login" className="text-purple-600 hover:underline">
                   Tilbake til innlogging
                 </Link>

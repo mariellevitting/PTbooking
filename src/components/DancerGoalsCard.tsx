@@ -31,7 +31,7 @@ function LevelTracker({ label, points, level, isFreestyle, onPointsChange, onLev
   return (
     <div className="space-y-3">
       <div className="flex items-center justify-between">
-        <p className="text-sm font-semibold text-gray-700">{label}</p>
+        <p className="text-sm font-semibold text-gray-700 dark:text-gray-300">{label}</p>
         <span className="text-xs font-bold text-purple-600 bg-purple-50 px-2 py-0.5 rounded-full">
           {LEVELS[level]}
         </span>
@@ -41,7 +41,7 @@ function LevelTracker({ label, points, level, isFreestyle, onPointsChange, onLev
       <div className="space-y-1.5">
         <div className="flex justify-between text-[10px] px-0.5">
           {LEVELS.map((name, i) => (
-            <span key={i} className={i <= level ? "text-purple-600 font-semibold" : "text-gray-400"}>{name}</span>
+            <span key={i} className={i <= level ? "text-purple-600 font-semibold" : "text-gray-400 dark:text-gray-500"}>{name}</span>
           ))}
         </div>
         <div style={{ height: "12px", backgroundColor: "#e5e7eb", borderRadius: "9999px", overflow: "hidden" }}>
@@ -62,18 +62,18 @@ function LevelTracker({ label, points, level, isFreestyle, onPointsChange, onLev
           min={0}
           value={points}
           onChange={e => onPointsChange(Math.max(0, parseInt(e.target.value) || 0))}
-          className="w-20 text-center border rounded-lg px-2 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-purple-400"
+          className="w-20 text-center border dark:border-gray-700 bg-white dark:bg-gray-900 dark:text-white rounded-lg px-2 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-purple-400"
         />
-        <p className="text-xs text-gray-500">poeng dette nivået</p>
+        <p className="text-xs text-gray-500 dark:text-gray-400">poeng dette nivået</p>
       </div>
 
       {isChampOrElite ? (
-        <div className="flex items-center gap-2 text-sm text-gray-500 bg-yellow-50 border border-yellow-200 rounded-lg px-3 py-2">
+        <div className="flex items-center gap-2 text-sm text-gray-500 dark:text-gray-400 bg-yellow-50 border border-yellow-200 rounded-lg px-3 py-2">
           <Trophy size={14} className="text-yellow-500" />
           Neste nivå avgjøres av plasseringer på stevner
         </div>
       ) : (
-        <div className="flex justify-between text-xs text-gray-500">
+        <div className="flex justify-between text-xs text-gray-500 dark:text-gray-400">
           <span>{current} / {needed} poeng mot {LEVELS[level + 1]}</span>
           <span>{percent}%</span>
         </div>
@@ -146,7 +146,7 @@ export default function DancerGoalsCard({ userId, seasonGoals, pointsFreestyle, 
           </CardTitle>
         </CardHeader>
         <CardContent>
-          <p className="text-xs text-gray-400 mb-2">
+          <p className="text-xs text-gray-400 dark:text-gray-500 mb-2">
             F.eks. triks du vil lære, mål for konkurranser, hva du vil jobbe med denne sesongen
           </p>
           <textarea
@@ -154,7 +154,7 @@ export default function DancerGoalsCard({ userId, seasonGoals, pointsFreestyle, 
             onChange={e => setGoals(e.target.value)}
             rows={4}
             placeholder="Skriv dine mål for sesongen her..."
-            className="w-full border rounded-lg px-3 py-2 text-sm resize-none focus:outline-none focus:ring-2 focus:ring-purple-400"
+            className="w-full border dark:border-gray-700 bg-white dark:bg-gray-900 dark:text-white rounded-lg px-3 py-2 text-sm resize-none focus:outline-none focus:ring-2 focus:ring-purple-400"
           />
         </CardContent>
       </Card>
@@ -175,7 +175,7 @@ export default function DancerGoalsCard({ userId, seasonGoals, pointsFreestyle, 
             onPointsChange={handleFreestyleChange}
             onLevelUp={() => {}}
           />
-          <div className="border-t pt-6">
+          <div className="border-t dark:border-gray-700 pt-6">
             <LevelTracker
               label="Slow"
               points={slow}

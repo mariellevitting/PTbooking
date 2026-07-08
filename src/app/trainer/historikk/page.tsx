@@ -39,7 +39,7 @@ export default async function TrainerHistorikkPage() {
   }
 
   return (
-    <main className="bg-gray-50 p-6">
+    <main className="bg-gray-50 dark:bg-gray-950 p-6">
       <div className="max-w-lg mx-auto">
         <Link href="/trainer/dashboard" className="inline-flex items-center gap-1 text-sm text-purple-600 hover:underline mb-6">
           <ArrowLeft size={16} /> Tilbake
@@ -60,14 +60,14 @@ export default async function TrainerHistorikkPage() {
         </div>
 
         {completed.length === 0 ? (
-          <div className="bg-white rounded-xl border p-6 text-center text-gray-400">
+          <div className="bg-white dark:bg-gray-900 rounded-xl border dark:border-gray-700 p-6 text-center text-gray-400 dark:text-gray-500">
             <p className="font-medium">Ingen gjennomførte timer ennå</p>
           </div>
         ) : (
           <div className="space-y-6">
             {Object.entries(monthGroups).map(([month, monthSlots]) => (
               <div key={month}>
-                <p className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2">{month}</p>
+                <p className="text-xs font-semibold text-gray-400 dark:text-gray-500 uppercase tracking-wider mb-2">{month}</p>
                 <div className="space-y-2">
                   {monthSlots.map((slot) => {
                     const start = new Date(slot.start_at);
@@ -75,13 +75,13 @@ export default async function TrainerHistorikkPage() {
                     const booking = slot.bookings?.find((b: any) => b.status === "confirmed");
                     const dayLabel = formatDate(start, { weekday: "long", day: "numeric", month: "long" });
                     return (
-                      <div key={slot.id} className="bg-white rounded-xl border p-4">
+                      <div key={slot.id} className="bg-white dark:bg-gray-900 rounded-xl border dark:border-gray-700 p-4">
                         <div className="flex justify-between items-start">
                           <div>
-                            <p className="text-sm font-semibold text-gray-700">
+                            <p className="text-sm font-semibold text-gray-700 dark:text-gray-300">
                               {dayLabel.charAt(0).toUpperCase() + dayLabel.slice(1)}
                             </p>
-                            <p className="text-sm text-gray-400">
+                            <p className="text-sm text-gray-400 dark:text-gray-500">
                               {formatTime(start)}–{formatTime(end)}
                             </p>
                             {booking && (
@@ -90,7 +90,7 @@ export default async function TrainerHistorikkPage() {
                               </p>
                             )}
                           </div>
-                          <span className="text-xs bg-gray-100 text-gray-500 px-2 py-1 rounded-full">Fullført</span>
+                          <span className="text-xs bg-gray-100 dark:bg-gray-800 text-gray-500 dark:text-gray-400 px-2 py-1 rounded-full">Fullført</span>
                         </div>
                       </div>
                     );

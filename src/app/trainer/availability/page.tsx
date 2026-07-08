@@ -181,7 +181,7 @@ export default function AvailabilityPage() {
   const slots = selectedDate ? getSlotsForDate(selectedDate) : [];
 
   return (
-    <main className="bg-gray-50 p-6">
+    <main className="bg-gray-50 dark:bg-gray-950 p-6">
       <div className="max-w-lg mx-auto">
         <button onClick={() => router.push("/trainer/dashboard")} className="text-sm text-purple-600 hover:underline mb-6 block">
           ← Tilbake
@@ -193,7 +193,7 @@ export default function AvailabilityPage() {
             {/* Måneds-/årsvelger */}
             <div className="mb-3">
               <select
-                className="w-full border rounded-lg px-3 py-2 text-sm bg-white text-gray-700"
+                className="w-full border dark:border-gray-700 rounded-lg px-3 py-2 text-sm bg-white dark:bg-gray-900 text-gray-700 dark:text-gray-300"
                 value={`${weekStart.getFullYear()}-${weekStart.getMonth()}`}
                 onChange={(e) => {
                   const [year, month] = e.target.value.split("-").map(Number);
@@ -217,9 +217,9 @@ export default function AvailabilityPage() {
             </div>
 
             <div className="flex items-center justify-between mb-4">
-              <button onClick={prevWeek} className="text-gray-400 hover:text-gray-700 px-2 text-xl">‹</button>
-              <span className="font-semibold text-gray-700">Uke {weekNumber}</span>
-              <button onClick={nextWeek} className="text-gray-400 hover:text-gray-700 px-2 text-xl">›</button>
+              <button onClick={prevWeek} className="text-gray-400 dark:text-gray-500 hover:text-gray-700 dark:hover:text-gray-300 px-2 text-xl">‹</button>
+              <span className="font-semibold text-gray-700 dark:text-gray-300">Uke {weekNumber}</span>
+              <button onClick={nextWeek} className="text-gray-400 dark:text-gray-500 hover:text-gray-700 dark:hover:text-gray-300 px-2 text-xl">›</button>
             </div>
             <div className="grid grid-cols-7 gap-1">
               {weekDays.map((day, i) => {
@@ -236,10 +236,10 @@ export default function AvailabilityPage() {
                       isSelected
                         ? "bg-purple-600 text-white"
                         : isPast
-                        ? "text-gray-300 cursor-default"
+                        ? "text-gray-300 dark:text-gray-600 cursor-default"
                         : isToday
                         ? "bg-purple-100 text-purple-700 hover:bg-purple-200"
-                        : "hover:bg-gray-100 text-gray-700"
+                        : "hover:bg-gray-100 dark:hover:bg-gray-800 text-gray-700 dark:text-gray-300"
                     }`}
                   >
                     <span className="text-xs uppercase">{DAY_NAMES[i]}</span>
@@ -256,7 +256,7 @@ export default function AvailabilityPage() {
             <CardHeader>
               <CardTitle className="text-base capitalize">
                 {selectedDate.toLocaleDateString("nb-NO", { weekday: "long", day: "numeric", month: "long" })}
-                <span className="text-sm font-normal text-gray-400 ml-2">
+                <span className="text-sm font-normal text-gray-400 dark:text-gray-500 ml-2">
                   {isWeekend(selectedDate) ? "09:00–21:00" : "14:00–21:00"}
                 </span>
               </CardTitle>
@@ -284,12 +284,12 @@ export default function AvailabilityPage() {
                         title={isExisting ? "Allerede publisert" : isPastSlot ? "Tidspunktet er passert" : undefined}
                         className={`py-2 px-1 rounded-lg text-sm font-medium border transition-colors ${
                           isExisting
-                            ? "bg-gray-100 text-gray-300 border-gray-100 cursor-not-allowed line-through"
+                            ? "bg-gray-100 dark:bg-gray-800 text-gray-300 dark:text-gray-600 border-gray-100 dark:border-gray-800 cursor-not-allowed line-through"
                             : isPastSlot
-                            ? "bg-gray-50 text-gray-300 border-gray-100 cursor-not-allowed"
+                            ? "bg-gray-50 dark:bg-gray-950 text-gray-300 dark:text-gray-600 border-gray-100 dark:border-gray-800 cursor-not-allowed"
                             : isSelected
                             ? "bg-purple-600 text-white border-purple-600"
-                            : "bg-white text-gray-700 border-gray-200 hover:border-purple-400"
+                            : "bg-white dark:bg-gray-900 text-gray-700 dark:text-gray-300 border-gray-200 dark:border-gray-700 hover:border-purple-400"
                         }`}
                       >
                         {slot}

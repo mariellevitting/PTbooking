@@ -235,7 +235,7 @@ export default function BookForDancerForm({ trainerId, danceStyles }: Props) {
         <CardContent className="pt-5 space-y-3">
           {/* Danser 1 – kombinert søk + navn */}
           <div ref={searchRef} className="relative">
-            <label className="block text-sm font-medium text-gray-700 mb-1">
+            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
               {double ? "Danser 1" : "Danserens navn"}
             </label>
             {linkedUser ? (
@@ -256,15 +256,15 @@ export default function BookForDancerForm({ trainerId, danceStyles }: Props) {
                   onChange={e => { setDancer1(e.target.value); setSearchQuery(e.target.value); }}
                   onFocus={() => dancer1.length >= 2 && setSearchQuery(dancer1)}
                   placeholder="Skriv navn..."
-                  className="w-full border rounded-lg px-3 py-2 text-sm bg-white"
+                  className="w-full border dark:border-gray-700 rounded-lg px-3 py-2 text-sm bg-white dark:bg-gray-900"
                   required
                 />
                 {searchResults.length > 0 && (
-                  <div className="absolute z-10 mt-1 w-full bg-white border rounded-xl shadow-lg overflow-hidden">
+                  <div className="absolute z-10 mt-1 w-full bg-white dark:bg-gray-900 border dark:border-gray-700 rounded-xl shadow-lg overflow-hidden">
                     {searchResults.map(u => (
                       <button key={u.id} type="button" onClick={() => selectUser(u)}
-                        className="w-full text-left px-4 py-2.5 hover:bg-purple-50 flex items-center justify-between border-t first:border-t-0">
-                        <span className="text-sm font-medium text-gray-800">{u.name}</span>
+                        className="w-full text-left px-4 py-2.5 hover:bg-purple-50 dark:hover:bg-purple-950/30 flex items-center justify-between border-t dark:border-gray-700 first:border-t-0">
+                        <span className="text-sm font-medium text-gray-800 dark:text-gray-100">{u.name}</span>
                         <span className="text-xs text-purple-500">Koble til profil</span>
                       </button>
                     ))}
@@ -276,13 +276,13 @@ export default function BookForDancerForm({ trainerId, danceStyles }: Props) {
 
           {double && (
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Danser 2</label>
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Danser 2</label>
               <input
                 type="text"
                 value={dancer2}
                 onChange={(e) => setDancer2(e.target.value)}
                 placeholder="Fullt navn"
-                className="w-full border rounded-lg px-3 py-2 text-sm bg-white"
+                className="w-full border dark:border-gray-700 rounded-lg px-3 py-2 text-sm bg-white dark:bg-gray-900"
                 required
               />
             </div>
@@ -293,9 +293,9 @@ export default function BookForDancerForm({ trainerId, danceStyles }: Props) {
       <Card>
         <CardContent className="pt-4">
           <div className="flex items-center justify-between mb-3">
-            <button type="button" onClick={prevWeek} className="text-gray-400 hover:text-gray-700 px-2 text-xl">‹</button>
-            <span className="font-semibold text-gray-700 text-sm">Uke {weekNumber}</span>
-            <button type="button" onClick={nextWeek} className="text-gray-400 hover:text-gray-700 px-2 text-xl">›</button>
+            <button type="button" onClick={prevWeek} className="text-gray-400 dark:text-gray-500 hover:text-gray-700 dark:hover:text-gray-300 px-2 text-xl">‹</button>
+            <span className="font-semibold text-gray-700 dark:text-gray-300 text-sm">Uke {weekNumber}</span>
+            <button type="button" onClick={nextWeek} className="text-gray-400 dark:text-gray-500 hover:text-gray-700 dark:hover:text-gray-300 px-2 text-xl">›</button>
           </div>
           <div className="grid grid-cols-7 gap-1">
             {weekDays.map((day, i) => {
@@ -312,10 +312,10 @@ export default function BookForDancerForm({ trainerId, danceStyles }: Props) {
                     isSelected
                       ? "bg-purple-600 text-white"
                       : isPast
-                      ? "text-gray-300 cursor-default"
+                      ? "text-gray-300 dark:text-gray-600 cursor-default"
                       : isToday
                       ? "bg-purple-100 text-purple-700 hover:bg-purple-200"
-                      : "hover:bg-gray-100 text-gray-700"
+                      : "hover:bg-gray-100 dark:hover:bg-gray-800 text-gray-700 dark:text-gray-300"
                   }`}
                 >
                   <span className="text-xs uppercase">{DAY_NAMES[i]}</span>
@@ -329,7 +329,7 @@ export default function BookForDancerForm({ trainerId, danceStyles }: Props) {
 
       <Card>
         <CardContent className="pt-4">
-          <p className="text-sm font-medium text-gray-700 mb-2 capitalize">
+          <p className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-2 capitalize">
             {selectedDate.toLocaleDateString("nb-NO", { weekday: "long", day: "numeric", month: "long" })}
           </p>
           <div className="grid grid-cols-4 gap-2">
@@ -349,10 +349,10 @@ export default function BookForDancerForm({ trainerId, danceStyles }: Props) {
                   disabled={isPastSlot}
                   className={`py-2 px-1 rounded-lg text-sm font-medium border transition-colors ${
                     isPastSlot
-                      ? "bg-gray-50 text-gray-300 border-gray-100 cursor-not-allowed"
+                      ? "bg-gray-50 dark:bg-gray-950 text-gray-300 dark:text-gray-600 border-gray-100 dark:border-gray-800 cursor-not-allowed"
                       : time === slot
                       ? "bg-purple-600 text-white border-purple-600"
-                      : "bg-white text-gray-700 border-gray-200 hover:border-purple-400"
+                      : "bg-white dark:bg-gray-900 text-gray-700 dark:text-gray-300 border-gray-200 dark:border-gray-700 hover:border-purple-400"
                   }`}
                 >
                   {slot}
@@ -365,7 +365,7 @@ export default function BookForDancerForm({ trainerId, danceStyles }: Props) {
 
       <Card>
         <CardContent className="pt-4">
-          <p className="text-sm font-medium text-gray-700 mb-2">Danseform <span className="text-gray-400 font-normal">(valgfritt)</span></p>
+          <p className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Danseform <span className="text-gray-400 dark:text-gray-500 font-normal">(valgfritt)</span></p>
           <div className="flex flex-wrap gap-2">
             {danceStyles.map((s) => (
               <button
@@ -375,7 +375,7 @@ export default function BookForDancerForm({ trainerId, danceStyles }: Props) {
                 className={`px-3 py-1.5 rounded-full text-sm font-medium border transition-colors ${
                   style === s
                     ? "bg-purple-600 text-white border-purple-600"
-                    : "bg-white text-gray-700 border-gray-200 hover:border-purple-400"
+                    : "bg-white dark:bg-gray-900 text-gray-700 dark:text-gray-300 border-gray-200 dark:border-gray-700 hover:border-purple-400"
                 }`}
               >
                 {s}
