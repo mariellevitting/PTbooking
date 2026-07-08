@@ -197,6 +197,9 @@ export default function LoginPage() {
             {tabs}
             {tab === "login" ? loginForm : registerForm}
           </div>
+          <p className="text-center text-xs text-white/70 mt-4">
+            <a href="/om" className="hover:text-white underline">Om Danceitude</a>
+          </p>
         </div>
       </div>
 
@@ -211,6 +214,9 @@ export default function LoginPage() {
           <p className="text-center text-sm text-gray-500 dark:text-gray-400 mt-4">
             Har du ikke konto?{" "}
             <a href="/register" className="text-purple-600 hover:underline font-medium">Registrer deg</a>
+          </p>
+          <p className="text-center text-xs text-gray-400 dark:text-gray-600 mt-3">
+            <a href="/om" className="hover:text-purple-500 hover:underline">Om Danceitude</a>
           </p>
         </div>
       </div>
