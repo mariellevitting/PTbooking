@@ -56,7 +56,7 @@ export default function RegisterForm({ prefilledCode, clubName }: Props) {
     <div className="min-h-screen flex flex-col md:flex-row">
       <div className="hidden md:flex md:w-1/2 relative">
         <div className="absolute inset-0 bg-cover bg-center" style={{ backgroundImage: "url('/dans.jpg')" }} />
-        <div className="absolute inset-0 bg-purple-900/60" />
+        <div className="absolute inset-0 bg-purple-900/40" />
         <div className="relative z-10 flex flex-col justify-end p-10 text-white">
           <p className="text-white/90 text-lg italic mb-3">✦ Av dansere, for dansere</p>
           <h1 className="text-5xl font-bold mb-1">Danceitude</h1>
