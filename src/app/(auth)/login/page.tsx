@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
+import Image from "next/image";
 import { createClient } from "@/lib/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -36,7 +37,8 @@ export default function LoginPage() {
     <div className="min-h-screen flex flex-col md:flex-row">
       {/* Venstre – lilla bakgrunn */}
       <div className="hidden md:flex md:w-1/2 relative">
-        <div className="absolute inset-0 bg-cover bg-center" style={{ backgroundImage: "url('/dans.jpg')" }} />
+        <Image src="/dans.jpg" alt="" fill className="object-cover" priority />
+        <div className="absolute inset-0 bg-black/30" />
         <div className="relative z-10 flex flex-col justify-end p-10 text-white">
           <p className="text-white/90 text-lg italic mb-3">✦ Av dansere, for dansere</p>
           <h1 className="text-5xl font-bold mb-1">Danceitude</h1>
@@ -46,7 +48,9 @@ export default function LoginPage() {
       </div>
 
       {/* Mobil – liten toppdel */}
-      <div className="md:hidden h-48 relative bg-purple-800" style={{ backgroundImage: "url('/dans.jpg')", backgroundSize: "cover", backgroundPosition: "center" }}>
+      <div className="md:hidden h-48 relative">
+        <Image src="/dans.jpg" alt="" fill className="object-cover" priority />
+        <div className="absolute inset-0 bg-black/30" />
         <div className="absolute inset-0 flex flex-col justify-end p-6">
           <p className="text-white/90 text-sm italic mb-1">✦ Av dansere, for dansere</p>
           <h1 className="text-2xl font-bold text-white">Danceitude</h1>
