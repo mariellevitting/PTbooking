@@ -1,11 +1,15 @@
 import Link from "next/link";
+import { createClient } from "@/lib/supabase/server";
 
 export const metadata = {
   title: "Om Danceitude – utviklet sammen med dansemiljøet",
   description: "Danceitude ble laget fordi dansemiljøet fortjener bedre verktøy. Les historien bak appen.",
 };
 
-export default function OmPage() {
+export default async function OmPage() {
+  const supabase = await createClient();
+  const { data: { user } } = await supabase.auth.getUser();
+
   return (
     <div className="min-h-screen bg-white dark:bg-gray-950">
 
@@ -150,9 +154,11 @@ export default function OmPage() {
           <div className="mt-12 bg-purple-50 dark:bg-purple-950 rounded-2xl p-8 text-center">
             <p className="text-2xl font-bold text-purple-700 dark:text-purple-300 mb-1">Danceitude</p>
             <p className="text-purple-500 dark:text-purple-400 italic mb-6">Utviklet sammen med dansemiljøet. Laget for hele dansehverdagen.</p>
-            <Link href="/login" className="inline-block bg-purple-600 hover:bg-purple-700 text-white font-semibold px-8 py-3 rounded-xl transition-colors">
-              Kom i gang
-            </Link>
+            {!user && (
+              <Link href="/login" className="inline-block bg-purple-600 hover:bg-purple-700 text-white font-semibold px-8 py-3 rounded-xl transition-colors">
+                Kom i gang
+              </Link>
+            )}
           </div>
         </section>
 
