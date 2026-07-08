@@ -188,9 +188,9 @@ export default function LoginPage() {
       </div>
 
       {/* Mobil – fullt bakgrunnsbilde med kort oppå */}
-      <div className="md:hidden relative min-h-screen flex items-end" style={{ backgroundImage: "url('/dans2.jpg')", backgroundSize: "cover", backgroundPosition: "center top" }}>
+      <div className="md:hidden relative min-h-screen flex items-center" style={{ backgroundImage: "url('/dans2.jpg')", backgroundSize: "cover", backgroundPosition: "center top" }}>
         <div className="absolute inset-0 bg-black/20" />
-        <div className="relative z-10 w-full px-4 pb-4 pt-16">
+        <div className="relative z-10 w-full px-4 pb-4 pt-8">
           <p className="text-white/90 text-sm italic mb-1 px-2">✦ Av dansere, for dansere</p>
           <h1 className="text-3xl font-bold text-white mb-4 px-2">Danceitude</h1>
           <div className="bg-white rounded-2xl p-6 shadow-xl">
