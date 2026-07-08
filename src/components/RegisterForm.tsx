@@ -54,8 +54,9 @@ export default function RegisterForm({ prefilledCode, clubName }: Props) {
 
   return (
     <div className="min-h-screen flex flex-col md:flex-row">
-      <div className="hidden md:flex md:w-1/2 relative bg-purple-600">
-        <div className="absolute inset-0 bg-gradient-to-br from-purple-500 to-purple-800" />
+      <div className="hidden md:flex md:w-1/2 relative">
+        <div className="absolute inset-0 bg-cover bg-center" style={{ backgroundImage: "url('/dans.png')" }} />
+        <div className="absolute inset-0 bg-purple-900/60" />
         <div className="relative z-10 flex flex-col justify-end p-10 text-white">
           <p className="text-white/90 text-lg italic mb-3">✦ Av dansere, for dansere</p>
           <h1 className="text-5xl font-bold mb-1">Danceitude</h1>
@@ -64,7 +65,7 @@ export default function RegisterForm({ prefilledCode, clubName }: Props) {
         </div>
       </div>
 
-      <div className="md:hidden h-48 relative bg-gradient-to-br from-purple-500 to-purple-800">
+      <div className="md:hidden h-48 relative bg-purple-800" style={{ backgroundImage: "url('/dans.png')", backgroundSize: "cover", backgroundPosition: "center" }}>
         <div className="absolute inset-0 flex flex-col justify-end p-6">
           <p className="text-white/90 text-sm italic mb-1">✦ Av dansere, for dansere</p>
           <h1 className="text-2xl font-bold text-white">Danceitude</h1>
