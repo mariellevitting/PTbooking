@@ -55,7 +55,7 @@ export default function RegisterForm({ prefilledCode, clubName }: Props) {
 
   return (
     <div className="min-h-screen flex flex-col md:flex-row">
-      <div className="hidden md:flex md:w-1/2 relative min-h-screen" style={{ backgroundImage: "url('/dans.jpg')", backgroundSize: "cover", backgroundPosition: "center" }}>
+      <div className="hidden md:flex md:w-1/2 relative min-h-screen" style={{ backgroundImage: "url('/dans2.jpg')", backgroundSize: "cover", backgroundPosition: "center" }}>
         <div className="absolute inset-0 bg-black/30" />
         <div className="relative z-10 flex flex-col justify-end p-10 text-white">
           <p className="text-white/90 text-lg italic mb-3">✦ Av dansere, for dansere</p>
@@ -65,7 +65,7 @@ export default function RegisterForm({ prefilledCode, clubName }: Props) {
         </div>
       </div>
 
-      <div className="md:hidden h-48 relative" style={{ backgroundImage: "url('/dans.jpg')", backgroundSize: "cover", backgroundPosition: "center" }}>
+      <div className="md:hidden h-48 relative" style={{ backgroundImage: "url('/dans2.jpg')", backgroundSize: "cover", backgroundPosition: "center" }}>
         <div className="absolute inset-0 bg-black/30" />
         <div className="absolute inset-0 flex flex-col justify-end p-6">
           <p className="text-white/90 text-sm italic mb-1">✦ Av dansere, for dansere</p>
