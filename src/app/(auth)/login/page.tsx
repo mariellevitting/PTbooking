@@ -31,7 +31,6 @@ export default function LoginPage() {
   const [regEmail, setRegEmail] = useState("");
   const [regPassword, setRegPassword] = useState("");
   const [trainerCode, setTrainerCode] = useState("");
-  const [memberCode, setMemberCode] = useState("");
   const [dancerNames, setDancerNames] = useState([""]);
   const [regError, setRegError] = useState("");
   const [regLoading, setRegLoading] = useState(false);
@@ -56,9 +55,7 @@ export default function LoginPage() {
     const result = await registerUser(
       regEmail, regPassword, name, role,
       trainerCode || undefined,
-      filteredDancers.length > 0 ? filteredDancers : undefined,
-      undefined,
-      memberCode || undefined
+      filteredDancers.length > 0 ? filteredDancers : undefined
     );
     if (result.error) { setRegError(result.error); setRegLoading(false); return; }
     router.push("/dashboard");
@@ -148,13 +145,6 @@ export default function LoginPage() {
               ))}
               <button type="button" onClick={() => setDancerNames([...dancerNames, ""])}
                 className="text-sm text-purple-600 hover:underline">+ Legg til danser</button>
-            </div>
-          )}
-          {(role === "dancer" || role === "parent") && (
-            <div className="space-y-1.5">
-              <label className="text-sm font-medium">Klubbkode</label>
-              <Input type="text" value={memberCode} onChange={e => setMemberCode(e.target.value)} placeholder="Kode fra Evolution" required />
-              <p className="text-xs text-gray-400 dark:text-gray-500">Du får koden av klubben via Spond eller e-post.</p>
             </div>
           )}
           {role === "trainer" && (

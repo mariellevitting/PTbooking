@@ -27,7 +27,6 @@ export default function RegisterForm({ prefilledCode, clubName }: Props) {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [trainerCode, setTrainerCode] = useState("");
-  const [memberCode, setMemberCode] = useState("");
   const [dancerNames, setDancerNames] = useState([""]);
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
@@ -41,9 +40,7 @@ export default function RegisterForm({ prefilledCode, clubName }: Props) {
     const result = await registerUser(
       email, password, name, role,
       trainerCode || undefined,
-      filteredDancers.length > 0 ? filteredDancers : undefined,
-      undefined,
-      memberCode || undefined
+      filteredDancers.length > 0 ? filteredDancers : undefined
     );
     if (result.error) { setError(result.error); setLoading(false); return; }
     router.push("/dashboard");
@@ -103,14 +100,6 @@ export default function RegisterForm({ prefilledCode, clubName }: Props) {
               ))}
               <button type="button" onClick={() => setDancerNames([...dancerNames, ""])}
                 className="text-sm text-purple-600 hover:underline">+ Legg til danser</button>
-            </div>
-          )}
-          {(role === "dancer" || role === "parent") && (
-            <div className="space-y-1.5">
-              <label className="text-sm font-medium">Klubbkode</label>
-              <Input type="text" value={memberCode} onChange={e => setMemberCode(e.target.value)}
-                placeholder="Kode fra Evolution" required />
-              <p className="text-xs text-gray-400 dark:text-gray-500">Du får koden av klubben via Spond eller e-post.</p>
             </div>
           )}
           {role === "trainer" && (

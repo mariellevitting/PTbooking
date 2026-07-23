@@ -10,8 +10,7 @@ export async function registerUser(
   role: UserRole,
   trainerCode?: string,
   dancerNames?: string[],
-  clubInviteCode?: string,
-  memberCode?: string
+  clubInviteCode?: string
 ): Promise<{ error?: string }> {
   const supabase = await createClient();
 
@@ -25,12 +24,6 @@ export async function registerUser(
   if (role === "trainer") {
     if (!trainerCode || trainerCode !== process.env.TRAINER_INVITE_CODE) {
       return { error: "Feil trenerkode. Ta kontakt med klubben for å få riktig kode." };
-    }
-  }
-
-  if (role === "dancer" || role === "parent") {
-    if (!memberCode || memberCode.toUpperCase() !== process.env.MEMBER_INVITE_CODE?.toUpperCase()) {
-      return { error: "Feil klubbkode. Du får koden av Evolution via Spond eller e-post." };
     }
   }
 
