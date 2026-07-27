@@ -11,6 +11,7 @@ type Trainer = {
   styles: string[];
   isPinned: boolean;
   price: number;
+  availableSlots: number;
 };
 
 function TrainerCard({ trainer }: { trainer: Trainer }) {
@@ -39,8 +40,11 @@ function TrainerCard({ trainer }: { trainer: Trainer }) {
             <p className="text-xs text-gray-400 dark:text-gray-500 mt-0.5 truncate">{trainer.styles.join(" · ")}</p>
           )}
         </div>
-        <div className="flex items-center gap-2 shrink-0">
-          <span className="text-sm font-semibold text-purple-600">{trainer.price} kr</span>
+        <div className="flex items-center gap-2 shrink-0 text-right">
+          <div>
+            <p className="text-sm font-semibold text-purple-600">{trainer.price} kr</p>
+            <p className="text-xs text-gray-400">{trainer.availableSlots > 0 ? `${trainer.availableSlots} ledige` : "Ingen ledige"}</p>
+          </div>
           <ChevronRight size={18} className="text-gray-300 dark:text-gray-600" />
         </div>
       </Link>

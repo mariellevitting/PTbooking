@@ -17,12 +17,18 @@ export default async function BookPage() {
 
   const backHref = profile?.role === "parent" ? "/parent/dashboard" : "/dancer/dashboard";
 
-  const [{ data: trainers }, { data: pins }] = await Promise.all([
+  const now = new Date().toISOString();
+  const [{ data: trainers }, { data: pins }, { data: slots }] = await Promise.all([
     supabase.from("profiles").select("id, name, trainers(dance_styles, price)").eq("role", "trainer").order("name"),
     supabase.from("pinned_trainers").select("trainer_id").eq("user_id", user.id),
+    supabase.from("availability_slots").select("trainer_id").eq("is_booked", false).gte("start_at", now),
   ]);
 
   const pinnedIds = new Set((pins ?? []).map(p => p.trainer_id));
+  const slotCounts: Record<string, number> = {};
+  for (const s of slots ?? []) {
+    slotCounts[s.trainer_id] = (slotCounts[s.trainer_id] ?? 0) + 1;
+  }
 
   const trainerList = (trainers ?? []).map(trainer => {
     const trainerData = trainer.trainers as any;
@@ -30,7 +36,7 @@ export default async function BookPage() {
       ? trainerData[0]?.dance_styles ?? []
       : trainerData?.dance_styles ?? [];
     const price: number = Array.isArray(trainerData) ? trainerData[0]?.price ?? 150 : trainerData?.price ?? 150;
-    return { id: trainer.id, name: trainer.name, styles, isPinned: pinnedIds.has(trainer.id), price };
+    return { id: trainer.id, name: trainer.name, styles, isPinned: pinnedIds.has(trainer.id), price, availableSlots: slotCounts[trainer.id] ?? 0 };
   });
 
   return (
