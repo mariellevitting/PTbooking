@@ -4,27 +4,21 @@ import { useState } from "react";
 
 type Profile = { id: string; name: string; role: string; created_at: string };
 type Feedback = { id: string; user_name: string; role: string; message: string; created_at: string };
-type Booking = {
-  id: string;
-  dancer_name: string;
-  dance_style: string;
-  status: string;
-  availability_slots: any;
-};
-type Slot = { id: string; start_at: string; end_at: string; trainer_id: string };
+type SlotBooking = { id: string; dancer_name: string; dance_style: string; status: string };
+type Slot = { id: string; start_at: string; end_at: string; trainer_id: string; bookings?: SlotBooking[] };
 
 interface Props {
   profiles: Profile[];
   feedback: Feedback[];
-  bookings: Booking[];
+  bookings: Slot[];  // slots with bookings (alias)
   slots: Slot[];
   trainerMap: Record<string, string>;
 }
 
 const ROLE_COLORS = {
-  dancer: { bg: "bg-blue-100 dark:bg-blue-900", text: "text-blue-700 dark:text-blue-300", badge: "bg-blue-500", label: "Danser" },
-  parent: { bg: "bg-green-100 dark:bg-green-900", text: "text-green-700 dark:text-green-300", badge: "bg-green-500", label: "Forelder" },
-  trainer: { bg: "bg-orange-100 dark:bg-orange-900", text: "text-orange-700 dark:text-orange-300", badge: "bg-orange-500", label: "Trener" },
+  dancer: { bg: "bg-blue-100 dark:bg-blue-900", text: "text-blue-700 dark:text-blue-300", label: "Danser" },
+  parent: { bg: "bg-green-100 dark:bg-green-900", text: "text-green-700 dark:text-green-300", label: "Forelder" },
+  trainer: { bg: "bg-orange-100 dark:bg-orange-900", text: "text-orange-700 dark:text-orange-300", label: "Trener" },
 };
 
 function timeAgo(dateStr: string) {
@@ -44,8 +38,7 @@ function formatTime(dateStr: string) {
 function startOfWeek(date: Date) {
   const d = new Date(date);
   const day = d.getDay();
-  const diff = day === 0 ? -6 : 1 - day;
-  d.setDate(d.getDate() + diff);
+  d.setDate(d.getDate() + (day === 0 ? -6 : 1 - day));
   d.setHours(0, 0, 0, 0);
   return d;
 }
@@ -65,74 +58,62 @@ const MONTHS = ["jan", "feb", "mar", "apr", "mai", "jun", "jul", "aug", "sep", "
 
 type RoleFilter = "alle" | "dancer" | "parent" | "trainer";
 
-function getSlot(b: Booking) {
-  if (!b.availability_slots) return null;
-  return Array.isArray(b.availability_slots) ? b.availability_slots[0] : b.availability_slots;
-}
-
-function TrainerCalendar({ trainer, bookings, slots }: { trainer: Profile; bookings: Booking[]; slots: Slot[] }) {
+function TrainerCalendar({ trainer, slots }: { trainer: Profile; slots: Slot[] }) {
   const [weekStart, setWeekStart] = useState(() => startOfWeek(new Date()));
-
   const weekDays = Array.from({ length: 7 }, (_, i) => addDays(weekStart, i));
 
-  const trainerBookings = bookings.filter(b => getSlot(b)?.trainer_id === trainer.id && b.status === "confirmed");
   const trainerSlots = slots.filter(s => s.trainer_id === trainer.id);
-
   const weekLabel = `${weekStart.getDate()}. ${MONTHS[weekStart.getMonth()]} – ${addDays(weekStart, 6).getDate()}. ${MONTHS[addDays(weekStart, 6).getMonth()]}`;
 
   return (
     <div className="border-t dark:border-gray-700 p-4">
-      {/* Uke-navigasjon */}
       <div className="flex items-center justify-between mb-4">
-        <button onClick={() => setWeekStart(addDays(weekStart, -7))} className="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 text-gray-500 dark:text-gray-400 font-bold">←</button>
+        <button onClick={() => setWeekStart(addDays(weekStart, -7))} className="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 text-gray-500 font-bold">←</button>
         <p className="text-sm font-semibold text-gray-700 dark:text-gray-300">{weekLabel}</p>
-        <button onClick={() => setWeekStart(addDays(weekStart, 7))} className="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 text-gray-500 dark:text-gray-400 font-bold">→</button>
+        <button onClick={() => setWeekStart(addDays(weekStart, 7))} className="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 text-gray-500 font-bold">→</button>
       </div>
 
-      {/* Kalender */}
       <div className="grid grid-cols-7 gap-1">
         {DAYS.map(d => (
-          <div key={d} className="text-center text-xs font-semibold text-gray-400 dark:text-gray-500 pb-1">{d}</div>
+          <div key={d} className="text-center text-xs font-semibold text-gray-400 pb-1">{d}</div>
         ))}
         {weekDays.map((day, i) => {
-          const dayBookings = trainerBookings.filter(b => getSlot(b) && isSameDay(new Date(getSlot(b)!.start_at), day));
           const daySlots = trainerSlots.filter(s => isSameDay(new Date(s.start_at), day));
           const isToday = isSameDay(day, new Date());
 
           return (
             <div key={i} className={`min-h-20 rounded-xl p-1.5 border ${isToday ? "border-purple-400 bg-purple-50 dark:bg-purple-950" : "border-gray-100 dark:border-gray-800 bg-gray-50 dark:bg-gray-800/50"}`}>
-              <p className={`text-xs font-bold mb-1 ${isToday ? "text-purple-600" : "text-gray-500 dark:text-gray-400"}`}>
-                {day.getDate()}
-              </p>
+              <p className={`text-xs font-bold mb-1 ${isToday ? "text-purple-600" : "text-gray-500 dark:text-gray-400"}`}>{day.getDate()}</p>
               <div className="space-y-1">
-                {dayBookings.map(b => (
-                  <div key={b.id} className="bg-blue-500 text-white rounded-md px-1 py-0.5">
-                    <p className="text-[10px] font-semibold leading-tight">{formatTime(getSlot(b)!.start_at)}</p>
-                    <p className="text-[10px] leading-tight truncate">{b.dancer_name}</p>
-                  </div>
-                ))}
-                {daySlots.filter(s => !trainerBookings.some(b => getSlot(b)?.id === s.id)).map(s => (
-                  <div key={s.id} className="bg-gray-200 dark:bg-gray-700 rounded-md px-1 py-0.5">
-                    <p className="text-[10px] text-gray-500 dark:text-gray-400 leading-tight">{formatTime(s.start_at)}</p>
-                    <p className="text-[10px] text-gray-400 dark:text-gray-500 leading-tight">Ledig</p>
-                  </div>
-                ))}
+                {daySlots.map(s => {
+                  const booking = s.bookings?.find(b => b.status === "confirmed");
+                  return booking ? (
+                    <div key={s.id} className="bg-blue-500 text-white rounded-md px-1 py-0.5">
+                      <p className="text-[10px] font-semibold leading-tight">{formatTime(s.start_at)}</p>
+                      <p className="text-[10px] leading-tight truncate">{booking.dancer_name}</p>
+                    </div>
+                  ) : (
+                    <div key={s.id} className="bg-gray-200 dark:bg-gray-700 rounded-md px-1 py-0.5">
+                      <p className="text-[10px] text-gray-500 dark:text-gray-400 leading-tight">{formatTime(s.start_at)}</p>
+                      <p className="text-[10px] text-gray-400 leading-tight">Ledig</p>
+                    </div>
+                  );
+                })}
               </div>
             </div>
           );
         })}
       </div>
 
-      {/* Forklaring */}
       <div className="flex gap-4 mt-3">
-        <div className="flex items-center gap-1.5"><div className="w-3 h-3 rounded bg-blue-500" /><span className="text-xs text-gray-500 dark:text-gray-400">Booket</span></div>
-        <div className="flex items-center gap-1.5"><div className="w-3 h-3 rounded bg-gray-200 dark:bg-gray-700" /><span className="text-xs text-gray-500 dark:text-gray-400">Ledig</span></div>
+        <div className="flex items-center gap-1.5"><div className="w-3 h-3 rounded bg-blue-500" /><span className="text-xs text-gray-500">Booket</span></div>
+        <div className="flex items-center gap-1.5"><div className="w-3 h-3 rounded bg-gray-200 dark:bg-gray-700" /><span className="text-xs text-gray-500">Ledig</span></div>
       </div>
     </div>
   );
 }
 
-export default function AdminClient({ profiles, feedback, bookings, slots, trainerMap }: Props) {
+export default function AdminClient({ profiles, feedback, slots, trainerMap }: Props) {
   const [roleFilter, setRoleFilter] = useState<RoleFilter | null>(null);
   const [trainerOpen, setTrainerOpen] = useState<string | null>(null);
 
@@ -162,21 +143,16 @@ export default function AdminClient({ profiles, feedback, bookings, slots, train
           <p className="text-gray-500 dark:text-gray-400 text-sm mt-1">Kun synlig for deg</p>
         </div>
 
-        {/* Stat-bokser */}
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
           {statCards.map(card => (
-            <button
-              key={card.filter}
-              onClick={() => setRoleFilter(roleFilter === card.filter ? null : card.filter)}
-              className={`rounded-2xl border-2 p-5 text-center transition-all ${roleFilter === card.filter ? `${card.color} text-white` : "bg-white dark:bg-gray-900 border-gray-200 dark:border-gray-700 hover:border-gray-300"}`}
-            >
+            <button key={card.filter} onClick={() => setRoleFilter(roleFilter === card.filter ? null : card.filter)}
+              className={`rounded-2xl border-2 p-5 text-center transition-all ${roleFilter === card.filter ? `${card.color} text-white` : "bg-white dark:bg-gray-900 border-gray-200 dark:border-gray-700 hover:border-gray-300"}`}>
               <p className="text-3xl font-bold">{card.value}</p>
               <p className="text-sm mt-1 opacity-80">{card.label}</p>
             </button>
           ))}
         </div>
 
-        {/* Brukerliste */}
         {filteredProfiles && (
           <div className="bg-white dark:bg-gray-900 rounded-2xl border dark:border-gray-700 p-5">
             <h2 className="font-bold text-gray-900 dark:text-white mb-4">
@@ -189,15 +165,15 @@ export default function AdminClient({ profiles, feedback, bookings, slots, train
                 return (
                   <div key={p.id} className="flex items-center justify-between py-2 border-b dark:border-gray-700 last:border-0">
                     <div className="flex items-center gap-3">
-                      <div className={`w-8 h-8 rounded-full ${colors.bg} flex items-center justify-center ${colors.text} font-bold text-sm shrink-0`}>
+                      <div className={`w-8 h-8 rounded-full ${colors?.bg} flex items-center justify-center ${colors?.text} font-bold text-sm shrink-0`}>
                         {p.name?.charAt(0) ?? "?"}
                       </div>
                       <div>
                         <p className="text-sm font-medium text-gray-800 dark:text-gray-100">{p.name}</p>
-                        <span className={`text-xs ${colors.text}`}>{colors.label}</span>
+                        <span className={`text-xs ${colors?.text}`}>{colors?.label}</span>
                       </div>
                     </div>
-                    <span className="text-xs text-gray-400 dark:text-gray-500 shrink-0 ml-2">{timeAgo(p.created_at)}</span>
+                    <span className="text-xs text-gray-400 shrink-0 ml-2">{timeAgo(p.created_at)}</span>
                   </div>
                 );
               })}
@@ -205,54 +181,43 @@ export default function AdminClient({ profiles, feedback, bookings, slots, train
           </div>
         )}
 
-        {/* Treneroversikt med kalender */}
         <div className="bg-white dark:bg-gray-900 rounded-2xl border dark:border-gray-700 p-5">
           <h2 className="font-bold text-gray-900 dark:text-white mb-4">Treneroversikt</h2>
           <div className="space-y-3">
             {trainers.map(trainer => {
-              const trainerBookings = bookings.filter(b => getSlot(b)?.trainer_id === trainer.id && b.status === "confirmed");
               const trainerSlots = slots.filter(s => s.trainer_id === trainer.id);
+              const bookedCount = trainerSlots.filter(s => s.bookings?.some(b => b.status === "confirmed")).length;
+              const availableCount = trainerSlots.filter(s => !s.bookings?.some(b => b.status === "confirmed") && new Date(s.start_at) > new Date()).length;
               const isOpen = trainerOpen === trainer.id;
 
               return (
                 <div key={trainer.id} className="border dark:border-gray-700 rounded-xl overflow-hidden">
-                  <button
-                    onClick={() => setTrainerOpen(isOpen ? null : trainer.id)}
-                    className="w-full flex items-center justify-between px-4 py-3 hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors"
-                  >
+                  <button onClick={() => setTrainerOpen(isOpen ? null : trainer.id)}
+                    className="w-full flex items-center justify-between px-4 py-3 hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors">
                     <div className="flex items-center gap-3">
                       <div className="w-9 h-9 rounded-full bg-orange-100 dark:bg-orange-900 flex items-center justify-center text-orange-700 dark:text-orange-300 font-bold text-sm shrink-0">
                         {trainer.name.charAt(0)}
                       </div>
                       <div className="text-left">
                         <p className="font-semibold text-sm text-gray-800 dark:text-gray-100">{trainer.name}</p>
-                        <p className="text-xs text-gray-400 dark:text-gray-500">
-                          {trainerBookings.length} bookinger · {trainerSlots.length} ledige fremover
-                        </p>
+                        <p className="text-xs text-gray-400">{bookedCount} bookinger · {availableCount} ledige fremover</p>
                       </div>
                     </div>
                     <span className="text-gray-400 text-sm">{isOpen ? "▲" : "▼"}</span>
                   </button>
-
-                  {isOpen && (
-                    <TrainerCalendar trainer={trainer} bookings={bookings} slots={slots} />
-                  )}
+                  {isOpen && <TrainerCalendar trainer={trainer} slots={slots} />}
                 </div>
               );
             })}
-            {trainers.length === 0 && (
-              <p className="text-sm text-gray-400 dark:text-gray-500">Ingen trenere registrert</p>
-            )}
           </div>
         </div>
 
-        {/* Tilbakemeldinger */}
         <div className="bg-white dark:bg-gray-900 rounded-2xl border dark:border-gray-700 p-5">
           <h2 className="font-bold text-gray-900 dark:text-white mb-4">
             Tilbakemeldinger <span className="text-purple-600 ml-1">{feedback.length}</span>
           </h2>
           {!feedback.length ? (
-            <p className="text-sm text-gray-400 dark:text-gray-500">Ingen tilbakemeldinger ennå</p>
+            <p className="text-sm text-gray-400">Ingen tilbakemeldinger ennå</p>
           ) : (
             <div className="space-y-3 max-h-96 overflow-y-auto">
               {feedback.map(f => {
