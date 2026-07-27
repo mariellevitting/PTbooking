@@ -138,9 +138,14 @@ export default function AdminClient({ profiles, feedback, slots, trainerMap }: P
     <div className="min-h-screen bg-gray-50 dark:bg-gray-950 p-6">
       <div className="max-w-5xl mx-auto space-y-8">
 
-        <div>
-          <h1 className="text-3xl font-bold text-gray-900 dark:text-white">Admin</h1>
-          <p className="text-gray-500 dark:text-gray-400 text-sm mt-1">Kun synlig for deg</p>
+        <div className="flex items-center gap-4">
+          <a href="/trainer/dashboard" className="p-2 rounded-xl hover:bg-gray-200 dark:hover:bg-gray-800 transition-colors text-gray-500 dark:text-gray-400">
+            ←
+          </a>
+          <div>
+            <h1 className="text-3xl font-bold text-gray-900 dark:text-white">Admin</h1>
+            <p className="text-gray-500 dark:text-gray-400 text-sm mt-1">Kun synlig for deg</p>
+          </div>
         </div>
 
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
