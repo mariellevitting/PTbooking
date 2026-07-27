@@ -15,14 +15,23 @@ export default async function AdminPage() {
   const [
     { data: profiles },
     { data: feedback },
-    { data: bookings },
-    { data: slots },
+    { data: rawSlots },
+    { data: rawBookings },
   ] = await Promise.all([
     supabase.from("profiles").select("id, name, role, created_at").order("created_at", { ascending: false }),
     supabase.from("feedback").select("*").order("created_at", { ascending: false }),
-    supabase.from("bookings").select("id, dancer_name, dance_style, status, slot_id, availability_slots!bookings_slot_id_fkey(id, start_at, end_at, trainer_id)").order("created_at", { ascending: false }) as any,
-    supabase.from("availability_slots").select("id, start_at, end_at, trainer_id").order("start_at").limit(500),
+    supabase.from("availability_slots").select("id, start_at, end_at, trainer_id").order("start_at").limit(1000) as any,
+    supabase.from("bookings").select("id, slot_id, dancer_name, dance_style, status").eq("status", "confirmed") as any,
   ]);
+
+  // Merge bookings into slots
+  const bookingsBySlot: Record<string, any[]> = {};
+  for (const b of rawBookings ?? []) {
+    if (!bookingsBySlot[b.slot_id]) bookingsBySlot[b.slot_id] = [];
+    bookingsBySlot[b.slot_id].push(b);
+  }
+  const slots = (rawSlots ?? []).map((s: any) => ({ ...s, bookings: bookingsBySlot[s.id] ?? [] }));
+  const bookings = slots;
 
   const trainerMap: Record<string, string> = {};
   for (const p of profiles ?? []) {
