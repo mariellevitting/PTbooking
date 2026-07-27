@@ -8,6 +8,9 @@ export async function GET(request: Request) {
   if (!code) return NextResponse.json({ error: "Mangler kode" }, { status: 400 });
 
   const supabase = await createClient();
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+
   const { data: club } = await supabase
     .from("clubs")
     .select("id, name, short_name")

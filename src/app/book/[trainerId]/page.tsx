@@ -23,6 +23,7 @@ export default async function TrainerBookPage({ params }: { params: Promise<{ tr
     .eq("role", "trainer")
     .single();
 
+  if (!profile || !["dancer", "parent"].includes(profile.role)) redirect("/dashboard");
   if (!trainer) redirect("/book");
 
   const { data: trainerDetails } = await supabase

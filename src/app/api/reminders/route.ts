@@ -5,8 +5,7 @@ import { createClient } from "@supabase/supabase-js";
 // til alle som har booking i dag (både danser/forelder og instruktør)
 export async function GET(request: Request) {
   // Enkel sikkerhet: sjekk at kallet kommer med riktig secret
-  const { searchParams } = new URL(request.url);
-  const secret = searchParams.get("secret");
+  const secret = request.headers.get("authorization")?.replace("Bearer ", "");
   if (secret !== process.env.CRON_SECRET) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
