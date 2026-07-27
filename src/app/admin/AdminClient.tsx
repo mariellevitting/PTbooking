@@ -21,6 +21,12 @@ interface Props {
   trainerMap: Record<string, string>;
 }
 
+const ROLE_COLORS = {
+  dancer: { bg: "bg-blue-100 dark:bg-blue-900", text: "text-blue-700 dark:text-blue-300", badge: "bg-blue-500", label: "Danser" },
+  parent: { bg: "bg-green-100 dark:bg-green-900", text: "text-green-700 dark:text-green-300", badge: "bg-green-500", label: "Forelder" },
+  trainer: { bg: "bg-orange-100 dark:bg-orange-900", text: "text-orange-700 dark:text-orange-300", badge: "bg-orange-500", label: "Trener" },
+};
+
 function timeAgo(dateStr: string) {
   const diff = Date.now() - new Date(dateStr).getTime();
   const mins = Math.floor(diff / 60000);
@@ -31,13 +37,95 @@ function timeAgo(dateStr: string) {
   return `${mins} min siden`;
 }
 
-function formatDt(dateStr: string) {
-  return new Date(dateStr).toLocaleString("nb-NO", {
-    weekday: "short", day: "numeric", month: "short", hour: "2-digit", minute: "2-digit",
-  });
+function formatTime(dateStr: string) {
+  return new Date(dateStr).toLocaleTimeString("nb-NO", { hour: "2-digit", minute: "2-digit" });
 }
 
+function startOfWeek(date: Date) {
+  const d = new Date(date);
+  const day = d.getDay();
+  const diff = day === 0 ? -6 : 1 - day;
+  d.setDate(d.getDate() + diff);
+  d.setHours(0, 0, 0, 0);
+  return d;
+}
+
+function addDays(date: Date, days: number) {
+  const d = new Date(date);
+  d.setDate(d.getDate() + days);
+  return d;
+}
+
+function isSameDay(a: Date, b: Date) {
+  return a.getFullYear() === b.getFullYear() && a.getMonth() === b.getMonth() && a.getDate() === b.getDate();
+}
+
+const DAYS = ["Man", "Tir", "Ons", "Tor", "Fre", "Lør", "Søn"];
+const MONTHS = ["jan", "feb", "mar", "apr", "mai", "jun", "jul", "aug", "sep", "okt", "nov", "des"];
+
 type RoleFilter = "alle" | "dancer" | "parent" | "trainer";
+
+function TrainerCalendar({ trainer, bookings, slots }: { trainer: Profile; bookings: Booking[]; slots: Slot[] }) {
+  const [weekStart, setWeekStart] = useState(() => startOfWeek(new Date()));
+
+  const weekDays = Array.from({ length: 7 }, (_, i) => addDays(weekStart, i));
+
+  const trainerBookings = bookings.filter(b => b.availability_slots?.trainer_id === trainer.id && b.status === "confirmed");
+  const trainerSlots = slots.filter(s => s.trainer_id === trainer.id);
+
+  const weekLabel = `${weekStart.getDate()}. ${MONTHS[weekStart.getMonth()]} – ${addDays(weekStart, 6).getDate()}. ${MONTHS[addDays(weekStart, 6).getMonth()]}`;
+
+  return (
+    <div className="border-t dark:border-gray-700 p-4">
+      {/* Uke-navigasjon */}
+      <div className="flex items-center justify-between mb-4">
+        <button onClick={() => setWeekStart(addDays(weekStart, -7))} className="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 text-gray-500 dark:text-gray-400 font-bold">←</button>
+        <p className="text-sm font-semibold text-gray-700 dark:text-gray-300">{weekLabel}</p>
+        <button onClick={() => setWeekStart(addDays(weekStart, 7))} className="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 text-gray-500 dark:text-gray-400 font-bold">→</button>
+      </div>
+
+      {/* Kalender */}
+      <div className="grid grid-cols-7 gap-1">
+        {DAYS.map(d => (
+          <div key={d} className="text-center text-xs font-semibold text-gray-400 dark:text-gray-500 pb-1">{d}</div>
+        ))}
+        {weekDays.map((day, i) => {
+          const dayBookings = trainerBookings.filter(b => b.availability_slots && isSameDay(new Date(b.availability_slots.start_at), day));
+          const daySlots = trainerSlots.filter(s => isSameDay(new Date(s.start_at), day));
+          const isToday = isSameDay(day, new Date());
+
+          return (
+            <div key={i} className={`min-h-20 rounded-xl p-1.5 border ${isToday ? "border-purple-400 bg-purple-50 dark:bg-purple-950" : "border-gray-100 dark:border-gray-800 bg-gray-50 dark:bg-gray-800/50"}`}>
+              <p className={`text-xs font-bold mb-1 ${isToday ? "text-purple-600" : "text-gray-500 dark:text-gray-400"}`}>
+                {day.getDate()}
+              </p>
+              <div className="space-y-1">
+                {dayBookings.map(b => (
+                  <div key={b.id} className="bg-blue-500 text-white rounded-md px-1 py-0.5">
+                    <p className="text-[10px] font-semibold leading-tight">{formatTime(b.availability_slots!.start_at)}</p>
+                    <p className="text-[10px] leading-tight truncate">{b.dancer_name}</p>
+                  </div>
+                ))}
+                {daySlots.filter(s => !trainerBookings.some(b => b.availability_slots?.id === s.id)).map(s => (
+                  <div key={s.id} className="bg-gray-200 dark:bg-gray-700 rounded-md px-1 py-0.5">
+                    <p className="text-[10px] text-gray-500 dark:text-gray-400 leading-tight">{formatTime(s.start_at)}</p>
+                    <p className="text-[10px] text-gray-400 dark:text-gray-500 leading-tight">Ledig</p>
+                  </div>
+                ))}
+              </div>
+            </div>
+          );
+        })}
+      </div>
+
+      {/* Forklaring */}
+      <div className="flex gap-4 mt-3">
+        <div className="flex items-center gap-1.5"><div className="w-3 h-3 rounded bg-blue-500" /><span className="text-xs text-gray-500 dark:text-gray-400">Booket</span></div>
+        <div className="flex items-center gap-1.5"><div className="w-3 h-3 rounded bg-gray-200 dark:bg-gray-700" /><span className="text-xs text-gray-500 dark:text-gray-400">Ledig</span></div>
+      </div>
+    </div>
+  );
+}
 
 export default function AdminClient({ profiles, feedback, bookings, slots, trainerMap }: Props) {
   const [roleFilter, setRoleFilter] = useState<RoleFilter | null>(null);
@@ -54,10 +142,10 @@ export default function AdminClient({ profiles, feedback, bookings, slots, train
     : null;
 
   const statCards = [
-    { label: "Alle brukere", value: profiles.length, filter: "alle" as RoleFilter },
-    { label: "Dansere", value: dancers.length, filter: "dancer" as RoleFilter },
-    { label: "Foreldre", value: parents.length, filter: "parent" as RoleFilter },
-    { label: "Trenere", value: trainers.length, filter: "trainer" as RoleFilter },
+    { label: "Alle brukere", value: profiles.length, filter: "alle" as RoleFilter, color: "bg-purple-600 border-purple-600" },
+    { label: "Dansere", value: dancers.length, filter: "dancer" as RoleFilter, color: "bg-blue-500 border-blue-500" },
+    { label: "Foreldre", value: parents.length, filter: "parent" as RoleFilter, color: "bg-green-500 border-green-500" },
+    { label: "Trenere", value: trainers.length, filter: "trainer" as RoleFilter, color: "bg-orange-500 border-orange-500" },
   ];
 
   return (
@@ -75,10 +163,10 @@ export default function AdminClient({ profiles, feedback, bookings, slots, train
             <button
               key={card.filter}
               onClick={() => setRoleFilter(roleFilter === card.filter ? null : card.filter)}
-              className={`rounded-2xl border p-5 text-center transition-all ${roleFilter === card.filter ? "bg-purple-600 border-purple-600 text-white" : "bg-white dark:bg-gray-900 border-gray-200 dark:border-gray-700 hover:border-purple-400"}`}
+              className={`rounded-2xl border-2 p-5 text-center transition-all ${roleFilter === card.filter ? `${card.color} text-white` : "bg-white dark:bg-gray-900 border-gray-200 dark:border-gray-700 hover:border-gray-300"}`}
             >
-              <p className={`text-3xl font-bold ${roleFilter === card.filter ? "text-white" : "text-gray-900 dark:text-white"}`}>{card.value}</p>
-              <p className={`text-sm mt-1 ${roleFilter === card.filter ? "text-purple-100" : "text-gray-500 dark:text-gray-400"}`}>{card.label}</p>
+              <p className="text-3xl font-bold">{card.value}</p>
+              <p className="text-sm mt-1 opacity-80">{card.label}</p>
             </button>
           ))}
         </div>
@@ -88,35 +176,36 @@ export default function AdminClient({ profiles, feedback, bookings, slots, train
           <div className="bg-white dark:bg-gray-900 rounded-2xl border dark:border-gray-700 p-5">
             <h2 className="font-bold text-gray-900 dark:text-white mb-4">
               {roleFilter === "alle" ? "Alle brukere" : roleFilter === "dancer" ? "Dansere" : roleFilter === "parent" ? "Foreldre" : "Trenere"}
-              <span className="text-purple-600 ml-2">{filteredProfiles.length}</span>
+              <span className="ml-2 text-gray-400">{filteredProfiles.length}</span>
             </h2>
             <div className="space-y-2 max-h-80 overflow-y-auto">
-              {filteredProfiles.map(p => (
-                <div key={p.id} className="flex items-center justify-between py-2 border-b dark:border-gray-700 last:border-0">
-                  <div className="flex items-center gap-3">
-                    <div className="w-8 h-8 rounded-full bg-purple-100 dark:bg-purple-900 flex items-center justify-center text-purple-600 dark:text-purple-300 font-bold text-sm shrink-0">
-                      {p.name?.charAt(0) ?? "?"}
+              {filteredProfiles.map(p => {
+                const colors = ROLE_COLORS[p.role as keyof typeof ROLE_COLORS];
+                return (
+                  <div key={p.id} className="flex items-center justify-between py-2 border-b dark:border-gray-700 last:border-0">
+                    <div className="flex items-center gap-3">
+                      <div className={`w-8 h-8 rounded-full ${colors.bg} flex items-center justify-center ${colors.text} font-bold text-sm shrink-0`}>
+                        {p.name?.charAt(0) ?? "?"}
+                      </div>
+                      <div>
+                        <p className="text-sm font-medium text-gray-800 dark:text-gray-100">{p.name}</p>
+                        <span className={`text-xs ${colors.text}`}>{colors.label}</span>
+                      </div>
                     </div>
-                    <div>
-                      <p className="text-sm font-medium text-gray-800 dark:text-gray-100">{p.name}</p>
-                      <p className="text-xs text-gray-400 dark:text-gray-500">{p.role}</p>
-                    </div>
+                    <span className="text-xs text-gray-400 dark:text-gray-500 shrink-0 ml-2">{timeAgo(p.created_at)}</span>
                   </div>
-                  <span className="text-xs text-gray-400 dark:text-gray-500 shrink-0 ml-2">{timeAgo(p.created_at)}</span>
-                </div>
-              ))}
+                );
+              })}
             </div>
           </div>
         )}
 
-        {/* Treneroversikt */}
+        {/* Treneroversikt med kalender */}
         <div className="bg-white dark:bg-gray-900 rounded-2xl border dark:border-gray-700 p-5">
           <h2 className="font-bold text-gray-900 dark:text-white mb-4">Treneroversikt</h2>
           <div className="space-y-3">
             {trainers.map(trainer => {
-              const trainerBookings = bookings.filter(
-                b => b.availability_slots?.trainer_id === trainer.id && b.status === "confirmed"
-              );
+              const trainerBookings = bookings.filter(b => b.availability_slots?.trainer_id === trainer.id && b.status === "confirmed");
               const trainerSlots = slots.filter(s => s.trainer_id === trainer.id);
               const isOpen = trainerOpen === trainer.id;
 
@@ -127,7 +216,7 @@ export default function AdminClient({ profiles, feedback, bookings, slots, train
                     className="w-full flex items-center justify-between px-4 py-3 hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors"
                   >
                     <div className="flex items-center gap-3">
-                      <div className="w-9 h-9 rounded-full bg-purple-100 dark:bg-purple-900 flex items-center justify-center text-purple-600 dark:text-purple-300 font-bold text-sm shrink-0">
+                      <div className="w-9 h-9 rounded-full bg-orange-100 dark:bg-orange-900 flex items-center justify-center text-orange-700 dark:text-orange-300 font-bold text-sm shrink-0">
                         {trainer.name.charAt(0)}
                       </div>
                       <div className="text-left">
@@ -141,53 +230,14 @@ export default function AdminClient({ profiles, feedback, bookings, slots, train
                   </button>
 
                   {isOpen && (
-                    <div className="border-t dark:border-gray-700 p-4 space-y-4">
-
-                      {/* Bookede timer */}
-                      <div>
-                        <p className="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider mb-2">Bookede timer</p>
-                        {trainerBookings.length === 0 ? (
-                          <p className="text-sm text-gray-400 dark:text-gray-500">Ingen bookede timer</p>
-                        ) : (
-                          <div className="space-y-2">
-                            {trainerBookings.map(b => (
-                              <div key={b.id} className="flex items-center justify-between bg-purple-50 dark:bg-purple-950 rounded-xl px-3 py-2">
-                                <div>
-                                  <p className="text-sm font-medium text-gray-800 dark:text-gray-100">
-                                    {b.availability_slots ? formatDt(b.availability_slots.start_at) : "–"}
-                                  </p>
-                                  <p className="text-xs text-purple-600">{b.dancer_name} · {b.dance_style}</p>
-                                </div>
-                                <span className="text-xs bg-green-100 text-green-600 px-2 py-0.5 rounded-full">Booket</span>
-                              </div>
-                            ))}
-                          </div>
-                        )}
-                      </div>
-
-                      {/* Ledige tider */}
-                      <div>
-                        <p className="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider mb-2">Ledige tider fremover</p>
-                        {trainerSlots.length === 0 ? (
-                          <p className="text-sm text-gray-400 dark:text-gray-500">Ingen ledige tider lagt ut</p>
-                        ) : (
-                          <div className="space-y-1">
-                            {trainerSlots.slice(0, 10).map(s => (
-                              <div key={s.id} className="flex items-center justify-between bg-gray-50 dark:bg-gray-800 rounded-xl px-3 py-2">
-                                <p className="text-sm text-gray-700 dark:text-gray-300">{formatDt(s.start_at)}</p>
-                                <span className="text-xs bg-gray-100 dark:bg-gray-700 text-gray-500 dark:text-gray-400 px-2 py-0.5 rounded-full">Ledig</span>
-                              </div>
-                            ))}
-                            {trainerSlots.length > 10 && <p className="text-xs text-gray-400 pl-3">+ {trainerSlots.length - 10} til</p>}
-                          </div>
-                        )}
-                      </div>
-
-                    </div>
+                    <TrainerCalendar trainer={trainer} bookings={bookings} slots={slots} />
                   )}
                 </div>
               );
             })}
+            {trainers.length === 0 && (
+              <p className="text-sm text-gray-400 dark:text-gray-500">Ingen trenere registrert</p>
+            )}
           </div>
         </div>
 
@@ -200,16 +250,19 @@ export default function AdminClient({ profiles, feedback, bookings, slots, train
             <p className="text-sm text-gray-400 dark:text-gray-500">Ingen tilbakemeldinger ennå</p>
           ) : (
             <div className="space-y-3 max-h-96 overflow-y-auto">
-              {feedback.map(f => (
-                <div key={f.id} className="border dark:border-gray-700 rounded-xl p-3">
-                  <div className="flex items-center justify-between mb-1">
-                    <p className="text-sm font-semibold text-gray-800 dark:text-gray-100">{f.user_name}</p>
-                    <span className="text-xs text-gray-400">{timeAgo(f.created_at)}</span>
+              {feedback.map(f => {
+                const colors = ROLE_COLORS[f.role as keyof typeof ROLE_COLORS];
+                return (
+                  <div key={f.id} className="border dark:border-gray-700 rounded-xl p-3">
+                    <div className="flex items-center justify-between mb-1">
+                      <p className="text-sm font-semibold text-gray-800 dark:text-gray-100">{f.user_name}</p>
+                      <span className="text-xs text-gray-400">{timeAgo(f.created_at)}</span>
+                    </div>
+                    {colors && <span className={`text-xs ${colors.text} ${colors.bg} px-2 py-0.5 rounded-full`}>{colors.label}</span>}
+                    <p className="text-sm text-gray-600 dark:text-gray-400 mt-2 leading-relaxed">{f.message}</p>
                   </div>
-                  <span className="text-xs bg-purple-50 dark:bg-purple-950 text-purple-600 px-2 py-0.5 rounded-full">{f.role}</span>
-                  <p className="text-sm text-gray-600 dark:text-gray-400 mt-2 leading-relaxed">{f.message}</p>
-                </div>
-              ))}
+                );
+              })}
             </div>
           )}
         </div>

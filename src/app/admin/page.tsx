@@ -21,7 +21,7 @@ export default async function AdminPage() {
     supabase.from("profiles").select("id, name, role, created_at").order("created_at", { ascending: false }),
     supabase.from("feedback").select("*").order("created_at", { ascending: false }),
     supabase.from("bookings").select("id, dancer_name, dance_style, status, availability_slots(id, start_at, end_at, trainer_id)").order("created_at", { ascending: false }),
-    supabase.from("availability_slots").select("id, start_at, end_at, trainer_id").gte("start_at", new Date().toISOString()).order("start_at").limit(200),
+    supabase.from("availability_slots").select("id, start_at, end_at, trainer_id").order("start_at").limit(500),
   ]);
 
   const trainerMap: Record<string, string> = {};
