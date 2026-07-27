@@ -9,7 +9,7 @@ type Booking = {
   dancer_name: string;
   dance_style: string;
   status: string;
-  availability_slots: { id: string; start_at: string; end_at: string; trainer_id: string } | null;
+  availability_slots: any;
 };
 type Slot = { id: string; start_at: string; end_at: string; trainer_id: string };
 
