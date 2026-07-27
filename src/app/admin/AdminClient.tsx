@@ -65,12 +65,17 @@ const MONTHS = ["jan", "feb", "mar", "apr", "mai", "jun", "jul", "aug", "sep", "
 
 type RoleFilter = "alle" | "dancer" | "parent" | "trainer";
 
+function getSlot(b: Booking) {
+  if (!b.availability_slots) return null;
+  return Array.isArray(b.availability_slots) ? b.availability_slots[0] : b.availability_slots;
+}
+
 function TrainerCalendar({ trainer, bookings, slots }: { trainer: Profile; bookings: Booking[]; slots: Slot[] }) {
   const [weekStart, setWeekStart] = useState(() => startOfWeek(new Date()));
 
   const weekDays = Array.from({ length: 7 }, (_, i) => addDays(weekStart, i));
 
-  const trainerBookings = bookings.filter(b => b.availability_slots?.trainer_id === trainer.id && b.status === "confirmed");
+  const trainerBookings = bookings.filter(b => getSlot(b)?.trainer_id === trainer.id && b.status === "confirmed");
   const trainerSlots = slots.filter(s => s.trainer_id === trainer.id);
 
   const weekLabel = `${weekStart.getDate()}. ${MONTHS[weekStart.getMonth()]} – ${addDays(weekStart, 6).getDate()}. ${MONTHS[addDays(weekStart, 6).getMonth()]}`;
@@ -90,7 +95,7 @@ function TrainerCalendar({ trainer, bookings, slots }: { trainer: Profile; booki
           <div key={d} className="text-center text-xs font-semibold text-gray-400 dark:text-gray-500 pb-1">{d}</div>
         ))}
         {weekDays.map((day, i) => {
-          const dayBookings = trainerBookings.filter(b => b.availability_slots && isSameDay(new Date(b.availability_slots.start_at), day));
+          const dayBookings = trainerBookings.filter(b => getSlot(b) && isSameDay(new Date(getSlot(b)!.start_at), day));
           const daySlots = trainerSlots.filter(s => isSameDay(new Date(s.start_at), day));
           const isToday = isSameDay(day, new Date());
 
@@ -102,11 +107,11 @@ function TrainerCalendar({ trainer, bookings, slots }: { trainer: Profile; booki
               <div className="space-y-1">
                 {dayBookings.map(b => (
                   <div key={b.id} className="bg-blue-500 text-white rounded-md px-1 py-0.5">
-                    <p className="text-[10px] font-semibold leading-tight">{formatTime(b.availability_slots!.start_at)}</p>
+                    <p className="text-[10px] font-semibold leading-tight">{formatTime(getSlot(b)!.start_at)}</p>
                     <p className="text-[10px] leading-tight truncate">{b.dancer_name}</p>
                   </div>
                 ))}
-                {daySlots.filter(s => !trainerBookings.some(b => b.availability_slots?.id === s.id)).map(s => (
+                {daySlots.filter(s => !trainerBookings.some(b => getSlot(b)?.id === s.id)).map(s => (
                   <div key={s.id} className="bg-gray-200 dark:bg-gray-700 rounded-md px-1 py-0.5">
                     <p className="text-[10px] text-gray-500 dark:text-gray-400 leading-tight">{formatTime(s.start_at)}</p>
                     <p className="text-[10px] text-gray-400 dark:text-gray-500 leading-tight">Ledig</p>
@@ -205,7 +210,7 @@ export default function AdminClient({ profiles, feedback, bookings, slots, train
           <h2 className="font-bold text-gray-900 dark:text-white mb-4">Treneroversikt</h2>
           <div className="space-y-3">
             {trainers.map(trainer => {
-              const trainerBookings = bookings.filter(b => b.availability_slots?.trainer_id === trainer.id && b.status === "confirmed");
+              const trainerBookings = bookings.filter(b => getSlot(b)?.trainer_id === trainer.id && b.status === "confirmed");
               const trainerSlots = slots.filter(s => s.trainer_id === trainer.id);
               const isOpen = trainerOpen === trainer.id;
 
