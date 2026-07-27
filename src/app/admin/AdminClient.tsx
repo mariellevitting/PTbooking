@@ -10,7 +10,6 @@ type Slot = {
   start_at: string;
   end_at: string;
   trainer_id: string;
-  profiles?: { name?: string } | null;
   bookings?: Booking[];
 };
 
@@ -18,6 +17,7 @@ interface Props {
   profiles: Profile[];
   feedback: Feedback[];
   slots: Slot[];
+  trainerMap: Record<string, string>;
 }
 
 function timeAgo(dateStr: string) {
@@ -38,7 +38,7 @@ function formatDt(dateStr: string) {
 
 type RoleFilter = "alle" | "dancer" | "parent" | "trainer";
 
-export default function AdminClient({ profiles, feedback, slots }: Props) {
+export default function AdminClient({ profiles, feedback, slots, trainerMap }: Props) {
   const [roleFilter, setRoleFilter] = useState<RoleFilter | null>(null);
   const [trainerOpen, setTrainerOpen] = useState<string | null>(null);
 
@@ -56,7 +56,7 @@ export default function AdminClient({ profiles, feedback, slots }: Props) {
   const slotsByTrainer: Record<string, { trainerName: string; slots: Slot[] }> = {};
   for (const slot of slots) {
     const tid = slot.trainer_id;
-    const tname = (slot.profiles as any)?.name ?? "Ukjent";
+    const tname = trainerMap[tid] ?? "Ukjent";
     if (!slotsByTrainer[tid]) slotsByTrainer[tid] = { trainerName: tname, slots: [] };
     slotsByTrainer[tid].slots.push(slot);
   }

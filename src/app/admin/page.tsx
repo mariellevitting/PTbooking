@@ -21,16 +21,22 @@ export default async function AdminPage() {
     supabase.from("feedback").select("*").order("created_at", { ascending: false }),
     supabase
       .from("availability_slots")
-      .select("id, start_at, end_at, trainer_id, profiles!availability_slots_trainer_id_fkey(name), bookings(id, dancer_name, dance_style, status, booker_id, profiles!bookings_booker_id_fkey(name))")
+      .select("id, start_at, end_at, trainer_id, bookings(id, dancer_name, dance_style, status, booker_id)")
       .order("start_at", { ascending: false })
       .limit(200),
   ]);
+
+  const trainerMap: Record<string, string> = {};
+  for (const p of profiles ?? []) {
+    if (p.role === "trainer") trainerMap[p.id] = p.name;
+  }
 
   return (
     <AdminClient
       profiles={profiles ?? []}
       feedback={feedback ?? []}
       slots={slots ?? []}
+      trainerMap={trainerMap}
     />
   );
 }
