@@ -26,6 +26,7 @@ export default async function TrainerLayout({ children }: { children: React.Reac
       <TrainerSidebar
         name={profile.name}
         userId={user.id}
+        email={user.email ?? ""}
         avatarUrl={profile.avatar_url ?? null}
         notifications={notifications ?? []}
       />

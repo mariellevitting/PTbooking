@@ -21,11 +21,13 @@ const NAV = [
 interface Props {
   name: string;
   userId: string;
+  email: string;
   avatarUrl: string | null;
   notifications: any[];
 }
 
-export default function TrainerSidebar({ name, userId, avatarUrl, notifications }: Props) {
+export default function TrainerSidebar({ name, userId, email, avatarUrl, notifications }: Props) {
+  const isAdmin = email === "miemarielle@live.no";
   const pathname = usePathname();
   const [menuOpen, setMenuOpen] = useState(false);
   const firstName = name.split(" ")[0];
@@ -99,6 +101,11 @@ export default function TrainerSidebar({ name, userId, avatarUrl, notifications 
             </div>
             {/* Logg ut */}
             <div className="border-t dark:border-gray-700 px-6 py-4 space-y-3 text-sm text-gray-400 dark:text-gray-500">
+              {isAdmin && (
+                <Link href="/admin" onClick={() => setMenuOpen(false)} className="flex items-center gap-2 text-purple-600 dark:text-purple-400 font-medium">
+                  Admin
+                </Link>
+              )}
               <Link href="/om" onClick={() => setMenuOpen(false)} className="flex items-center gap-2 hover:text-gray-600">
                 Om Danceitude
               </Link>
@@ -147,6 +154,11 @@ export default function TrainerSidebar({ name, userId, avatarUrl, notifications 
           })}
         </nav>
         <div className="p-3 border-t border-gray-100 dark:border-gray-800 space-y-1">
+          {isAdmin && (
+            <Link href="/admin" className="flex items-center gap-2 px-3 py-2 rounded-xl text-sm text-purple-600 dark:text-purple-400 hover:bg-purple-50 dark:hover:bg-purple-950 transition-colors font-medium">
+              Admin
+            </Link>
+          )}
           <Link href="/om" className="flex items-center gap-2 px-3 py-2 rounded-xl text-sm text-gray-400 dark:text-gray-500 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors">
             Om Danceitude
           </Link>
