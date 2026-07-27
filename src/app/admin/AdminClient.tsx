@@ -4,18 +4,19 @@ import { useState } from "react";
 
 type Profile = { id: string; name: string; role: string; created_at: string };
 type Feedback = { id: string; user_name: string; role: string; message: string; created_at: string };
-type Booking = { id: string; dancer_name: string; dance_style: string; status: string; booker_id: string; profiles?: { name?: string } | null };
-type Slot = {
+type Booking = {
   id: string;
-  start_at: string;
-  end_at: string;
-  trainer_id: string;
-  bookings?: Booking[];
+  dancer_name: string;
+  dance_style: string;
+  status: string;
+  availability_slots: { id: string; start_at: string; end_at: string; trainer_id: string } | null;
 };
+type Slot = { id: string; start_at: string; end_at: string; trainer_id: string };
 
 interface Props {
   profiles: Profile[];
   feedback: Feedback[];
+  bookings: Booking[];
   slots: Slot[];
   trainerMap: Record<string, string>;
 }
@@ -38,7 +39,7 @@ function formatDt(dateStr: string) {
 
 type RoleFilter = "alle" | "dancer" | "parent" | "trainer";
 
-export default function AdminClient({ profiles, feedback, slots, trainerMap }: Props) {
+export default function AdminClient({ profiles, feedback, bookings, slots, trainerMap }: Props) {
   const [roleFilter, setRoleFilter] = useState<RoleFilter | null>(null);
   const [trainerOpen, setTrainerOpen] = useState<string | null>(null);
 
@@ -51,15 +52,6 @@ export default function AdminClient({ profiles, feedback, slots, trainerMap }: P
     : roleFilter === "trainer" ? trainers
     : roleFilter === "alle" ? profiles
     : null;
-
-  // Group slots by trainer
-  const slotsByTrainer: Record<string, { trainerName: string; slots: Slot[] }> = {};
-  for (const slot of slots) {
-    const tid = slot.trainer_id;
-    const tname = trainerMap[tid] ?? "Ukjent";
-    if (!slotsByTrainer[tid]) slotsByTrainer[tid] = { trainerName: tname, slots: [] };
-    slotsByTrainer[tid].slots.push(slot);
-  }
 
   const statCards = [
     { label: "Alle brukere", value: profiles.length, filter: "alle" as RoleFilter },
@@ -91,7 +83,7 @@ export default function AdminClient({ profiles, feedback, slots, trainerMap }: P
           ))}
         </div>
 
-        {/* Brukerliste når boks er valgt */}
+        {/* Brukerliste */}
         {filteredProfiles && (
           <div className="bg-white dark:bg-gray-900 rounded-2xl border dark:border-gray-700 p-5">
             <h2 className="font-bold text-gray-900 dark:text-white mb-4">
@@ -119,27 +111,29 @@ export default function AdminClient({ profiles, feedback, slots, trainerMap }: P
 
         {/* Treneroversikt */}
         <div className="bg-white dark:bg-gray-900 rounded-2xl border dark:border-gray-700 p-5">
-          <h2 className="font-bold text-gray-900 dark:text-white mb-4">Treneroversikt – timer og bookinger</h2>
+          <h2 className="font-bold text-gray-900 dark:text-white mb-4">Treneroversikt</h2>
           <div className="space-y-3">
-            {Object.entries(slotsByTrainer).map(([tid, { trainerName, slots: tSlots }]) => {
-              const booked = tSlots.flatMap(s => s.bookings ?? []).filter(b => b.status === "confirmed");
-              const available = tSlots.filter(s => !s.bookings?.some(b => b.status === "confirmed") && new Date(s.start_at) > new Date());
-              const isOpen = trainerOpen === tid;
+            {trainers.map(trainer => {
+              const trainerBookings = bookings.filter(
+                b => b.availability_slots?.trainer_id === trainer.id && b.status === "confirmed"
+              );
+              const trainerSlots = slots.filter(s => s.trainer_id === trainer.id);
+              const isOpen = trainerOpen === trainer.id;
 
               return (
-                <div key={tid} className="border dark:border-gray-700 rounded-xl overflow-hidden">
+                <div key={trainer.id} className="border dark:border-gray-700 rounded-xl overflow-hidden">
                   <button
-                    onClick={() => setTrainerOpen(isOpen ? null : tid)}
+                    onClick={() => setTrainerOpen(isOpen ? null : trainer.id)}
                     className="w-full flex items-center justify-between px-4 py-3 hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors"
                   >
                     <div className="flex items-center gap-3">
                       <div className="w-9 h-9 rounded-full bg-purple-100 dark:bg-purple-900 flex items-center justify-center text-purple-600 dark:text-purple-300 font-bold text-sm shrink-0">
-                        {trainerName.charAt(0)}
+                        {trainer.name.charAt(0)}
                       </div>
                       <div className="text-left">
-                        <p className="font-semibold text-sm text-gray-800 dark:text-gray-100">{trainerName}</p>
+                        <p className="font-semibold text-sm text-gray-800 dark:text-gray-100">{trainer.name}</p>
                         <p className="text-xs text-gray-400 dark:text-gray-500">
-                          {booked.length} booket · {available.length} ledige fremover
+                          {trainerBookings.length} bookinger · {trainerSlots.length} ledige fremover
                         </p>
                       </div>
                     </div>
@@ -152,40 +146,39 @@ export default function AdminClient({ profiles, feedback, slots, trainerMap }: P
                       {/* Bookede timer */}
                       <div>
                         <p className="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider mb-2">Bookede timer</p>
-                        {booked.length === 0 ? (
+                        {trainerBookings.length === 0 ? (
                           <p className="text-sm text-gray-400 dark:text-gray-500">Ingen bookede timer</p>
                         ) : (
                           <div className="space-y-2">
-                            {tSlots.filter(s => s.bookings?.some(b => b.status === "confirmed")).map(s => {
-                              const booking = s.bookings?.find(b => b.status === "confirmed");
-                              return (
-                                <div key={s.id} className="flex items-center justify-between bg-purple-50 dark:bg-purple-950 rounded-xl px-3 py-2">
-                                  <div>
-                                    <p className="text-sm font-medium text-gray-800 dark:text-gray-100">{formatDt(s.start_at)}</p>
-                                    <p className="text-xs text-purple-600">{booking?.dancer_name} · {booking?.dance_style}</p>
-                                  </div>
-                                  <span className="text-xs bg-green-100 text-green-600 px-2 py-0.5 rounded-full">Booket</span>
+                            {trainerBookings.map(b => (
+                              <div key={b.id} className="flex items-center justify-between bg-purple-50 dark:bg-purple-950 rounded-xl px-3 py-2">
+                                <div>
+                                  <p className="text-sm font-medium text-gray-800 dark:text-gray-100">
+                                    {b.availability_slots ? formatDt(b.availability_slots.start_at) : "–"}
+                                  </p>
+                                  <p className="text-xs text-purple-600">{b.dancer_name} · {b.dance_style}</p>
                                 </div>
-                              );
-                            })}
+                                <span className="text-xs bg-green-100 text-green-600 px-2 py-0.5 rounded-full">Booket</span>
+                              </div>
+                            ))}
                           </div>
                         )}
                       </div>
 
-                      {/* Ledige timer fremover */}
+                      {/* Ledige tider */}
                       <div>
                         <p className="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider mb-2">Ledige tider fremover</p>
-                        {available.length === 0 ? (
+                        {trainerSlots.length === 0 ? (
                           <p className="text-sm text-gray-400 dark:text-gray-500">Ingen ledige tider lagt ut</p>
                         ) : (
                           <div className="space-y-1">
-                            {available.slice(0, 10).map(s => (
+                            {trainerSlots.slice(0, 10).map(s => (
                               <div key={s.id} className="flex items-center justify-between bg-gray-50 dark:bg-gray-800 rounded-xl px-3 py-2">
                                 <p className="text-sm text-gray-700 dark:text-gray-300">{formatDt(s.start_at)}</p>
                                 <span className="text-xs bg-gray-100 dark:bg-gray-700 text-gray-500 dark:text-gray-400 px-2 py-0.5 rounded-full">Ledig</span>
                               </div>
                             ))}
-                            {available.length > 10 && <p className="text-xs text-gray-400 pl-3">+ {available.length - 10} til</p>}
+                            {trainerSlots.length > 10 && <p className="text-xs text-gray-400 pl-3">+ {trainerSlots.length - 10} til</p>}
                           </div>
                         )}
                       </div>
@@ -195,9 +188,6 @@ export default function AdminClient({ profiles, feedback, slots, trainerMap }: P
                 </div>
               );
             })}
-            {Object.keys(slotsByTrainer).length === 0 && (
-              <p className="text-sm text-gray-400 dark:text-gray-500">Ingen tider lagt ut ennå</p>
-            )}
           </div>
         </div>
 
