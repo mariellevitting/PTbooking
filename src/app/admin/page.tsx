@@ -20,7 +20,7 @@ export default async function AdminPage() {
   ] = await Promise.all([
     supabase.from("profiles").select("id, name, role, created_at").order("created_at", { ascending: false }),
     supabase.from("feedback").select("*").order("created_at", { ascending: false }),
-    supabase.from("bookings").select("id, dancer_name, dance_style, status, availability_slots(id, start_at, end_at, trainer_id)").order("created_at", { ascending: false }) as any,
+    supabase.from("bookings").select("id, dancer_name, dance_style, status, slot_id, availability_slots!bookings_slot_id_fkey(id, start_at, end_at, trainer_id)").order("created_at", { ascending: false }) as any,
     supabase.from("availability_slots").select("id, start_at, end_at, trainer_id").order("start_at").limit(500),
   ]);
 
