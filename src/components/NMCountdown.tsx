@@ -71,8 +71,8 @@ export default function NMCountdown({ href }: Props) {
   const box = (
     <div className="bg-purple-600 rounded-xl px-4 py-3 flex items-center justify-between">
       <div>
-        <p className="text-xs text-purple-200 font-semibold uppercase tracking-wide">🏆 {next.short}</p>
-        <p className="text-sm font-bold text-white">{next.short}</p>
+        <p className="text-xs text-purple-200 font-semibold uppercase tracking-wide">Neste konkurranse</p>
+        <p className="text-sm font-bold text-white">{next.name}</p>
         <p className="text-xs text-purple-200">{next.dateLabel}{next.location ? ` · ${next.location}` : ""}</p>
       </div>
       <div className="text-right ml-4">
