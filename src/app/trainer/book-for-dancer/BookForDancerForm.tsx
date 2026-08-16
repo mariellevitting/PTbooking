@@ -231,7 +231,7 @@ export default function BookForDancerForm({ trainerId, danceStyles }: Props) {
 
   return (
     <form onSubmit={handleSubmit} className="space-y-4">
-      <Card>
+      <Card className="overflow-visible">
         <CardContent className="pt-5 space-y-3">
           {/* Danser 1 – kombinert søk + navn */}
           <div ref={searchRef} className="relative">
@@ -260,7 +260,7 @@ export default function BookForDancerForm({ trainerId, danceStyles }: Props) {
                   required
                 />
                 {searchResults.length > 0 && (
-                  <div className="absolute z-10 mt-1 w-full bg-white dark:bg-gray-900 border dark:border-gray-700 rounded-xl shadow-lg overflow-hidden">
+                  <div className="absolute z-50 mt-1 w-full bg-white dark:bg-gray-900 border dark:border-gray-700 rounded-xl shadow-lg overflow-hidden">
                     {searchResults.map(u => (
                       <button key={u.id} type="button" onClick={() => selectUser(u)}
                         className="w-full text-left px-4 py-2.5 hover:bg-[#f5eeff] dark:bg-[#E2A9F1]/10 dark:hover:bg-purple-950/30 flex items-center justify-between border-t dark:border-gray-700 first:border-t-0">
