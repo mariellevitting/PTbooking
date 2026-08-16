@@ -128,3 +128,7 @@
     @apply font-sans;
   }
 }
+
+.page-safe-top {
+  padding-top: calc(1.5rem + env(safe-area-inset-top));
+}

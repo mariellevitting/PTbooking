@@ -50,7 +50,7 @@ export default async function TrainerBookPage({ params }: { params: Promise<{ tr
     : DEFAULT_STYLES;
 
   return (
-    <main className="bg-gray-50 dark:bg-gray-950 p-6 pt-16">
+    <main className="bg-gray-50 dark:bg-gray-950 px-6 pb-6 page-safe-top">
       <div className="max-w-lg mx-auto">
         <Link href="/book" className="inline-flex items-center gap-1 text-sm text-purple-600 hover:underline mb-6">
           <ArrowLeft size={16} /> Velg annen trener

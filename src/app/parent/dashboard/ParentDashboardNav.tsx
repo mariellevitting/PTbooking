@@ -294,7 +294,7 @@ export default function ParentDashboardNav({ userName, avatarUrl, notifications,
       <div className="md:ml-56">
         <div className="max-w-lg mx-auto px-4 py-6 space-y-4">
 
-          <h1 className="text-2xl font-bold hidden md:block">Heihei, {userName.split(" ")[0]}! 👋</h1>
+          <h1 className="text-2xl font-bold">Heihei, {userName.split(" ")[0]}! 👋</h1>
 
           {/* Mine privattimer */}
           {active === "timer" && (

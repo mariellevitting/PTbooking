@@ -14,6 +14,10 @@ export const metadata: Metadata = {
   description: "Book privattimer hos Evolution Danseklubb",
 };
 
+export const viewport = {
+  viewportFit: "cover",
+};
+
 export default function RootLayout({
   children,
 }: Readonly<{

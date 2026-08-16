@@ -15,7 +15,7 @@ export default async function OmPage() {
 
       {/* Header */}
       <div className="bg-purple-600 text-white">
-        <div className="max-w-3xl mx-auto px-6 py-12 md:py-20">
+        <div className="max-w-3xl mx-auto px-6 pb-12 md:pb-20 page-safe-top">
           <Link href="/login" className="text-purple-200 hover:text-white text-sm mb-6 inline-block">← Tilbake</Link>
           <p className="text-purple-200 text-sm font-semibold uppercase tracking-widest mb-3">Evolution Danseklubb</p>
           <h1 className="text-3xl md:text-5xl font-bold leading-tight mb-4">
