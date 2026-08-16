@@ -142,7 +142,7 @@ export default function DancerDashboardNav(props: Props) {
     <div>
       <FeedbackButton userId={props.userId} userName={props.userName} role="dancer" />
       {/* Mobil: lilla topbar */}
-      <div className="md:hidden sticky top-0 z-40 bg-purple-600 px-4 py-3 flex items-center justify-between shadow-md">
+      <div className="md:hidden sticky top-0 z-40 bg-purple-600 px-4 pb-3 pt-[calc(0.75rem+env(safe-area-inset-top))] flex items-center justify-between shadow-md">
         <button onClick={() => setMenuOpen(true)} className="p-1.5 rounded-lg hover:bg-purple-700 transition-colors">
           <Menu size={24} className="text-white" />
         </button>
