@@ -19,7 +19,7 @@ export default async function BookPage() {
 
   const now = new Date().toISOString();
   const [{ data: trainers }, { data: pins }, { data: slots }] = await Promise.all([
-    supabase.from("profiles").select("id, name, trainers(dance_styles, price)").eq("role", "trainer").order("name"),
+    supabase.from("profiles").select("id, name, avatar_url, trainers(dance_styles, price)").eq("role", "trainer").order("name"),
     supabase.from("pinned_trainers").select("trainer_id").eq("user_id", user.id),
     supabase.from("availability_slots").select("trainer_id").eq("is_booked", false).gte("start_at", now),
   ]);
@@ -36,7 +36,7 @@ export default async function BookPage() {
       ? trainerData[0]?.dance_styles ?? []
       : trainerData?.dance_styles ?? [];
     const price: number = Array.isArray(trainerData) ? trainerData[0]?.price ?? 150 : trainerData?.price ?? 150;
-    return { id: trainer.id, name: trainer.name, styles, isPinned: pinnedIds.has(trainer.id), price, availableSlots: slotCounts[trainer.id] ?? 0 };
+    return { id: trainer.id, name: trainer.name, avatarUrl: trainer.avatar_url ?? null, styles, isPinned: pinnedIds.has(trainer.id), price, availableSlots: slotCounts[trainer.id] ?? 0 };
   });
 
   return (

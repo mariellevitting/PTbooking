@@ -8,6 +8,7 @@ import { togglePin } from "./actions";
 type Trainer = {
   id: string;
   name: string;
+  avatarUrl: string | null;
   styles: string[];
   isPinned: boolean;
   price: number;
@@ -31,8 +32,10 @@ function TrainerCard({ trainer }: { trainer: Trainer }) {
         />
       </button>
       <Link href={`/book/${trainer.id}`} className="flex items-center gap-4 flex-1 min-w-0">
-        <div className="w-12 h-12 rounded-full bg-[#edd5f9] dark:bg-[#E2A9F1]/15 flex items-center justify-center text-[#E2A9F1] font-bold text-lg shrink-0">
-          {trainer.name.charAt(0)}
+        <div className="w-12 h-12 rounded-full bg-[#edd5f9] dark:bg-[#E2A9F1]/15 flex items-center justify-center text-[#E2A9F1] font-bold text-lg shrink-0 overflow-hidden">
+          {trainer.avatarUrl
+            ? <img src={trainer.avatarUrl} alt={trainer.name} className="w-full h-full object-cover" />
+            : trainer.name.charAt(0)}
         </div>
         <div className="flex-1 min-w-0">
           <p className="font-semibold">{trainer.name}</p>
