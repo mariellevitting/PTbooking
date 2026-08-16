@@ -52,8 +52,8 @@ export default async function TrainerBookPage({ params }: { params: Promise<{ tr
   return (
     <main className="bg-gray-50 dark:bg-gray-950 px-6 pb-6 page-safe-top">
       <div className="max-w-lg mx-auto">
-        <Link href="/book" className="inline-flex items-center gap-1 text-sm text-[#E2A9F1] hover:underline mb-6">
-          <ArrowLeft size={16} /> Velg annen trener
+        <Link href="/book" className="inline-flex items-center justify-center w-11 h-11 rounded-full hover:bg-[#E2A9F1]/10 text-[#E2A9F1] mb-2 -ml-2">
+          <ArrowLeft size={24} strokeWidth={2.5} />
         </Link>
 
         {/* Trener-kort */}

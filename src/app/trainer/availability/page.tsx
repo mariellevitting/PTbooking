@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
+import { ArrowLeft } from "lucide-react";
 import { createClient } from "@/lib/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -183,8 +184,8 @@ export default function AvailabilityPage() {
   return (
     <main className="bg-gray-50 dark:bg-gray-950 px-6 pb-6 page-safe-top">
       <div className="max-w-lg mx-auto">
-        <button onClick={() => router.push("/trainer/dashboard")} className="text-sm text-[#E2A9F1] hover:underline mb-6 block">
-          ← Tilbake
+        <button onClick={() => router.push("/trainer/dashboard")} className="inline-flex items-center justify-center w-11 h-11 rounded-full hover:bg-[#E2A9F1]/10 text-[#E2A9F1] mb-2 -ml-2">
+          <ArrowLeft size={24} strokeWidth={2.5} />
         </button>
         <h1 className="text-2xl font-bold mb-6">Legg ut ledige tider</h1>
 
