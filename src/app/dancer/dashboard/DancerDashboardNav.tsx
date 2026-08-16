@@ -83,6 +83,7 @@ export default function DancerDashboardNav(props: Props) {
   const [levelS, setLevelS] = useState(props.levelSlow);
   const [saving, setSaving] = useState(false);
   const [saved, setSaved] = useState(false);
+  const [saveError, setSaveError] = useState<string | null>(null);
   const isFirstRender = useRef(true);
 
   const now = new Date(props.now);
@@ -109,7 +110,7 @@ export default function DancerDashboardNav(props: Props) {
     setSaving(true);
     const timer = setTimeout(async () => {
       const supabase = createClient();
-      await supabase.from("profiles").update({
+      const { error } = await supabase.from("profiles").update({
         season_goals: goals,
         points_freestyle: freestyle,
         points_slow: slow,
@@ -117,7 +118,8 @@ export default function DancerDashboardNav(props: Props) {
         level_slow: levelS,
       }).eq("id", props.userId);
       setSaving(false);
-      setSaved(true);
+      if (error) { setSaveError("Feil: " + error.message); }
+      else { setSaved(true); setSaveError(null); }
     }, 600);
     return () => clearTimeout(timer);
   }, [goals, freestyle, slow, levelF, levelS]);
@@ -506,9 +508,9 @@ export default function DancerDashboardNav(props: Props) {
         )}
 
         {/* Auto-lagring status */}
-        {(active === "maal" || active === "nivaer") && (saving || saved) && (
-          <p className="text-xs text-center text-gray-400 dark:text-gray-500 pb-1">
-            {saving ? "Lagrer..." : "✓ Lagret"}
+        {(active === "maal" || active === "nivaer") && (saving || saved || saveError) && (
+          <p className={`text-xs text-center pb-1 ${saveError ? "text-red-500" : "text-gray-400 dark:text-gray-500"}`}>
+            {saving ? "Lagrer..." : saveError ? saveError : "✓ Lagret"}
           </p>
         )}
       </div>
