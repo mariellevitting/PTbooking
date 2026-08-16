@@ -11,6 +11,7 @@ import NotificationBell from "@/components/NotificationBell";
 import FeedbackButton from "@/components/FeedbackButton";
 import ThemeToggle from "@/components/ThemeToggle";
 import NMCountdown from "@/components/NMCountdown";
+import CompetitionList from "@/components/CompetitionList";
 import ChildDancerCard from "@/app/parent/profil/ChildDancerCard";
 import CompetitionResultsCard from "@/components/CompetitionResultsCard";
 import { formatDate, formatTime, formatDateKey } from "@/lib/dateUtils";
@@ -496,18 +497,7 @@ export default function ParentDashboardNav({ userName, avatarUrl, notifications,
           {active === "konkurranser" && (
             <div className="space-y-3">
               <h2 className="font-semibold text-lg mb-1">Kommende konkurranser</h2>
-              <NMCountdown />
-              {upcomingComps.length === 0 && <p className="text-sm text-gray-400 dark:text-gray-500">Ingen kommende konkurranser</p>}
-              {upcomingComps.slice(1).map(c => (
-                <div key={c.short} className="bg-white dark:bg-gray-900 rounded-xl border dark:border-gray-700 p-4 flex items-center justify-between">
-                  <div>
-                    <p className="font-semibold text-gray-800 dark:text-white">{c.short}</p>
-                    <p className="text-sm text-[#E2A9F1]">{c.dateLabel}</p>
-                    {c.location && <p className="text-xs text-gray-400 dark:text-gray-500 mt-0.5">{c.location}</p>}
-                  </div>
-                  <span className="text-xs font-bold text-[#E2A9F1] bg-[#f5eeff] dark:bg-[#E2A9F1]/10 px-2 py-1 rounded-full ml-3">{daysUntil(c.date)} dager</span>
-                </div>
-              ))}
+              <CompetitionList userId={parentId} showCountdown />
             </div>
           )}
 

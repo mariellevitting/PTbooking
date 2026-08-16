@@ -13,6 +13,7 @@ import LogoutButton from "@/components/LogoutButton";
 import ThemeToggle from "@/components/ThemeToggle";
 import FeedbackButton from "@/components/FeedbackButton";
 import NMCountdown from "@/components/NMCountdown";
+import CompetitionList from "@/components/CompetitionList";
 import { createClient } from "@/lib/supabase/client";
 import { formatDate, formatTime, formatDateKey } from "@/lib/dateUtils";
 
@@ -452,28 +453,9 @@ export default function DancerDashboardNav(props: Props) {
       )}
 
       {/* Kommende konkurranser */}
-      {active === "konkurranser" && (() => {
-        const upcoming = COMPETITIONS.filter(c => c.date >= new Date());
-        const daysLeft = (d: Date) => Math.ceil((d.getTime() - new Date().getTime()) / (1000 * 60 * 60 * 24));
-        return (
-          <div className="space-y-3">
-            <NMCountdown />
-            {upcoming.length === 0 && <p className="text-sm text-gray-400 dark:text-gray-500 text-center py-6">Ingen kommende konkurranser</p>}
-            {upcoming.slice(1).map(c => (
-              <div key={c.name} className="bg-white dark:bg-gray-900 rounded-xl border dark:border-gray-700 p-4 flex items-center justify-between">
-                <div>
-                  <p className="font-semibold text-gray-800 dark:text-white">{c.short}</p>
-                  <p className="text-sm text-[#E2A9F1]">{c.dateLabel}</p>
-                  {c.location && <p className="text-xs text-gray-400 dark:text-gray-500 mt-0.5">{c.location}</p>}
-                </div>
-                <span className="text-xs font-bold text-[#E2A9F1] bg-[#f5eeff] dark:bg-[#E2A9F1]/10 px-2 py-1 rounded-full whitespace-nowrap ml-3">
-                  {daysLeft(c.date)} dager
-                </span>
-              </div>
-            ))}
-          </div>
-        );
-      })()}
+      {active === "konkurranser" && (
+        <CompetitionList userId={props.userId} showCountdown />
+      )}
 
         {/* Om privattimer */}
         {active === "om" && (
