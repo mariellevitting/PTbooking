@@ -22,7 +22,7 @@ export default async function TrainerLayout({ children }: { children: React.Reac
     .order("created_at", { ascending: false });
 
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-gray-950 flex">
+    <div className="bg-gray-50 dark:bg-gray-950">
       <TrainerSidebar
         name={profile.name}
         userId={user.id}
@@ -30,7 +30,7 @@ export default async function TrainerLayout({ children }: { children: React.Reac
         avatarUrl={profile.avatar_url ?? null}
         notifications={notifications ?? []}
       />
-      <div className="flex-1 md:ml-56 pt-[calc(4.5rem+env(safe-area-inset-top))] md:pt-0">
+      <div className="md:ml-56 pt-[calc(4.5rem+env(safe-area-inset-top))] md:pt-0">
         {children}
       </div>
     </div>
