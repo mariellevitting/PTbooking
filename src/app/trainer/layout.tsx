@@ -30,7 +30,7 @@ export default async function TrainerLayout({ children }: { children: React.Reac
         avatarUrl={profile.avatar_url ?? null}
         notifications={notifications ?? []}
       />
-      <div className="flex-1 md:ml-56 pt-14 md:pt-0">
+      <div className="flex-1 md:ml-56 pt-[calc(3.5rem+env(safe-area-inset-top))] md:pt-0">
         {children}
       </div>
     </div>
