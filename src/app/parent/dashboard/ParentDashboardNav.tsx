@@ -78,6 +78,7 @@ function ParentGoalsSection({ children }: { children: Child[] }) {
   const [goals, setGoals] = useState(children[0]?.season_goals ?? "");
   const [saving, setSaving] = useState(false);
   const [saved, setSaved] = useState(false);
+  const [saveError, setSaveError] = useState<string | null>(null);
   const isFirstRender = useRef(true);
 
   function handleChildSelect(id: string) {
@@ -85,6 +86,7 @@ function ParentGoalsSection({ children }: { children: Child[] }) {
     setSelectedId(id);
     setGoals(c?.season_goals ?? "");
     setSaved(false);
+    setSaveError(null);
     isFirstRender.current = true;
   }
 
@@ -92,14 +94,16 @@ function ParentGoalsSection({ children }: { children: Child[] }) {
     if (isFirstRender.current) { isFirstRender.current = false; return; }
     setSaved(false);
     setSaving(true);
+    const currentId = selectedId;
     const timer = setTimeout(async () => {
       const supabase = createClient();
-      await supabase.from("children").update({ season_goals: goals }).eq("id", selectedId);
+      const { error } = await supabase.from("children").update({ season_goals: goals }).eq("id", currentId);
       setSaving(false);
-      setSaved(true);
+      if (error) { setSaveError("Feil: " + error.message); }
+      else { setSaved(true); setSaveError(null); }
     }, 600);
     return () => clearTimeout(timer);
-  }, [goals]);
+  }, [goals, selectedId]);
 
   return (
     <div className="space-y-4">
@@ -119,9 +123,9 @@ function ParentGoalsSection({ children }: { children: Child[] }) {
         <p className="text-xs text-gray-400 dark:text-gray-500">F.eks. triks, mål for konkurranser, hva danseren vil jobbe med</p>
         <GoalsList value={goals} onChange={g => setGoals(g)} />
       </div>
-      {(saving || saved) && (
-        <p className="text-xs text-center text-gray-400 dark:text-gray-500">
-          {saving ? "Lagrer..." : "✓ Lagret"}
+      {(saving || saved || saveError) && (
+        <p className={`text-xs text-center ${saveError ? "text-red-500" : "text-gray-400 dark:text-gray-500"}`}>
+          {saving ? "Lagrer..." : saveError ? saveError : "✓ Lagret"}
         </p>
       )}
     </div>
