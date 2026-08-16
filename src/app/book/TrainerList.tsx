@@ -31,7 +31,7 @@ function TrainerCard({ trainer }: { trainer: Trainer }) {
         />
       </button>
       <Link href={`/book/${trainer.id}`} className="flex items-center gap-4 flex-1 min-w-0">
-        <div className="w-12 h-12 rounded-full bg-[#edd5f9] flex items-center justify-center text-[#E2A9F1] font-bold text-lg shrink-0">
+        <div className="w-12 h-12 rounded-full bg-[#edd5f9] dark:bg-[#E2A9F1]/15 flex items-center justify-center text-[#E2A9F1] font-bold text-lg shrink-0">
           {trainer.name.charAt(0)}
         </div>
         <div className="flex-1 min-w-0">

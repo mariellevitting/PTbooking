@@ -72,7 +72,7 @@ export default function TrainerSidebar({ name, userId, email, avatarUrl, notific
             </div>
             {/* Profil */}
             <Link href="/trainer/profil" onClick={() => setMenuOpen(false)} className="px-6 pb-6 flex items-center gap-4 border-b hover:bg-gray-50 dark:hover:bg-gray-950 transition-colors">
-              <div className="w-14 h-14 rounded-full bg-[#edd5f9] flex items-center justify-center overflow-hidden shrink-0">
+              <div className="w-14 h-14 rounded-full bg-[#edd5f9] dark:bg-[#E2A9F1]/15 flex items-center justify-center overflow-hidden shrink-0">
                 {avatarUrl
                   ? <img src={avatarUrl} alt="Profil" className="w-full h-full object-cover" />
                   : <span className="text-2xl font-bold text-[#E2A9F1]">{firstName.charAt(0)}</span>}
@@ -91,7 +91,7 @@ export default function TrainerSidebar({ name, userId, email, avatarUrl, notific
                     key={href}
                     href={href}
                     onClick={() => setMenuOpen(false)}
-                    className={`w-full flex items-center gap-4 px-6 py-3.5 text-sm font-medium transition-colors ${active ? "bg-[#f5eeff] text-[#c87de0] border-r-4 border-[#3A3A3A]" : "text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-950"}`}
+                    className={`w-full flex items-center gap-4 px-6 py-3.5 text-sm font-medium transition-colors ${active ? "bg-[#f5eeff] dark:bg-[#E2A9F1]/10 text-[#c87de0] border-r-4 border-[#3A3A3A]" : "text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-950"}`}
                   >
                     <Icon size={18} className={active ? "text-[#E2A9F1]" : "text-gray-400 dark:text-gray-500"} />
                     {label}
@@ -123,7 +123,7 @@ export default function TrainerSidebar({ name, userId, email, avatarUrl, notific
               {avatarUrl ? (
                 <img src={avatarUrl} alt="" className="w-9 h-9 rounded-full object-cover shrink-0" />
               ) : (
-                <div className="w-9 h-9 rounded-full bg-[#edd5f9] flex items-center justify-center text-[#c87de0] font-bold text-sm shrink-0">
+                <div className="w-9 h-9 rounded-full bg-[#edd5f9] dark:bg-[#E2A9F1]/15 flex items-center justify-center text-[#c87de0] font-bold text-sm shrink-0">
                   {firstName.charAt(0)}
                 </div>
               )}
@@ -155,7 +155,7 @@ export default function TrainerSidebar({ name, userId, email, avatarUrl, notific
         </nav>
         <div className="p-3 border-t border-gray-100 dark:border-gray-800 space-y-1">
           {isAdmin && (
-            <Link href="/admin" className="flex items-center gap-2 px-3 py-2 rounded-xl text-sm text-[#E2A9F1] dark:text-[#E2A9F1] hover:bg-[#f5eeff] dark:hover:bg-purple-950 transition-colors font-medium">
+            <Link href="/admin" className="flex items-center gap-2 px-3 py-2 rounded-xl text-sm text-[#E2A9F1] dark:text-[#E2A9F1] hover:bg-[#f5eeff] dark:bg-[#E2A9F1]/10 dark:hover:bg-purple-950 transition-colors font-medium">
               Admin
             </Link>
           )}

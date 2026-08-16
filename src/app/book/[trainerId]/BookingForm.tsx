@@ -411,7 +411,7 @@ export default function BookingForm({ slots, trainerName, bookerId, bookerName, 
               <label className="text-sm font-medium">{isParent ? "Danser 2 – navn" : "Navn på partner"}</label>
 
               {linkedPartner ? (
-                <div className="flex items-center justify-between bg-[#f5eeff] border border-[#E2A9F1]/40 rounded-lg px-3 py-2.5">
+                <div className="flex items-center justify-between bg-[#f5eeff] dark:bg-[#E2A9F1]/10 border border-[#E2A9F1]/40 rounded-lg px-3 py-2.5">
                   <div>
                     <p className="text-sm font-semibold text-purple-800">{linkedPartner.name}</p>
                     <p className="text-xs text-[#E2A9F1]">Koblet til profil · får varsel</p>
@@ -442,7 +442,7 @@ export default function BookingForm({ slots, trainerName, bookerId, bookerName, 
                           key={u.id}
                           type="button"
                           onClick={() => selectPartner(u)}
-                          className="w-full text-left px-4 py-2.5 hover:bg-[#f5eeff] dark:hover:bg-purple-950/30 flex items-center justify-between border-t dark:border-gray-700 first:border-t-0"
+                          className="w-full text-left px-4 py-2.5 hover:bg-[#f5eeff] dark:bg-[#E2A9F1]/10 dark:hover:bg-purple-950/30 flex items-center justify-between border-t dark:border-gray-700 first:border-t-0"
                         >
                           <span className="text-sm font-medium text-gray-800 dark:text-gray-100">{u.name}</span>
                           <span className="text-xs text-[#E2A9F1]">Koble til profil</span>

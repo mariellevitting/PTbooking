@@ -63,7 +63,7 @@ export default async function TrainerProfilPage() {
               </h2>
               <div className="grid grid-cols-3 gap-3 mb-5">
                 {(["trainer", "dancer", "parent"] as const).map((role) => (
-                  <div key={role} className="bg-[#f5eeff] rounded-xl p-3 text-center">
+                  <div key={role} className="bg-[#f5eeff] dark:bg-[#E2A9F1]/10 rounded-xl p-3 text-center">
                     <p className="text-2xl font-bold text-[#E2A9F1]">
                       {allUsers.filter(u => u.role === role).length}
                     </p>
@@ -77,7 +77,7 @@ export default async function TrainerProfilPage() {
                 {allUsers.map((u) => (
                   <div key={u.id} className="flex items-center justify-between py-2 border-b dark:border-gray-700 last:border-0">
                     <div className="flex items-center gap-3">
-                      <div className="w-8 h-8 rounded-full bg-[#edd5f9] flex items-center justify-center text-[#E2A9F1] font-bold text-xs shrink-0">
+                      <div className="w-8 h-8 rounded-full bg-[#edd5f9] dark:bg-[#E2A9F1]/15 flex items-center justify-center text-[#E2A9F1] font-bold text-xs shrink-0">
                         {u.name.charAt(0)}
                       </div>
                         <div>
@@ -86,7 +86,7 @@ export default async function TrainerProfilPage() {
                       </div>
                     </div>
                     <span className={`text-xs px-2 py-0.5 rounded-full shrink-0 ${
-                      u.role === "trainer" ? "bg-[#edd5f9] text-[#E2A9F1]" :
+                      u.role === "trainer" ? "bg-[#edd5f9] dark:bg-[#E2A9F1]/15 text-[#E2A9F1]" :
                       u.role === "dancer" ? "bg-blue-100 text-blue-600" :
                       "bg-green-100 text-green-600"
                     }`}>

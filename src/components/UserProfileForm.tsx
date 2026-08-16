@@ -63,7 +63,7 @@ export default function UserProfileForm({ userId, name, phone, avatarUrl }: Prop
       <Card>
         <CardContent className="pt-5 flex flex-col items-center gap-3">
           <div className="relative">
-            <div className="w-24 h-24 rounded-full bg-[#edd5f9] flex items-center justify-center overflow-hidden">
+            <div className="w-24 h-24 rounded-full bg-[#edd5f9] dark:bg-[#E2A9F1]/15 flex items-center justify-center overflow-hidden">
               {avatar ? (
                 <img src={avatar} alt="Profilbilde" className="w-full h-full object-cover" />
               ) : (
@@ -113,7 +113,7 @@ export default function UserProfileForm({ userId, name, phone, avatarUrl }: Prop
 
       {error && <p className="text-sm text-red-500">{error}</p>}
       {success && (
-        <div className="flex items-center gap-2 text-[#c87de0] text-sm bg-[#f5eeff] border border-[#E2A9F1]/40 rounded-xl p-3">
+        <div className="flex items-center gap-2 text-[#c87de0] text-sm bg-[#f5eeff] dark:bg-[#E2A9F1]/10 border border-[#E2A9F1]/40 rounded-xl p-3">
           <Check size={16} /> Profilen er oppdatert!
         </div>
       )}

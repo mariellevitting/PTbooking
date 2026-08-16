@@ -32,7 +32,7 @@ function LevelTracker({ label, points, level, isFreestyle, onPointsChange, onLev
     <div className="space-y-3">
       <div className="flex items-center justify-between">
         <p className="text-sm font-semibold text-gray-700 dark:text-gray-300">{label}</p>
-        <span className="text-xs font-bold text-[#E2A9F1] bg-[#f5eeff] px-2 py-0.5 rounded-full">
+        <span className="text-xs font-bold text-[#E2A9F1] bg-[#f5eeff] dark:bg-[#E2A9F1]/10 px-2 py-0.5 rounded-full">
           {LEVELS[level]}
         </span>
       </div>
@@ -189,7 +189,7 @@ export default function DancerGoalsCard({ userId, seasonGoals, pointsFreestyle, 
       </Card>
 
       {success && (
-        <div className="flex items-center gap-2 text-[#c87de0] text-sm bg-[#f5eeff] border border-[#E2A9F1]/40 rounded-xl p-3">
+        <div className="flex items-center gap-2 text-[#c87de0] text-sm bg-[#f5eeff] dark:bg-[#E2A9F1]/10 border border-[#E2A9F1]/40 rounded-xl p-3">
           <Check size={16} /> Lagret!
         </div>
       )}

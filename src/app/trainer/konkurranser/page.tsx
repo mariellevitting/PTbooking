@@ -59,7 +59,7 @@ export default async function TrainerKonkurranserPage() {
                 <p className="text-sm text-[#E2A9F1]">{c.dateLabel}</p>
                 {c.location && <p className="text-xs text-gray-400 dark:text-gray-500 mt-0.5">{c.location}</p>}
               </div>
-              <span className="text-xs font-bold text-[#E2A9F1] bg-[#f5eeff] px-2 py-1 rounded-full whitespace-nowrap ml-3">
+              <span className="text-xs font-bold text-[#E2A9F1] bg-[#f5eeff] dark:bg-[#E2A9F1]/10 px-2 py-1 rounded-full whitespace-nowrap ml-3">
                 {daysUntil(c.date)} dager
               </span>
             </div>

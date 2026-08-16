@@ -239,7 +239,7 @@ export default function BookForDancerForm({ trainerId, danceStyles }: Props) {
               {double ? "Danser 1" : "Danserens navn"}
             </label>
             {linkedUser ? (
-              <div className="flex items-center justify-between bg-[#f5eeff] border border-[#E2A9F1]/40 rounded-lg px-3 py-2.5">
+              <div className="flex items-center justify-between bg-[#f5eeff] dark:bg-[#E2A9F1]/10 border border-[#E2A9F1]/40 rounded-lg px-3 py-2.5">
                 <div>
                   <p className="text-sm font-semibold text-purple-800">{linkedUser.name}</p>
                   <p className="text-xs text-[#E2A9F1]">Koblet til profil · får varsel</p>
@@ -263,7 +263,7 @@ export default function BookForDancerForm({ trainerId, danceStyles }: Props) {
                   <div className="absolute z-10 mt-1 w-full bg-white dark:bg-gray-900 border dark:border-gray-700 rounded-xl shadow-lg overflow-hidden">
                     {searchResults.map(u => (
                       <button key={u.id} type="button" onClick={() => selectUser(u)}
-                        className="w-full text-left px-4 py-2.5 hover:bg-[#f5eeff] dark:hover:bg-purple-950/30 flex items-center justify-between border-t dark:border-gray-700 first:border-t-0">
+                        className="w-full text-left px-4 py-2.5 hover:bg-[#f5eeff] dark:bg-[#E2A9F1]/10 dark:hover:bg-purple-950/30 flex items-center justify-between border-t dark:border-gray-700 first:border-t-0">
                         <span className="text-sm font-medium text-gray-800 dark:text-gray-100">{u.name}</span>
                         <span className="text-xs text-[#E2A9F1]">Koble til profil</span>
                       </button>
@@ -314,7 +314,7 @@ export default function BookForDancerForm({ trainerId, danceStyles }: Props) {
                       : isPast
                       ? "text-gray-300 dark:text-gray-600 cursor-default"
                       : isToday
-                      ? "bg-[#edd5f9] text-[#c87de0] hover:bg-[#E2A9F1]/30"
+                      ? "bg-[#edd5f9] dark:bg-[#E2A9F1]/15 text-[#c87de0] hover:bg-[#E2A9F1]/30"
                       : "hover:bg-gray-100 dark:hover:bg-gray-800 text-gray-700 dark:text-gray-300"
                   }`}
                 >

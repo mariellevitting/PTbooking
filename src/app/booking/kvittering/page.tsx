@@ -12,7 +12,7 @@ export default function KvitteringPage() {
         <h1 className="text-2xl font-bold mb-2">Booket!</h1>
         <p className="text-gray-500 dark:text-gray-400 mb-6">Timen er bekreftet. Treneren får beskjed.</p>
 
-        <div className="bg-[#f5eeff] border border-[#E2A9F1]/30 rounded-2xl p-4 mb-8 text-left">
+        <div className="bg-[#f5eeff] dark:bg-[#E2A9F1]/10 border border-[#E2A9F1]/30 rounded-2xl p-4 mb-8 text-left">
           <p className="text-sm text-[#c87de0] font-medium mb-1">Husk til timen</p>
           <p className="text-sm text-[#E2A9F1]">
             Husk å komme oppvarmet til privattimen! Gleder meg til å se deg 🌟

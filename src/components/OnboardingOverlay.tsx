@@ -82,7 +82,7 @@ export default function OnboardingOverlay() {
           emoji="📅"
           title="Book privattime – enkelt som aldri før"
           description="Velg trener, tidspunkt og danseform på under ett minutt. Få bekreftelse med én gang – ingen venting, ingen ringing."
-          color="bg-[#f5eeff]"
+          color="bg-[#f5eeff] dark:bg-[#E2A9F1]/10"
           highlight="Mye enklere enn noensinne"
         />}
         {slide === 2 && <FeatureSlide
@@ -186,7 +186,7 @@ function WelcomeSlide({ onNext }: { onNext: () => void }) {
       >
         <button
           onClick={onNext}
-          className="bg-white text-[#c87de0] font-bold px-10 py-4 rounded-2xl shadow-lg hover:bg-[#f5eeff] transition-colors flex items-center gap-2"
+          className="bg-white text-[#c87de0] font-bold px-10 py-4 rounded-2xl shadow-lg hover:bg-[#f5eeff] dark:bg-[#E2A9F1]/10 transition-colors flex items-center gap-2"
         >
           Kom i gang <ChevronRight size={20} />
         </button>
@@ -227,7 +227,7 @@ function FeatureSlide({ icon, emoji, title, description, color, highlight, level
       {/* Highlight-boks */}
       {highlight && (
         <div
-          className="mt-6 bg-[#f5eeff] border border-[#E2A9F1]/30 rounded-2xl px-5 py-3"
+          className="mt-6 bg-[#f5eeff] dark:bg-[#E2A9F1]/10 border border-[#E2A9F1]/30 rounded-2xl px-5 py-3"
           style={{ animation: "fadeUp 0.4s ease forwards", animationDelay: "0.2s", opacity: 0 }}
         >
           <p className="text-[#c87de0] font-semibold text-sm">✨ {highlight}</p>
@@ -246,7 +246,7 @@ function FeatureSlide({ icon, emoji, title, description, color, highlight, level
               className={`px-3 py-1.5 rounded-full text-xs font-semibold border ${
                 i === 0 ? "bg-gray-100 dark:bg-gray-800 text-gray-500 dark:text-gray-400 border-gray-200 dark:border-gray-700"
                 : i === 1 ? "bg-blue-50 text-blue-600 border-blue-100"
-                : i === 2 ? "bg-[#f5eeff] text-[#E2A9F1] border-[#E2A9F1]/30"
+                : i === 2 ? "bg-[#f5eeff] dark:bg-[#E2A9F1]/10 text-[#E2A9F1] border-[#E2A9F1]/30"
                 : i === 3 ? "bg-yellow-50 text-yellow-600 border-yellow-100"
                 : "bg-orange-50 text-orange-600 border-orange-100"
               }`}

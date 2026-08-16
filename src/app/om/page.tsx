@@ -56,7 +56,7 @@ export default async function OmPage() {
             {/* Danser */}
             <div className="border border-gray-200 dark:border-gray-700 rounded-2xl p-6">
               <div className="flex items-center gap-3 mb-3">
-                <div className="w-10 h-10 rounded-full bg-[#edd5f9] dark:bg-purple-900 flex items-center justify-center text-[#E2A9F1] dark:text-[#E2A9F1] font-bold">D</div>
+                <div className="w-10 h-10 rounded-full bg-[#edd5f9] dark:bg-[#E2A9F1]/15 dark:bg-purple-900 flex items-center justify-center text-[#E2A9F1] dark:text-[#E2A9F1] font-bold">D</div>
                 <h3 className="text-xl font-bold text-gray-900 dark:text-white">For dansere</h3>
               </div>
               <p className="text-gray-600 dark:text-gray-400 mb-4">Finn trenere, book privattimer og få bedre oversikt over treningen og utviklingen din.</p>
@@ -84,7 +84,7 @@ export default async function OmPage() {
             {/* Forelder */}
             <div className="border border-gray-200 dark:border-gray-700 rounded-2xl p-6">
               <div className="flex items-center gap-3 mb-3">
-                <div className="w-10 h-10 rounded-full bg-[#edd5f9] dark:bg-purple-900 flex items-center justify-center text-[#E2A9F1] dark:text-[#E2A9F1] font-bold">F</div>
+                <div className="w-10 h-10 rounded-full bg-[#edd5f9] dark:bg-[#E2A9F1]/15 dark:bg-purple-900 flex items-center justify-center text-[#E2A9F1] dark:text-[#E2A9F1] font-bold">F</div>
                 <h3 className="text-xl font-bold text-gray-900 dark:text-white">For foreldre</h3>
               </div>
               <p className="text-gray-600 dark:text-gray-400 mb-4">Følg opp barnets dansehverdag uten å måtte lete gjennom dokumenter, meldinger og ulike systemer.</p>
@@ -107,7 +107,7 @@ export default async function OmPage() {
             {/* Trener */}
             <div className="border border-gray-200 dark:border-gray-700 rounded-2xl p-6">
               <div className="flex items-center gap-3 mb-3">
-                <div className="w-10 h-10 rounded-full bg-[#edd5f9] dark:bg-purple-900 flex items-center justify-center text-[#E2A9F1] dark:text-[#E2A9F1] font-bold">T</div>
+                <div className="w-10 h-10 rounded-full bg-[#edd5f9] dark:bg-[#E2A9F1]/15 dark:bg-purple-900 flex items-center justify-center text-[#E2A9F1] dark:text-[#E2A9F1] font-bold">T</div>
                 <h3 className="text-xl font-bold text-gray-900 dark:text-white">For trenere</h3>
               </div>
               <p className="text-gray-600 dark:text-gray-400 mb-4">Bruk mindre tid på administrasjon og få bedre oversikt over tilgjengelighet, bookinger og danserne du følger opp.</p>
@@ -151,7 +151,7 @@ export default async function OmPage() {
             <p className="font-medium text-gray-900 dark:text-white">For de beste løsningene blir ikke laget for brukerne. De blir laget sammen med dem.</p>
           </div>
 
-          <div className="mt-12 bg-[#f5eeff] dark:bg-purple-950 rounded-2xl p-8 text-center">
+          <div className="mt-12 bg-[#f5eeff] dark:bg-[#E2A9F1]/10 dark:bg-purple-950 rounded-2xl p-8 text-center">
             <p className="text-2xl font-bold text-[#c87de0] dark:text-[#E2A9F1] mb-1">Danceitude</p>
             <p className="text-[#E2A9F1] dark:text-[#E2A9F1] italic mb-6">Utviklet sammen med dansemiljøet. Laget for hele dansehverdagen.</p>
             {!user && (

@@ -104,7 +104,7 @@ export default function CompetitionResultsCard({ userId, initialResults, childId
       <CardContent className="space-y-4">
 
         {adding && (
-          <div className="border border-[#E2A9F1]/40 rounded-xl p-4 space-y-3 bg-[#f5eeff]">
+          <div className="border border-[#E2A9F1]/40 rounded-xl p-4 space-y-3 bg-[#f5eeff] dark:bg-[#E2A9F1]/10">
             <div className="space-y-1">
               <label className="text-xs font-medium text-gray-600 dark:text-gray-400">Konkurranse</label>
               <select value={comp} onChange={e => setComp(e.target.value)}
@@ -139,7 +139,7 @@ export default function CompetitionResultsCard({ userId, initialResults, childId
         )}
 
         {success && (
-          <div className="flex items-center gap-2 text-[#c87de0] text-sm bg-[#f5eeff] border border-[#E2A9F1]/40 rounded-xl p-3">
+          <div className="flex items-center gap-2 text-[#c87de0] text-sm bg-[#f5eeff] dark:bg-[#E2A9F1]/10 border border-[#E2A9F1]/40 rounded-xl p-3">
             <Check size={16} /> Resultat lagret!
           </div>
         )}

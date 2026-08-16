@@ -108,7 +108,7 @@ export default function LoginPage() {
           <p className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-3">Hvem er du?</p>
           {roles.map(r => (
             <button key={r.value} onClick={() => { setRole(r.value); setStep("details"); }}
-              className="w-full text-left border dark:border-gray-700 rounded-xl p-4 bg-white dark:bg-gray-900 hover:border-[#E2A9F1] hover:bg-[#f5eeff] transition-colors">
+              className="w-full text-left border dark:border-gray-700 rounded-xl p-4 bg-white dark:bg-gray-900 hover:border-[#E2A9F1] hover:bg-[#f5eeff] dark:bg-[#E2A9F1]/10 transition-colors">
               <p className="font-semibold text-gray-800 dark:text-gray-100">{r.label}</p>
               <p className="text-sm text-gray-500 dark:text-gray-400">{r.description}</p>
             </button>

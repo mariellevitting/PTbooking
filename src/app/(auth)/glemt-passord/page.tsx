@@ -54,7 +54,7 @@ export default function GlemtPassordPage() {
         <div className="w-full max-w-sm">
           {sent ? (
             <div className="text-center space-y-4">
-              <div className="w-16 h-16 bg-[#edd5f9] rounded-full flex items-center justify-center mx-auto">
+              <div className="w-16 h-16 bg-[#edd5f9] dark:bg-[#E2A9F1]/15 rounded-full flex items-center justify-center mx-auto">
                 <span className="text-3xl">📧</span>
               </div>
               <h2 className="text-2xl font-bold text-gray-900 dark:text-white">Sjekk e-posten din</h2>

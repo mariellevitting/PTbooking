@@ -34,7 +34,7 @@ export default function GoalsList({ value, onChange }: Props) {
         <p className="text-sm text-gray-400 dark:text-gray-500 py-1">Ingen mål lagt til ennå</p>
       )}
       {goals.map((goal, idx) => (
-        <div key={idx} className="flex items-start gap-2 bg-[#f5eeff] rounded-lg px-3 py-2">
+        <div key={idx} className="flex items-start gap-2 bg-[#f5eeff] dark:bg-[#E2A9F1]/10 rounded-lg px-3 py-2">
           <span className="text-[#E2A9F1] mt-0.5 shrink-0">•</span>
           <span className="text-sm text-gray-700 dark:text-gray-300 flex-1">{goal}</span>
           <button type="button" onClick={() => removeGoal(idx)} className="text-gray-300 dark:text-gray-600 hover:text-red-400 transition-colors shrink-0 mt-0.5">

@@ -124,7 +124,7 @@ export default function TrainerDashboardTabs({ slots, completedSlots }: Props) {
                                         {(booking.profiles as any)?.avatar_url ? (
                                           <img src={(booking.profiles as any).avatar_url} alt="" className="w-6 h-6 rounded-full object-cover" />
                                         ) : (
-                                          <div className="w-6 h-6 rounded-full bg-[#edd5f9] flex items-center justify-center text-[#E2A9F1] text-xs font-bold">
+                                          <div className="w-6 h-6 rounded-full bg-[#edd5f9] dark:bg-[#E2A9F1]/15 flex items-center justify-center text-[#E2A9F1] text-xs font-bold">
                                             {booking.dancer_name.charAt(0)}
                                           </div>
                                         )}
@@ -137,7 +137,7 @@ export default function TrainerDashboardTabs({ slots, completedSlots }: Props) {
                                   )}
                                 </div>
                                 {booking ? (
-                                  <span className="text-xs bg-[#edd5f9] text-[#c87de0] px-2 py-1 rounded-full whitespace-nowrap">Opptatt</span>
+                                  <span className="text-xs bg-[#edd5f9] dark:bg-[#E2A9F1]/15 text-[#c87de0] px-2 py-1 rounded-full whitespace-nowrap">Opptatt</span>
                                 ) : (
                                   <div className="flex flex-col items-end gap-1">
                                     <span className="text-xs bg-green-100 text-green-600 px-2 py-1 rounded-full">Ledig</span>

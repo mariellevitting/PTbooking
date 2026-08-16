@@ -82,7 +82,7 @@ function TrainerCalendar({ trainer, slots }: { trainer: Profile; slots: Slot[] }
           const isToday = isSameDay(day, new Date());
 
           return (
-            <div key={i} className={`min-h-20 rounded-xl p-1.5 border ${isToday ? "border-purple-400 bg-[#f5eeff] dark:bg-purple-950" : "border-gray-100 dark:border-gray-800 bg-gray-50 dark:bg-gray-800/50"}`}>
+            <div key={i} className={`min-h-20 rounded-xl p-1.5 border ${isToday ? "border-purple-400 bg-[#f5eeff] dark:bg-[#E2A9F1]/10 dark:bg-purple-950" : "border-gray-100 dark:border-gray-800 bg-gray-50 dark:bg-gray-800/50"}`}>
               <p className={`text-xs font-bold mb-1 ${isToday ? "text-[#E2A9F1]" : "text-gray-500 dark:text-gray-400"}`}>{day.getDate()}</p>
               <div className="space-y-1">
                 {daySlots.map(s => {

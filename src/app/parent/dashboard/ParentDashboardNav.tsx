@@ -113,7 +113,7 @@ function ParentGoalsSection({ children }: { children: Child[] }) {
         <p className="text-xs text-gray-400 dark:text-gray-500">F.eks. triks, mål for konkurranser, hva danseren vil jobbe med</p>
         <GoalsList value={goals} onChange={g => { setGoals(g); setSaved(false); }} />
       </div>
-      {saved && <div className="flex items-center gap-2 text-[#c87de0] text-sm bg-[#f5eeff] border border-[#E2A9F1]/40 rounded-xl p-3">✓ Lagret!</div>}
+      {saved && <div className="flex items-center gap-2 text-[#c87de0] text-sm bg-[#f5eeff] dark:bg-[#E2A9F1]/10 border border-[#E2A9F1]/40 rounded-xl p-3">✓ Lagret!</div>}
       <button onClick={handleSave} disabled={saving || saved}
         className="w-full py-2.5 rounded-xl bg-[#3A3A3A] hover:bg-[#2a2a2a] text-[#E2A9F1] text-sm font-semibold transition-colors disabled:opacity-60">
         {saving ? "Lagrer..." : "Lagre"}
@@ -187,7 +187,7 @@ export default function ParentDashboardNav({ userName, avatarUrl, notifications,
             {avatarUrl ? (
               <img src={avatarUrl} alt="" className="w-9 h-9 rounded-full object-cover shrink-0" />
             ) : (
-              <div className="w-9 h-9 rounded-full bg-[#edd5f9] flex items-center justify-center text-[#c87de0] font-bold text-sm shrink-0">
+              <div className="w-9 h-9 rounded-full bg-[#edd5f9] dark:bg-[#E2A9F1]/15 flex items-center justify-center text-[#c87de0] font-bold text-sm shrink-0">
                 {userName.charAt(0)}
               </div>
             )}
@@ -227,7 +227,7 @@ export default function ParentDashboardNav({ userName, avatarUrl, notifications,
     <>
       <FeedbackButton userId={parentId} userName={userName} role="parent" />
       {/* Mobil: lilla topbar */}
-      <div className="md:hidden sticky top-0 z-40 bg-[#3A3A3A] px-4 pb-3 pt-[calc(0.75rem+env(safe-area-inset-top))] flex items-center justify-between shadow-md">
+      <div className="md:hidden sticky top-0 z-40 bg-[#3A3A3A] dark:bg-[#4a4a4a] px-4 pb-3 pt-[calc(0.75rem+env(safe-area-inset-top))] flex items-center justify-between shadow-md">
         <button onClick={() => setMenuOpen(true)} className="p-1.5 rounded-lg hover:bg-[#2a2a2a] transition-colors">
           <Menu size={24} className="text-[#E2A9F1]" />
         </button>
@@ -261,7 +261,7 @@ export default function ParentDashboardNav({ userName, avatarUrl, notifications,
               </button>
             </div>
             <Link href="/parent/profil" onClick={() => setMenuOpen(false)} className="px-6 pb-6 flex items-center gap-4 border-b hover:bg-gray-50 dark:hover:bg-gray-950 transition-colors">
-              <div className="w-14 h-14 rounded-full bg-[#edd5f9] flex items-center justify-center overflow-hidden shrink-0">
+              <div className="w-14 h-14 rounded-full bg-[#edd5f9] dark:bg-[#E2A9F1]/15 flex items-center justify-center overflow-hidden shrink-0">
                 {avatarUrl
                   ? <img src={avatarUrl} alt="Profil" className="w-full h-full object-cover" />
                   : <span className="text-2xl font-bold text-[#E2A9F1]">{userName.charAt(0)}</span>}
@@ -274,7 +274,7 @@ export default function ParentDashboardNav({ userName, avatarUrl, notifications,
             <div className="flex-1 py-4 overflow-y-auto">
               {sections.map(s => (
                 <button key={s.id} onClick={() => goTo(s.id)}
-                  className={`w-full flex items-center gap-4 px-6 py-3.5 text-sm font-medium transition-colors ${active === s.id ? "bg-[#f5eeff] text-[#c87de0] border-r-4 border-[#3A3A3A]" : "text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-950"}`}>
+                  className={`w-full flex items-center gap-4 px-6 py-3.5 text-sm font-medium transition-colors ${active === s.id ? "bg-[#f5eeff] dark:bg-[#E2A9F1]/10 text-[#c87de0] border-r-4 border-[#3A3A3A]" : "text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-950"}`}>
                   <span className={active === s.id ? "text-[#E2A9F1]" : "text-gray-400 dark:text-gray-500"}>{s.icon}</span>
                   {s.label}
                 </button>
@@ -464,7 +464,7 @@ export default function ParentDashboardNav({ userName, avatarUrl, notifications,
                     <p className="text-sm text-[#E2A9F1]">{c.dateLabel}</p>
                     {c.location && <p className="text-xs text-gray-400 dark:text-gray-500 mt-0.5">{c.location}</p>}
                   </div>
-                  <span className="text-xs font-bold text-[#E2A9F1] bg-[#f5eeff] px-2 py-1 rounded-full ml-3">{daysUntil(c.date)} dager</span>
+                  <span className="text-xs font-bold text-[#E2A9F1] bg-[#f5eeff] dark:bg-[#E2A9F1]/10 px-2 py-1 rounded-full ml-3">{daysUntil(c.date)} dager</span>
                 </div>
               ))}
             </div>
@@ -501,7 +501,7 @@ export default function ParentDashboardNav({ userName, avatarUrl, notifications,
                 <div className="space-y-1">
                   {trainers.map(t => (
                     <div key={t.name} className="flex items-start gap-3 py-3 border-b dark:border-gray-700 last:border-0">
-                      <div className="w-9 h-9 rounded-full bg-[#edd5f9] flex items-center justify-center text-[#E2A9F1] font-bold shrink-0 text-sm">
+                      <div className="w-9 h-9 rounded-full bg-[#edd5f9] dark:bg-[#E2A9F1]/15 flex items-center justify-center text-[#E2A9F1] font-bold shrink-0 text-sm">
                         {t.name.charAt(0)}
                       </div>
                       <div>

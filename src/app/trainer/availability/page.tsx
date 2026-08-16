@@ -238,7 +238,7 @@ export default function AvailabilityPage() {
                         : isPast
                         ? "text-gray-300 dark:text-gray-600 cursor-default"
                         : isToday
-                        ? "bg-[#edd5f9] text-[#c87de0] hover:bg-[#E2A9F1]/30"
+                        ? "bg-[#edd5f9] dark:bg-[#E2A9F1]/15 text-[#c87de0] hover:bg-[#E2A9F1]/30"
                         : "hover:bg-gray-100 dark:hover:bg-gray-800 text-gray-700 dark:text-gray-300"
                     }`}
                   >

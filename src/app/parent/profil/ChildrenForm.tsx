@@ -53,7 +53,7 @@ export default function ChildrenForm({ parentId, children: initial }: { parentId
             {children.map((c) => (
               <div key={c.id} className="flex items-center justify-between py-2 border-b dark:border-gray-700 last:border-0">
                 <div className="flex items-center gap-3">
-                  <div className="w-9 h-9 rounded-full bg-[#edd5f9] flex items-center justify-center text-[#E2A9F1] font-bold text-sm">
+                  <div className="w-9 h-9 rounded-full bg-[#edd5f9] dark:bg-[#E2A9F1]/15 flex items-center justify-center text-[#E2A9F1] font-bold text-sm">
                     {c.name.charAt(0)}
                   </div>
                   <p className="font-medium text-sm">{c.name}</p>

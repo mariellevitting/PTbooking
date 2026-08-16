@@ -59,7 +59,7 @@ export default async function TrainerBookPage({ params }: { params: Promise<{ tr
         {/* Trener-kort */}
         <div className="bg-white dark:bg-gray-900 rounded-2xl border dark:border-gray-700 p-5 mb-6">
           <div className="flex items-center gap-4 mb-4">
-            <div className="w-14 h-14 rounded-full bg-[#edd5f9] flex items-center justify-center text-[#E2A9F1] font-bold text-xl shrink-0">
+            <div className="w-14 h-14 rounded-full bg-[#edd5f9] dark:bg-[#E2A9F1]/15 flex items-center justify-center text-[#E2A9F1] font-bold text-xl shrink-0">
               {trainer.name.charAt(0)}
             </div>
             <div>
@@ -75,7 +75,7 @@ export default async function TrainerBookPage({ params }: { params: Promise<{ tr
           {styles.length > 0 && (
             <div className="flex flex-wrap gap-1.5 mb-4">
               {styles.map((style) => (
-                <span key={style} className="text-xs bg-[#f5eeff] text-[#E2A9F1] border border-[#E2A9F1]/30 px-2.5 py-1 rounded-full">
+                <span key={style} className="text-xs bg-[#f5eeff] dark:bg-[#E2A9F1]/10 text-[#E2A9F1] border border-[#E2A9F1]/30 px-2.5 py-1 rounded-full">
                   {style}
                 </span>
               ))}

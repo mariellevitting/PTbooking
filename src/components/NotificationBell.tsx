@@ -99,8 +99,8 @@ export default function NotificationBell({ notifications: initial }: Props) {
           ) : (
             <div className="max-h-96 overflow-y-auto divide-y">
               {notifications.map((n) => (
-                <div key={n.id} className={`px-4 py-3 flex gap-3 items-start ${!n.read ? "bg-[#f5eeff] dark:bg-purple-950/30" : ""}`}>
-                  <div className="w-9 h-9 rounded-full bg-[#edd5f9] flex items-center justify-center text-[#E2A9F1] shrink-0 text-sm font-bold">
+                <div key={n.id} className={`px-4 py-3 flex gap-3 items-start ${!n.read ? "bg-[#f5eeff] dark:bg-[#E2A9F1]/10 dark:bg-purple-950/30" : ""}`}>
+                  <div className="w-9 h-9 rounded-full bg-[#edd5f9] dark:bg-[#E2A9F1]/15 flex items-center justify-center text-[#E2A9F1] shrink-0 text-sm font-bold">
                     PT
                   </div>
                   <div className="flex-1 min-w-0">
@@ -110,7 +110,7 @@ export default function NotificationBell({ notifications: initial }: Props) {
                     </p>
                   </div>
                   {!n.read && (
-                    <div className="w-2 h-2 rounded-full bg-[#f5eeff]0 mt-1.5 shrink-0" />
+                    <div className="w-2 h-2 rounded-full bg-[#f5eeff] dark:bg-[#E2A9F1]/100 mt-1.5 shrink-0" />
                   )}
                 </div>
               ))}

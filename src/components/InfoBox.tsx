@@ -17,7 +17,7 @@ export default function InfoBox() {
       </button>
 
       {open && (
-        <div className="mt-3 bg-[#f5eeff] border border-[#E2A9F1]/30 rounded-2xl p-4 space-y-3 relative">
+        <div className="mt-3 bg-[#f5eeff] dark:bg-[#E2A9F1]/10 border border-[#E2A9F1]/30 rounded-2xl p-4 space-y-3 relative">
           <button
             onClick={() => setOpen(false)}
             className="absolute top-3 right-3 text-gray-400 dark:text-gray-500 hover:text-gray-600"
