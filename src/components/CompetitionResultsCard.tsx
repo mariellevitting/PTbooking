@@ -55,10 +55,12 @@ export default function CompetitionResultsCard({ userId, initialResults, childId
   const [notes, setNotes] = useState("");
   const [saving, setSaving] = useState(false);
   const [success, setSuccess] = useState(false);
+  const [saveError, setSaveError] = useState<string | null>(null);
 
   async function handleAdd() {
     if (!placementF && !placementS) return;
     setSaving(true);
+    setSaveError(null);
     const supabase = createClient();
     const { data, error } = await supabase
       .from("competition_results")
@@ -73,7 +75,9 @@ export default function CompetitionResultsCard({ userId, initialResults, childId
       })
       .select()
       .single();
-    if (!error && data) {
+    if (error) {
+      setSaveError("Kunne ikke lagre: " + error.message);
+    } else if (data) {
       setResults(r => [data, ...r]);
       setPlacementF(""); setPlacementS(""); setNotes("");
       setAdding(false);
@@ -135,6 +139,9 @@ export default function CompetitionResultsCard({ userId, initialResults, childId
                 Avbryt
               </button>
             </div>
+            {saveError && (
+              <p className="text-xs text-red-500 mt-1">{saveError}</p>
+            )}
           </div>
         )}
 
