@@ -28,6 +28,10 @@ export default function GoalsList({ value, onChange }: Props) {
     if (e.key === "Enter") { e.preventDefault(); addGoal(); }
   }
 
+  function handleBlur() {
+    if (newGoal.trim()) addGoal();
+  }
+
   return (
     <div className="space-y-2">
       {goals.length === 0 && (
@@ -48,6 +52,7 @@ export default function GoalsList({ value, onChange }: Props) {
           value={newGoal}
           onChange={e => setNewGoal(e.target.value)}
           onKeyDown={handleKeyDown}
+          onBlur={handleBlur}
           placeholder="Legg til et mål..."
           className="flex-1 border dark:border-gray-700 bg-white dark:bg-gray-900 dark:text-white rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#E2A9F1]"
         />
