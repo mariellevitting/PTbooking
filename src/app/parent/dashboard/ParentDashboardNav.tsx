@@ -163,7 +163,7 @@ interface Props {
   completedBookings: Booking[];
   parentId: string;
   children: { id: string; name: string; season_goals: string | null; points_freestyle: number | null; points_slow: number | null; level_freestyle: number | null; level_slow: number | null }[];
-  trainers?: { name: string; styles: string[] }[];
+  trainers?: { name: string; avatarUrl: string | null; styles: string[] }[];
 }
 
 export default function ParentDashboardNav({ userName, avatarUrl, notifications, upcomingBookings, completedBookings, parentId, children, trainers = [] }: Props) {
@@ -525,8 +525,10 @@ export default function ParentDashboardNav({ userName, avatarUrl, notifications,
                 <div className="space-y-1">
                   {trainers.map(t => (
                     <div key={t.name} className="flex items-start gap-3 py-3 border-b dark:border-gray-700 last:border-0">
-                      <div className="w-9 h-9 rounded-full bg-[#edd5f9] dark:bg-[#E2A9F1]/15 flex items-center justify-center text-[#E2A9F1] font-bold shrink-0 text-sm">
-                        {t.name.charAt(0)}
+                      <div className="w-9 h-9 rounded-full bg-[#edd5f9] dark:bg-[#E2A9F1]/15 flex items-center justify-center text-[#E2A9F1] font-bold shrink-0 text-sm overflow-hidden">
+                        {t.avatarUrl
+                          ? <img src={t.avatarUrl} alt={t.name} className="w-full h-full object-cover" />
+                          : t.name.charAt(0)}
                       </div>
                       <div>
                         <p className="font-medium text-sm">{t.name}</p>

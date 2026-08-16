@@ -51,7 +51,7 @@ interface Props {
   now: string;
   notifications?: any[];
   mobileNavOnly?: boolean;
-  trainers?: { name: string; styles: string[] }[];
+  trainers?: { name: string; avatarUrl: string | null; styles: string[] }[];
 }
 
 const COMPETITIONS = [
@@ -507,8 +507,10 @@ export default function DancerDashboardNav(props: Props) {
               <div className="space-y-1">
                 {(props.trainers ?? []).map(t => (
                   <div key={t.name} className="flex items-start gap-3 py-3 border-b dark:border-gray-700 last:border-0">
-                    <div className="w-9 h-9 rounded-full bg-[#edd5f9] dark:bg-[#E2A9F1]/15 flex items-center justify-center text-[#E2A9F1] font-bold shrink-0 text-sm">
-                      {t.name.charAt(0)}
+                    <div className="w-9 h-9 rounded-full bg-[#edd5f9] dark:bg-[#E2A9F1]/15 flex items-center justify-center text-[#E2A9F1] font-bold shrink-0 text-sm overflow-hidden">
+                      {t.avatarUrl
+                        ? <img src={t.avatarUrl} alt={t.name} className="w-full h-full object-cover" />
+                        : t.name.charAt(0)}
                     </div>
                     <div>
                       <p className="font-medium text-sm">{t.name}</p>
