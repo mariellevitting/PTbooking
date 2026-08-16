@@ -10,7 +10,8 @@ interface Booking {
   dancer_name: string;
   dance_style: string;
   status: string;
-  profiles?: { avatar_url?: string } | null;
+  booker?: { avatar_url?: string } | null;
+  linked_profile?: { avatar_url?: string } | null;
 }
 
 interface Slot {
@@ -121,8 +122,8 @@ export default function TrainerDashboardTabs({ slots, completedSlots }: Props) {
                                   {booking && (
                                     <>
                                       <div className="flex items-center gap-2 mt-1">
-                                        {(booking.profiles as any)?.avatar_url ? (
-                                          <img src={(booking.profiles as any).avatar_url} alt="" className="w-6 h-6 rounded-full object-cover" />
+                                        {((booking.linked_profile as any)?.avatar_url || (booking.booker as any)?.avatar_url) ? (
+                                          <img src={(booking.linked_profile as any)?.avatar_url ?? (booking.booker as any)?.avatar_url} alt="" className="w-6 h-6 rounded-full object-cover" />
                                         ) : (
                                           <div className="w-6 h-6 rounded-full bg-[#edd5f9] dark:bg-[#E2A9F1]/15 flex items-center justify-center text-[#E2A9F1] text-xs font-bold">
                                             {booking.dancer_name.charAt(0)}
