@@ -10,13 +10,21 @@ export default async function OmPage() {
   const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
 
+  let backHref = "/login";
+  if (user) {
+    const { data: profile } = await supabase.from("profiles").select("role").eq("id", user.id).single();
+    if (profile?.role === "trainer") backHref = "/trainer/dashboard";
+    else if (profile?.role === "parent") backHref = "/parent/dashboard";
+    else if (profile?.role === "dancer") backHref = "/dancer/dashboard";
+  }
+
   return (
     <div className="min-h-screen bg-white dark:bg-gray-950">
 
       {/* Header */}
       <div className="bg-[#3A3A3A] text-[#E2A9F1]">
         <div className="max-w-3xl mx-auto px-6 pb-12 md:pb-20 page-safe-top">
-          <Link href="/login" className="text-[#e8c4f5] hover:text-white text-sm mb-6 inline-block">← Tilbake</Link>
+          <Link href={backHref} className="text-[#e8c4f5] hover:text-white text-sm mb-6 inline-block">← Tilbake</Link>
           <p className="text-[#e8c4f5] text-sm font-semibold uppercase tracking-widest mb-3">Evolution Danseklubb</p>
           <h1 className="text-3xl md:text-5xl font-bold leading-tight mb-4">
             Danceitude ble laget fordi dansemiljøet fortjener bedre verktøy
