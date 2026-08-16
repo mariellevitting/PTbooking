@@ -23,38 +23,51 @@ type Child = { id: string; name: string; season_goals: string | null; points_fre
 
 export default function ChildDancerCard({ parentId, children, hideResults, hideGoals }: { parentId: string; children: Child[]; hideResults?: boolean; hideGoals?: boolean }) {
   const [selectedId, setSelectedId] = useState(children[0]?.id ?? "");
-  const child = children.find(c => c.id === selectedId);
 
-  const [goals, setGoals] = useState(child?.season_goals ?? "");
-  const [freestyle, setFreestyle] = useState(child?.points_freestyle ?? 0);
-  const [slow, setSlow] = useState(child?.points_slow ?? 0);
-  const [levelF, setLevelF] = useState(child?.level_freestyle ?? 0);
-  const [levelS, setLevelS] = useState(child?.level_slow ?? 0);
+  // Cache per child so switching doesn't revert to stale prop values
+  const stateCache = useRef<Record<string, { goals: string; freestyle: number; slow: number; levelF: number; levelS: number }>>(
+    Object.fromEntries(children.map(c => [c.id, {
+      goals: c.season_goals ?? "",
+      freestyle: c.points_freestyle ?? 0,
+      slow: c.points_slow ?? 0,
+      levelF: c.level_freestyle ?? 0,
+      levelS: c.level_slow ?? 0,
+    }]))
+  );
+
+  const initial = stateCache.current[children[0]?.id ?? ""] ?? { goals: "", freestyle: 0, slow: 0, levelF: 0, levelS: 0 };
+  const [goals, setGoals] = useState(initial.goals);
+  const [freestyle, setFreestyle] = useState(initial.freestyle);
+  const [slow, setSlow] = useState(initial.slow);
+  const [levelF, setLevelF] = useState(initial.levelF);
+  const [levelS, setLevelS] = useState(initial.levelS);
   const [results, setResults] = useState<Result[]>([]);
-  const [resultsLoaded, setResultsLoaded] = useState<string | null>(null);
   const [saving, setSaving] = useState(false);
   const [success, setSuccess] = useState(false);
 
   useEffect(() => {
-    if (selectedId) loadChild(selectedId);
+    if (selectedId && !hideResults) loadResults(selectedId);
   }, []);
 
+  async function loadResults(id: string) {
+    const supabase = createClient();
+    const { data } = await supabase.from("competition_results").select("*").eq("child_id", id).order("created_at", { ascending: false });
+    setResults(data ?? []);
+  }
+
   async function loadChild(id: string) {
-    const c = children.find(x => x.id === id);
-    if (!c) return;
+    // Save current state to cache before switching
+    stateCache.current[selectedId] = { goals, freestyle, slow, levelF, levelS };
+
+    const cached = stateCache.current[id];
     setSelectedId(id);
-    setGoals(c.season_goals ?? "");
-    setFreestyle(c.points_freestyle ?? 0);
-    setSlow(c.points_slow ?? 0);
-    setLevelF(c.level_freestyle ?? 0);
-    setLevelS(c.level_slow ?? 0);
+    setGoals(cached.goals);
+    setFreestyle(cached.freestyle);
+    setSlow(cached.slow);
+    setLevelF(cached.levelF);
+    setLevelS(cached.levelS);
     setSuccess(false);
-    if (resultsLoaded !== id) {
-      const supabase = createClient();
-      const { data } = await supabase.from("competition_results").select("*").eq("child_id", id).order("created_at", { ascending: false });
-      setResults(data ?? []);
-      setResultsLoaded(id);
-    }
+    if (!hideResults) await loadResults(id);
   }
 
   function handleFreestyleChange(val: number) {
@@ -168,7 +181,7 @@ export default function ChildDancerCard({ parentId, children, hideResults, hideG
         </CardContent>
       </Card>
 
-      {!hideResults && <CompetitionResultsCard userId={parentId} childId={selectedId} initialResults={results} />}
+      {!hideResults && <CompetitionResultsCard key={selectedId} userId={parentId} childId={selectedId} initialResults={results} />}
 
       {success && (
         <div className="flex items-center gap-2 text-[#c87de0] text-sm bg-[#f5eeff] dark:bg-[#E2A9F1]/10 border border-[#E2A9F1]/40 rounded-xl p-3">

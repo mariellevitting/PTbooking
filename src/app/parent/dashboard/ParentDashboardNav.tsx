@@ -40,18 +40,17 @@ type Result = { id: string; competition_name: string; placement_freestyle: strin
 function ParentResultsSection({ parentId, children }: { parentId: string; children: Child[] }) {
   const [selectedId, setSelectedId] = useState(children[0]?.id ?? "");
   const [results, setResults] = useState<Result[]>([]);
-  const [loaded, setLoaded] = useState<string | null>(null);
 
   useEffect(() => {
-    if (!selectedId || loaded === selectedId) return;
+    if (!selectedId) return;
     const supabase = createClient();
     supabase.from("competition_results").select("*").eq("child_id", selectedId).order("created_at", { ascending: false })
-      .then(({ data }) => { setResults(data ?? []); setLoaded(selectedId); });
+      .then(({ data }) => { setResults(data ?? []); });
   }, [selectedId]);
 
   function handleChildSelect(id: string) {
     setSelectedId(id);
-    if (loaded !== id) { setResults([]); setLoaded(null); }
+    setResults([]);
   }
 
   return (
@@ -68,7 +67,7 @@ function ParentResultsSection({ parentId, children }: { parentId: string; childr
         </div>
       )}
       {children.length === 1 && <p className="text-sm font-medium text-gray-700 dark:text-gray-300">{children[0].name}</p>}
-      <CompetitionResultsCard userId={parentId} childId={selectedId} initialResults={results} />
+      <CompetitionResultsCard key={selectedId} userId={parentId} childId={selectedId} initialResults={results} />
     </div>
   );
 }
