@@ -83,9 +83,19 @@ function ParentGoalsSection({ children }: { children: Child[] }) {
   const [saved, setSaved] = useState(false);
   const [saveError, setSaveError] = useState<string | null>(null);
   const isFirstRender = useRef(true);
-  // Ref to current goals/selectedId so we can read latest values in async callbacks
+  const isDirty = useRef(false);
+  // Refs so unmount/async callbacks always read latest values
   const currentGoalsRef = useRef(goals);
   const currentIdRef = useRef(selectedId);
+
+  // Save on unmount (handles navigating away before debounce fires)
+  useEffect(() => {
+    return () => {
+      if (!isDirty.current) return;
+      const supabase = createClient();
+      supabase.from("children").update({ season_goals: currentGoalsRef.current }).eq("id", currentIdRef.current);
+    };
+  }, []);
 
   async function handleChildSelect(id: string) {
     // Save current child's goals to DB immediately before switching
@@ -93,8 +103,10 @@ function ParentGoalsSection({ children }: { children: Child[] }) {
     const idToSave = currentIdRef.current;
     goalsCache.current[idToSave] = goalsTosave;
     const supabase = createClient();
-    supabase.from("children").update({ season_goals: goalsTosave }).eq("id", idToSave);
-
+    if (isDirty.current) {
+      supabase.from("children").update({ season_goals: goalsTosave }).eq("id", idToSave);
+      isDirty.current = false;
+    }
     currentIdRef.current = id;
     setSelectedId(id);
     const next = goalsCache.current[id] ?? "";
@@ -109,6 +121,7 @@ function ParentGoalsSection({ children }: { children: Child[] }) {
     currentGoalsRef.current = goals;
     currentIdRef.current = selectedId;
     if (isFirstRender.current) { isFirstRender.current = false; return; }
+    isDirty.current = true;
     setSaved(false);
     setSaving(true);
     goalsCache.current[selectedId] = goals;
@@ -118,7 +131,7 @@ function ParentGoalsSection({ children }: { children: Child[] }) {
       const { error } = await supabase.from("children").update({ season_goals: goals }).eq("id", currentId);
       setSaving(false);
       if (error) { setSaveError("Feil: " + error.message); }
-      else { setSaved(true); setSaveError(null); }
+      else { setSaved(true); setSaveError(null); isDirty.current = false; }
     }, 600);
     return () => clearTimeout(timer);
   }, [goals, selectedId]);
