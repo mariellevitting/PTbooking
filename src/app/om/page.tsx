@@ -24,7 +24,14 @@ export default async function OmPage() {
       {/* Header */}
       <div className="bg-[#3A3A3A] text-[#E2A9F1]">
         <div className="max-w-3xl mx-auto px-6 pb-12 md:pb-20 page-safe-top">
-          <Link href={backHref} className="text-[#e8c4f5] hover:text-white text-sm mb-6 inline-block">← Tilbake</Link>
+          <div className="flex items-center justify-between mb-6">
+            <Link href={backHref} className="text-[#e8c4f5] hover:text-white text-sm">← Tilbake</Link>
+            {!user && (
+              <Link href="/login" className="bg-[#E2A9F1] text-[#3A3A3A] font-semibold text-sm px-5 py-2 rounded-xl hover:bg-[#d494e8] transition-colors">
+                Bli med nå!
+              </Link>
+            )}
+          </div>
           <p className="text-[#e8c4f5] text-sm font-semibold uppercase tracking-widest mb-3">Evolution Danseklubb</p>
           <h1 className="text-3xl md:text-5xl font-bold leading-tight mb-4">
             Danceitude ble laget fordi dansemiljøet fortjener bedre verktøy
