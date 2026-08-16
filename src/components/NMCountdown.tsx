@@ -42,11 +42,12 @@ const COMPETITIONS = [
 ];
 
 function getTimeLeft(date: Date) {
-  const now = new Date();
-  const diff = date.getTime() - now.getTime();
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+  const diff = date.getTime() - today.getTime();
   if (diff <= 0) return null;
   return {
-    days: Math.floor(diff / (1000 * 60 * 60 * 24)),
+    days: Math.round(diff / (1000 * 60 * 60 * 24)),
   };
 }
 
