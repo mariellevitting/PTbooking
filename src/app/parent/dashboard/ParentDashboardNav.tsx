@@ -74,7 +74,6 @@ function ParentResultsSection({ parentId, children }: { parentId: string; childr
 
 function ParentGoalsSection({ children }: { children: Child[] }) {
   const [selectedId, setSelectedId] = useState(children[0]?.id ?? "");
-  // Local cache so switching between children doesn't revert to stale prop values
   const goalsCache = useRef<Record<string, string>>(
     Object.fromEntries(children.map(c => [c.id, c.season_goals ?? ""]))
   );
@@ -83,16 +82,31 @@ function ParentGoalsSection({ children }: { children: Child[] }) {
   const [saved, setSaved] = useState(false);
   const [saveError, setSaveError] = useState<string | null>(null);
   const isFirstRender = useRef(true);
+  // Ref to current goals/selectedId so we can read latest values in async callbacks
+  const currentGoalsRef = useRef(goals);
+  const currentIdRef = useRef(selectedId);
 
-  function handleChildSelect(id: string) {
+  async function handleChildSelect(id: string) {
+    // Save current child's goals to DB immediately before switching
+    const goalsTosave = currentGoalsRef.current;
+    const idToSave = currentIdRef.current;
+    goalsCache.current[idToSave] = goalsTosave;
+    const supabase = createClient();
+    supabase.from("children").update({ season_goals: goalsTosave }).eq("id", idToSave);
+
+    currentIdRef.current = id;
     setSelectedId(id);
-    setGoals(goalsCache.current[id] ?? "");
+    const next = goalsCache.current[id] ?? "";
+    currentGoalsRef.current = next;
+    setGoals(next);
     setSaved(false);
     setSaveError(null);
     isFirstRender.current = true;
   }
 
   useEffect(() => {
+    currentGoalsRef.current = goals;
+    currentIdRef.current = selectedId;
     if (isFirstRender.current) { isFirstRender.current = false; return; }
     setSaved(false);
     setSaving(true);
