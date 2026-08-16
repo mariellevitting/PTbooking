@@ -85,10 +85,24 @@ export default function DancerDashboardNav(props: Props) {
   const [saved, setSaved] = useState(false);
   const [saveError, setSaveError] = useState<string | null>(null);
   const isFirstRender = useRef(true);
+  const [topbarVisible, setTopbarVisible] = useState(true);
+  const lastScrollY = useRef(0);
 
   const now = new Date(props.now);
 
-  function goTo(id: string) { setActive(id); setMenuOpen(false); }
+  useEffect(() => {
+    function handleScroll() {
+      const y = window.scrollY;
+      if (y < 10) { setTopbarVisible(true); }
+      else if (y < lastScrollY.current) { setTopbarVisible(true); }
+      else if (y > lastScrollY.current + 4) { setTopbarVisible(false); }
+      lastScrollY.current = y;
+    }
+    window.addEventListener("scroll", handleScroll, { passive: true });
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
+
+  function goTo(id: string) { setActive(id); setMenuOpen(false); setTopbarVisible(true); }
 
   function handleFreestyleChange(val: number) {
     if (val < 0) { setLevelF(l => Math.max(0, l - 1)); setFreestyle(0); return; }
@@ -147,13 +161,13 @@ export default function DancerDashboardNav(props: Props) {
     <div>
       <FeedbackButton userId={props.userId} userName={props.userName} role="dancer" />
       {/* Mobil: lilla topbar */}
-      <div className="md:hidden sticky top-0 z-40 bg-[#3A3A3A] dark:bg-[#4a4a4a] px-4 pb-1.5 pt-[calc(0.5rem+env(safe-area-inset-top))] flex items-center justify-between shadow-md">
+      <div className={`md:hidden fixed top-0 left-0 right-0 z-40 bg-[#3A3A3A] dark:bg-[#4a4a4a] px-4 pb-1.5 pt-[calc(0.5rem+env(safe-area-inset-top))] flex items-center justify-between shadow-md transition-transform duration-300 ${topbarVisible ? "translate-y-0" : "-translate-y-full"}`}>
         <button onClick={() => setMenuOpen(true)} className="p-1.5 rounded-lg hover:bg-[#2a2a2a] transition-colors">
           <Menu size={24} className="text-[#E2A9F1]" />
         </button>
         <p className="text-[#E2A9F1] font-semibold text-sm">Danceitude</p>
         <div className="flex items-center gap-2">
-          <div className="[&_button]:text-[#E2A9F1] [&_svg]:text-[#E2A9F1] [&_span]:bg-[#E2A9F1] [&_span]:text-[#3A3A3A]">
+          <div className="flex items-center [&_button]:text-[#E2A9F1] [&_svg]:text-[#E2A9F1] [&_span]:bg-[#E2A9F1] [&_span]:text-[#3A3A3A]">
             <ThemeToggle />
             <NotificationBell notifications={props.notifications ?? []} />
           </div>
@@ -208,7 +222,7 @@ export default function DancerDashboardNav(props: Props) {
         </div>
       </aside>
 
-      <div className="md:ml-56 p-4 md:p-6">
+      <div className="md:ml-56 px-4 pb-4 pt-[calc(3.5rem+env(safe-area-inset-top))] md:p-6">
       {/* Innhold */}
       <div className="max-w-lg mx-auto space-y-4">
 
