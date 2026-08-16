@@ -227,7 +227,7 @@ export default function ParentDashboardNav({ userName, avatarUrl, notifications,
     <>
       <FeedbackButton userId={parentId} userName={userName} role="parent" />
       {/* Mobil: lilla topbar */}
-      <div className="md:hidden sticky top-0 z-40 bg-[#3A3A3A] dark:bg-[#4a4a4a] px-4 pb-3 pt-[calc(0.75rem+env(safe-area-inset-top))] flex items-center justify-between shadow-md">
+      <div className="md:hidden sticky top-0 z-40 bg-[#3A3A3A] dark:bg-[#4a4a4a] px-4 pb-1.5 pt-[calc(0.5rem+env(safe-area-inset-top))] flex items-center justify-between shadow-md">
         <button onClick={() => setMenuOpen(true)} className="p-1.5 rounded-lg hover:bg-[#2a2a2a] transition-colors">
           <Menu size={24} className="text-[#E2A9F1]" />
         </button>
