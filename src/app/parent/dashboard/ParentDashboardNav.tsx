@@ -75,6 +75,10 @@ function ParentResultsSection({ parentId, children }: { parentId: string; childr
 
 function ParentGoalsSection({ children }: { children: Child[] }) {
   const [selectedId, setSelectedId] = useState(children[0]?.id ?? "");
+  // Local cache so switching between children doesn't revert to stale prop values
+  const goalsCache = useRef<Record<string, string>>(
+    Object.fromEntries(children.map(c => [c.id, c.season_goals ?? ""]))
+  );
   const [goals, setGoals] = useState(children[0]?.season_goals ?? "");
   const [saving, setSaving] = useState(false);
   const [saved, setSaved] = useState(false);
@@ -82,9 +86,8 @@ function ParentGoalsSection({ children }: { children: Child[] }) {
   const isFirstRender = useRef(true);
 
   function handleChildSelect(id: string) {
-    const c = children.find(x => x.id === id);
     setSelectedId(id);
-    setGoals(c?.season_goals ?? "");
+    setGoals(goalsCache.current[id] ?? "");
     setSaved(false);
     setSaveError(null);
     isFirstRender.current = true;
@@ -94,6 +97,7 @@ function ParentGoalsSection({ children }: { children: Child[] }) {
     if (isFirstRender.current) { isFirstRender.current = false; return; }
     setSaved(false);
     setSaving(true);
+    goalsCache.current[selectedId] = goals;
     const currentId = selectedId;
     const timer = setTimeout(async () => {
       const supabase = createClient();
