@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -83,13 +83,13 @@ export default function DancerDashboardNav(props: Props) {
   const [levelS, setLevelS] = useState(props.levelSlow);
   const [saving, setSaving] = useState(false);
   const [saved, setSaved] = useState(false);
+  const isFirstRender = useRef(true);
 
   const now = new Date(props.now);
 
   function goTo(id: string) { setActive(id); setMenuOpen(false); }
 
   function handleFreestyleChange(val: number) {
-    setSaved(false);
     if (val < 0) { setLevelF(l => Math.max(0, l - 1)); setFreestyle(0); return; }
     const needed = getNeeded(levelF, true);
     if (levelF < 3 && val >= needed) { setLevelF(l => Math.min(l + 1, 4)); setFreestyle(0); }
@@ -97,27 +97,30 @@ export default function DancerDashboardNav(props: Props) {
   }
 
   function handleSlowChange(val: number) {
-    setSaved(false);
     if (val < 0) { setLevelS(l => Math.max(0, l - 1)); setSlow(0); return; }
     const needed = getNeeded(levelS, false);
     if (levelS < 3 && val >= needed) { setLevelS(l => Math.min(l + 1, 4)); setSlow(0); }
     else setSlow(val);
   }
 
-  async function handleSave() {
-    setSaving(true);
+  useEffect(() => {
+    if (isFirstRender.current) { isFirstRender.current = false; return; }
     setSaved(false);
-    const supabase = createClient();
-    await supabase.from("profiles").update({
-      season_goals: goals,
-      points_freestyle: freestyle,
-      points_slow: slow,
-      level_freestyle: levelF,
-      level_slow: levelS,
-    }).eq("id", props.userId);
-    setSaving(false);
-    setSaved(true);
-  }
+    setSaving(true);
+    const timer = setTimeout(async () => {
+      const supabase = createClient();
+      await supabase.from("profiles").update({
+        season_goals: goals,
+        points_freestyle: freestyle,
+        points_slow: slow,
+        level_freestyle: levelF,
+        level_slow: levelS,
+      }).eq("id", props.userId);
+      setSaving(false);
+      setSaved(true);
+    }, 600);
+    return () => clearTimeout(timer);
+  }, [goals, freestyle, slow, levelF, levelS]);
 
   // Booking sections grouped by week
   const grouped: Record<string, Booking[]> = {};
@@ -502,18 +505,11 @@ export default function DancerDashboardNav(props: Props) {
           </div>
         )}
 
-        {/* Lagre-knapp for mål og nivåer */}
-        {(active === "maal" || active === "nivaer") && (
-          <div className="space-y-2">
-            {saved && (
-              <div className="flex items-center gap-2 text-[#c87de0] text-sm bg-[#f5eeff] dark:bg-[#E2A9F1]/10 border border-[#E2A9F1]/40 rounded-xl p-3">
-                ✓ Lagret!
-              </div>
-            )}
-            <Button onClick={handleSave} className="w-full bg-[#3A3A3A] hover:bg-[#2a2a2a]" disabled={saving || saved}>
-              {saving ? "Lagrer..." : "Lagre"}
-            </Button>
-          </div>
+        {/* Auto-lagring status */}
+        {(active === "maal" || active === "nivaer") && (saving || saved) && (
+          <p className="text-xs text-center text-gray-400 dark:text-gray-500 pb-1">
+            {saving ? "Lagrer..." : "✓ Lagret"}
+          </p>
         )}
       </div>
       </div>

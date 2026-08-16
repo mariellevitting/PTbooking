@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { createClient } from "@/lib/supabase/client";
 import Link from "next/link";
 import { Menu, X, Calendar, Trophy, Medal, Star, Info, UserCircle, User, Target } from "lucide-react";
@@ -78,22 +78,28 @@ function ParentGoalsSection({ children }: { children: Child[] }) {
   const [goals, setGoals] = useState(children[0]?.season_goals ?? "");
   const [saving, setSaving] = useState(false);
   const [saved, setSaved] = useState(false);
+  const isFirstRender = useRef(true);
 
   function handleChildSelect(id: string) {
     const c = children.find(x => x.id === id);
     setSelectedId(id);
     setGoals(c?.season_goals ?? "");
     setSaved(false);
+    isFirstRender.current = true;
   }
 
-  async function handleSave() {
-    setSaving(true);
+  useEffect(() => {
+    if (isFirstRender.current) { isFirstRender.current = false; return; }
     setSaved(false);
-    const supabase = createClient();
-    await supabase.from("children").update({ season_goals: goals }).eq("id", selectedId);
-    setSaving(false);
-    setSaved(true);
-  }
+    setSaving(true);
+    const timer = setTimeout(async () => {
+      const supabase = createClient();
+      await supabase.from("children").update({ season_goals: goals }).eq("id", selectedId);
+      setSaving(false);
+      setSaved(true);
+    }, 600);
+    return () => clearTimeout(timer);
+  }, [goals]);
 
   return (
     <div className="space-y-4">
@@ -111,13 +117,13 @@ function ParentGoalsSection({ children }: { children: Child[] }) {
       {children.length === 1 && <p className="text-sm font-medium text-gray-700 dark:text-gray-300">{children[0].name}</p>}
       <div className="bg-white dark:bg-gray-900 rounded-2xl border dark:border-gray-700 p-5 space-y-3">
         <p className="text-xs text-gray-400 dark:text-gray-500">F.eks. triks, mål for konkurranser, hva danseren vil jobbe med</p>
-        <GoalsList value={goals} onChange={g => { setGoals(g); setSaved(false); }} />
+        <GoalsList value={goals} onChange={g => setGoals(g)} />
       </div>
-      {saved && <div className="flex items-center gap-2 text-[#c87de0] text-sm bg-[#f5eeff] dark:bg-[#E2A9F1]/10 border border-[#E2A9F1]/40 rounded-xl p-3">✓ Lagret!</div>}
-      <button onClick={handleSave} disabled={saving || saved}
-        className="w-full py-2.5 rounded-xl bg-[#3A3A3A] hover:bg-[#2a2a2a] text-[#E2A9F1] text-sm font-semibold transition-colors disabled:opacity-60">
-        {saving ? "Lagrer..." : "Lagre"}
-      </button>
+      {(saving || saved) && (
+        <p className="text-xs text-center text-gray-400 dark:text-gray-500">
+          {saving ? "Lagrer..." : "✓ Lagret"}
+        </p>
+      )}
     </div>
   );
 }
