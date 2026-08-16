@@ -58,7 +58,7 @@ export default function DancerSearch({ slots }: { slots: Slot[] }) {
           <div className="flex flex-wrap gap-2">
             {suggestions.map(name => (
               <button key={name} onClick={() => setQuery(name)}
-                className="text-xs bg-purple-50 text-purple-700 px-3 py-1 rounded-full hover:bg-purple-100 transition-colors">
+                className="text-xs bg-[#f5eeff] text-[#c87de0] px-3 py-1 rounded-full hover:bg-[#edd5f9] transition-colors">
                 {name}
               </button>
             ))}

@@ -30,7 +30,7 @@ export default async function TrainerKonkurranserPage() {
   return (
     <main className="bg-gray-50 dark:bg-gray-950 px-6 pb-6 min-h-screen page-safe-top">
       <div className="max-w-lg mx-auto">
-        <Link href="/trainer/dashboard" className="inline-flex items-center gap-1 text-sm text-purple-600 hover:underline mb-6">
+        <Link href="/trainer/dashboard" className="inline-flex items-center gap-1 text-sm text-[#E2A9F1] hover:underline mb-6">
           <ArrowLeft size={16} /> Tilbake
         </Link>
         <h1 className="text-2xl font-bold mb-6">Kommende konkurranser</h1>
@@ -40,13 +40,13 @@ export default async function TrainerKonkurranserPage() {
         )}
 
         {next && (
-          <div className="bg-purple-600 rounded-2xl px-5 py-4 mb-3">
-            <p className="text-xs text-purple-200 font-semibold uppercase tracking-wide mb-1">🏆 Neste konkurranse</p>
+          <div className="bg-[#3A3A3A] rounded-2xl px-5 py-4 mb-3">
+            <p className="text-xs text-[#e8c4f5] font-semibold uppercase tracking-wide mb-1">🏆 Neste konkurranse</p>
             <p className="text-lg font-bold text-white">{next.short}</p>
-            <p className="text-sm text-purple-200 mt-0.5">{next.dateLabel}{next.location ? ` · ${next.location}` : ""}</p>
+            <p className="text-sm text-[#e8c4f5] mt-0.5">{next.dateLabel}{next.location ? ` · ${next.location}` : ""}</p>
             <div className="mt-3 flex items-end gap-1">
               <p className="text-4xl font-bold text-white">{daysUntil(next.date)}</p>
-              <p className="text-sm text-purple-200 mb-1">dager igjen</p>
+              <p className="text-sm text-[#e8c4f5] mb-1">dager igjen</p>
             </div>
           </div>
         )}
@@ -56,10 +56,10 @@ export default async function TrainerKonkurranserPage() {
             <div key={c.short} className="bg-white dark:bg-gray-900 rounded-xl border dark:border-gray-700 p-4 flex items-center justify-between">
               <div>
                 <p className="font-semibold text-gray-800 dark:text-gray-100">{c.short}</p>
-                <p className="text-sm text-purple-600">{c.dateLabel}</p>
+                <p className="text-sm text-[#E2A9F1]">{c.dateLabel}</p>
                 {c.location && <p className="text-xs text-gray-400 dark:text-gray-500 mt-0.5">{c.location}</p>}
               </div>
-              <span className="text-xs font-bold text-purple-600 bg-purple-50 px-2 py-1 rounded-full whitespace-nowrap ml-3">
+              <span className="text-xs font-bold text-[#E2A9F1] bg-[#f5eeff] px-2 py-1 rounded-full whitespace-nowrap ml-3">
                 {daysUntil(c.date)} dager
               </span>
             </div>

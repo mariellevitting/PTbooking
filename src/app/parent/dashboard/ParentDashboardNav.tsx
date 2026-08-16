@@ -61,7 +61,7 @@ function ParentResultsSection({ parentId, children }: { parentId: string; childr
         <div className="flex gap-2 flex-wrap">
           {children.map(c => (
             <button key={c.id} onClick={() => handleChildSelect(c.id)}
-              className={`px-3 py-1.5 rounded-full text-sm font-medium border transition-colors ${selectedId === c.id ? "bg-purple-600 text-white border-purple-600" : "bg-white dark:bg-gray-900 text-gray-700 dark:text-gray-300 border-gray-200 dark:border-gray-700 hover:border-purple-400"}`}>
+              className={`px-3 py-1.5 rounded-full text-sm font-medium border transition-colors ${selectedId === c.id ? "bg-[#3A3A3A] text-[#E2A9F1] border-[#3A3A3A]" : "bg-white dark:bg-gray-900 text-gray-700 dark:text-gray-300 border-gray-200 dark:border-gray-700 hover:border-[#E2A9F1]"}`}>
               {c.name}
             </button>
           ))}
@@ -102,7 +102,7 @@ function ParentGoalsSection({ children }: { children: Child[] }) {
         <div className="flex gap-2 flex-wrap">
           {children.map(c => (
             <button key={c.id} onClick={() => handleChildSelect(c.id)}
-              className={`px-3 py-1.5 rounded-full text-sm font-medium border transition-colors ${selectedId === c.id ? "bg-purple-600 text-white border-purple-600" : "bg-white dark:bg-gray-900 text-gray-700 dark:text-gray-300 border-gray-200 dark:border-gray-700 hover:border-purple-400"}`}>
+              className={`px-3 py-1.5 rounded-full text-sm font-medium border transition-colors ${selectedId === c.id ? "bg-[#3A3A3A] text-[#E2A9F1] border-[#3A3A3A]" : "bg-white dark:bg-gray-900 text-gray-700 dark:text-gray-300 border-gray-200 dark:border-gray-700 hover:border-[#E2A9F1]"}`}>
               {c.name}
             </button>
           ))}
@@ -113,9 +113,9 @@ function ParentGoalsSection({ children }: { children: Child[] }) {
         <p className="text-xs text-gray-400 dark:text-gray-500">F.eks. triks, mål for konkurranser, hva danseren vil jobbe med</p>
         <GoalsList value={goals} onChange={g => { setGoals(g); setSaved(false); }} />
       </div>
-      {saved && <div className="flex items-center gap-2 text-purple-700 text-sm bg-purple-50 border border-purple-200 rounded-xl p-3">✓ Lagret!</div>}
+      {saved && <div className="flex items-center gap-2 text-[#c87de0] text-sm bg-[#f5eeff] border border-[#E2A9F1]/40 rounded-xl p-3">✓ Lagret!</div>}
       <button onClick={handleSave} disabled={saving || saved}
-        className="w-full py-2.5 rounded-xl bg-purple-600 hover:bg-purple-700 text-white text-sm font-semibold transition-colors disabled:opacity-60">
+        className="w-full py-2.5 rounded-xl bg-[#3A3A3A] hover:bg-[#2a2a2a] text-[#E2A9F1] text-sm font-semibold transition-colors disabled:opacity-60">
         {saving ? "Lagrer..." : "Lagre"}
       </button>
     </div>
@@ -187,7 +187,7 @@ export default function ParentDashboardNav({ userName, avatarUrl, notifications,
             {avatarUrl ? (
               <img src={avatarUrl} alt="" className="w-9 h-9 rounded-full object-cover shrink-0" />
             ) : (
-              <div className="w-9 h-9 rounded-full bg-purple-100 flex items-center justify-center text-purple-700 font-bold text-sm shrink-0">
+              <div className="w-9 h-9 rounded-full bg-[#edd5f9] flex items-center justify-center text-[#c87de0] font-bold text-sm shrink-0">
                 {userName.charAt(0)}
               </div>
             )}
@@ -203,8 +203,8 @@ export default function ParentDashboardNav({ userName, avatarUrl, notifications,
       <nav className="flex-1 p-3 space-y-1 overflow-y-auto">
         {sections.map(s => (
           <button key={s.id} onClick={() => goTo(s.id)}
-            className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-colors text-left ${active === s.id ? "bg-purple-600 text-white" : "text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800"}`}>
-            <span className={active === s.id ? "text-white" : "text-gray-400 dark:text-gray-500"}>{s.icon}</span>
+            className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-colors text-left ${active === s.id ? "bg-[#3A3A3A] text-[#E2A9F1]" : "text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800"}`}>
+            <span className={active === s.id ? "text-[#E2A9F1]" : "text-gray-400 dark:text-gray-500"}>{s.icon}</span>
             {s.label}
           </button>
         ))}
@@ -227,20 +227,20 @@ export default function ParentDashboardNav({ userName, avatarUrl, notifications,
     <>
       <FeedbackButton userId={parentId} userName={userName} role="parent" />
       {/* Mobil: lilla topbar */}
-      <div className="md:hidden sticky top-0 z-40 bg-purple-600 px-4 pb-3 pt-[calc(0.75rem+env(safe-area-inset-top))] flex items-center justify-between shadow-md">
-        <button onClick={() => setMenuOpen(true)} className="p-1.5 rounded-lg hover:bg-purple-700 transition-colors">
-          <Menu size={24} className="text-white" />
+      <div className="md:hidden sticky top-0 z-40 bg-[#3A3A3A] px-4 pb-3 pt-[calc(0.75rem+env(safe-area-inset-top))] flex items-center justify-between shadow-md">
+        <button onClick={() => setMenuOpen(true)} className="p-1.5 rounded-lg hover:bg-[#2a2a2a] transition-colors">
+          <Menu size={24} className="text-[#E2A9F1]" />
         </button>
-        <p className="text-white font-semibold text-sm">Danceitude</p>
+        <p className="text-[#E2A9F1] font-semibold text-sm">Danceitude</p>
         <div className="flex items-center gap-2">
-          <div className="[&_button]:text-white [&_svg]:text-white [&_span]:bg-white [&_span]:text-purple-600">
+          <div className="[&_button]:text-[#E2A9F1] [&_svg]:text-[#E2A9F1] [&_span]:bg-[#E2A9F1] [&_span]:text-[#3A3A3A]">
             <ThemeToggle />
           <NotificationBell notifications={notifications} />
           </div>
           <Link href="/parent/profil" className="hover:opacity-80 transition-opacity">
             {avatarUrl
-              ? <img src={avatarUrl} alt="Profil" className="w-8 h-8 rounded-full object-cover border-2 border-white" />
-              : <UserCircle size={28} className="text-white" />}
+              ? <img src={avatarUrl} alt="Profil" className="w-8 h-8 rounded-full object-cover border-2 border-[#E2A9F1]" />
+              : <UserCircle size={28} className="text-[#E2A9F1]" />}
           </Link>
         </div>
       </div>
@@ -261,21 +261,21 @@ export default function ParentDashboardNav({ userName, avatarUrl, notifications,
               </button>
             </div>
             <Link href="/parent/profil" onClick={() => setMenuOpen(false)} className="px-6 pb-6 flex items-center gap-4 border-b hover:bg-gray-50 dark:hover:bg-gray-950 transition-colors">
-              <div className="w-14 h-14 rounded-full bg-purple-100 flex items-center justify-center overflow-hidden shrink-0">
+              <div className="w-14 h-14 rounded-full bg-[#edd5f9] flex items-center justify-center overflow-hidden shrink-0">
                 {avatarUrl
                   ? <img src={avatarUrl} alt="Profil" className="w-full h-full object-cover" />
-                  : <span className="text-2xl font-bold text-purple-600">{userName.charAt(0)}</span>}
+                  : <span className="text-2xl font-bold text-[#E2A9F1]">{userName.charAt(0)}</span>}
               </div>
               <div>
                 <p className="font-bold text-gray-800 dark:text-gray-100">{userName}</p>
-                <p className="text-xs text-purple-500">Se profil →</p>
+                <p className="text-xs text-[#E2A9F1]">Se profil →</p>
               </div>
             </Link>
             <div className="flex-1 py-4 overflow-y-auto">
               {sections.map(s => (
                 <button key={s.id} onClick={() => goTo(s.id)}
-                  className={`w-full flex items-center gap-4 px-6 py-3.5 text-sm font-medium transition-colors ${active === s.id ? "bg-purple-50 text-purple-700 border-r-4 border-purple-600" : "text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-950"}`}>
-                  <span className={active === s.id ? "text-purple-600" : "text-gray-400 dark:text-gray-500"}>{s.icon}</span>
+                  className={`w-full flex items-center gap-4 px-6 py-3.5 text-sm font-medium transition-colors ${active === s.id ? "bg-[#f5eeff] text-[#c87de0] border-r-4 border-[#3A3A3A]" : "text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-950"}`}>
+                  <span className={active === s.id ? "text-[#E2A9F1]" : "text-gray-400 dark:text-gray-500"}>{s.icon}</span>
                   {s.label}
                 </button>
               ))}
@@ -303,18 +303,18 @@ export default function ParentDashboardNav({ userName, avatarUrl, notifications,
               <div className="flex justify-between items-center mb-3 mt-4">
                 <h2 className="font-semibold text-lg">Mine privattimer</h2>
                 <Link href="/book">
-                  <Button className="bg-purple-600 hover:bg-purple-700 text-sm">+ Book time</Button>
+                  <Button className="bg-[#3A3A3A] hover:bg-[#2a2a2a] text-sm">+ Book time</Button>
                 </Link>
               </div>
 
               {/* Tabs */}
               <div className="flex gap-1 bg-gray-100 dark:bg-gray-800 rounded-xl p-1 mb-4">
                 <button onClick={() => setBookingTab("kommende")}
-                  className={`flex-1 px-3 py-1.5 rounded-lg text-sm font-medium transition-colors ${bookingTab === "kommende" ? "bg-white dark:bg-gray-900 text-purple-700 shadow-sm" : "text-gray-500 dark:text-gray-400"}`}>
+                  className={`flex-1 px-3 py-1.5 rounded-lg text-sm font-medium transition-colors ${bookingTab === "kommende" ? "bg-white dark:bg-gray-900 text-[#c87de0] shadow-sm" : "text-gray-500 dark:text-gray-400"}`}>
                   Kommende
                 </button>
                 <button onClick={() => setBookingTab("gjennomforte")}
-                  className={`flex-1 px-3 py-1.5 rounded-lg text-sm font-medium transition-colors ${bookingTab === "gjennomforte" ? "bg-white dark:bg-gray-900 text-purple-700 shadow-sm" : "text-gray-500 dark:text-gray-400"}`}>
+                  className={`flex-1 px-3 py-1.5 rounded-lg text-sm font-medium transition-colors ${bookingTab === "gjennomforte" ? "bg-white dark:bg-gray-900 text-[#c87de0] shadow-sm" : "text-gray-500 dark:text-gray-400"}`}>
                   Gjennomførte
                 </button>
               </div>
@@ -324,7 +324,7 @@ export default function ParentDashboardNav({ userName, avatarUrl, notifications,
                   <div className="bg-white dark:bg-gray-900 rounded-xl border dark:border-gray-700 p-6 text-center text-gray-400 dark:text-gray-500">
                     <p className="text-lg font-medium mb-2">Ingen kommende timer</p>
                     <p className="text-sm mb-4">Book privattime for ditt barn</p>
-                    <Link href="/book"><Button className="bg-purple-600 hover:bg-purple-700">Book privattime</Button></Link>
+                    <Link href="/book"><Button className="bg-[#3A3A3A] hover:bg-[#2a2a2a]">Book privattime</Button></Link>
                   </div>
                 ) : (
                   <div className="space-y-6">
@@ -344,11 +344,11 @@ export default function ParentDashboardNav({ userName, avatarUrl, notifications,
                                     const end = new Date(booking.availability_slots.end_at);
                                     const hoursUntil = (start.getTime() - new Date().getTime()) / (1000 * 60 * 60);
                                     return (
-                                      <div key={booking.id} className="bg-white dark:bg-gray-900 rounded-xl border dark:border-gray-700 border-l-4 border-l-purple-400 px-4 py-3">
+                                      <div key={booking.id} className="bg-white dark:bg-gray-900 rounded-xl border dark:border-gray-700 border-l-4 border-l-[#E2A9F1] px-4 py-3">
                                         <div className="flex justify-between items-start">
                                           <div>
                                             <p className="text-sm font-semibold text-gray-700 dark:text-gray-300">{formatTime(start)}–{formatTime(end)}</p>
-                                            <p className="text-sm font-medium text-purple-600">{booking.dancer_name} · {booking.dance_style}</p>
+                                            <p className="text-sm font-medium text-[#E2A9F1]">{booking.dancer_name} · {booking.dance_style}</p>
                                             {(booking.availability_slots as any)?.profiles?.name && (
                                               <p className="text-xs font-medium text-gray-500 dark:text-gray-400">Trener: {(booking.availability_slots as any).profiles.name}</p>
                                             )}
@@ -413,7 +413,7 @@ export default function ParentDashboardNav({ userName, avatarUrl, notifications,
                 <h2 className="font-semibold text-lg">Sesongmål</h2>
                 <div className="bg-white dark:bg-gray-900 rounded-xl border dark:border-gray-700 p-6 text-center text-gray-400 dark:text-gray-500 text-sm">
                   <p className="mb-1">Ingen barn lagt til ennå</p>
-                  <Link href="/parent/profil"><span className="text-purple-600 text-sm underline">Legg til barn i profilen →</span></Link>
+                  <Link href="/parent/profil"><span className="text-[#E2A9F1] text-sm underline">Legg til barn i profilen →</span></Link>
                 </div>
               </div>
             ) : (
@@ -428,7 +428,7 @@ export default function ParentDashboardNav({ userName, avatarUrl, notifications,
                 <h2 className="font-semibold text-lg">Poeng og nivå</h2>
                 <div className="bg-white dark:bg-gray-900 rounded-xl border dark:border-gray-700 p-6 text-center text-gray-400 dark:text-gray-500 text-sm">
                   <p className="mb-1">Ingen barn lagt til ennå</p>
-                  <Link href="/parent/profil"><span className="text-purple-600 text-sm underline">Legg til barn i profilen →</span></Link>
+                  <Link href="/parent/profil"><span className="text-[#E2A9F1] text-sm underline">Legg til barn i profilen →</span></Link>
                 </div>
               </div>
             ) : (
@@ -443,7 +443,7 @@ export default function ParentDashboardNav({ userName, avatarUrl, notifications,
                 <h2 className="font-semibold text-lg">Resultater</h2>
                 <div className="bg-white dark:bg-gray-900 rounded-xl border dark:border-gray-700 p-6 text-center text-gray-400 dark:text-gray-500 text-sm">
                   <p className="mb-1">Ingen barn lagt til ennå</p>
-                  <Link href="/parent/profil"><span className="text-purple-600 text-sm underline">Legg til barn i profilen →</span></Link>
+                  <Link href="/parent/profil"><span className="text-[#E2A9F1] text-sm underline">Legg til barn i profilen →</span></Link>
                 </div>
               </div>
             ) : (
@@ -461,10 +461,10 @@ export default function ParentDashboardNav({ userName, avatarUrl, notifications,
                 <div key={c.short} className="bg-white dark:bg-gray-900 rounded-xl border dark:border-gray-700 p-4 flex items-center justify-between">
                   <div>
                     <p className="font-semibold text-gray-800 dark:text-white">{c.short}</p>
-                    <p className="text-sm text-purple-600">{c.dateLabel}</p>
+                    <p className="text-sm text-[#E2A9F1]">{c.dateLabel}</p>
                     {c.location && <p className="text-xs text-gray-400 dark:text-gray-500 mt-0.5">{c.location}</p>}
                   </div>
-                  <span className="text-xs font-bold text-purple-600 bg-purple-50 px-2 py-1 rounded-full ml-3">{daysUntil(c.date)} dager</span>
+                  <span className="text-xs font-bold text-[#E2A9F1] bg-[#f5eeff] px-2 py-1 rounded-full ml-3">{daysUntil(c.date)} dager</span>
                 </div>
               ))}
             </div>
@@ -501,7 +501,7 @@ export default function ParentDashboardNav({ userName, avatarUrl, notifications,
                 <div className="space-y-1">
                   {trainers.map(t => (
                     <div key={t.name} className="flex items-start gap-3 py-3 border-b dark:border-gray-700 last:border-0">
-                      <div className="w-9 h-9 rounded-full bg-purple-100 flex items-center justify-center text-purple-600 font-bold shrink-0 text-sm">
+                      <div className="w-9 h-9 rounded-full bg-[#edd5f9] flex items-center justify-center text-[#E2A9F1] font-bold shrink-0 text-sm">
                         {t.name.charAt(0)}
                       </div>
                       <div>

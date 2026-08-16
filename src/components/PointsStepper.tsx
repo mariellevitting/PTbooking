@@ -22,9 +22,9 @@ export default function PointsStepper({ value, onChange, min = 0 }: Props) {
       <button
         type="button"
         onClick={() => onChange(value + 1)}
-        className="w-10 h-10 rounded-full bg-purple-100 hover:bg-purple-200 active:bg-purple-300 flex items-center justify-center transition-colors"
+        className="w-10 h-10 rounded-full bg-[#edd5f9] hover:bg-[#E2A9F1]/30 active:bg-[#E2A9F1]/50 flex items-center justify-center transition-colors"
       >
-        <Plus size={18} className="text-purple-600" />
+        <Plus size={18} className="text-[#E2A9F1]" />
       </button>
     </div>
   );

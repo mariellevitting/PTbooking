@@ -32,7 +32,7 @@ function LevelTracker({ label, points, level, isFreestyle, onPointsChange, onLev
     <div className="space-y-3">
       <div className="flex items-center justify-between">
         <p className="text-sm font-semibold text-gray-700 dark:text-gray-300">{label}</p>
-        <span className="text-xs font-bold text-purple-600 bg-purple-50 px-2 py-0.5 rounded-full">
+        <span className="text-xs font-bold text-[#E2A9F1] bg-[#f5eeff] px-2 py-0.5 rounded-full">
           {LEVELS[level]}
         </span>
       </div>
@@ -41,7 +41,7 @@ function LevelTracker({ label, points, level, isFreestyle, onPointsChange, onLev
       <div className="space-y-1.5">
         <div className="flex justify-between text-[10px] px-0.5">
           {LEVELS.map((name, i) => (
-            <span key={i} className={i <= level ? "text-purple-600 font-semibold" : "text-gray-400 dark:text-gray-500"}>{name}</span>
+            <span key={i} className={i <= level ? "text-[#E2A9F1] font-semibold" : "text-gray-400 dark:text-gray-500"}>{name}</span>
           ))}
         </div>
         <div style={{ height: "12px", backgroundColor: "#e5e7eb", borderRadius: "9999px", overflow: "hidden" }}>
@@ -62,7 +62,7 @@ function LevelTracker({ label, points, level, isFreestyle, onPointsChange, onLev
           min={0}
           value={points}
           onChange={e => onPointsChange(Math.max(0, parseInt(e.target.value) || 0))}
-          className="w-20 text-center border dark:border-gray-700 bg-white dark:bg-gray-900 dark:text-white rounded-lg px-2 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-purple-400"
+          className="w-20 text-center border dark:border-gray-700 bg-white dark:bg-gray-900 dark:text-white rounded-lg px-2 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-[#E2A9F1]"
         />
         <p className="text-xs text-gray-500 dark:text-gray-400">poeng dette nivået</p>
       </div>
@@ -142,7 +142,7 @@ export default function DancerGoalsCard({ userId, seasonGoals, pointsFreestyle, 
       <Card>
         <CardHeader>
           <CardTitle className="text-base flex items-center gap-2">
-            <Target size={16} className="text-purple-500" /> Mine sesongmål
+            <Target size={16} className="text-[#E2A9F1]" /> Mine sesongmål
           </CardTitle>
         </CardHeader>
         <CardContent>
@@ -154,7 +154,7 @@ export default function DancerGoalsCard({ userId, seasonGoals, pointsFreestyle, 
             onChange={e => setGoals(e.target.value)}
             rows={4}
             placeholder="Skriv dine mål for sesongen her..."
-            className="w-full border dark:border-gray-700 bg-white dark:bg-gray-900 dark:text-white rounded-lg px-3 py-2 text-sm resize-none focus:outline-none focus:ring-2 focus:ring-purple-400"
+            className="w-full border dark:border-gray-700 bg-white dark:bg-gray-900 dark:text-white rounded-lg px-3 py-2 text-sm resize-none focus:outline-none focus:ring-2 focus:ring-[#E2A9F1]"
           />
         </CardContent>
       </Card>
@@ -163,7 +163,7 @@ export default function DancerGoalsCard({ userId, seasonGoals, pointsFreestyle, 
       <Card>
         <CardHeader>
           <CardTitle className="text-base flex items-center gap-2">
-            <Trophy size={16} className="text-purple-500" /> Poeng og nivåer
+            <Trophy size={16} className="text-[#E2A9F1]" /> Poeng og nivåer
           </CardTitle>
         </CardHeader>
         <CardContent className="space-y-6">
@@ -189,11 +189,11 @@ export default function DancerGoalsCard({ userId, seasonGoals, pointsFreestyle, 
       </Card>
 
       {success && (
-        <div className="flex items-center gap-2 text-purple-700 text-sm bg-purple-50 border border-purple-200 rounded-xl p-3">
+        <div className="flex items-center gap-2 text-[#c87de0] text-sm bg-[#f5eeff] border border-[#E2A9F1]/40 rounded-xl p-3">
           <Check size={16} /> Lagret!
         </div>
       )}
-      <Button onClick={handleSave} className="w-full bg-purple-600 hover:bg-purple-700" disabled={saving}>
+      <Button onClick={handleSave} className="w-full bg-[#3A3A3A] hover:bg-[#2a2a2a]" disabled={saving}>
         {saving ? "Lagrer..." : "Lagre mål og poeng"}
       </Button>
     </div>

@@ -28,7 +28,7 @@ export default async function BookForDancerPage() {
   return (
     <main className="bg-gray-50 dark:bg-gray-950 p-6">
       <div className="max-w-lg mx-auto">
-        <Link href="/trainer/dashboard" className="inline-flex items-center gap-1 text-sm text-purple-600 hover:underline mb-6">
+        <Link href="/trainer/dashboard" className="inline-flex items-center gap-1 text-sm text-[#E2A9F1] hover:underline mb-6">
           <ArrowLeft size={16} /> Tilbake
         </Link>
         <h1 className="text-2xl font-bold mb-6">Book time for danser</h1>

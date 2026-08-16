@@ -90,12 +90,12 @@ export default function LoginPage() {
       <div className="space-y-1.5">
         <div className="flex justify-between items-center">
           <label className="text-sm font-medium text-gray-700 dark:text-gray-300">Passord</label>
-          <a href="/glemt-passord" className="text-xs text-purple-600 hover:underline">Glemt passordet?</a>
+          <a href="/glemt-passord" className="text-xs text-[#E2A9F1] hover:underline">Glemt passordet?</a>
         </div>
         <Input type="password" value={password} onChange={e => setPassword(e.target.value)} placeholder="••••••••" required />
       </div>
       {loginError && <p className="text-sm text-red-500">{loginError}</p>}
-      <Button type="submit" className="w-full bg-purple-600 hover:bg-purple-700 h-11 text-base" disabled={loginLoading}>
+      <Button type="submit" className="w-full bg-[#3A3A3A] hover:bg-[#2a2a2a] h-11 text-base" disabled={loginLoading}>
         {loginLoading ? "Logger inn..." : "Logg inn"}
       </Button>
     </form>
@@ -108,7 +108,7 @@ export default function LoginPage() {
           <p className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-3">Hvem er du?</p>
           {roles.map(r => (
             <button key={r.value} onClick={() => { setRole(r.value); setStep("details"); }}
-              className="w-full text-left border dark:border-gray-700 rounded-xl p-4 bg-white dark:bg-gray-900 hover:border-purple-500 hover:bg-purple-50 transition-colors">
+              className="w-full text-left border dark:border-gray-700 rounded-xl p-4 bg-white dark:bg-gray-900 hover:border-[#E2A9F1] hover:bg-[#f5eeff] transition-colors">
               <p className="font-semibold text-gray-800 dark:text-gray-100">{r.label}</p>
               <p className="text-sm text-gray-500 dark:text-gray-400">{r.description}</p>
             </button>
@@ -117,7 +117,7 @@ export default function LoginPage() {
       )}
       {step === "details" && (
         <form onSubmit={handleRegister} className="space-y-4">
-          <button type="button" onClick={() => setStep("role")} className="text-sm text-purple-600 hover:underline">← Endre rolle</button>
+          <button type="button" onClick={() => setStep("role")} className="text-sm text-[#E2A9F1] hover:underline">← Endre rolle</button>
           <div className="space-y-1.5">
             <label className="text-sm font-medium">Navn</label>
             <Input value={name} onChange={e => setName(e.target.value)} placeholder="Ditt fulle navn" required />
@@ -144,7 +144,7 @@ export default function LoginPage() {
                 </div>
               ))}
               <button type="button" onClick={() => setDancerNames([...dancerNames, ""])}
-                className="text-sm text-purple-600 hover:underline">+ Legg til danser</button>
+                className="text-sm text-[#E2A9F1] hover:underline">+ Legg til danser</button>
             </div>
           )}
           {role === "trainer" && (
@@ -155,7 +155,7 @@ export default function LoginPage() {
             </div>
           )}
           {regError && <p className="text-sm text-red-500">{regError}</p>}
-          <Button type="submit" className="w-full bg-purple-600 hover:bg-purple-700 h-11 text-base" disabled={regLoading}>
+          <Button type="submit" className="w-full bg-[#3A3A3A] hover:bg-[#2a2a2a] h-11 text-base" disabled={regLoading}>
             {regLoading ? "Oppretter konto..." : "Lag konto"}
           </Button>
         </form>
@@ -203,10 +203,10 @@ export default function LoginPage() {
           {loginForm}
           <p className="text-center text-sm text-gray-500 dark:text-gray-400 mt-4">
             Har du ikke konto?{" "}
-            <a href="/register" className="text-purple-600 hover:underline font-medium">Registrer deg</a>
+            <a href="/register" className="text-[#E2A9F1] hover:underline font-medium">Registrer deg</a>
           </p>
           <p className="text-center text-xs text-gray-400 dark:text-gray-600 mt-3">
-            <a href="/om" className="hover:text-purple-500 hover:underline">Om Danceitude</a>
+            <a href="/om" className="hover:text-[#E2A9F1] hover:underline">Om Danceitude</a>
           </p>
         </div>
       </div>

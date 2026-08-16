@@ -66,7 +66,7 @@ export default function CancelForm({ bookingId, slotId, trainerId, dancerName, d
       <div className="bg-white dark:bg-gray-900 border dark:border-gray-700 rounded-xl px-4 py-3">
         <p className="text-xs text-gray-400 dark:text-gray-500 mb-1">Time som avbestilles</p>
         <p className="font-semibold">{tidspunkt}</p>
-        <p className="text-sm text-purple-600">{dancerName} · {danceStyle}</p>
+        <p className="text-sm text-[#E2A9F1]">{dancerName} · {danceStyle}</p>
       </div>
 
       <div className="bg-amber-50 border border-amber-200 rounded-xl px-4 py-3">
@@ -88,7 +88,7 @@ export default function CancelForm({ bookingId, slotId, trainerId, dancerName, d
             type="checkbox"
             checked={confirmed}
             onChange={(e) => setConfirmed(e.target.checked)}
-            className="mt-0.5 accent-purple-600 w-4 h-4"
+            className="mt-0.5 accent-[#3A3A3A] w-4 h-4"
           />
           <span className="text-sm text-gray-700 dark:text-gray-300">
             {withinDeadline

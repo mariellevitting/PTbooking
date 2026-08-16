@@ -56,21 +56,21 @@ export default function RegisterForm({ prefilledCode, clubName }: Props) {
           <p className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-3">Hvem er du?</p>
           {roles.map(r => (
             <button key={r.value} onClick={() => { setRole(r.value); setStep("details"); }}
-              className="w-full text-left border dark:border-gray-700 rounded-xl p-4 bg-white dark:bg-gray-900 hover:border-purple-500 hover:bg-purple-50 transition-colors">
+              className="w-full text-left border dark:border-gray-700 rounded-xl p-4 bg-white dark:bg-gray-900 hover:border-[#E2A9F1] hover:bg-[#f5eeff] transition-colors">
               <p className="font-semibold text-gray-800 dark:text-gray-100">{r.label}</p>
               <p className="text-sm text-gray-500 dark:text-gray-400">{r.description}</p>
             </button>
           ))}
           <p className="text-center text-sm text-gray-500 dark:text-gray-400 mt-4">
             Har du allerede konto?{" "}
-            <Link href="/login" className="text-purple-600 hover:underline font-medium">Logg inn</Link>
+            <Link href="/login" className="text-[#E2A9F1] hover:underline font-medium">Logg inn</Link>
           </p>
         </div>
       )}
 
       {step === "details" && (
         <form onSubmit={handleRegister} className="space-y-4">
-          <button type="button" onClick={() => setStep("role")} className="text-sm text-purple-600 hover:underline mb-2">
+          <button type="button" onClick={() => setStep("role")} className="text-sm text-[#E2A9F1] hover:underline mb-2">
             ← Endre rolle
           </button>
           <div className="space-y-1.5">
@@ -99,7 +99,7 @@ export default function RegisterForm({ prefilledCode, clubName }: Props) {
                 </div>
               ))}
               <button type="button" onClick={() => setDancerNames([...dancerNames, ""])}
-                className="text-sm text-purple-600 hover:underline">+ Legg til danser</button>
+                className="text-sm text-[#E2A9F1] hover:underline">+ Legg til danser</button>
             </div>
           )}
           {role === "trainer" && (
@@ -111,7 +111,7 @@ export default function RegisterForm({ prefilledCode, clubName }: Props) {
             </div>
           )}
           {error && <p className="text-sm text-red-500">{error}</p>}
-          <Button type="submit" className="w-full bg-purple-600 hover:bg-purple-700 h-11 text-base" disabled={loading}>
+          <Button type="submit" className="w-full bg-[#3A3A3A] hover:bg-[#2a2a2a] h-11 text-base" disabled={loading}>
             {loading ? "Oppretter konto..." : "Lag konto"}
           </Button>
         </form>

@@ -18,7 +18,7 @@ function TrainerCard({ trainer }: { trainer: Trainer }) {
   const [pending, startTransition] = useTransition();
 
   return (
-    <div className="bg-white dark:bg-gray-900 rounded-xl border dark:border-gray-700 p-4 hover:border-purple-400 hover:shadow-sm transition-all flex items-center gap-4">
+    <div className="bg-white dark:bg-gray-900 rounded-xl border dark:border-gray-700 p-4 hover:border-[#E2A9F1] hover:shadow-sm transition-all flex items-center gap-4">
       <button
         onClick={() => startTransition(() => togglePin(trainer.id, trainer.isPinned))}
         disabled={pending}
@@ -27,11 +27,11 @@ function TrainerCard({ trainer }: { trainer: Trainer }) {
       >
         <Pin
           size={16}
-          className={trainer.isPinned ? "text-purple-600 fill-purple-600" : "text-gray-300 dark:text-gray-600"}
+          className={trainer.isPinned ? "text-[#E2A9F1] fill-[#3A3A3A]" : "text-gray-300 dark:text-gray-600"}
         />
       </button>
       <Link href={`/book/${trainer.id}`} className="flex items-center gap-4 flex-1 min-w-0">
-        <div className="w-12 h-12 rounded-full bg-purple-100 flex items-center justify-center text-purple-600 font-bold text-lg shrink-0">
+        <div className="w-12 h-12 rounded-full bg-[#edd5f9] flex items-center justify-center text-[#E2A9F1] font-bold text-lg shrink-0">
           {trainer.name.charAt(0)}
         </div>
         <div className="flex-1 min-w-0">
@@ -42,7 +42,7 @@ function TrainerCard({ trainer }: { trainer: Trainer }) {
         </div>
         <div className="flex items-center gap-2 shrink-0 text-right">
           <div>
-            <p className="text-sm font-semibold text-purple-600">{trainer.price} kr</p>
+            <p className="text-sm font-semibold text-[#E2A9F1]">{trainer.price} kr</p>
             <p className="text-xs text-gray-400">{trainer.availableSlots > 0 ? `${trainer.availableSlots} ledige` : "Ingen ledige"}</p>
           </div>
           <ChevronRight size={18} className="text-gray-300 dark:text-gray-600" />

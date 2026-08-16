@@ -36,12 +36,12 @@ export default function PrivacyPage() {
 
       <section className="mb-8">
         <h2 className="text-xl font-semibold mb-2">Dine rettigheter</h2>
-        <p>Du kan når som helst be om innsyn i, retting av eller sletting av dine personopplysninger ved å kontakte oss på <a href="mailto:miemarielle@live.no" className="text-purple-600 underline">miemarielle@live.no</a>.</p>
+        <p>Du kan når som helst be om innsyn i, retting av eller sletting av dine personopplysninger ved å kontakte oss på <a href="mailto:miemarielle@live.no" className="text-[#E2A9F1] underline">miemarielle@live.no</a>.</p>
       </section>
 
       <section className="mb-8">
         <h2 className="text-xl font-semibold mb-2">Kontakt</h2>
-        <p>Mie Marielle Øverås Vitting<br />E-post: <a href="mailto:miemarielle@live.no" className="text-purple-600 underline">miemarielle@live.no</a></p>
+        <p>Mie Marielle Øverås Vitting<br />E-post: <a href="mailto:miemarielle@live.no" className="text-[#E2A9F1] underline">miemarielle@live.no</a></p>
       </section>
     </main>
   );

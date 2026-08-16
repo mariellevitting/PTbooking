@@ -33,7 +33,7 @@ export default function FeedbackButton({ userId, userName, role }: Props) {
       {/* Flytende knapp */}
       <button
         onClick={() => setOpen(true)}
-        className="fixed bottom-6 right-6 z-40 bg-purple-600 hover:bg-purple-700 text-white rounded-full shadow-lg flex items-center gap-2 px-4 py-3 text-sm font-semibold transition-all hover:scale-105"
+        className="fixed bottom-6 right-6 z-40 bg-[#3A3A3A] hover:bg-[#2a2a2a] text-[#E2A9F1] rounded-full shadow-lg flex items-center gap-2 px-4 py-3 text-sm font-semibold transition-all hover:scale-105"
       >
         <MessageSquare size={16} />
         <span className="hidden sm:inline">Gi tilbakemelding</span>
@@ -68,12 +68,12 @@ export default function FeedbackButton({ userId, userName, role }: Props) {
                   placeholder="Skriv din tilbakemelding her..."
                   rows={5}
                   required
-                  className="w-full rounded-xl border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-white text-sm p-3 resize-none focus:outline-none focus:ring-2 focus:ring-purple-500"
+                  className="w-full rounded-xl border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-white text-sm p-3 resize-none focus:outline-none focus:ring-2 focus:ring-[#E2A9F1]"
                 />
                 <button
                   type="submit"
                   disabled={loading || !message.trim()}
-                  className="w-full bg-purple-600 hover:bg-purple-700 disabled:opacity-50 text-white font-semibold py-2.5 rounded-xl flex items-center justify-center gap-2 transition-colors"
+                  className="w-full bg-[#3A3A3A] hover:bg-[#2a2a2a] disabled:opacity-50 text-white font-semibold py-2.5 rounded-xl flex items-center justify-center gap-2 transition-colors"
                 >
                   <Send size={15} />
                   {loading ? "Sender..." : "Send tilbakemelding"}

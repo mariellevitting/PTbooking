@@ -42,7 +42,7 @@ export default async function BookPage() {
   return (
     <main className="bg-gray-50 dark:bg-gray-950 px-6 pb-6 page-safe-top">
       <div className="max-w-lg mx-auto">
-        <Link href={backHref} className="inline-flex items-center gap-1 text-sm text-purple-600 hover:underline mb-6">
+        <Link href={backHref} className="inline-flex items-center gap-1 text-sm text-[#E2A9F1] hover:underline mb-6">
           <ArrowLeft size={16} /> Tilbake
         </Link>
         <h1 className="text-2xl font-bold mb-6">Velg trener</h1>

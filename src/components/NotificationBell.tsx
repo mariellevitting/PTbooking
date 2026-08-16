@@ -65,10 +65,10 @@ export default function NotificationBell({ notifications: initial }: Props) {
 
   return (
     <div className="relative">
-      <button ref={buttonRef} onClick={handleOpen} className="relative p-1 text-gray-500 dark:text-gray-400 hover:text-purple-600 transition-colors">
+      <button ref={buttonRef} onClick={handleOpen} className="relative p-1 text-gray-500 dark:text-gray-400 hover:text-[#E2A9F1] transition-colors">
         <Bell size={22} />
         {unread > 0 && (
-          <span className="absolute -top-1 -right-1 bg-purple-600 text-white text-xs w-5 h-5 rounded-full flex items-center justify-center font-bold">
+          <span className="absolute -top-1 -right-1 bg-[#3A3A3A] text-[#E2A9F1] text-xs w-5 h-5 rounded-full flex items-center justify-center font-bold">
             {unread}
           </span>
         )}
@@ -99,8 +99,8 @@ export default function NotificationBell({ notifications: initial }: Props) {
           ) : (
             <div className="max-h-96 overflow-y-auto divide-y">
               {notifications.map((n) => (
-                <div key={n.id} className={`px-4 py-3 flex gap-3 items-start ${!n.read ? "bg-purple-50 dark:bg-purple-950/30" : ""}`}>
-                  <div className="w-9 h-9 rounded-full bg-purple-100 flex items-center justify-center text-purple-600 shrink-0 text-sm font-bold">
+                <div key={n.id} className={`px-4 py-3 flex gap-3 items-start ${!n.read ? "bg-[#f5eeff] dark:bg-purple-950/30" : ""}`}>
+                  <div className="w-9 h-9 rounded-full bg-[#edd5f9] flex items-center justify-center text-[#E2A9F1] shrink-0 text-sm font-bold">
                     PT
                   </div>
                   <div className="flex-1 min-w-0">
@@ -110,7 +110,7 @@ export default function NotificationBell({ notifications: initial }: Props) {
                     </p>
                   </div>
                   {!n.read && (
-                    <div className="w-2 h-2 rounded-full bg-purple-500 mt-1.5 shrink-0" />
+                    <div className="w-2 h-2 rounded-full bg-[#f5eeff]0 mt-1.5 shrink-0" />
                   )}
                 </div>
               ))}

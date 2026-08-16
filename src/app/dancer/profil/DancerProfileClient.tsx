@@ -61,13 +61,13 @@ export default function DancerProfileClient(props: Props) {
       <Card>
         <CardContent className="pt-5 flex flex-col items-center gap-3">
           <div className="relative">
-            <div className="w-24 h-24 rounded-full bg-purple-100 flex items-center justify-center overflow-hidden">
+            <div className="w-24 h-24 rounded-full bg-[#edd5f9] flex items-center justify-center overflow-hidden">
               {avatar
                 ? <img src={avatar} alt="Profilbilde" className="w-full h-full object-cover" />
-                : <span className="text-3xl font-bold text-purple-600">{nameVal.charAt(0)}</span>}
+                : <span className="text-3xl font-bold text-[#E2A9F1]">{nameVal.charAt(0)}</span>}
             </div>
             <button type="button" onClick={() => fileRef.current?.click()}
-              className="absolute bottom-0 right-0 bg-purple-600 text-white rounded-full p-1.5 hover:bg-purple-700">
+              className="absolute bottom-0 right-0 bg-[#3A3A3A] text-[#E2A9F1] rounded-full p-1.5 hover:bg-[#2a2a2a]">
               <Camera size={14} />
             </button>
           </div>
@@ -80,7 +80,7 @@ export default function DancerProfileClient(props: Props) {
       <Card>
         <CardHeader>
           <CardTitle className="text-base flex items-center gap-2">
-            <User size={16} className="text-purple-500" /> Personlig informasjon
+            <User size={16} className="text-[#E2A9F1]" /> Personlig informasjon
           </CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">
@@ -106,11 +106,11 @@ export default function DancerProfileClient(props: Props) {
 
       {error && <p className="text-sm text-red-500">{error}</p>}
       {success && (
-        <div className="flex items-center gap-2 text-purple-700 text-sm bg-purple-50 border border-purple-200 rounded-xl p-3">
+        <div className="flex items-center gap-2 text-[#c87de0] text-sm bg-[#f5eeff] border border-[#E2A9F1]/40 rounded-xl p-3">
           <Check size={16} /> Profilen er oppdatert!
         </div>
       )}
-      <Button type="submit" className="w-full bg-purple-600 hover:bg-purple-700" disabled={saving || success}>
+      <Button type="submit" className="w-full bg-[#3A3A3A] hover:bg-[#2a2a2a]" disabled={saving || success}>
         {saving ? "Lagrer..." : "Lagre profil"}
       </Button>
     </form>

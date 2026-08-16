@@ -52,14 +52,14 @@ export default async function TrainerBookPage({ params }: { params: Promise<{ tr
   return (
     <main className="bg-gray-50 dark:bg-gray-950 px-6 pb-6 page-safe-top">
       <div className="max-w-lg mx-auto">
-        <Link href="/book" className="inline-flex items-center gap-1 text-sm text-purple-600 hover:underline mb-6">
+        <Link href="/book" className="inline-flex items-center gap-1 text-sm text-[#E2A9F1] hover:underline mb-6">
           <ArrowLeft size={16} /> Velg annen trener
         </Link>
 
         {/* Trener-kort */}
         <div className="bg-white dark:bg-gray-900 rounded-2xl border dark:border-gray-700 p-5 mb-6">
           <div className="flex items-center gap-4 mb-4">
-            <div className="w-14 h-14 rounded-full bg-purple-100 flex items-center justify-center text-purple-600 font-bold text-xl shrink-0">
+            <div className="w-14 h-14 rounded-full bg-[#edd5f9] flex items-center justify-center text-[#E2A9F1] font-bold text-xl shrink-0">
               {trainer.name.charAt(0)}
             </div>
             <div>
@@ -75,7 +75,7 @@ export default async function TrainerBookPage({ params }: { params: Promise<{ tr
           {styles.length > 0 && (
             <div className="flex flex-wrap gap-1.5 mb-4">
               {styles.map((style) => (
-                <span key={style} className="text-xs bg-purple-50 text-purple-600 border border-purple-100 px-2.5 py-1 rounded-full">
+                <span key={style} className="text-xs bg-[#f5eeff] text-[#E2A9F1] border border-[#E2A9F1]/30 px-2.5 py-1 rounded-full">
                   {style}
                 </span>
               ))}
@@ -83,7 +83,7 @@ export default async function TrainerBookPage({ params }: { params: Promise<{ tr
           )}
 
           {trainer.phone && (
-            <a href={`tel:${trainer.phone}`} className="inline-flex items-center gap-2 text-sm text-gray-500 dark:text-gray-400 hover:text-purple-600">
+            <a href={`tel:${trainer.phone}`} className="inline-flex items-center gap-2 text-sm text-gray-500 dark:text-gray-400 hover:text-[#E2A9F1]">
               <Phone size={14} /> {trainer.phone}
             </a>
           )}

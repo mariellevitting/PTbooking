@@ -41,20 +41,20 @@ export default function TrainerSidebar({ name, userId, email, avatarUrl, notific
     <>
       <FeedbackButton userId={userId} userName={name} role="trainer" />
       {/* Mobil: lilla topbar */}
-      <div className="md:hidden fixed top-0 left-0 right-0 z-40 bg-purple-600 px-4 py-3 flex items-center justify-between shadow-md">
-        <button onClick={() => setMenuOpen(true)} className="p-1.5 rounded-lg hover:bg-purple-700 transition-colors">
-          <Menu size={24} className="text-white" />
+      <div className="md:hidden fixed top-0 left-0 right-0 z-40 bg-[#3A3A3A] px-4 py-3 flex items-center justify-between shadow-md">
+        <button onClick={() => setMenuOpen(true)} className="p-1.5 rounded-lg hover:bg-[#2a2a2a] transition-colors">
+          <Menu size={24} className="text-[#E2A9F1]" />
         </button>
-        <p className="text-white font-semibold text-sm">Danceitude</p>
+        <p className="text-[#E2A9F1] font-semibold text-sm">Danceitude</p>
         <div className="flex items-center gap-2">
-          <div className="[&_button]:text-white [&_svg]:text-white [&_span]:bg-white [&_span]:text-purple-600">
+          <div className="[&_button]:text-[#E2A9F1] [&_svg]:text-[#E2A9F1] [&_span]:bg-[#E2A9F1] [&_span]:text-[#3A3A3A]">
             <ThemeToggle />
             <NotificationBell notifications={notifications} />
           </div>
           <Link href="/trainer/profil" className="hover:opacity-80 transition-opacity">
             {avatarUrl
-              ? <img src={avatarUrl} alt="Profil" className="w-8 h-8 rounded-full object-cover border-2 border-white" />
-              : <div className="w-8 h-8 rounded-full bg-purple-400 flex items-center justify-center text-white font-bold text-sm">{firstName.charAt(0)}</div>
+              ? <img src={avatarUrl} alt="Profil" className="w-8 h-8 rounded-full object-cover border-2 border-[#E2A9F1]" />
+              : <div className="w-8 h-8 rounded-full bg-[#E2A9F1] flex items-center justify-center text-white font-bold text-sm">{firstName.charAt(0)}</div>
             }
           </Link>
         </div>
@@ -72,14 +72,14 @@ export default function TrainerSidebar({ name, userId, email, avatarUrl, notific
             </div>
             {/* Profil */}
             <Link href="/trainer/profil" onClick={() => setMenuOpen(false)} className="px-6 pb-6 flex items-center gap-4 border-b hover:bg-gray-50 dark:hover:bg-gray-950 transition-colors">
-              <div className="w-14 h-14 rounded-full bg-purple-100 flex items-center justify-center overflow-hidden shrink-0">
+              <div className="w-14 h-14 rounded-full bg-[#edd5f9] flex items-center justify-center overflow-hidden shrink-0">
                 {avatarUrl
                   ? <img src={avatarUrl} alt="Profil" className="w-full h-full object-cover" />
-                  : <span className="text-2xl font-bold text-purple-600">{firstName.charAt(0)}</span>}
+                  : <span className="text-2xl font-bold text-[#E2A9F1]">{firstName.charAt(0)}</span>}
               </div>
               <div>
                 <p className="font-bold text-gray-800 dark:text-gray-100">{name}</p>
-                <p className="text-xs text-purple-500">Se profil →</p>
+                <p className="text-xs text-[#E2A9F1]">Se profil →</p>
               </div>
             </Link>
             {/* Menyvalg */}
@@ -91,9 +91,9 @@ export default function TrainerSidebar({ name, userId, email, avatarUrl, notific
                     key={href}
                     href={href}
                     onClick={() => setMenuOpen(false)}
-                    className={`w-full flex items-center gap-4 px-6 py-3.5 text-sm font-medium transition-colors ${active ? "bg-purple-50 text-purple-700 border-r-4 border-purple-600" : "text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-950"}`}
+                    className={`w-full flex items-center gap-4 px-6 py-3.5 text-sm font-medium transition-colors ${active ? "bg-[#f5eeff] text-[#c87de0] border-r-4 border-[#3A3A3A]" : "text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-950"}`}
                   >
-                    <Icon size={18} className={active ? "text-purple-600" : "text-gray-400 dark:text-gray-500"} />
+                    <Icon size={18} className={active ? "text-[#E2A9F1]" : "text-gray-400 dark:text-gray-500"} />
                     {label}
                   </Link>
                 );
@@ -102,7 +102,7 @@ export default function TrainerSidebar({ name, userId, email, avatarUrl, notific
             {/* Logg ut */}
             <div className="border-t dark:border-gray-700 px-6 py-4 space-y-3 text-sm text-gray-400 dark:text-gray-500">
               {isAdmin && (
-                <Link href="/admin" onClick={() => setMenuOpen(false)} className="flex items-center gap-2 text-purple-600 dark:text-purple-400 font-medium">
+                <Link href="/admin" onClick={() => setMenuOpen(false)} className="flex items-center gap-2 text-[#E2A9F1] dark:text-[#E2A9F1] font-medium">
                   Admin
                 </Link>
               )}
@@ -123,7 +123,7 @@ export default function TrainerSidebar({ name, userId, email, avatarUrl, notific
               {avatarUrl ? (
                 <img src={avatarUrl} alt="" className="w-9 h-9 rounded-full object-cover shrink-0" />
               ) : (
-                <div className="w-9 h-9 rounded-full bg-purple-100 flex items-center justify-center text-purple-700 font-bold text-sm shrink-0">
+                <div className="w-9 h-9 rounded-full bg-[#edd5f9] flex items-center justify-center text-[#c87de0] font-bold text-sm shrink-0">
                   {firstName.charAt(0)}
                 </div>
               )}
@@ -144,7 +144,7 @@ export default function TrainerSidebar({ name, userId, email, avatarUrl, notific
                 key={href}
                 href={href}
                 className={`flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-colors ${
-                  active ? "bg-purple-600 text-white" : "text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800"
+                  active ? "bg-[#3A3A3A] text-[#E2A9F1]" : "text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800"
                 }`}
               >
                 <Icon size={18} />
@@ -155,7 +155,7 @@ export default function TrainerSidebar({ name, userId, email, avatarUrl, notific
         </nav>
         <div className="p-3 border-t border-gray-100 dark:border-gray-800 space-y-1">
           {isAdmin && (
-            <Link href="/admin" className="flex items-center gap-2 px-3 py-2 rounded-xl text-sm text-purple-600 dark:text-purple-400 hover:bg-purple-50 dark:hover:bg-purple-950 transition-colors font-medium">
+            <Link href="/admin" className="flex items-center gap-2 px-3 py-2 rounded-xl text-sm text-[#E2A9F1] dark:text-[#E2A9F1] hover:bg-[#f5eeff] dark:hover:bg-purple-950 transition-colors font-medium">
               Admin
             </Link>
           )}

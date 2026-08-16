@@ -104,7 +104,7 @@ export default function ChildDancerCard({ parentId, children, hideResults, hideG
         <div className="flex gap-2 flex-wrap">
           {children.map(c => (
             <button key={c.id} onClick={() => loadChild(c.id)}
-              className={`px-4 py-1.5 rounded-full text-sm font-medium border transition-colors ${selectedId === c.id ? "bg-purple-600 text-white border-purple-600" : "bg-white dark:bg-gray-900 text-gray-600 dark:text-gray-400 border-gray-200 dark:border-gray-700 hover:border-purple-400"}`}>
+              className={`px-4 py-1.5 rounded-full text-sm font-medium border transition-colors ${selectedId === c.id ? "bg-[#3A3A3A] text-[#E2A9F1] border-[#3A3A3A]" : "bg-white dark:bg-gray-900 text-gray-600 dark:text-gray-400 border-gray-200 dark:border-gray-700 hover:border-[#E2A9F1]"}`}>
               {c.name}
             </button>
           ))}
@@ -116,7 +116,7 @@ export default function ChildDancerCard({ parentId, children, hideResults, hideG
         <Card>
           <CardHeader>
             <CardTitle className="text-base flex items-center gap-2">
-              <Target size={16} className="text-purple-500" /> Sesongmål
+              <Target size={16} className="text-[#E2A9F1]" /> Sesongmål
             </CardTitle>
           </CardHeader>
           <CardContent>
@@ -129,7 +129,7 @@ export default function ChildDancerCard({ parentId, children, hideResults, hideG
       <Card>
         <CardHeader>
           <CardTitle className="text-base flex items-center gap-2">
-            <Trophy size={16} className="text-purple-500" /> Poeng og nivåer
+            <Trophy size={16} className="text-[#E2A9F1]" /> Poeng og nivåer
           </CardTitle>
         </CardHeader>
         <CardContent className="space-y-6">
@@ -141,11 +141,11 @@ export default function ChildDancerCard({ parentId, children, hideResults, hideG
               <div className="space-y-3">
                 <div className="flex items-center justify-between">
                   <p className="text-sm font-semibold text-gray-700 dark:text-gray-300">{label}</p>
-                  <span className="text-xs font-bold text-purple-600 bg-purple-50 px-2 py-0.5 rounded-full">{LEVELS[level]}</span>
+                  <span className="text-xs font-bold text-[#E2A9F1] bg-[#f5eeff] px-2 py-0.5 rounded-full">{LEVELS[level]}</span>
                 </div>
                 <div className="space-y-1.5">
                   <div className="flex justify-between text-[10px] px-0.5">
-                    {LEVELS.map((name, i) => <span key={i} className={i <= level ? "text-purple-600 font-semibold" : "text-gray-400 dark:text-gray-500"}>{name}</span>)}
+                    {LEVELS.map((name, i) => <span key={i} className={i <= level ? "text-[#E2A9F1] font-semibold" : "text-gray-400 dark:text-gray-500"}>{name}</span>)}
                   </div>
                   <div style={{ height: "12px", backgroundColor: "#e5e7eb", borderRadius: "9999px", overflow: "hidden" }}>
                     <div style={{ height: "100%", backgroundColor: "#7c3aed", borderRadius: "9999px", width: `${Math.max(3, (level / 4) * 100 + (percent / 100) * (100 / 4))}%`, transition: "width 0.5s ease" }} />
@@ -171,11 +171,11 @@ export default function ChildDancerCard({ parentId, children, hideResults, hideG
       {!hideResults && <CompetitionResultsCard userId={parentId} childId={selectedId} initialResults={results} />}
 
       {success && (
-        <div className="flex items-center gap-2 text-purple-700 text-sm bg-purple-50 border border-purple-200 rounded-xl p-3">
+        <div className="flex items-center gap-2 text-[#c87de0] text-sm bg-[#f5eeff] border border-[#E2A9F1]/40 rounded-xl p-3">
           <Check size={16} /> Lagret!
         </div>
       )}
-      <Button onClick={handleSave} className="w-full bg-purple-600 hover:bg-purple-700" disabled={saving || success}>
+      <Button onClick={handleSave} className="w-full bg-[#3A3A3A] hover:bg-[#2a2a2a]" disabled={saving || success}>
         {saving ? "Lagrer..." : "Lagre"}
       </Button>
     </div>

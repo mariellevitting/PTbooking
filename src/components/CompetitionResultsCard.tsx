@@ -25,7 +25,7 @@ function placementColor(p: string | null) {
   if (p === "1") return "text-yellow-500";
   if (p === "2") return "text-gray-400";
   if (p === "3") return "text-amber-600";
-  return "text-purple-600";
+  return "text-[#E2A9F1]";
 }
 
 type Result = {
@@ -94,9 +94,9 @@ export default function CompetitionResultsCard({ userId, initialResults, childId
       <CardHeader>
         <div className="flex items-center justify-between">
           <CardTitle className="text-base flex items-center gap-2">
-            <Medal size={16} className="text-purple-500" /> Konkurranseresultater
+            <Medal size={16} className="text-[#E2A9F1]" /> Konkurranseresultater
           </CardTitle>
-          <button onClick={() => setAdding(a => !a)} className="flex items-center gap-1 text-xs text-purple-600 hover:text-purple-800 font-medium">
+          <button onClick={() => setAdding(a => !a)} className="flex items-center gap-1 text-xs text-[#E2A9F1] hover:text-purple-800 font-medium">
             <Plus size={14} /> Legg til
           </button>
         </div>
@@ -104,11 +104,11 @@ export default function CompetitionResultsCard({ userId, initialResults, childId
       <CardContent className="space-y-4">
 
         {adding && (
-          <div className="border border-purple-200 rounded-xl p-4 space-y-3 bg-purple-50">
+          <div className="border border-[#E2A9F1]/40 rounded-xl p-4 space-y-3 bg-[#f5eeff]">
             <div className="space-y-1">
               <label className="text-xs font-medium text-gray-600 dark:text-gray-400">Konkurranse</label>
               <select value={comp} onChange={e => setComp(e.target.value)}
-                className="w-full border dark:border-gray-700 rounded-lg px-3 py-2 text-sm bg-white dark:bg-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-purple-400">
+                className="w-full border dark:border-gray-700 rounded-lg px-3 py-2 text-sm bg-white dark:bg-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-[#E2A9F1]">
                 {COMPETITIONS.map(c => <option key={c.name} value={c.name}>{c.short}</option>)}
               </select>
             </div>
@@ -117,18 +117,18 @@ export default function CompetitionResultsCard({ userId, initialResults, childId
                 <label className="text-xs font-medium text-gray-600 dark:text-gray-400">Freestyle-plassering</label>
                 <input type="text" value={placementF} onChange={e => setPlacementF(e.target.value)}
                   placeholder="f.eks. 1, finalist"
-                  className="w-full border dark:border-gray-700 bg-white dark:bg-gray-900 dark:text-white rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-purple-400" />
+                  className="w-full border dark:border-gray-700 bg-white dark:bg-gray-900 dark:text-white rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#E2A9F1]" />
               </div>
               <div className="space-y-1">
                 <label className="text-xs font-medium text-gray-600 dark:text-gray-400">Slow-plassering</label>
                 <input type="text" value={placementS} onChange={e => setPlacementS(e.target.value)}
                   placeholder="f.eks. 2, semifinalist"
-                  className="w-full border dark:border-gray-700 bg-white dark:bg-gray-900 dark:text-white rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-purple-400" />
+                  className="w-full border dark:border-gray-700 bg-white dark:bg-gray-900 dark:text-white rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#E2A9F1]" />
               </div>
             </div>
             <div className="flex gap-2">
               <button onClick={handleAdd} disabled={saving || (!placementF && !placementS)}
-                className="flex-1 bg-purple-600 hover:bg-purple-700 disabled:opacity-50 text-white text-sm font-medium rounded-lg py-2">
+                className="flex-1 bg-[#3A3A3A] hover:bg-[#2a2a2a] disabled:opacity-50 text-white text-sm font-medium rounded-lg py-2">
                 {saving ? "Lagrer..." : "Lagre resultat"}
               </button>
               <button onClick={() => setAdding(false)} className="px-4 text-sm text-gray-500 dark:text-gray-400 hover:text-gray-700 border dark:border-gray-700 rounded-lg bg-white dark:bg-gray-900">
@@ -139,7 +139,7 @@ export default function CompetitionResultsCard({ userId, initialResults, childId
         )}
 
         {success && (
-          <div className="flex items-center gap-2 text-purple-700 text-sm bg-purple-50 border border-purple-200 rounded-xl p-3">
+          <div className="flex items-center gap-2 text-[#c87de0] text-sm bg-[#f5eeff] border border-[#E2A9F1]/40 rounded-xl p-3">
             <Check size={16} /> Resultat lagret!
           </div>
         )}

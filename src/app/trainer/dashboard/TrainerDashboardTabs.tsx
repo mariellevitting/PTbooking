@@ -54,13 +54,13 @@ export default function TrainerDashboardTabs({ slots, completedSlots }: Props) {
       <div className="flex gap-1 bg-gray-100 dark:bg-gray-800 rounded-xl p-1 mb-3">
         <button
           onClick={() => setTab("upcoming")}
-          className={`flex-1 px-3 py-1.5 rounded-lg text-sm font-medium transition-colors ${tab === "upcoming" ? "bg-white dark:bg-gray-900 text-purple-700 shadow-sm" : "text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300"}`}
+          className={`flex-1 px-3 py-1.5 rounded-lg text-sm font-medium transition-colors ${tab === "upcoming" ? "bg-white dark:bg-gray-900 text-[#c87de0] shadow-sm" : "text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300"}`}
         >
           Kommende
         </button>
         <button
           onClick={() => setTab("completed")}
-          className={`flex-1 px-3 py-1.5 rounded-lg text-sm font-medium transition-colors ${tab === "completed" ? "bg-white dark:bg-gray-900 text-purple-700 shadow-sm" : "text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300"}`}
+          className={`flex-1 px-3 py-1.5 rounded-lg text-sm font-medium transition-colors ${tab === "completed" ? "bg-white dark:bg-gray-900 text-[#c87de0] shadow-sm" : "text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300"}`}
         >
           Gjennomførte
         </button>
@@ -68,7 +68,7 @@ export default function TrainerDashboardTabs({ slots, completedSlots }: Props) {
 
       {/* Legg ut tid-knapp */}
       <Link href="/trainer/availability" className="block mb-4">
-        <Button className="w-full bg-purple-600 hover:bg-purple-700">+ Legg ut tid</Button>
+        <Button className="w-full bg-[#3A3A3A] hover:bg-[#2a2a2a]">+ Legg ut tid</Button>
       </Link>
 
       {/* Kommende timer */}
@@ -115,7 +115,7 @@ export default function TrainerDashboardTabs({ slots, completedSlots }: Props) {
                             const end = new Date(slot.end_at);
                             const booking = slot.bookings?.find(b => b.status === "confirmed");
                             return (
-                              <div key={slot.id} className={`rounded-xl border p-4 flex justify-between items-center ${booking ? "bg-white dark:bg-gray-900 border-l-4 border-l-purple-400" : "bg-gray-50 dark:bg-gray-950 border-dashed border-gray-200 dark:border-gray-700"}`}>
+                              <div key={slot.id} className={`rounded-xl border p-4 flex justify-between items-center ${booking ? "bg-white dark:bg-gray-900 border-l-4 border-l-[#E2A9F1]" : "bg-gray-50 dark:bg-gray-950 border-dashed border-gray-200 dark:border-gray-700"}`}>
                                 <div>
                                   <p className="text-sm text-gray-500 dark:text-gray-400">{formatTime(start)}–{formatTime(end)}</p>
                                   {booking && (
@@ -124,11 +124,11 @@ export default function TrainerDashboardTabs({ slots, completedSlots }: Props) {
                                         {(booking.profiles as any)?.avatar_url ? (
                                           <img src={(booking.profiles as any).avatar_url} alt="" className="w-6 h-6 rounded-full object-cover" />
                                         ) : (
-                                          <div className="w-6 h-6 rounded-full bg-purple-100 flex items-center justify-center text-purple-600 text-xs font-bold">
+                                          <div className="w-6 h-6 rounded-full bg-[#edd5f9] flex items-center justify-center text-[#E2A9F1] text-xs font-bold">
                                             {booking.dancer_name.charAt(0)}
                                           </div>
                                         )}
-                                        <p className="text-sm font-medium text-purple-700">{booking.dancer_name} · {booking.dance_style}</p>
+                                        <p className="text-sm font-medium text-[#c87de0]">{booking.dancer_name} · {booking.dance_style}</p>
                                       </div>
                                       {end > new Date() && (
                                         <Link href={`/trainer/avbestill/${booking.id}`} className="text-xs text-red-400 hover:text-red-600 mt-1 inline-block">Avbestill</Link>
@@ -137,7 +137,7 @@ export default function TrainerDashboardTabs({ slots, completedSlots }: Props) {
                                   )}
                                 </div>
                                 {booking ? (
-                                  <span className="text-xs bg-purple-100 text-purple-700 px-2 py-1 rounded-full whitespace-nowrap">Opptatt</span>
+                                  <span className="text-xs bg-[#edd5f9] text-[#c87de0] px-2 py-1 rounded-full whitespace-nowrap">Opptatt</span>
                                 ) : (
                                   <div className="flex flex-col items-end gap-1">
                                     <span className="text-xs bg-green-100 text-green-600 px-2 py-1 rounded-full">Ledig</span>
@@ -178,7 +178,7 @@ export default function TrainerDashboardTabs({ slots, completedSlots }: Props) {
 
         return (
           <div className="space-y-6">
-            <p className="text-xs text-purple-500">{completed.length} gjennomførte privattimer totalt</p>
+            <p className="text-xs text-[#E2A9F1]">{completed.length} gjennomførte privattimer totalt</p>
             {Object.entries(monthGroups).map(([month, monthSlots]) => (
               <div key={month}>
                 <p className="text-xs font-semibold text-gray-400 dark:text-gray-500 uppercase tracking-wider mb-2">{month}</p>
@@ -194,7 +194,7 @@ export default function TrainerDashboardTabs({ slots, completedSlots }: Props) {
                           <div>
                             <p className="text-sm font-semibold text-gray-600 dark:text-gray-400">{dayLabel.charAt(0).toUpperCase() + dayLabel.slice(1)}</p>
                             <p className="text-sm text-gray-400 dark:text-gray-500">{formatTime(start)}–{formatTime(end)}</p>
-                            {booking && <p className="text-sm text-purple-500 mt-0.5">{booking.dancer_name} · {booking.dance_style}</p>}
+                            {booking && <p className="text-sm text-[#E2A9F1] mt-0.5">{booking.dancer_name} · {booking.dance_style}</p>}
                           </div>
                           <span className="text-xs bg-gray-100 dark:bg-gray-800 text-gray-500 dark:text-gray-400 px-2 py-1 rounded-full">Fullført</span>
                         </div>

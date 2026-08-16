@@ -274,9 +274,9 @@ export default function BookingForm({ slots, trainerName, bookerId, bookerName, 
         )}
 
         <div className="flex items-center justify-between">
-          <button type="button" onClick={() => { const p = new Date(weekStart); p.setDate(p.getDate() - 7); setWeekStart(p); }} disabled={!canGoPrev} className={`text-2xl px-2 ${canGoPrev ? "text-gray-600 dark:text-gray-400 hover:text-purple-600" : "text-gray-200 dark:text-gray-700"}`}>‹</button>
+          <button type="button" onClick={() => { const p = new Date(weekStart); p.setDate(p.getDate() - 7); setWeekStart(p); }} disabled={!canGoPrev} className={`text-2xl px-2 ${canGoPrev ? "text-gray-600 dark:text-gray-400 hover:text-[#E2A9F1]" : "text-gray-200 dark:text-gray-700"}`}>‹</button>
           <span className="font-semibold text-gray-700 dark:text-gray-300">Uke {getWeekNumber(weekStart)}</span>
-          <button type="button" onClick={() => { const n = new Date(weekStart); n.setDate(n.getDate() + 7); setWeekStart(n); }} className="text-2xl px-2 text-gray-600 dark:text-gray-400 hover:text-purple-600">›</button>
+          <button type="button" onClick={() => { const n = new Date(weekStart); n.setDate(n.getDate() + 7); setWeekStart(n); }} className="text-2xl px-2 text-gray-600 dark:text-gray-400 hover:text-[#E2A9F1]">›</button>
         </div>
 
         {Object.keys(weekGrouped).length === 0 ? (
@@ -309,8 +309,8 @@ export default function BookingForm({ slots, trainerName, bookerId, bookerName, 
                         slot.is_booked
                           ? "bg-gray-100 dark:bg-gray-800 text-gray-400 dark:text-gray-600 border-gray-200 dark:border-gray-700 cursor-not-allowed line-through"
                           : isSelected
-                          ? "bg-purple-600 text-white border-purple-600"
-                          : "bg-white dark:bg-gray-900 text-gray-700 dark:text-gray-300 border-gray-200 dark:border-gray-700 hover:border-purple-400"
+                          ? "bg-[#3A3A3A] text-[#E2A9F1] border-[#3A3A3A]"
+                          : "bg-white dark:bg-gray-900 text-gray-700 dark:text-gray-300 border-gray-200 dark:border-gray-700 hover:border-[#E2A9F1]"
                       }`}
                     >
                       {time}
@@ -323,10 +323,10 @@ export default function BookingForm({ slots, trainerName, bookerId, bookerName, 
         )}
 
         {selectedSlots.length > 0 && (
-          <p className="text-sm text-purple-600 text-center">{selectedSlots.length} time{selectedSlots.length !== 1 ? "r" : ""} valgt</p>
+          <p className="text-sm text-[#E2A9F1] text-center">{selectedSlots.length} time{selectedSlots.length !== 1 ? "r" : ""} valgt</p>
         )}
 
-        <Button className="w-full bg-purple-600 hover:bg-purple-700" disabled={selectedSlots.length === 0} onClick={startConfigure}>
+        <Button className="w-full bg-[#3A3A3A] hover:bg-[#2a2a2a]" disabled={selectedSlots.length === 0} onClick={startConfigure}>
           Gå videre
         </Button>
       </div>
@@ -375,8 +375,8 @@ export default function BookingForm({ slots, trainerName, bookerId, bookerName, 
                   }}
                   className={`py-2 px-3 rounded-lg text-sm border transition-colors ${
                     current.danceStyle === style
-                      ? "bg-purple-600 text-white border-purple-600"
-                      : "bg-white dark:bg-gray-900 text-gray-700 dark:text-gray-300 border-gray-200 dark:border-gray-700 hover:border-purple-400"
+                      ? "bg-[#3A3A3A] text-[#E2A9F1] border-[#3A3A3A]"
+                      : "bg-white dark:bg-gray-900 text-gray-700 dark:text-gray-300 border-gray-200 dark:border-gray-700 hover:border-[#E2A9F1]"
                   }`}
                 >
                   {style}
@@ -396,11 +396,11 @@ export default function BookingForm({ slots, trainerName, bookerId, bookerName, 
               ) : (
                 <Input value={current.dancer1} onChange={(e) => updateCurrent("dancer1", e.target.value)} placeholder="Navn på danseren" />
               )}
-              {!addingChild && <button type="button" onClick={() => setAddingChild(true)} className="text-xs text-purple-600 hover:underline">+ Legg til barn</button>}
+              {!addingChild && <button type="button" onClick={() => setAddingChild(true)} className="text-xs text-[#E2A9F1] hover:underline">+ Legg til barn</button>}
               {addingChild && (
                 <div className="flex gap-2">
                   <Input value={newChildName} onChange={(e) => setNewChildName(e.target.value)} placeholder="Navn på barn" className="text-sm" />
-                  <Button type="button" onClick={handleAddChild} disabled={savingChild} className="bg-purple-600 hover:bg-purple-700 text-sm px-3">{savingChild ? "..." : "Legg til"}</Button>
+                  <Button type="button" onClick={handleAddChild} disabled={savingChild} className="bg-[#3A3A3A] hover:bg-[#2a2a2a] text-sm px-3">{savingChild ? "..." : "Legg til"}</Button>
                 </div>
               )}
             </div>
@@ -411,12 +411,12 @@ export default function BookingForm({ slots, trainerName, bookerId, bookerName, 
               <label className="text-sm font-medium">{isParent ? "Danser 2 – navn" : "Navn på partner"}</label>
 
               {linkedPartner ? (
-                <div className="flex items-center justify-between bg-purple-50 border border-purple-200 rounded-lg px-3 py-2.5">
+                <div className="flex items-center justify-between bg-[#f5eeff] border border-[#E2A9F1]/40 rounded-lg px-3 py-2.5">
                   <div>
                     <p className="text-sm font-semibold text-purple-800">{linkedPartner.name}</p>
-                    <p className="text-xs text-purple-500">Koblet til profil · får varsel</p>
+                    <p className="text-xs text-[#E2A9F1]">Koblet til profil · får varsel</p>
                   </div>
-                  <button type="button" onClick={clearPartner} className="text-purple-400 hover:text-purple-700 ml-2">
+                  <button type="button" onClick={clearPartner} className="text-[#E2A9F1] hover:text-[#c87de0] ml-2">
                     <X size={16} />
                   </button>
                 </div>
@@ -442,10 +442,10 @@ export default function BookingForm({ slots, trainerName, bookerId, bookerName, 
                           key={u.id}
                           type="button"
                           onClick={() => selectPartner(u)}
-                          className="w-full text-left px-4 py-2.5 hover:bg-purple-50 dark:hover:bg-purple-950/30 flex items-center justify-between border-t dark:border-gray-700 first:border-t-0"
+                          className="w-full text-left px-4 py-2.5 hover:bg-[#f5eeff] dark:hover:bg-purple-950/30 flex items-center justify-between border-t dark:border-gray-700 first:border-t-0"
                         >
                           <span className="text-sm font-medium text-gray-800 dark:text-gray-100">{u.name}</span>
-                          <span className="text-xs text-purple-500">Koble til profil</span>
+                          <span className="text-xs text-[#E2A9F1]">Koble til profil</span>
                         </button>
                       ))}
                     </div>
@@ -455,7 +455,7 @@ export default function BookingForm({ slots, trainerName, bookerId, bookerName, 
             </div>
           )}
 
-          <Button className="w-full bg-purple-600 hover:bg-purple-700" disabled={!canNext} onClick={nextConfig}>
+          <Button className="w-full bg-[#3A3A3A] hover:bg-[#2a2a2a]" disabled={!canNext} onClick={nextConfig}>
             {configIndex < slotBookings.length - 1 ? "Neste time →" : "Se oppsummering"}
           </Button>
           <button type="button" onClick={() => configIndex === 0 ? setStep("pick") : setConfigIndex(configIndex - 1)} className="w-full text-sm text-gray-400 dark:text-gray-500 hover:text-gray-600 dark:hover:text-gray-300 py-2">
@@ -480,12 +480,12 @@ export default function BookingForm({ slots, trainerName, bookerId, bookerName, 
             const dayLabel = start.toLocaleDateString("nb-NO", { weekday: "long", day: "numeric", month: "long" });
             const dancerName = isDouble(sb.danceStyle) ? `${sb.dancer1} & ${sb.dancer2}` : sb.dancer1;
             return (
-              <div key={i} className="bg-gray-50 dark:bg-gray-800 rounded-xl px-4 py-3 border-l-4 border-l-purple-400">
+              <div key={i} className="bg-gray-50 dark:bg-gray-800 rounded-xl px-4 py-3 border-l-4 border-l-[#E2A9F1]">
                 <p className="font-semibold text-sm">{dayLabel.charAt(0).toUpperCase() + dayLabel.slice(1)}</p>
                 <p className="text-sm text-gray-500 dark:text-gray-400">
                   {start.toLocaleTimeString("nb-NO", { hour: "2-digit", minute: "2-digit" })}–{end.toLocaleTimeString("nb-NO", { hour: "2-digit", minute: "2-digit" })}
                 </p>
-                <p className="text-sm text-purple-600">{sb.danceStyle} · {dancerName}</p>
+                <p className="text-sm text-[#E2A9F1]">{sb.danceStyle} · {dancerName}</p>
                 <p className="text-xs text-gray-400 dark:text-gray-500 mt-0.5">Trener: {trainerName}</p>
                 {sb.linkedUserId && (
                   <p className="text-xs text-green-600 mt-0.5">✓ Koblet til {sb.dancer2}s profil</p>
@@ -505,7 +505,7 @@ export default function BookingForm({ slots, trainerName, bookerId, bookerName, 
 
         {error && <p className="text-sm text-red-500">{error}</p>}
 
-        <Button className="w-full bg-purple-600 hover:bg-purple-700" onClick={handleBook} disabled={loading}>
+        <Button className="w-full bg-[#3A3A3A] hover:bg-[#2a2a2a]" onClick={handleBook} disabled={loading}>
           {loading ? "Booker..." : `Bekreft ${slotBookings.length} booking${slotBookings.length !== 1 ? "er" : ""}`}
         </Button>
         <button type="button" onClick={() => { setConfigIndex(slotBookings.length - 1); setStep("configure"); }} className="w-full text-sm text-gray-400 dark:text-gray-500 hover:text-gray-600 dark:hover:text-gray-300 py-2">

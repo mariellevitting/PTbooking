@@ -41,7 +41,7 @@ export default async function TrainerHistorikkPage() {
   return (
     <main className="bg-gray-50 dark:bg-gray-950 px-6 pb-6 page-safe-top">
       <div className="max-w-lg mx-auto">
-        <Link href="/trainer/dashboard" className="inline-flex items-center gap-1 text-sm text-purple-600 hover:underline mb-6">
+        <Link href="/trainer/dashboard" className="inline-flex items-center gap-1 text-sm text-[#E2A9F1] hover:underline mb-6">
           <ArrowLeft size={16} /> Tilbake
         </Link>
 
@@ -55,7 +55,7 @@ export default async function TrainerHistorikkPage() {
         <div className="flex items-baseline gap-2 mb-6">
           <h1 className="text-2xl font-bold">Gjennomførte privattimer</h1>
           {completed.length > 0 && (
-            <span className="text-sm text-purple-500">{completed.length} totalt</span>
+            <span className="text-sm text-[#E2A9F1]">{completed.length} totalt</span>
           )}
         </div>
 
@@ -85,7 +85,7 @@ export default async function TrainerHistorikkPage() {
                               {formatTime(start)}–{formatTime(end)}
                             </p>
                             {booking && (
-                              <p className="text-sm text-purple-600 mt-0.5">
+                              <p className="text-sm text-[#E2A9F1] mt-0.5">
                                 {booking.dancer_name} · {booking.dance_style}
                               </p>
                             )}

@@ -69,15 +69,15 @@ export default function NMCountdown({ href }: Props) {
   const timeLeft = getTimeLeft(next.date)!;
 
   const box = (
-    <div className="bg-purple-600 rounded-xl px-4 py-3 flex items-center justify-between">
+    <div className="bg-[#3A3A3A] rounded-xl px-4 py-3 flex items-center justify-between">
       <div>
-        <p className="text-xs text-purple-200 font-semibold uppercase tracking-wide">Neste konkurranse</p>
+        <p className="text-xs text-[#e8c4f5] font-semibold uppercase tracking-wide">Neste konkurranse</p>
         <p className="text-sm font-bold text-white">{next.short}</p>
-        <p className="text-xs text-purple-200">{next.dateLabel}{next.location ? ` · ${next.location}` : ""}</p>
+        <p className="text-xs text-[#e8c4f5]">{next.dateLabel}{next.location ? ` · ${next.location}` : ""}</p>
       </div>
       <div className="text-right ml-4">
         <p className="text-3xl font-bold text-white">{timeLeft.days}</p>
-        <p className="text-xs text-purple-200">dager igjen</p>
+        <p className="text-xs text-[#e8c4f5]">dager igjen</p>
       </div>
     </div>
   );

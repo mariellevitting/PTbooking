@@ -41,7 +41,7 @@ export default function NyttPassordPage() {
 
   return (
     <div className="min-h-screen flex flex-col md:flex-row">
-      <div className="hidden md:flex md:w-1/2 relative bg-purple-600">
+      <div className="hidden md:flex md:w-1/2 relative bg-[#3A3A3A]">
         <div className="absolute inset-0 bg-gradient-to-br from-purple-500 to-purple-800" />
         <div className="relative z-10 flex flex-col justify-end p-10 text-white">
           <p className="text-white/90 text-lg italic mb-3">✦ Av dansere, for dansere</p>
@@ -86,7 +86,7 @@ export default function NyttPassordPage() {
               />
             </div>
             {error && <p className="text-sm text-red-500">{error}</p>}
-            <Button type="submit" className="w-full bg-purple-600 hover:bg-purple-700 h-11 text-base" disabled={loading}>
+            <Button type="submit" className="w-full bg-[#3A3A3A] hover:bg-[#2a2a2a] h-11 text-base" disabled={loading}>
               {loading ? "Lagrer..." : "Sett nytt passord"}
             </Button>
           </form>

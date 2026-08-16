@@ -101,15 +101,15 @@ export default function ProfilForm({ userId, name, phone, bio, danceStyles, avat
       <Card>
         <CardContent className="pt-5 flex flex-col items-center gap-3">
           <div className="relative">
-            <div className="w-24 h-24 rounded-full bg-purple-100 flex items-center justify-center overflow-hidden">
+            <div className="w-24 h-24 rounded-full bg-[#edd5f9] flex items-center justify-center overflow-hidden">
               {avatar ? (
                 <img src={avatar} alt="Profilbilde" className="w-full h-full object-cover" />
               ) : (
-                <span className="text-3xl font-bold text-purple-600">{nameVal.charAt(0)}</span>
+                <span className="text-3xl font-bold text-[#E2A9F1]">{nameVal.charAt(0)}</span>
               )}
             </div>
             <button type="button" onClick={() => fileRef.current?.click()}
-              className="absolute bottom-0 right-0 bg-purple-600 text-white rounded-full p-1.5 hover:bg-purple-700">
+              className="absolute bottom-0 right-0 bg-[#3A3A3A] text-[#E2A9F1] rounded-full p-1.5 hover:bg-[#2a2a2a]">
               <Camera size={14} />
             </button>
           </div>
@@ -121,7 +121,7 @@ export default function ProfilForm({ userId, name, phone, bio, danceStyles, avat
       <Card>
         <CardHeader>
           <CardTitle className="text-base flex items-center gap-2">
-            <User size={16} className="text-purple-500" /> Personlig informasjon
+            <User size={16} className="text-[#E2A9F1]" /> Personlig informasjon
           </CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">
@@ -144,7 +144,7 @@ export default function ProfilForm({ userId, name, phone, bio, danceStyles, avat
               onChange={(e) => setBioVal(e.target.value)}
               rows={3}
               placeholder="Kort beskrivelse av deg som trener..."
-              className="w-full border dark:border-gray-700 bg-white dark:bg-gray-900 text-gray-900 dark:text-white rounded-lg px-3 py-2 text-sm resize-none focus:outline-none focus:ring-2 focus:ring-purple-300"
+              className="w-full border dark:border-gray-700 bg-white dark:bg-gray-900 text-gray-900 dark:text-white rounded-lg px-3 py-2 text-sm resize-none focus:outline-none focus:ring-2 focus:ring-[#E2A9F1]"
             />
           </div>
         </CardContent>
@@ -153,7 +153,7 @@ export default function ProfilForm({ userId, name, phone, bio, danceStyles, avat
       <Card>
         <CardHeader>
           <CardTitle className="text-base flex items-center gap-2">
-            <Music size={16} className="text-purple-500" /> Dansestiler du tilbyr
+            <Music size={16} className="text-[#E2A9F1]" /> Dansestiler du tilbyr
           </CardTitle>
         </CardHeader>
         <CardContent>
@@ -167,14 +167,14 @@ export default function ProfilForm({ userId, name, phone, bio, danceStyles, avat
                   onClick={() => toggleStyle(style)}
                   className={`flex items-center gap-2 px-3 py-2.5 rounded-xl border text-sm font-medium transition-colors ${
                     isSelected
-                      ? "bg-purple-600 text-white border-purple-600"
-                      : "bg-white dark:bg-gray-900 text-gray-700 dark:text-gray-300 border-gray-200 dark:border-gray-700 hover:border-purple-300"
+                      ? "bg-[#3A3A3A] text-[#E2A9F1] border-[#3A3A3A]"
+                      : "bg-white dark:bg-gray-900 text-gray-700 dark:text-gray-300 border-gray-200 dark:border-gray-700 hover:border-[#E2A9F1]"
                   }`}
                 >
                   <div className={`w-4 h-4 rounded border flex items-center justify-center shrink-0 ${
                     isSelected ? "bg-white border-white" : "border-gray-300 dark:border-gray-600"
                   }`}>
-                    {isSelected && <Check size={11} className="text-purple-600" strokeWidth={3} />}
+                    {isSelected && <Check size={11} className="text-[#E2A9F1]" strokeWidth={3} />}
                   </div>
                   {style}
                 </button>
@@ -182,19 +182,19 @@ export default function ProfilForm({ userId, name, phone, bio, danceStyles, avat
             })}
           </div>
           {selected.size > 0 && (
-            <p className="text-xs text-purple-600 mt-3">{selected.size} stil{selected.size !== 1 ? "er" : ""} valgt</p>
+            <p className="text-xs text-[#E2A9F1] mt-3">{selected.size} stil{selected.size !== 1 ? "er" : ""} valgt</p>
           )}
         </CardContent>
       </Card>
 
       {error && <p className="text-sm text-red-500">{error}</p>}
       {success && (
-        <div className="flex items-center gap-2 text-purple-700 text-sm bg-purple-50 border border-purple-200 rounded-xl p-3">
+        <div className="flex items-center gap-2 text-[#c87de0] text-sm bg-[#f5eeff] border border-[#E2A9F1]/40 rounded-xl p-3">
           <Check size={16} /> Profilen er oppdatert!
         </div>
       )}
 
-      <Button type="submit" className="w-full bg-purple-600 hover:bg-purple-700" disabled={saving || success}>
+      <Button type="submit" className="w-full bg-[#3A3A3A] hover:bg-[#2a2a2a]" disabled={saving || success}>
         {saving ? "Lagrer..." : "Lagre profil"}
       </Button>
     </form>

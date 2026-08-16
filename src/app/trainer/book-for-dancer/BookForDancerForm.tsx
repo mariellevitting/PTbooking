@@ -239,12 +239,12 @@ export default function BookForDancerForm({ trainerId, danceStyles }: Props) {
               {double ? "Danser 1" : "Danserens navn"}
             </label>
             {linkedUser ? (
-              <div className="flex items-center justify-between bg-purple-50 border border-purple-200 rounded-lg px-3 py-2.5">
+              <div className="flex items-center justify-between bg-[#f5eeff] border border-[#E2A9F1]/40 rounded-lg px-3 py-2.5">
                 <div>
                   <p className="text-sm font-semibold text-purple-800">{linkedUser.name}</p>
-                  <p className="text-xs text-purple-500">Koblet til profil · får varsel</p>
+                  <p className="text-xs text-[#E2A9F1]">Koblet til profil · får varsel</p>
                 </div>
-                <button type="button" onClick={clearLinkedUser} className="text-purple-400 hover:text-purple-700 ml-2">
+                <button type="button" onClick={clearLinkedUser} className="text-[#E2A9F1] hover:text-[#c87de0] ml-2">
                   <X size={16} />
                 </button>
               </div>
@@ -263,9 +263,9 @@ export default function BookForDancerForm({ trainerId, danceStyles }: Props) {
                   <div className="absolute z-10 mt-1 w-full bg-white dark:bg-gray-900 border dark:border-gray-700 rounded-xl shadow-lg overflow-hidden">
                     {searchResults.map(u => (
                       <button key={u.id} type="button" onClick={() => selectUser(u)}
-                        className="w-full text-left px-4 py-2.5 hover:bg-purple-50 dark:hover:bg-purple-950/30 flex items-center justify-between border-t dark:border-gray-700 first:border-t-0">
+                        className="w-full text-left px-4 py-2.5 hover:bg-[#f5eeff] dark:hover:bg-purple-950/30 flex items-center justify-between border-t dark:border-gray-700 first:border-t-0">
                         <span className="text-sm font-medium text-gray-800 dark:text-gray-100">{u.name}</span>
-                        <span className="text-xs text-purple-500">Koble til profil</span>
+                        <span className="text-xs text-[#E2A9F1]">Koble til profil</span>
                       </button>
                     ))}
                   </div>
@@ -310,11 +310,11 @@ export default function BookForDancerForm({ trainerId, danceStyles }: Props) {
                   disabled={isPast}
                   className={`flex flex-col items-center py-2 rounded-lg transition-colors ${
                     isSelected
-                      ? "bg-purple-600 text-white"
+                      ? "bg-[#3A3A3A] text-[#E2A9F1]"
                       : isPast
                       ? "text-gray-300 dark:text-gray-600 cursor-default"
                       : isToday
-                      ? "bg-purple-100 text-purple-700 hover:bg-purple-200"
+                      ? "bg-[#edd5f9] text-[#c87de0] hover:bg-[#E2A9F1]/30"
                       : "hover:bg-gray-100 dark:hover:bg-gray-800 text-gray-700 dark:text-gray-300"
                   }`}
                 >
@@ -351,8 +351,8 @@ export default function BookForDancerForm({ trainerId, danceStyles }: Props) {
                     isPastSlot
                       ? "bg-gray-50 dark:bg-gray-950 text-gray-300 dark:text-gray-600 border-gray-100 dark:border-gray-800 cursor-not-allowed"
                       : time === slot
-                      ? "bg-purple-600 text-white border-purple-600"
-                      : "bg-white dark:bg-gray-900 text-gray-700 dark:text-gray-300 border-gray-200 dark:border-gray-700 hover:border-purple-400"
+                      ? "bg-[#3A3A3A] text-[#E2A9F1] border-[#3A3A3A]"
+                      : "bg-white dark:bg-gray-900 text-gray-700 dark:text-gray-300 border-gray-200 dark:border-gray-700 hover:border-[#E2A9F1]"
                   }`}
                 >
                   {slot}
@@ -374,8 +374,8 @@ export default function BookForDancerForm({ trainerId, danceStyles }: Props) {
                 onClick={() => { setStyle(style === s ? "" : s); setDancer2(""); }}
                 className={`px-3 py-1.5 rounded-full text-sm font-medium border transition-colors ${
                   style === s
-                    ? "bg-purple-600 text-white border-purple-600"
-                    : "bg-white dark:bg-gray-900 text-gray-700 dark:text-gray-300 border-gray-200 dark:border-gray-700 hover:border-purple-400"
+                    ? "bg-[#3A3A3A] text-[#E2A9F1] border-[#3A3A3A]"
+                    : "bg-white dark:bg-gray-900 text-gray-700 dark:text-gray-300 border-gray-200 dark:border-gray-700 hover:border-[#E2A9F1]"
                 }`}
               >
                 {s}
@@ -389,7 +389,7 @@ export default function BookForDancerForm({ trainerId, danceStyles }: Props) {
 
       <Button
         type="submit"
-        className="w-full bg-purple-600 hover:bg-purple-700"
+        className="w-full bg-[#3A3A3A] hover:bg-[#2a2a2a]"
         disabled={loading || !time || !dancer1 || (double && !dancer2)}
       >
         {loading ? "Lagrer..." : "Book time"}

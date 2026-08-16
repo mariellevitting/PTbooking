@@ -183,7 +183,7 @@ export default function AvailabilityPage() {
   return (
     <main className="bg-gray-50 dark:bg-gray-950 px-6 pb-6 page-safe-top">
       <div className="max-w-lg mx-auto">
-        <button onClick={() => router.push("/trainer/dashboard")} className="text-sm text-purple-600 hover:underline mb-6 block">
+        <button onClick={() => router.push("/trainer/dashboard")} className="text-sm text-[#E2A9F1] hover:underline mb-6 block">
           ← Tilbake
         </button>
         <h1 className="text-2xl font-bold mb-6">Legg ut ledige tider</h1>
@@ -234,11 +234,11 @@ export default function AvailabilityPage() {
                     disabled={isPast}
                     className={`flex flex-col items-center py-2 rounded-lg transition-colors ${
                       isSelected
-                        ? "bg-purple-600 text-white"
+                        ? "bg-[#3A3A3A] text-[#E2A9F1]"
                         : isPast
                         ? "text-gray-300 dark:text-gray-600 cursor-default"
                         : isToday
-                        ? "bg-purple-100 text-purple-700 hover:bg-purple-200"
+                        ? "bg-[#edd5f9] text-[#c87de0] hover:bg-[#E2A9F1]/30"
                         : "hover:bg-gray-100 dark:hover:bg-gray-800 text-gray-700 dark:text-gray-300"
                     }`}
                   >
@@ -288,8 +288,8 @@ export default function AvailabilityPage() {
                             : isPastSlot
                             ? "bg-gray-50 dark:bg-gray-950 text-gray-300 dark:text-gray-600 border-gray-100 dark:border-gray-800 cursor-not-allowed"
                             : isSelected
-                            ? "bg-purple-600 text-white border-purple-600"
-                            : "bg-white dark:bg-gray-900 text-gray-700 dark:text-gray-300 border-gray-200 dark:border-gray-700 hover:border-purple-400"
+                            ? "bg-[#3A3A3A] text-[#E2A9F1] border-[#3A3A3A]"
+                            : "bg-white dark:bg-gray-900 text-gray-700 dark:text-gray-300 border-gray-200 dark:border-gray-700 hover:border-[#E2A9F1]"
                         }`}
                       >
                         {slot}
@@ -299,7 +299,7 @@ export default function AvailabilityPage() {
                 </div>
 
                 {selectedDate && (selected.get(dateToISO(selectedDate))?.size ?? 0) > 0 && (
-                  <p className="text-sm text-purple-600">
+                  <p className="text-sm text-[#E2A9F1]">
                     {selected.get(dateToISO(selectedDate))!.size} valgt denne dagen
                   </p>
                 )}
@@ -309,7 +309,7 @@ export default function AvailabilityPage() {
 
                 <Button
                   type="submit"
-                  className="w-full bg-purple-600 hover:bg-purple-700"
+                  className="w-full bg-[#3A3A3A] hover:bg-[#2a2a2a]"
                   disabled={saving || totalSelected === 0}
                 >
                   {saving ? "Lagrer..." : `Legg ut ${totalSelected > 0 ? totalSelected + " " : ""}time${totalSelected !== 1 ? "r" : ""}`}

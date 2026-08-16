@@ -82,8 +82,8 @@ function TrainerCalendar({ trainer, slots }: { trainer: Profile; slots: Slot[] }
           const isToday = isSameDay(day, new Date());
 
           return (
-            <div key={i} className={`min-h-20 rounded-xl p-1.5 border ${isToday ? "border-purple-400 bg-purple-50 dark:bg-purple-950" : "border-gray-100 dark:border-gray-800 bg-gray-50 dark:bg-gray-800/50"}`}>
-              <p className={`text-xs font-bold mb-1 ${isToday ? "text-purple-600" : "text-gray-500 dark:text-gray-400"}`}>{day.getDate()}</p>
+            <div key={i} className={`min-h-20 rounded-xl p-1.5 border ${isToday ? "border-purple-400 bg-[#f5eeff] dark:bg-purple-950" : "border-gray-100 dark:border-gray-800 bg-gray-50 dark:bg-gray-800/50"}`}>
+              <p className={`text-xs font-bold mb-1 ${isToday ? "text-[#E2A9F1]" : "text-gray-500 dark:text-gray-400"}`}>{day.getDate()}</p>
               <div className="space-y-1">
                 {daySlots.map(s => {
                   const booking = s.bookings?.find(b => b.status === "confirmed");
@@ -137,7 +137,7 @@ export default function AdminClient({ profiles, feedback, slots, trainerMap }: P
     .sort((a, b) => new Date(a.start_at).getTime() - new Date(b.start_at).getTime());
 
   const statCards = [
-    { label: "Alle brukere", value: profiles.length, filter: "alle" as RoleFilter, color: "bg-purple-600 border-purple-600" },
+    { label: "Alle brukere", value: profiles.length, filter: "alle" as RoleFilter, color: "bg-[#3A3A3A] border-[#3A3A3A]" },
     { label: "Dansere", value: dancers.length, filter: "dancer" as RoleFilter, color: "bg-blue-500 border-blue-500" },
     { label: "Foreldre", value: parents.length, filter: "parent" as RoleFilter, color: "bg-green-500 border-green-500" },
     { label: "Trenere", value: trainers.length, filter: "trainer" as RoleFilter, color: "bg-orange-500 border-orange-500" },
@@ -169,7 +169,7 @@ export default function AdminClient({ profiles, feedback, slots, trainerMap }: P
 
         <div className="bg-white dark:bg-gray-900 rounded-2xl border dark:border-gray-700 p-5">
           <h2 className="font-bold text-gray-900 dark:text-white mb-4">
-            Kommende bookinger <span className="text-purple-600 ml-1">neste 7 dager</span>
+            Kommende bookinger <span className="text-[#E2A9F1] ml-1">neste 7 dager</span>
           </h2>
           {upcomingBookings.length === 0 ? (
             <p className="text-sm text-gray-400">Ingen bookinger de neste 7 dagene</p>
@@ -262,7 +262,7 @@ export default function AdminClient({ profiles, feedback, slots, trainerMap }: P
 
         <div className="bg-white dark:bg-gray-900 rounded-2xl border dark:border-gray-700 p-5">
           <h2 className="font-bold text-gray-900 dark:text-white mb-4">
-            Tilbakemeldinger <span className="text-purple-600 ml-1">{feedback.length}</span>
+            Tilbakemeldinger <span className="text-[#E2A9F1] ml-1">{feedback.length}</span>
           </h2>
           {!feedback.length ? (
             <p className="text-sm text-gray-400">Ingen tilbakemeldinger ennå</p>

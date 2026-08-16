@@ -14,14 +14,14 @@ export default async function OmPage() {
     <div className="min-h-screen bg-white dark:bg-gray-950">
 
       {/* Header */}
-      <div className="bg-purple-600 text-white">
+      <div className="bg-[#3A3A3A] text-[#E2A9F1]">
         <div className="max-w-3xl mx-auto px-6 pb-12 md:pb-20 page-safe-top">
-          <Link href="/login" className="text-purple-200 hover:text-white text-sm mb-6 inline-block">← Tilbake</Link>
-          <p className="text-purple-200 text-sm font-semibold uppercase tracking-widest mb-3">Evolution Danseklubb</p>
+          <Link href="/login" className="text-[#e8c4f5] hover:text-white text-sm mb-6 inline-block">← Tilbake</Link>
+          <p className="text-[#e8c4f5] text-sm font-semibold uppercase tracking-widest mb-3">Evolution Danseklubb</p>
           <h1 className="text-3xl md:text-5xl font-bold leading-tight mb-4">
             Danceitude ble laget fordi dansemiljøet fortjener bedre verktøy
           </h1>
-          <p className="text-purple-100 text-lg italic">Av dansere, for dansere</p>
+          <p className="text-[#f0d8fa] text-lg italic">Av dansere, for dansere</p>
         </div>
       </div>
 
@@ -56,7 +56,7 @@ export default async function OmPage() {
             {/* Danser */}
             <div className="border border-gray-200 dark:border-gray-700 rounded-2xl p-6">
               <div className="flex items-center gap-3 mb-3">
-                <div className="w-10 h-10 rounded-full bg-purple-100 dark:bg-purple-900 flex items-center justify-center text-purple-600 dark:text-purple-300 font-bold">D</div>
+                <div className="w-10 h-10 rounded-full bg-[#edd5f9] dark:bg-purple-900 flex items-center justify-center text-[#E2A9F1] dark:text-[#E2A9F1] font-bold">D</div>
                 <h3 className="text-xl font-bold text-gray-900 dark:text-white">For dansere</h3>
               </div>
               <p className="text-gray-600 dark:text-gray-400 mb-4">Finn trenere, book privattimer og få bedre oversikt over treningen og utviklingen din.</p>
@@ -74,7 +74,7 @@ export default async function OmPage() {
                   "Motta varsler når en trener booker en time på dine vegne",
                 ].map(f => (
                   <li key={f} className="flex items-start gap-2 text-gray-700 dark:text-gray-300 text-sm">
-                    <span className="text-purple-500 mt-0.5">•</span>{f}
+                    <span className="text-[#E2A9F1] mt-0.5">•</span>{f}
                   </li>
                 ))}
               </ul>
@@ -84,7 +84,7 @@ export default async function OmPage() {
             {/* Forelder */}
             <div className="border border-gray-200 dark:border-gray-700 rounded-2xl p-6">
               <div className="flex items-center gap-3 mb-3">
-                <div className="w-10 h-10 rounded-full bg-purple-100 dark:bg-purple-900 flex items-center justify-center text-purple-600 dark:text-purple-300 font-bold">F</div>
+                <div className="w-10 h-10 rounded-full bg-[#edd5f9] dark:bg-purple-900 flex items-center justify-center text-[#E2A9F1] dark:text-[#E2A9F1] font-bold">F</div>
                 <h3 className="text-xl font-bold text-gray-900 dark:text-white">For foreldre</h3>
               </div>
               <p className="text-gray-600 dark:text-gray-400 mb-4">Følg opp barnets dansehverdag uten å måtte lete gjennom dokumenter, meldinger og ulike systemer.</p>
@@ -97,7 +97,7 @@ export default async function OmPage() {
                   "Motta varsler når en trener booker en time på barnets vegne",
                 ].map(f => (
                   <li key={f} className="flex items-start gap-2 text-gray-700 dark:text-gray-300 text-sm">
-                    <span className="text-purple-500 mt-0.5">•</span>{f}
+                    <span className="text-[#E2A9F1] mt-0.5">•</span>{f}
                   </li>
                 ))}
               </ul>
@@ -107,7 +107,7 @@ export default async function OmPage() {
             {/* Trener */}
             <div className="border border-gray-200 dark:border-gray-700 rounded-2xl p-6">
               <div className="flex items-center gap-3 mb-3">
-                <div className="w-10 h-10 rounded-full bg-purple-100 dark:bg-purple-900 flex items-center justify-center text-purple-600 dark:text-purple-300 font-bold">T</div>
+                <div className="w-10 h-10 rounded-full bg-[#edd5f9] dark:bg-purple-900 flex items-center justify-center text-[#E2A9F1] dark:text-[#E2A9F1] font-bold">T</div>
                 <h3 className="text-xl font-bold text-gray-900 dark:text-white">For trenere</h3>
               </div>
               <p className="text-gray-600 dark:text-gray-400 mb-4">Bruk mindre tid på administrasjon og få bedre oversikt over tilgjengelighet, bookinger og danserne du følger opp.</p>
@@ -123,7 +123,7 @@ export default async function OmPage() {
                   "Motta varsler ved nye bookinger",
                 ].map(f => (
                   <li key={f} className="flex items-start gap-2 text-gray-700 dark:text-gray-300 text-sm">
-                    <span className="text-purple-500 mt-0.5">•</span>{f}
+                    <span className="text-[#E2A9F1] mt-0.5">•</span>{f}
                   </li>
                 ))}
               </ul>
@@ -151,11 +151,11 @@ export default async function OmPage() {
             <p className="font-medium text-gray-900 dark:text-white">For de beste løsningene blir ikke laget for brukerne. De blir laget sammen med dem.</p>
           </div>
 
-          <div className="mt-12 bg-purple-50 dark:bg-purple-950 rounded-2xl p-8 text-center">
-            <p className="text-2xl font-bold text-purple-700 dark:text-purple-300 mb-1">Danceitude</p>
-            <p className="text-purple-500 dark:text-purple-400 italic mb-6">Utviklet sammen med dansemiljøet. Laget for hele dansehverdagen.</p>
+          <div className="mt-12 bg-[#f5eeff] dark:bg-purple-950 rounded-2xl p-8 text-center">
+            <p className="text-2xl font-bold text-[#c87de0] dark:text-[#E2A9F1] mb-1">Danceitude</p>
+            <p className="text-[#E2A9F1] dark:text-[#E2A9F1] italic mb-6">Utviklet sammen med dansemiljøet. Laget for hele dansehverdagen.</p>
             {!user && (
-              <Link href="/login" className="inline-block bg-purple-600 hover:bg-purple-700 text-white font-semibold px-8 py-3 rounded-xl transition-colors">
+              <Link href="/login" className="inline-block bg-[#3A3A3A] hover:bg-[#2a2a2a] text-[#E2A9F1] font-semibold px-8 py-3 rounded-xl transition-colors">
                 Kom i gang
               </Link>
             )}

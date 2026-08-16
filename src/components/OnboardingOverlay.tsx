@@ -78,11 +78,11 @@ export default function OnboardingOverlay() {
       >
         {slide === 0 && <WelcomeSlide onNext={next} />}
         {slide === 1 && <FeatureSlide
-          icon={<Calendar size={40} className="text-purple-600" />}
+          icon={<Calendar size={40} className="text-[#E2A9F1]" />}
           emoji="📅"
           title="Book privattime – enkelt som aldri før"
           description="Velg trener, tidspunkt og danseform på under ett minutt. Få bekreftelse med én gang – ingen venting, ingen ringing."
-          color="bg-purple-50"
+          color="bg-[#f5eeff]"
           highlight="Mye enklere enn noensinne"
         />}
         {slide === 2 && <FeatureSlide
@@ -117,7 +117,7 @@ export default function OnboardingOverlay() {
         <div className="px-6 pb-10 pt-4 flex flex-col items-center gap-4">
           <button
             onClick={next}
-            className="w-full max-w-sm bg-purple-600 hover:bg-purple-700 text-white font-semibold py-3.5 rounded-2xl transition-colors flex items-center justify-center gap-2"
+            className="w-full max-w-sm bg-[#3A3A3A] hover:bg-[#2a2a2a] text-[#E2A9F1] font-semibold py-3.5 rounded-2xl transition-colors flex items-center justify-center gap-2"
           >
             {slide === SLIDES.length - 1 ? "Kom i gang!" : "Neste"}
             {slide < SLIDES.length - 1 && <ChevronRight size={18} />}
@@ -128,7 +128,7 @@ export default function OnboardingOverlay() {
               <div
                 key={i}
                 className={`rounded-full transition-all duration-300 ${
-                  i === slide - 1 ? "w-6 h-2 bg-purple-600" : "w-2 h-2 bg-gray-200 dark:bg-gray-700"
+                  i === slide - 1 ? "w-6 h-2 bg-[#3A3A3A]" : "w-2 h-2 bg-gray-200 dark:bg-gray-700"
                 }`}
               />
             ))}
@@ -171,11 +171,11 @@ function WelcomeSlide({ onNext }: { onNext: () => void }) {
 
       {/* Tekst */}
       <div style={{ animation: "fadeUp 0.6s ease forwards", animationDelay: "0.2s", opacity: 0 }}>
-        <p className="text-purple-200 text-sm font-semibold uppercase tracking-widest mb-3">Evolution Dance Studio</p>
+        <p className="text-[#e8c4f5] text-sm font-semibold uppercase tracking-widest mb-3">Evolution Dance Studio</p>
         <h1 className="text-4xl font-bold text-white leading-tight mb-4">
           Velkommen til<br />Danceitude
         </h1>
-        <p className="text-purple-200 text-base leading-relaxed max-w-xs mx-auto">
+        <p className="text-[#e8c4f5] text-base leading-relaxed max-w-xs mx-auto">
           Din app for privattimer, fremgang og konkurranser
         </p>
       </div>
@@ -186,7 +186,7 @@ function WelcomeSlide({ onNext }: { onNext: () => void }) {
       >
         <button
           onClick={onNext}
-          className="bg-white text-purple-700 font-bold px-10 py-4 rounded-2xl shadow-lg hover:bg-purple-50 transition-colors flex items-center gap-2"
+          className="bg-white text-[#c87de0] font-bold px-10 py-4 rounded-2xl shadow-lg hover:bg-[#f5eeff] transition-colors flex items-center gap-2"
         >
           Kom i gang <ChevronRight size={20} />
         </button>
@@ -227,10 +227,10 @@ function FeatureSlide({ icon, emoji, title, description, color, highlight, level
       {/* Highlight-boks */}
       {highlight && (
         <div
-          className="mt-6 bg-purple-50 border border-purple-100 rounded-2xl px-5 py-3"
+          className="mt-6 bg-[#f5eeff] border border-[#E2A9F1]/30 rounded-2xl px-5 py-3"
           style={{ animation: "fadeUp 0.4s ease forwards", animationDelay: "0.2s", opacity: 0 }}
         >
-          <p className="text-purple-700 font-semibold text-sm">✨ {highlight}</p>
+          <p className="text-[#c87de0] font-semibold text-sm">✨ {highlight}</p>
         </div>
       )}
 
@@ -246,7 +246,7 @@ function FeatureSlide({ icon, emoji, title, description, color, highlight, level
               className={`px-3 py-1.5 rounded-full text-xs font-semibold border ${
                 i === 0 ? "bg-gray-100 dark:bg-gray-800 text-gray-500 dark:text-gray-400 border-gray-200 dark:border-gray-700"
                 : i === 1 ? "bg-blue-50 text-blue-600 border-blue-100"
-                : i === 2 ? "bg-purple-50 text-purple-600 border-purple-100"
+                : i === 2 ? "bg-[#f5eeff] text-[#E2A9F1] border-[#E2A9F1]/30"
                 : i === 3 ? "bg-yellow-50 text-yellow-600 border-yellow-100"
                 : "bg-orange-50 text-orange-600 border-orange-100"
               }`}
@@ -264,14 +264,14 @@ function FeatureSlide({ icon, emoji, title, description, color, highlight, level
           className="mt-6 w-full max-w-xs space-y-2"
           style={{ animation: "fadeUp 0.4s ease forwards", animationDelay: "0.2s", opacity: 0 }}
         >
-          <div className="bg-purple-600 rounded-2xl px-4 py-3 flex items-center justify-between">
+          <div className="bg-[#3A3A3A] rounded-2xl px-4 py-3 flex items-center justify-between">
             <div className="text-left">
-              <p className="text-xs text-purple-200 font-semibold">🏆 FDJ 6</p>
+              <p className="text-xs text-[#e8c4f5] font-semibold">🏆 FDJ 6</p>
               <p className="text-sm font-bold text-white">22. august</p>
             </div>
             <div className="text-right">
               <p className="text-2xl font-bold text-white">67</p>
-              <p className="text-xs text-purple-200">dager igjen</p>
+              <p className="text-xs text-[#e8c4f5]">dager igjen</p>
             </div>
           </div>
           <div className="bg-white dark:bg-gray-900 rounded-xl border dark:border-gray-700 px-4 py-2.5 flex items-center justify-between">
