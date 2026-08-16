@@ -9,7 +9,7 @@ import { Check, Target, Trophy } from "lucide-react";
 const LEVELS = ["Rekrutt", "Litt øvet", "Mester", "Champ", "Elite"];
 
 function getNeeded(levelIndex: number, isFreestyle: boolean): number {
-  if (levelIndex === 0) return 7;
+  if (levelIndex === 0) return 8;
   if (levelIndex === 1) return 14;
   if (levelIndex === 2) return isFreestyle ? 21 : 28;
   return 0;
