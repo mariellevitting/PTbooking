@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Calendar, Clock, UserCircle, Trophy, History, PlusCircle, Menu, X } from "lucide-react";
+import { Calendar, Clock, UserCircle, Trophy, History, PlusCircle, Menu, X, LayoutDashboard } from "lucide-react";
 import { useState } from "react";
 import LogoutButton from "@/components/LogoutButton";
 import NotificationBell from "@/components/NotificationBell";
@@ -16,6 +16,7 @@ const NAV = [
   { href: "/trainer/historikk", label: "Historikk", icon: History },
   { href: "/trainer/konkurranser", label: "Konkurranser", icon: Trophy },
   { href: "/trainer/profil", label: "Profil", icon: UserCircle },
+  { href: "/admin", label: "Admin", icon: LayoutDashboard },
 ];
 
 interface Props {
@@ -101,11 +102,6 @@ export default function TrainerSidebar({ name, userId, email, avatarUrl, notific
             </div>
             {/* Logg ut */}
             <div className="border-t dark:border-gray-700 px-6 py-4 space-y-3 text-sm text-gray-400 dark:text-gray-500">
-              {isAdmin && (
-                <Link href="/admin" onClick={() => setMenuOpen(false)} className="flex items-center gap-2 text-[#E2A9F1] dark:text-[#E2A9F1] font-medium">
-                  Admin
-                </Link>
-              )}
               <Link href="/om" onClick={() => setMenuOpen(false)} className="flex items-center gap-2 hover:text-gray-600">
                 Om Danceitude
               </Link>
@@ -154,11 +150,6 @@ export default function TrainerSidebar({ name, userId, email, avatarUrl, notific
           })}
         </nav>
         <div className="p-3 border-t border-gray-100 dark:border-gray-800 space-y-1">
-          {isAdmin && (
-            <Link href="/admin" className="flex items-center gap-2 px-3 py-2 rounded-xl text-sm text-[#E2A9F1] dark:text-[#E2A9F1] hover:bg-[#f5eeff] dark:bg-[#E2A9F1]/10 dark:hover:bg-purple-950 transition-colors font-medium">
-              Admin
-            </Link>
-          )}
           <Link href="/om" className="flex items-center gap-2 px-3 py-2 rounded-xl text-sm text-gray-400 dark:text-gray-500 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors">
             Om Danceitude
           </Link>
