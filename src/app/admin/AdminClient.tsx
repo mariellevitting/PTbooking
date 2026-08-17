@@ -157,6 +157,37 @@ export default function AdminClient({ profiles, feedback, slots, trainerMap }: P
           </div>
         </div>
 
+        <div className="bg-white dark:bg-gray-900 rounded-2xl border dark:border-gray-700 p-5">
+          <h2 className="font-bold text-gray-900 dark:text-white mb-4">Treneroversikt</h2>
+          <div className="space-y-3">
+            {trainers.map(trainer => {
+              const trainerSlots = slots.filter(s => s.trainer_id === trainer.id);
+              const bookedCount = trainerSlots.filter(s => s.bookings?.some(b => b.status === "confirmed")).length;
+              const availableCount = trainerSlots.filter(s => !s.bookings?.some(b => b.status === "confirmed") && new Date(s.start_at) > new Date()).length;
+              const isOpen = trainerOpen === trainer.id;
+
+              return (
+                <div key={trainer.id} className="border dark:border-gray-700 rounded-xl overflow-hidden">
+                  <button onClick={() => setTrainerOpen(isOpen ? null : trainer.id)}
+                    className="w-full flex items-center justify-between px-4 py-3 hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors">
+                    <div className="flex items-center gap-3">
+                      <div className="w-9 h-9 rounded-full bg-orange-100 dark:bg-orange-900 flex items-center justify-center text-orange-700 dark:text-orange-300 font-bold text-sm shrink-0">
+                        {trainer.name.charAt(0)}
+                      </div>
+                      <div className="text-left">
+                        <p className="font-semibold text-sm text-gray-800 dark:text-gray-100">{trainer.name}</p>
+                        <p className="text-xs text-gray-400">{bookedCount} bookinger · {availableCount} ledige fremover</p>
+                      </div>
+                    </div>
+                    <span className="text-gray-400 text-sm">{isOpen ? "▲" : "▼"}</span>
+                  </button>
+                  {isOpen && <TrainerCalendar trainer={trainer} slots={slots} />}
+                </div>
+              );
+            })}
+          </div>
+        </div>
+
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
           {statCards.map(card => (
             <button key={card.filter} onClick={() => setRoleFilter(roleFilter === card.filter ? null : card.filter)}
@@ -228,37 +259,6 @@ export default function AdminClient({ profiles, feedback, slots, trainerMap }: P
             </div>
           </div>
         )}
-
-        <div className="bg-white dark:bg-gray-900 rounded-2xl border dark:border-gray-700 p-5">
-          <h2 className="font-bold text-gray-900 dark:text-white mb-4">Treneroversikt</h2>
-          <div className="space-y-3">
-            {trainers.map(trainer => {
-              const trainerSlots = slots.filter(s => s.trainer_id === trainer.id);
-              const bookedCount = trainerSlots.filter(s => s.bookings?.some(b => b.status === "confirmed")).length;
-              const availableCount = trainerSlots.filter(s => !s.bookings?.some(b => b.status === "confirmed") && new Date(s.start_at) > new Date()).length;
-              const isOpen = trainerOpen === trainer.id;
-
-              return (
-                <div key={trainer.id} className="border dark:border-gray-700 rounded-xl overflow-hidden">
-                  <button onClick={() => setTrainerOpen(isOpen ? null : trainer.id)}
-                    className="w-full flex items-center justify-between px-4 py-3 hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors">
-                    <div className="flex items-center gap-3">
-                      <div className="w-9 h-9 rounded-full bg-orange-100 dark:bg-orange-900 flex items-center justify-center text-orange-700 dark:text-orange-300 font-bold text-sm shrink-0">
-                        {trainer.name.charAt(0)}
-                      </div>
-                      <div className="text-left">
-                        <p className="font-semibold text-sm text-gray-800 dark:text-gray-100">{trainer.name}</p>
-                        <p className="text-xs text-gray-400">{bookedCount} bookinger · {availableCount} ledige fremover</p>
-                      </div>
-                    </div>
-                    <span className="text-gray-400 text-sm">{isOpen ? "▲" : "▼"}</span>
-                  </button>
-                  {isOpen && <TrainerCalendar trainer={trainer} slots={slots} />}
-                </div>
-              );
-            })}
-          </div>
-        </div>
 
         <div className="bg-white dark:bg-gray-900 rounded-2xl border dark:border-gray-700 p-5">
           <h2 className="font-bold text-gray-900 dark:text-white mb-4">
