@@ -24,29 +24,42 @@ type Child = { id: string; name: string; season_goals: string | null; points_fre
 export default function ChildDancerCard({ parentId, children, hideResults, hideGoals }: { parentId: string; children: Child[]; hideResults?: boolean; hideGoals?: boolean }) {
   const [selectedId, setSelectedId] = useState(children[0]?.id ?? "");
 
-  // Cache per child so switching doesn't revert to stale prop values
-  const stateCache = useRef<Record<string, { goals: string; freestyle: number; slow: number; levelF: number; levelS: number }>>(
-    Object.fromEntries(children.map(c => [c.id, {
-      goals: c.season_goals ?? "",
-      freestyle: c.points_freestyle ?? 0,
-      slow: c.points_slow ?? 0,
-      levelF: c.level_freestyle ?? 0,
-      levelS: c.level_slow ?? 0,
-    }]))
-  );
-
-  const initial = stateCache.current[children[0]?.id ?? ""] ?? { goals: "", freestyle: 0, slow: 0, levelF: 0, levelS: 0 };
-  const [goals, setGoals] = useState(initial.goals);
-  const [freestyle, setFreestyle] = useState(initial.freestyle);
-  const [slow, setSlow] = useState(initial.slow);
-  const [levelF, setLevelF] = useState(initial.levelF);
-  const [levelS, setLevelS] = useState(initial.levelS);
+  const stateCache = useRef<Record<string, { goals: string; freestyle: number; slow: number; levelF: number; levelS: number }>>({});
+  const [goals, setGoals] = useState("");
+  const [freestyle, setFreestyle] = useState(0);
+  const [slow, setSlow] = useState(0);
+  const [levelF, setLevelF] = useState(0);
+  const [levelS, setLevelS] = useState(0);
   const [results, setResults] = useState<Result[]>([]);
+  const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [success, setSuccess] = useState(false);
 
   useEffect(() => {
-    if (selectedId && !hideResults) loadResults(selectedId);
+    const ids = children.map(c => c.id);
+    if (ids.length === 0) { setLoading(false); return; }
+    const supabase = createClient();
+    supabase.from("children").select("id, season_goals, points_freestyle, points_slow, level_freestyle, level_slow").in("id", ids).then(({ data }) => {
+      const fetched: typeof stateCache.current = {};
+      for (const row of data ?? []) {
+        fetched[row.id] = {
+          goals: row.season_goals ?? "",
+          freestyle: row.points_freestyle ?? 0,
+          slow: row.points_slow ?? 0,
+          levelF: row.level_freestyle ?? 0,
+          levelS: row.level_slow ?? 0,
+        };
+      }
+      stateCache.current = fetched;
+      const first = fetched[children[0]?.id ?? ""] ?? { goals: "", freestyle: 0, slow: 0, levelF: 0, levelS: 0 };
+      setGoals(first.goals);
+      setFreestyle(first.freestyle);
+      setSlow(first.slow);
+      setLevelF(first.levelF);
+      setLevelS(first.levelS);
+      setLoading(false);
+    });
+    if (!hideResults && selectedId) loadResults(selectedId);
   }, []);
 
   async function loadResults(id: string) {
@@ -103,6 +116,7 @@ export default function ChildDancerCard({ parentId, children, hideResults, hideG
   }
 
   if (children.length === 0) return null;
+  if (loading) return <p className="text-sm text-gray-400 py-4">Laster...</p>;
 
   const neededF = getNeeded(levelF, true);
   const percentF = neededF > 0 ? Math.round((Math.min(freestyle, neededF) / neededF) * 100) : 100;
