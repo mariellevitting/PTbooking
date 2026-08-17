@@ -281,24 +281,24 @@ export default function AdminClient({ profiles, feedback, slots, trainerMap }: P
         </div>
 
         {filteredProfiles && (
-          <div className="bg-white dark:bg-gray-900 rounded-2xl border dark:border-gray-700 p-5">
-            <h2 className="font-bold text-gray-900 dark:text-white mb-4">
-              {roleFilter === "alle" ? "Alle brukere" : roleFilter === "dancer" ? "Dansere" : roleFilter === "parent" ? "Foreldre" : "Trenere"}
-              <span className="ml-2 text-gray-400">{filteredProfiles.length}</span>
-            </h2>
-            <div className="space-y-2 max-h-80 overflow-y-auto">
+          <div className="bg-white dark:bg-gray-900 rounded-2xl border dark:border-gray-700 p-5 -mt-4">
+            <div className="flex items-center justify-between mb-4">
+              <h2 className="font-bold text-gray-900 dark:text-white">
+                {roleFilter === "alle" ? "Alle brukere" : roleFilter === "dancer" ? "Dansere" : roleFilter === "parent" ? "Foreldre" : "Trenere"}
+                <span className="ml-2 text-gray-400 font-normal">{filteredProfiles.length}</span>
+              </h2>
+              <button onClick={() => setRoleFilter(null)} className="text-xs text-gray-400 hover:text-gray-600 dark:hover:text-gray-300">✕ Lukk</button>
+            </div>
+            <div className="space-y-1">
               {filteredProfiles.map(p => {
                 const colors = ROLE_COLORS[p.role as keyof typeof ROLE_COLORS];
                 return (
-                  <div key={p.id} className="flex items-center justify-between py-2 border-b dark:border-gray-700 last:border-0">
+                  <div key={p.id} className="flex items-center justify-between py-2.5 border-b dark:border-gray-700 last:border-0">
                     <div className="flex items-center gap-3">
                       <div className={`w-8 h-8 rounded-full ${colors?.bg} flex items-center justify-center ${colors?.text} font-bold text-sm shrink-0`}>
                         {p.name?.charAt(0) ?? "?"}
                       </div>
-                      <div>
-                        <p className="text-sm font-medium text-gray-800 dark:text-gray-100">{p.name}</p>
-                        <span className={`text-xs ${colors?.text}`}>{colors?.label}</span>
-                      </div>
+                      <p className="text-sm font-medium text-gray-800 dark:text-gray-100">{p.name}</p>
                     </div>
                     <span className="text-xs text-gray-400 shrink-0 ml-2">{timeAgo(p.created_at)}</span>
                   </div>
