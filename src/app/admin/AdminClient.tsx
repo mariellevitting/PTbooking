@@ -192,7 +192,7 @@ export default function AdminClient({ profiles, feedback, slots, trainerMap }: P
   ];
 
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-gray-950 p-6">
+    <div className="min-h-screen bg-gray-50 dark:bg-gray-950 p-6 page-safe-top">
       <div className="max-w-5xl mx-auto space-y-8">
 
         <div className="flex items-center gap-4">
