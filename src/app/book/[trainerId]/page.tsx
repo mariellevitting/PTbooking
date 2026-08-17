@@ -41,7 +41,6 @@ export default async function TrainerBookPage({ params }: { params: Promise<{ tr
     .from("availability_slots")
     .select("*")
     .eq("trainer_id", trainerId)
-    .eq("is_booked", false)
     .gte("start_at", new Date().toISOString())
     .order("start_at");
 
