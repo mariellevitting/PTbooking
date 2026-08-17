@@ -178,11 +178,9 @@ export default function AdminClient({ profiles, feedback, slots, trainerMap }: P
   const filteredProfiles = roleFilter === "dancer" ? dancers
     : roleFilter === "parent" ? parents
     : roleFilter === "trainer" ? trainers
-    : roleFilter === "alle" ? profiles
     : null;
 
   const statCards = [
-    { label: "Alle brukere", value: profiles.length, filter: "alle" as RoleFilter, color: "bg-[#3A3A3A] border-[#3A3A3A]" },
     { label: "Dansere", value: dancers.length, filter: "dancer" as RoleFilter, color: "bg-blue-500 border-blue-500" },
     { label: "Foreldre", value: parents.length, filter: "parent" as RoleFilter, color: "bg-green-500 border-green-500" },
     { label: "Trenere", value: trainers.length, filter: "trainer" as RoleFilter, color: "bg-orange-500 border-orange-500" },
@@ -198,7 +196,7 @@ export default function AdminClient({ profiles, feedback, slots, trainerMap }: P
           </a>
           <div>
             <h1 className="text-3xl font-bold text-gray-900 dark:text-white">Admin</h1>
-            <p className="text-gray-500 dark:text-gray-400 text-sm mt-1">Kun synlig for deg</p>
+            <p className="text-gray-500 dark:text-gray-400 text-sm mt-1">Kun synlig for deg · <span className="font-medium">{profiles.length} brukere totalt</span></p>
           </div>
         </div>
 
