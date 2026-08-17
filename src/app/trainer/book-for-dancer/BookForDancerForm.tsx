@@ -186,7 +186,7 @@ export default function BookForDancerForm({ trainerId, danceStyles }: Props) {
 
     if (existing?.is_booked) {
       setError(`Kl. ${time} er allerede booket. Velg et annet tidspunkt.`);
-      setSaving(false);
+      setLoading(false);
       return;
     }
 
