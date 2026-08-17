@@ -25,7 +25,9 @@ export default async function OmPage() {
       <div className="bg-[#3A3A3A] text-[#E2A9F1]">
         <div className="max-w-3xl mx-auto px-6 pb-12 md:pb-20 page-safe-top">
           <div className="flex items-center justify-between mb-6">
-            <Link href={backHref} className="text-[#e8c4f5] hover:text-white text-sm">← Tilbake</Link>
+            <Link href={backHref} className="inline-flex items-center justify-center w-12 h-12 rounded-full bg-white/10 hover:bg-white/20 text-white">
+              <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="m15 18-6-6 6-6"/></svg>
+            </Link>
             {!user && (
               <Link href="/login" className="bg-[#E2A9F1] text-[#3A3A3A] font-semibold text-sm px-5 py-2 rounded-xl hover:bg-[#d494e8] transition-colors">
                 Bli med nå!

@@ -191,8 +191,8 @@ export default function AdminClient({ profiles, feedback, slots, trainerMap }: P
       <div className="max-w-5xl mx-auto space-y-8">
 
         <div className="flex items-center gap-4">
-          <a href="/trainer/dashboard" className="p-2 rounded-xl hover:bg-gray-200 dark:hover:bg-gray-800 transition-colors text-gray-500 dark:text-gray-400">
-            ←
+          <a href="/trainer/dashboard" className="inline-flex items-center justify-center w-12 h-12 rounded-full bg-gray-100 dark:bg-gray-800 hover:bg-[#E2A9F1]/20 text-gray-700 dark:text-gray-200">
+            <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="m15 18-6-6 6-6"/></svg>
           </a>
           <div>
             <h1 className="text-3xl font-bold text-gray-900 dark:text-white">Admin</h1>
