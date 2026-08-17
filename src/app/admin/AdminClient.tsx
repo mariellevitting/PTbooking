@@ -73,6 +73,8 @@ function TrainerCalendar({ trainer, slots }: { trainer: Profile; slots: Slot[] }
     </div>
   );
 
+  const now = new Date();
+
   // Mobile: list view
   const listView = (
     <div className="md:hidden space-y-2">
@@ -88,17 +90,19 @@ function TrainerCalendar({ trainer, slots }: { trainer: Profile; slots: Slot[] }
             <div className="space-y-1">
               {daySlots.map(s => {
                 const booking = s.bookings?.find(b => b.status === "confirmed");
+                const isPast = new Date(s.start_at) < now;
                 return booking ? (
-                  <div key={s.id} className="flex items-center gap-2 bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg px-3 py-2">
-                    <div className="w-2 h-2 rounded-full bg-blue-500 shrink-0" />
+                  <div key={s.id} className={`flex items-center gap-2 rounded-lg px-3 py-2 border ${isPast ? "bg-gray-50 dark:bg-gray-800/40 border-gray-200 dark:border-gray-700 opacity-50" : "bg-green-50 dark:bg-green-900/20 border-green-200 dark:border-green-800"}`}>
+                    <div className={`w-2 h-2 rounded-full shrink-0 ${isPast ? "bg-gray-400" : "bg-green-500"}`} />
                     <span className="text-xs font-semibold text-gray-700 dark:text-gray-300 w-10 shrink-0">{formatTime(s.start_at)}</span>
-                    <span className="text-xs text-gray-600 dark:text-gray-400 truncate">{booking.dancer_name} · {booking.dance_style}</span>
+                    <span className="text-xs text-gray-600 dark:text-gray-400 truncate flex-1">{booking.dancer_name} · {booking.dance_style}</span>
+                    {isPast && <span className="text-[10px] text-gray-400 shrink-0">Gjennomført</span>}
                   </div>
                 ) : (
-                  <div key={s.id} className="flex items-center gap-2 bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg px-3 py-2">
+                  <div key={s.id} className={`flex items-center gap-2 rounded-lg px-3 py-2 border ${isPast ? "opacity-30 bg-gray-50 dark:bg-gray-800 border-gray-200 dark:border-gray-700" : "bg-gray-50 dark:bg-gray-800 border-gray-200 dark:border-gray-700"}`}>
                     <div className="w-2 h-2 rounded-full bg-gray-300 dark:bg-gray-600 shrink-0" />
                     <span className="text-xs font-semibold text-gray-500 w-10 shrink-0">{formatTime(s.start_at)}</span>
-                    <span className="text-xs text-gray-400">Ledig</span>
+                    <span className="text-xs text-gray-400">{isPast ? "Ikke booket" : "Ledig"}</span>
                   </div>
                 );
               })}
@@ -128,13 +132,14 @@ function TrainerCalendar({ trainer, slots }: { trainer: Profile; slots: Slot[] }
               <div className="space-y-1">
                 {daySlots.map(s => {
                   const booking = s.bookings?.find(b => b.status === "confirmed");
+                  const isPast = new Date(s.start_at) < now;
                   return booking ? (
-                    <div key={s.id} className="bg-blue-500 text-white rounded-md px-1 py-0.5">
+                    <div key={s.id} className={`rounded-md px-1 py-0.5 ${isPast ? "bg-gray-300 dark:bg-gray-600 opacity-50" : "bg-green-500 text-white"}`}>
                       <p className="text-[10px] font-semibold leading-tight">{formatTime(s.start_at)}</p>
                       <p className="text-[10px] leading-tight truncate">{booking.dancer_name}</p>
                     </div>
                   ) : (
-                    <div key={s.id} className="bg-gray-200 dark:bg-gray-700 rounded-md px-1 py-0.5">
+                    <div key={s.id} className={`rounded-md px-1 py-0.5 ${isPast ? "opacity-25 bg-gray-200 dark:bg-gray-700" : "bg-gray-200 dark:bg-gray-700"}`}>
                       <p className="text-[10px] text-gray-500 dark:text-gray-400 leading-tight">{formatTime(s.start_at)}</p>
                       <p className="text-[10px] text-gray-400 leading-tight">Ledig</p>
                     </div>
@@ -146,7 +151,8 @@ function TrainerCalendar({ trainer, slots }: { trainer: Profile; slots: Slot[] }
         })}
       </div>
       <div className="flex gap-4 mt-3">
-        <div className="flex items-center gap-1.5"><div className="w-3 h-3 rounded bg-blue-500" /><span className="text-xs text-gray-500">Booket</span></div>
+        <div className="flex items-center gap-1.5"><div className="w-3 h-3 rounded bg-green-500" /><span className="text-xs text-gray-500">Kommende</span></div>
+        <div className="flex items-center gap-1.5"><div className="w-3 h-3 rounded bg-gray-300 dark:bg-gray-600" /><span className="text-xs text-gray-500">Gjennomført</span></div>
         <div className="flex items-center gap-1.5"><div className="w-3 h-3 rounded bg-gray-200 dark:bg-gray-700" /><span className="text-xs text-gray-500">Ledig</span></div>
       </div>
     </div>
