@@ -197,7 +197,7 @@ export default function AdminClient({ profiles, feedback, slots, trainerMap, isA
           </a>
           <div>
             <h1 className="text-3xl font-bold text-gray-900 dark:text-white">Admin</h1>
-            <p className="text-gray-500 dark:text-gray-400 text-sm mt-1">Kun synlig for deg · <span className="font-medium">{profiles.length} brukere totalt</span></p>
+            <p className="text-gray-500 dark:text-gray-400 text-sm mt-1">Kun synlig for trenere · <span className="font-medium">{profiles.length} brukere totalt</span></p>
           </div>
         </div>
 
@@ -206,7 +206,7 @@ export default function AdminClient({ profiles, feedback, slots, trainerMap, isA
           <div className="space-y-3">
             {trainers.map(trainer => {
               const trainerSlots = slots.filter(s => s.trainer_id === trainer.id);
-              const bookedCount = trainerSlots.filter(s => s.bookings?.some(b => b.status === "confirmed")).length;
+              const bookedCount = trainerSlots.reduce((sum, s) => sum + (s.bookings?.filter(b => b.status === "confirmed").length ?? 0), 0);
               const availableCount = trainerSlots.filter(s => !s.bookings?.some(b => b.status === "confirmed") && new Date(s.start_at) > new Date()).length;
               const isOpen = trainerOpen === trainer.id;
 
