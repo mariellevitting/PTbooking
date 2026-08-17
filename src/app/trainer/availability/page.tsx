@@ -68,6 +68,8 @@ export default function AvailabilityPage() {
   const [success, setSuccess] = useState(false);
   const [error, setError] = useState("");
   const [existingSlots, setExistingSlots] = useState<Set<string>>(new Set());
+  const [customStart, setCustomStart] = useState("");
+  const [customEnd, setCustomEnd] = useState("");
 
   const weekDays = getWeekDays(weekStart);
   const weekNumber = getWeekNumber(weekStart);
@@ -144,7 +146,42 @@ export default function AvailabilityPage() {
     });
   }
 
-  const totalSelected = Array.from(selected.values()).reduce((sum, s) => sum + s.size, 0);
+  // Custom slots: { dateKey -> [{start, end}] }
+  const [customSlots, setCustomSlots] = useState<Map<string, {start: string; end: string}[]>>(new Map());
+
+  function addCustomSlot() {
+    if (!selectedDate || !customStart || !customEnd) return;
+    if (customStart >= customEnd) { setError("Starttid må være før sluttid"); return; }
+    if (existingSlots.has(customStart)) {
+      setError(`Du har allerede lagt ut en tid kl. ${customStart} denne dagen`);
+      return;
+    }
+    const dateKey = dateToISO(selectedDate);
+    const existing = customSlots.get(dateKey) ?? [];
+    if (existing.some(s => s.start === customStart)) {
+      setError(`Du har allerede lagt til kl. ${customStart} i denne listen`);
+      return;
+    }
+    setError("");
+    setCustomSlots(prev => {
+      const next = new Map(prev);
+      next.set(dateKey, [...existing, { start: customStart, end: customEnd }]);
+      return next;
+    });
+    setCustomStart("");
+    setCustomEnd("");
+  }
+
+  function removeCustomSlot(dateKey: string, start: string) {
+    setCustomSlots(prev => {
+      const next = new Map(prev);
+      next.set(dateKey, (next.get(dateKey) ?? []).filter(s => s.start !== start));
+      return next;
+    });
+  }
+
+  const totalSelected = Array.from(selected.values()).reduce((sum, s) => sum + s.size, 0)
+    + Array.from(customSlots.values()).reduce((sum, s) => sum + s.length, 0);
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -167,11 +204,26 @@ export default function AvailabilityPage() {
         rows.push({ trainer_id: user.id, start_at: start.toISOString(), end_at: end.toISOString() });
       }
     }
+    for (const [dateKey, customs] of customSlots.entries()) {
+      for (const { start, end } of customs) {
+        const [sh, sm] = start.split(":").map(Number);
+        const [eh, em] = end.split(":").map(Number);
+        const startDate = new Date(`${dateKey}T00:00:00`);
+        startDate.setHours(sh, sm, 0, 0);
+        const endDate = new Date(`${dateKey}T00:00:00`);
+        endDate.setHours(eh, em, 0, 0);
+        rows.push({ trainer_id: user.id, start_at: startDate.toISOString(), end_at: endDate.toISOString() });
+      }
+    }
 
     const { error: insertError } = await supabase.from("availability_slots").insert(rows);
 
     if (insertError) {
-      setError("Noe gikk galt, prøv igjen");
+      if (insertError.code === "23505") {
+        setError("En eller flere av tidene du valgte finnes allerede. Oppdater siden og prøv igjen.");
+      } else {
+        setError("Noe gikk galt: " + insertError.message);
+      }
       setSaving(false);
     } else {
       router.push("/trainer/dashboard");
@@ -304,6 +356,28 @@ export default function AvailabilityPage() {
                     {selected.get(dateToISO(selectedDate))!.size} valgt denne dagen
                   </p>
                 )}
+
+                {/* Egendefinert tid */}
+                <div className="border-t dark:border-gray-700 pt-3 space-y-2">
+                  {(customSlots.get(selectedDate ? dateToISO(selectedDate) : "") ?? []).map(s => (
+                    <div key={s.start} className="flex items-center justify-between bg-[#f5eeff] dark:bg-[#E2A9F1]/10 rounded-lg px-3 py-2">
+                      <span className="text-sm text-gray-700 dark:text-gray-300">{s.start}–{s.end}</span>
+                      <button type="button" onClick={() => removeCustomSlot(dateToISO(selectedDate!), s.start)} className="text-gray-400 hover:text-red-400 text-xs">✕</button>
+                    </div>
+                  ))}
+                  <div className="flex items-center gap-2">
+                    <input type="time" value={customStart} onChange={e => setCustomStart(e.target.value)}
+                      className="flex-1 border dark:border-gray-700 rounded-lg px-2 py-1.5 text-sm bg-white dark:bg-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-[#E2A9F1]" />
+                    <span className="text-gray-400 text-sm">–</span>
+                    <input type="time" value={customEnd} onChange={e => setCustomEnd(e.target.value)}
+                      className="flex-1 border dark:border-gray-700 rounded-lg px-2 py-1.5 text-sm bg-white dark:bg-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-[#E2A9F1]" />
+                    <button type="button" onClick={addCustomSlot} disabled={!customStart || !customEnd}
+                      className="text-xs text-[#c87de0] hover:text-[#E2A9F1] disabled:opacity-30 font-medium whitespace-nowrap">
+                      + Legg til
+                    </button>
+                  </div>
+                  <p className="text-[11px] text-gray-400 dark:text-gray-500">Egendefinert tid utenfor vanlige tidspunkter</p>
+                </div>
 
                 {error && <p className="text-sm text-red-500">{error}</p>}
                 {success && <p className="text-sm text-green-600">Ledige tider lagt ut!</p>}
