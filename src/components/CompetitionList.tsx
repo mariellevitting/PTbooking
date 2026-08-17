@@ -30,6 +30,7 @@ export default function CompetitionList({ userId, showCountdown = false }: Props
 
   const [participating, setParticipating] = useState<Set<string>>(new Set());
   const [toggling, setToggling] = useState<string | null>(null);
+  const [counts, setCounts] = useState<Record<string, number>>({});
 
   useEffect(() => {
     const supabase = createClient();
@@ -39,6 +40,15 @@ export default function CompetitionList({ userId, showCountdown = false }: Props
       .eq("user_id", userId)
       .then(({ data }) => {
         if (data) setParticipating(new Set(data.map(r => r.competition_name)));
+      });
+    supabase
+      .from("competition_participations")
+      .select("competition_name")
+      .then(({ data }) => {
+        if (!data) return;
+        const c: Record<string, number> = {};
+        for (const r of data) c[r.competition_name] = (c[r.competition_name] ?? 0) + 1;
+        setCounts(c);
       });
   }, [userId]);
 
@@ -50,9 +60,11 @@ export default function CompetitionList({ userId, showCountdown = false }: Props
     if (isOn) {
       await supabase.from("competition_participations").delete().eq("user_id", userId).eq("competition_name", name);
       setParticipating(prev => { const s = new Set(prev); s.delete(name); return s; });
+      setCounts(prev => ({ ...prev, [name]: Math.max(0, (prev[name] ?? 1) - 1) }));
     } else {
       await supabase.from("competition_participations").insert({ user_id: userId, competition_name: name });
       setParticipating(prev => new Set(prev).add(name));
+      setCounts(prev => ({ ...prev, [name]: (prev[name] ?? 0) + 1 }));
     }
     setToggling(null);
   }
@@ -73,7 +85,12 @@ export default function CompetitionList({ userId, showCountdown = false }: Props
               <p className="text-4xl font-bold text-white">{daysUntil(next.date)}</p>
               <p className="text-sm text-[#e8c4f5] mb-1">dager igjen</p>
             </div>
-            <DeltaButton name={next.name} participating={participating} toggling={toggling} onToggle={toggle} variant="dark" />
+            <div className="flex flex-col items-end gap-1.5">
+              {(counts[next.name] ?? 0) > 0 && (
+                <p className="text-xs text-[#e8c4f5]">{counts[next.name]} stk skal delta</p>
+              )}
+              <DeltaButton name={next.name} participating={participating} toggling={toggling} onToggle={toggle} variant="dark" />
+            </div>
           </div>
         </div>
       )}
@@ -88,11 +105,16 @@ export default function CompetitionList({ userId, showCountdown = false }: Props
               <p className="text-sm text-[#E2A9F1]">{c.dateLabel}</p>
               {c.location && <p className="text-xs text-gray-400 dark:text-gray-500 mt-0.5">{c.location}</p>}
             </div>
-            <div className="flex items-center gap-2 shrink-0">
-              <span className="text-xs font-bold text-[#E2A9F1] bg-[#f5eeff] dark:bg-[#E2A9F1]/10 px-2 py-1 rounded-full whitespace-nowrap">
-                {days} dager
-              </span>
-              <DeltaButton name={c.name} participating={participating} toggling={toggling} onToggle={toggle} />
+            <div className="flex flex-col items-end gap-1 shrink-0">
+              {(counts[c.name] ?? 0) > 0 && (
+                <p className="text-xs text-gray-400 dark:text-gray-500">{counts[c.name]} stk skal delta</p>
+              )}
+              <div className="flex items-center gap-2">
+                <span className="text-xs font-bold text-[#E2A9F1] bg-[#f5eeff] dark:bg-[#E2A9F1]/10 px-2 py-1 rounded-full whitespace-nowrap">
+                  {days} dager
+                </span>
+                <DeltaButton name={c.name} participating={participating} toggling={toggling} onToggle={toggle} />
+              </div>
             </div>
           </div>
         );
