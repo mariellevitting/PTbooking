@@ -157,6 +157,10 @@ export default function AvailabilityPage() {
       return;
     }
     const dateKey = dateToISO(selectedDate);
+    if (selected.get(dateKey)?.has(customStart)) {
+      setError(`Du har allerede valgt kl. ${customStart} i listen over`);
+      return;
+    }
     const existing = customSlots.get(dateKey) ?? [];
     if (existing.some(s => s.start === customStart)) {
       setError(`Du har allerede lagt til kl. ${customStart} i denne listen`);
