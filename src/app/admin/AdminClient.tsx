@@ -65,14 +65,56 @@ function TrainerCalendar({ trainer, slots }: { trainer: Profile; slots: Slot[] }
   const trainerSlots = slots.filter(s => s.trainer_id === trainer.id);
   const weekLabel = `${weekStart.getDate()}. ${MONTHS[weekStart.getMonth()]} – ${addDays(weekStart, 6).getDate()}. ${MONTHS[addDays(weekStart, 6).getMonth()]}`;
 
-  return (
-    <div className="border-t dark:border-gray-700 p-4">
-      <div className="flex items-center justify-between mb-4">
-        <button onClick={() => setWeekStart(addDays(weekStart, -7))} className="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 text-gray-500 font-bold">←</button>
-        <p className="text-sm font-semibold text-gray-700 dark:text-gray-300">{weekLabel}</p>
-        <button onClick={() => setWeekStart(addDays(weekStart, 7))} className="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 text-gray-500 font-bold">→</button>
-      </div>
+  const weekNav = (
+    <div className="flex items-center justify-between mb-4">
+      <button onClick={() => setWeekStart(addDays(weekStart, -7))} className="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 text-gray-500 font-bold">←</button>
+      <p className="text-sm font-semibold text-gray-700 dark:text-gray-300">{weekLabel}</p>
+      <button onClick={() => setWeekStart(addDays(weekStart, 7))} className="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 text-gray-500 font-bold">→</button>
+    </div>
+  );
 
+  // Mobile: list view
+  const listView = (
+    <div className="md:hidden space-y-2">
+      {weekDays.map((day, i) => {
+        const daySlots = trainerSlots.filter(s => isSameDay(new Date(s.start_at), day));
+        const isToday = isSameDay(day, new Date());
+        if (daySlots.length === 0) return null;
+        return (
+          <div key={i}>
+            <p className={`text-xs font-bold mb-1 ${isToday ? "text-[#E2A9F1]" : "text-gray-500 dark:text-gray-400"}`}>
+              {DAYS[i]} {day.getDate()}. {MONTHS[day.getMonth()]}
+            </p>
+            <div className="space-y-1">
+              {daySlots.map(s => {
+                const booking = s.bookings?.find(b => b.status === "confirmed");
+                return booking ? (
+                  <div key={s.id} className="flex items-center gap-2 bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg px-3 py-2">
+                    <div className="w-2 h-2 rounded-full bg-blue-500 shrink-0" />
+                    <span className="text-xs font-semibold text-gray-700 dark:text-gray-300 w-10 shrink-0">{formatTime(s.start_at)}</span>
+                    <span className="text-xs text-gray-600 dark:text-gray-400 truncate">{booking.dancer_name} · {booking.dance_style}</span>
+                  </div>
+                ) : (
+                  <div key={s.id} className="flex items-center gap-2 bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg px-3 py-2">
+                    <div className="w-2 h-2 rounded-full bg-gray-300 dark:bg-gray-600 shrink-0" />
+                    <span className="text-xs font-semibold text-gray-500 w-10 shrink-0">{formatTime(s.start_at)}</span>
+                    <span className="text-xs text-gray-400">Ledig</span>
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+        );
+      })}
+      {weekDays.every(day => trainerSlots.filter(s => isSameDay(new Date(s.start_at), day)).length === 0) && (
+        <p className="text-xs text-gray-400 text-center py-2">Ingen timer denne uken</p>
+      )}
+    </div>
+  );
+
+  // Desktop: grid view
+  const gridView = (
+    <div className="hidden md:block">
       <div className="grid grid-cols-7 gap-1">
         {DAYS.map(d => (
           <div key={d} className="text-center text-xs font-semibold text-gray-400 pb-1">{d}</div>
@@ -80,9 +122,8 @@ function TrainerCalendar({ trainer, slots }: { trainer: Profile; slots: Slot[] }
         {weekDays.map((day, i) => {
           const daySlots = trainerSlots.filter(s => isSameDay(new Date(s.start_at), day));
           const isToday = isSameDay(day, new Date());
-
           return (
-            <div key={i} className={`min-h-20 rounded-xl p-1.5 border ${isToday ? "border-purple-400 bg-[#f5eeff] dark:bg-[#E2A9F1]/10 dark:bg-purple-950" : "border-gray-100 dark:border-gray-800 bg-gray-50 dark:bg-gray-800/50"}`}>
+            <div key={i} className={`min-h-20 rounded-xl p-1.5 border ${isToday ? "border-purple-400 bg-[#f5eeff] dark:bg-[#E2A9F1]/10" : "border-gray-100 dark:border-gray-800 bg-gray-50 dark:bg-gray-800/50"}`}>
               <p className={`text-xs font-bold mb-1 ${isToday ? "text-[#E2A9F1]" : "text-gray-500 dark:text-gray-400"}`}>{day.getDate()}</p>
               <div className="space-y-1">
                 {daySlots.map(s => {
@@ -104,11 +145,18 @@ function TrainerCalendar({ trainer, slots }: { trainer: Profile; slots: Slot[] }
           );
         })}
       </div>
-
       <div className="flex gap-4 mt-3">
         <div className="flex items-center gap-1.5"><div className="w-3 h-3 rounded bg-blue-500" /><span className="text-xs text-gray-500">Booket</span></div>
         <div className="flex items-center gap-1.5"><div className="w-3 h-3 rounded bg-gray-200 dark:bg-gray-700" /><span className="text-xs text-gray-500">Ledig</span></div>
       </div>
+    </div>
+  );
+
+  return (
+    <div className="border-t dark:border-gray-700 p-4">
+      {weekNav}
+      {listView}
+      {gridView}
     </div>
   );
 }
