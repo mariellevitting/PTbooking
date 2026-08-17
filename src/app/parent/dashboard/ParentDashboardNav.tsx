@@ -75,10 +75,9 @@ function ParentResultsSection({ parentId, children }: { parentId: string; childr
 
 function ParentGoalsSection({ children }: { children: Child[] }) {
   const [selectedId, setSelectedId] = useState(children[0]?.id ?? "");
-  const goalsCache = useRef<Record<string, string>>(
-    Object.fromEntries(children.map(c => [c.id, c.season_goals ?? ""]))
-  );
-  const [goals, setGoals] = useState(children[0]?.season_goals ?? "");
+  const goalsCache = useRef<Record<string, string>>({});
+  const [goals, setGoals] = useState("");
+  const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [saved, setSaved] = useState(false);
   const [saveError, setSaveError] = useState<string | null>(null);
@@ -87,6 +86,22 @@ function ParentGoalsSection({ children }: { children: Child[] }) {
   // Refs so unmount/async callbacks always read latest values
   const currentGoalsRef = useRef(goals);
   const currentIdRef = useRef(selectedId);
+
+  // Load all children's goals from DB on mount
+  useEffect(() => {
+    const ids = children.map(c => c.id);
+    if (ids.length === 0) { setLoading(false); return; }
+    const supabase = createClient();
+    supabase.from("children").select("id, season_goals").in("id", ids).then(({ data }) => {
+      const fetched: Record<string, string> = {};
+      for (const row of data ?? []) fetched[row.id] = row.season_goals ?? "";
+      goalsCache.current = fetched;
+      const first = fetched[children[0]?.id ?? ""] ?? "";
+      currentGoalsRef.current = first;
+      setGoals(first);
+      setLoading(false);
+    });
+  }, []);
 
   // Save on unmount (handles navigating away before debounce fires)
   useEffect(() => {
@@ -120,7 +135,7 @@ function ParentGoalsSection({ children }: { children: Child[] }) {
   useEffect(() => {
     currentGoalsRef.current = goals;
     currentIdRef.current = selectedId;
-    if (isFirstRender.current) { isFirstRender.current = false; return; }
+    if (loading || isFirstRender.current) { isFirstRender.current = false; return; }
     isDirty.current = true;
     setSaved(false);
     setSaving(true);
@@ -152,7 +167,7 @@ function ParentGoalsSection({ children }: { children: Child[] }) {
       {children.length === 1 && <p className="text-sm font-medium text-gray-700 dark:text-gray-300">{children[0].name}</p>}
       <div className="bg-white dark:bg-gray-900 rounded-2xl border dark:border-gray-700 p-5 space-y-3">
         <p className="text-xs text-gray-400 dark:text-gray-500">F.eks. triks, mål for konkurranser, hva danseren vil jobbe med</p>
-        <GoalsList value={goals} onChange={g => setGoals(g)} />
+        {loading ? <p className="text-sm text-gray-400">Laster...</p> : <GoalsList value={goals} onChange={g => setGoals(g)} />}
       </div>
       {(saving || saved || saveError) && (
         <p className={`text-xs text-center ${saveError ? "text-red-500" : "text-gray-400 dark:text-gray-500"}`}>
