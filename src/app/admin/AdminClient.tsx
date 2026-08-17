@@ -175,15 +175,6 @@ export default function AdminClient({ profiles, feedback, slots, trainerMap }: P
     : roleFilter === "alle" ? profiles
     : null;
 
-  const now = new Date();
-  const in7days = new Date(now.getTime() + 7 * 24 * 60 * 60 * 1000);
-  const upcomingBookings = slots
-    .filter(s => {
-      const start = new Date(s.start_at);
-      return start >= now && start <= in7days && s.bookings?.some(b => b.status === "confirmed");
-    })
-    .sort((a, b) => new Date(a.start_at).getTime() - new Date(b.start_at).getTime());
-
   const statCards = [
     { label: "Alle brukere", value: profiles.length, filter: "alle" as RoleFilter, color: "bg-[#3A3A3A] border-[#3A3A3A]" },
     { label: "Dansere", value: dancers.length, filter: "dancer" as RoleFilter, color: "bg-blue-500 border-blue-500" },
@@ -246,42 +237,8 @@ export default function AdminClient({ profiles, feedback, slots, trainerMap }: P
           ))}
         </div>
 
-        <div className="bg-white dark:bg-gray-900 rounded-2xl border dark:border-gray-700 p-5">
-          <h2 className="font-bold text-gray-900 dark:text-white mb-4">
-            Kommende bookinger <span className="text-[#E2A9F1] ml-1">neste 7 dager</span>
-          </h2>
-          {upcomingBookings.length === 0 ? (
-            <p className="text-sm text-gray-400">Ingen bookinger de neste 7 dagene</p>
-          ) : (
-            <div className="space-y-2">
-              {upcomingBookings.map(s => {
-                const booking = s.bookings!.find(b => b.status === "confirmed")!;
-                const trainerName = trainerMap[s.trainer_id] ?? "Ukjent trener";
-                const start = new Date(s.start_at);
-                const dateLabel = start.toLocaleDateString("nb-NO", { weekday: "long", day: "numeric", month: "short" });
-                const timeLabel = start.toLocaleTimeString("nb-NO", { hour: "2-digit", minute: "2-digit" });
-                return (
-                  <div key={s.id} className="flex items-center justify-between py-2.5 border-b dark:border-gray-700 last:border-0">
-                    <div className="flex items-center gap-3">
-                      <div className="w-2 h-2 rounded-full bg-blue-500 shrink-0" />
-                      <div>
-                        <p className="text-sm font-medium text-gray-800 dark:text-gray-100">{booking.dancer_name}</p>
-                        <p className="text-xs text-gray-400">{booking.dance_style} · hos {trainerName}</p>
-                      </div>
-                    </div>
-                    <div className="text-right shrink-0 ml-4">
-                      <p className="text-xs font-semibold text-gray-700 dark:text-gray-300">{timeLabel}</p>
-                      <p className="text-xs text-gray-400 capitalize">{dateLabel}</p>
-                    </div>
-                  </div>
-                );
-              })}
-            </div>
-          )}
-        </div>
-
         {filteredProfiles && (
-          <div className="bg-white dark:bg-gray-900 rounded-2xl border dark:border-gray-700 p-5 -mt-4">
+          <div className="bg-white dark:bg-gray-900 rounded-2xl border dark:border-gray-700 p-5">
             <div className="flex items-center justify-between mb-4">
               <h2 className="font-bold text-gray-900 dark:text-white">
                 {roleFilter === "alle" ? "Alle brukere" : roleFilter === "dancer" ? "Dansere" : roleFilter === "parent" ? "Foreldre" : "Trenere"}
