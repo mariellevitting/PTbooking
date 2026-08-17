@@ -179,10 +179,16 @@ export default function BookForDancerForm({ trainerId, danceStyles }: Props) {
     // Bruk eksisterende ledig slot på dette tidspunktet hvis den finnes
     const { data: existing } = await supabase
       .from("availability_slots")
-      .select("id")
+      .select("id, is_booked")
       .eq("trainer_id", trainerId)
       .eq("start_at", start.toISOString())
       .maybeSingle();
+
+    if (existing?.is_booked) {
+      setError(`Kl. ${time} er allerede booket. Velg et annet tidspunkt.`);
+      setSaving(false);
+      return;
+    }
 
     let slotId: string;
     if (existing) {
