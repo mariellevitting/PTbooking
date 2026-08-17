@@ -18,7 +18,7 @@ export default async function TrainerBookPage({ params }: { params: Promise<{ tr
 
   const { data: trainer } = await supabase
     .from("profiles")
-    .select("id, name, phone")
+    .select("id, name, phone, avatar_url")
     .eq("id", trainerId)
     .eq("role", "trainer")
     .single();
@@ -59,8 +59,10 @@ export default async function TrainerBookPage({ params }: { params: Promise<{ tr
         {/* Trener-kort */}
         <div className="bg-white dark:bg-gray-900 rounded-2xl border dark:border-gray-700 p-5 mb-6">
           <div className="flex items-center gap-4 mb-4">
-            <div className="w-14 h-14 rounded-full bg-[#edd5f9] dark:bg-[#E2A9F1]/15 flex items-center justify-center text-[#E2A9F1] font-bold text-xl shrink-0">
-              {trainer.name.charAt(0)}
+            <div className="w-14 h-14 rounded-full bg-[#edd5f9] dark:bg-[#E2A9F1]/15 flex items-center justify-center text-[#E2A9F1] font-bold text-xl shrink-0 overflow-hidden">
+              {trainer.avatar_url
+                ? <img src={trainer.avatar_url} alt={trainer.name} className="w-full h-full object-cover" />
+                : trainer.name.charAt(0)}
             </div>
             <div>
               <h1 className="text-xl font-bold">{trainer.name}</h1>
