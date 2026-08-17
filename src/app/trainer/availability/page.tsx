@@ -365,18 +365,30 @@ export default function AvailabilityPage() {
                       <button type="button" onClick={() => removeCustomSlot(dateToISO(selectedDate!), s.start)} className="text-gray-400 hover:text-red-400 text-xs">✕</button>
                     </div>
                   ))}
-                  <div className="flex items-center gap-2">
-                    <input type="time" value={customStart} onChange={e => setCustomStart(e.target.value)}
-                      className="flex-1 border dark:border-gray-700 rounded-lg px-2 py-1.5 text-sm bg-white dark:bg-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-[#E2A9F1]" />
-                    <span className="text-gray-400 text-sm">–</span>
-                    <input type="time" value={customEnd} onChange={e => setCustomEnd(e.target.value)}
-                      className="flex-1 border dark:border-gray-700 rounded-lg px-2 py-1.5 text-sm bg-white dark:bg-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-[#E2A9F1]" />
-                    <button type="button" onClick={addCustomSlot} disabled={!customStart || !customEnd}
-                      className="text-xs text-[#c87de0] hover:text-[#E2A9F1] disabled:opacity-30 font-medium whitespace-nowrap">
-                      + Legg til
+                  <div className="space-y-2">
+                    <div className="flex items-center gap-2">
+                      <div className="flex-1">
+                        <label className="text-[11px] text-gray-400 mb-1 block">Fra</label>
+                        <input type="time" value={customStart}
+                          onChange={e => setCustomStart(e.target.value)}
+                          onBlur={e => setCustomStart(e.target.value)}
+                          className="w-full border dark:border-gray-700 rounded-lg px-3 py-2 text-sm bg-white dark:bg-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-[#E2A9F1]" />
+                      </div>
+                      <span className="text-gray-400 text-sm mt-4">–</span>
+                      <div className="flex-1">
+                        <label className="text-[11px] text-gray-400 mb-1 block">Til</label>
+                        <input type="time" value={customEnd}
+                          onChange={e => setCustomEnd(e.target.value)}
+                          onBlur={e => setCustomEnd(e.target.value)}
+                          className="w-full border dark:border-gray-700 rounded-lg px-3 py-2 text-sm bg-white dark:bg-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-[#E2A9F1]" />
+                      </div>
+                    </div>
+                    <button type="button" onClick={addCustomSlot}
+                      className="w-full py-2 rounded-lg border border-dashed border-[#E2A9F1] text-[#c87de0] text-sm font-medium hover:bg-[#f5eeff] dark:hover:bg-[#E2A9F1]/10 transition-colors">
+                      + Legg til egendefinert tid
                     </button>
                   </div>
-                  <p className="text-[11px] text-gray-400 dark:text-gray-500">Egendefinert tid utenfor vanlige tidspunkter</p>
+                  <p className="text-[11px] text-gray-400 dark:text-gray-500">For tider utenfor vanlige tidspunkter</p>
                 </div>
 
                 {error && <p className="text-sm text-red-500">{error}</p>}
