@@ -13,6 +13,7 @@ interface Props {
   bookings: Slot[];  // slots with bookings (alias)
   slots: Slot[];
   trainerMap: Record<string, string>;
+  isAdmin: boolean;
 }
 
 const ROLE_COLORS = {
@@ -167,7 +168,7 @@ function TrainerCalendar({ trainer, slots }: { trainer: Profile; slots: Slot[] }
   );
 }
 
-export default function AdminClient({ profiles, feedback, slots, trainerMap }: Props) {
+export default function AdminClient({ profiles, feedback, slots, trainerMap, isAdmin }: Props) {
   const [roleFilter, setRoleFilter] = useState<RoleFilter | null>(null);
   const [trainerOpen, setTrainerOpen] = useState<string | null>(null);
 
@@ -269,30 +270,32 @@ export default function AdminClient({ profiles, feedback, slots, trainerMap }: P
           </div>
         )}
 
-        <div className="bg-white dark:bg-gray-900 rounded-2xl border dark:border-gray-700 p-5">
-          <h2 className="font-bold text-gray-900 dark:text-white mb-4">
-            Tilbakemeldinger <span className="text-[#E2A9F1] ml-1">{feedback.length}</span>
-          </h2>
-          {!feedback.length ? (
-            <p className="text-sm text-gray-400">Ingen tilbakemeldinger ennå</p>
-          ) : (
-            <div className="space-y-3 max-h-96 overflow-y-auto">
-              {feedback.map(f => {
-                const colors = ROLE_COLORS[f.role as keyof typeof ROLE_COLORS];
-                return (
-                  <div key={f.id} className="border dark:border-gray-700 rounded-xl p-3">
-                    <div className="flex items-center justify-between mb-1">
-                      <p className="text-sm font-semibold text-gray-800 dark:text-gray-100">{f.user_name}</p>
-                      <span className="text-xs text-gray-400">{timeAgo(f.created_at)}</span>
+        {isAdmin && (
+          <div className="bg-white dark:bg-gray-900 rounded-2xl border dark:border-gray-700 p-5">
+            <h2 className="font-bold text-gray-900 dark:text-white mb-4">
+              Tilbakemeldinger <span className="text-[#E2A9F1] ml-1">{feedback.length}</span>
+            </h2>
+            {!feedback.length ? (
+              <p className="text-sm text-gray-400">Ingen tilbakemeldinger ennå</p>
+            ) : (
+              <div className="space-y-3 max-h-96 overflow-y-auto">
+                {feedback.map(f => {
+                  const colors = ROLE_COLORS[f.role as keyof typeof ROLE_COLORS];
+                  return (
+                    <div key={f.id} className="border dark:border-gray-700 rounded-xl p-3">
+                      <div className="flex items-center justify-between mb-1">
+                        <p className="text-sm font-semibold text-gray-800 dark:text-gray-100">{f.user_name}</p>
+                        <span className="text-xs text-gray-400">{timeAgo(f.created_at)}</span>
+                      </div>
+                      {colors && <span className={`text-xs ${colors.text} ${colors.bg} px-2 py-0.5 rounded-full`}>{colors.label}</span>}
+                      <p className="text-sm text-gray-600 dark:text-gray-400 mt-2 leading-relaxed">{f.message}</p>
                     </div>
-                    {colors && <span className={`text-xs ${colors.text} ${colors.bg} px-2 py-0.5 rounded-full`}>{colors.label}</span>}
-                    <p className="text-sm text-gray-600 dark:text-gray-400 mt-2 leading-relaxed">{f.message}</p>
-                  </div>
-                );
-              })}
-            </div>
-          )}
-        </div>
+                  );
+                })}
+              </div>
+            )}
+          </div>
+        )}
 
       </div>
     </div>

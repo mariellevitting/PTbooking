@@ -10,7 +10,10 @@ export default async function AdminPage() {
   const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
 
-  if (!user || user.email !== ADMIN_EMAIL) redirect("/dashboard");
+  const { data: profile } = await supabase.from("profiles").select("role").eq("id", user?.id ?? "").single();
+  if (!user || profile?.role !== "trainer") redirect("/dashboard");
+
+  const isAdmin = user.email === ADMIN_EMAIL;
 
   const [
     { data: profiles },
@@ -19,7 +22,7 @@ export default async function AdminPage() {
     { data: rawBookings },
   ] = await Promise.all([
     supabase.from("profiles").select("id, name, role, created_at").order("created_at", { ascending: false }),
-    supabase.from("feedback").select("*").order("created_at", { ascending: false }),
+    isAdmin ? supabase.from("feedback").select("*").order("created_at", { ascending: false }) : Promise.resolve({ data: [] }),
     supabase.from("availability_slots").select("id, start_at, end_at, trainer_id").order("start_at").limit(1000) as any,
     supabase.from("bookings").select("id, slot_id, dancer_name, dance_style, status").eq("status", "confirmed") as any,
   ]);
@@ -41,10 +44,11 @@ export default async function AdminPage() {
   return (
     <AdminClient
       profiles={profiles ?? []}
-      feedback={feedback ?? []}
+      feedback={isAdmin ? (feedback ?? []) : []}
       bookings={bookings ?? []}
       slots={slots ?? []}
       trainerMap={trainerMap}
+      isAdmin={isAdmin}
     />
   );
 }
