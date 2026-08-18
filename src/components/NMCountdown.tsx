@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
+import { createClient } from "@/lib/supabase/client";
 
 const COMPETITIONS = [
   {
@@ -57,16 +58,27 @@ interface Props {
 
 export default function NMCountdown({ href }: Props) {
   const [tick, setTick] = useState(0);
+  const [count, setCount] = useState<number | null>(null);
+
+  const upcoming = COMPETITIONS.filter(c => getTimeLeft(c.date) !== null);
+  const next = upcoming[0];
 
   useEffect(() => {
     const interval = setInterval(() => setTick(t => t + 1), 1000);
     return () => clearInterval(interval);
   }, []);
 
-  const upcoming = COMPETITIONS.filter(c => getTimeLeft(c.date) !== null);
-  if (upcoming.length === 0) return null;
+  useEffect(() => {
+    if (!next) return;
+    const supabase = createClient();
+    supabase
+      .from("competition_participants")
+      .select("id", { count: "exact", head: true })
+      .eq("competition_name", next.name)
+      .then(({ count: c }) => setCount(c ?? 0));
+  }, [next?.name]);
 
-  const next = upcoming[0];
+  if (upcoming.length === 0) return null;
   const timeLeft = getTimeLeft(next.date)!;
 
   const box = (
@@ -75,6 +87,9 @@ export default function NMCountdown({ href }: Props) {
         <p className="text-xs text-[#e8c4f5] font-semibold uppercase tracking-wide">Neste konkurranse</p>
         <p className="text-sm font-bold text-white">{next.short}</p>
         <p className="text-xs text-[#e8c4f5]">{next.dateLabel}{next.location ? ` · ${next.location}` : ""}</p>
+        {count !== null && count > 0 && (
+          <p className="text-xs text-[#e8c4f5] mt-1">{count} stk skal delta</p>
+        )}
       </div>
       <div className="text-right ml-4">
         <p className="text-3xl font-bold text-white">{timeLeft.days}</p>
