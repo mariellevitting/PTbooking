@@ -72,7 +72,7 @@ export default function NMCountdown({ href }: Props) {
     if (!next) return;
     const supabase = createClient();
     supabase
-      .from("competition_participants")
+      .from("competition_participations")
       .select("id", { count: "exact", head: true })
       .eq("competition_name", next.name)
       .then(({ count: c }) => setCount(c ?? 0));
