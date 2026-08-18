@@ -7,6 +7,7 @@ import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Check, User, Phone, FileText, Music, Camera } from "lucide-react";
 import { useRef } from "react";
+import DeleteAccountSection from "@/components/DeleteAccountSection";
 
 const ALL_STYLES = [
   "Slow",
@@ -197,6 +198,7 @@ export default function ProfilForm({ userId, name, phone, bio, danceStyles, avat
       <Button type="submit" className="w-full bg-[#3A3A3A] hover:bg-[#2a2a2a]" disabled={saving || success}>
         {saving ? "Lagrer..." : "Lagre profil"}
       </Button>
+      <DeleteAccountSection userId={userId} />
     </form>
   );
 }

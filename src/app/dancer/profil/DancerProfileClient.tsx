@@ -6,6 +6,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { User, Phone, Camera, Check } from "lucide-react";
+import DeleteAccountSection from "@/components/DeleteAccountSection";
 
 interface Props {
   userId: string;
@@ -113,6 +114,7 @@ export default function DancerProfileClient(props: Props) {
       <Button type="submit" className="w-full bg-[#3A3A3A] hover:bg-[#2a2a2a]" disabled={saving || success}>
         {saving ? "Lagrer..." : "Lagre profil"}
       </Button>
+      <DeleteAccountSection userId={props.userId} />
     </form>
   );
 }
