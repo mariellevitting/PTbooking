@@ -54,7 +54,7 @@ export default function ProfilForm({ userId, name, phone, bio, danceStyles, avat
       const { data } = supabase.storage.from("avatars").getPublicUrl(path);
       const url = data.publicUrl + "?t=" + Date.now();
       setAvatar(url);
-      await supabase.from("profiles").update({ avatar_url: data.publicUrl }).eq("id", userId);
+      await supabase.from("profiles").update({ avatar_url: url }).eq("id", userId);
       router.refresh();
     }
     setUploading(false);

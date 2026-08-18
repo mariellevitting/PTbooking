@@ -39,8 +39,9 @@ export default function UserProfileForm({ userId, name, phone, avatarUrl }: Prop
       .upload(path, file, { upsert: true });
     if (!uploadError) {
       const { data } = supabase.storage.from("avatars").getPublicUrl(path);
-      setAvatar(data.publicUrl + "?t=" + Date.now());
-      await supabase.from("profiles").update({ avatar_url: data.publicUrl }).eq("id", userId);
+      const url = data.publicUrl + "?t=" + Date.now();
+      setAvatar(url);
+      await supabase.from("profiles").update({ avatar_url: url }).eq("id", userId);
       router.refresh();
     }
     setUploading(false);
