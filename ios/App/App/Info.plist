@@ -45,5 +45,11 @@
 	</array>
 	<key>UIViewControllerBasedStatusBarAppearance</key>
 	<true/>
+	<key>NSCameraUsageDescription</key>
+	<string>Danceitude trenger tilgang til kameraet for at du skal kunne ta et profilbilde.</string>
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>Danceitude trenger tilgang til bilder for at du skal kunne velge et profilbilde.</string>
+	<key>NSPhotoLibraryAddUsageDescription</key>
+	<string>Danceitude trenger tilgang til å lagre bilder.</string>
 </dict>
 </plist>
