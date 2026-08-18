@@ -19,7 +19,7 @@ export default async function TrainerKonkurranserPage() {
           <ArrowLeft size={24} strokeWidth={2.5} />
         </Link>
         <h1 className="text-2xl font-bold mb-6">Kommende konkurranser</h1>
-        <CompetitionList userId={user.id} showCountdown />
+        <CompetitionList userId={user.id} showCountdown isTrainer />
       </div>
     </main>
   );

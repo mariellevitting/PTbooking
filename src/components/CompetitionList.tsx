@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { createClient } from "@/lib/supabase/client";
-import { Check } from "lucide-react";
+import { Check, ChevronDown, ChevronUp } from "lucide-react";
 
 export const COMPETITIONS = [
   { short: "NM", name: "Norgesmesterskapet 2026", date: new Date("2026-06-13T00:00:00"), dateLabel: "13–14. juni", location: "Sofiemyrhallen, Sofienmyr" },
@@ -20,10 +20,11 @@ function daysUntil(date: Date) {
 
 interface Props {
   userId: string;
-  showCountdown?: boolean; // show the big "next competition" card
+  showCountdown?: boolean;
+  isTrainer?: boolean;
 }
 
-export default function CompetitionList({ userId, showCountdown = false }: Props) {
+export default function CompetitionList({ userId, showCountdown = false, isTrainer = false }: Props) {
   const upcoming = COMPETITIONS.filter(c => daysUntil(c.date) > 0);
   const next = upcoming[0];
   const rest = upcoming.slice(1);
@@ -31,6 +32,8 @@ export default function CompetitionList({ userId, showCountdown = false }: Props
   const [participating, setParticipating] = useState<Set<string>>(new Set());
   const [toggling, setToggling] = useState<string | null>(null);
   const [counts, setCounts] = useState<Record<string, number>>({});
+  const [expanded, setExpanded] = useState<string | null>(null);
+  const [participants, setParticipants] = useState<Record<string, string[]>>({});
 
   useEffect(() => {
     const supabase = createClient();
@@ -62,6 +65,30 @@ export default function CompetitionList({ userId, showCountdown = false }: Props
 
     return () => { supabase.removeChannel(channel); };
   }, [userId]);
+
+  async function fetchParticipants(name: string) {
+    if (participants[name]) return;
+    const supabase = createClient();
+    const { data } = await supabase
+      .from("competition_participations")
+      .select("profiles(name)")
+      .eq("competition_name", name);
+    if (data) {
+      setParticipants(prev => ({
+        ...prev,
+        [name]: data.map((r: any) => r.profiles?.name ?? "Ukjent").filter(Boolean),
+      }));
+    }
+  }
+
+  function toggleExpanded(name: string) {
+    if (expanded === name) {
+      setExpanded(null);
+    } else {
+      setExpanded(name);
+      fetchParticipants(name);
+    }
+  }
 
   async function toggle(name: string) {
     if (toggling) return;
@@ -98,11 +125,25 @@ export default function CompetitionList({ userId, showCountdown = false }: Props
             </div>
             <div className="flex flex-col items-end gap-1.5">
               {(counts[next.name] ?? 0) > 0 && (
-                <p className="text-xs text-[#e8c4f5]">{counts[next.name]} stk skal delta</p>
+                isTrainer ? (
+                  <button onClick={() => toggleExpanded(next.name)} className="flex items-center gap-1 text-xs text-[#e8c4f5] hover:text-white">
+                    {counts[next.name]} stk skal delta
+                    {expanded === next.name ? <ChevronUp size={12} /> : <ChevronDown size={12} />}
+                  </button>
+                ) : (
+                  <p className="text-xs text-[#e8c4f5]">{counts[next.name]} stk skal delta</p>
+                )
               )}
               <DeltaButton name={next.name} participating={participating} toggling={toggling} onToggle={toggle} variant="dark" />
             </div>
           </div>
+          {isTrainer && expanded === next.name && (
+            <div className="mt-3 border-t border-white/10 pt-3 space-y-1">
+              {(participants[next.name] ?? []).map(n => (
+                <p key={n} className="text-xs text-[#e8c4f5]">• {n}</p>
+              ))}
+            </div>
+          )}
         </div>
       )}
 
@@ -110,23 +151,39 @@ export default function CompetitionList({ userId, showCountdown = false }: Props
         const days = daysUntil(c.date);
         const isOn = participating.has(c.name);
         return (
-          <div key={c.name} className="bg-white dark:bg-gray-900 rounded-xl border dark:border-gray-700 p-4 flex items-center justify-between gap-3">
-            <div className="min-w-0">
-              <p className="font-semibold text-gray-800 dark:text-white">{c.short}</p>
-              <p className="text-sm text-[#E2A9F1]">{c.dateLabel}</p>
-              {c.location && <p className="text-xs text-gray-400 dark:text-gray-500 mt-0.5">{c.location}</p>}
-            </div>
-            <div className="flex flex-col items-end gap-1 shrink-0">
-              {(counts[c.name] ?? 0) > 0 && (
-                <p className="text-xs text-gray-400 dark:text-gray-500">{counts[c.name]} stk skal delta</p>
-              )}
-              <div className="flex items-center gap-2">
-                <span className="text-xs font-bold text-[#E2A9F1] bg-[#f5eeff] dark:bg-[#E2A9F1]/10 px-2 py-1 rounded-full whitespace-nowrap">
-                  {days} dager
-                </span>
-                <DeltaButton name={c.name} participating={participating} toggling={toggling} onToggle={toggle} />
+          <div key={c.name} className="bg-white dark:bg-gray-900 rounded-xl border dark:border-gray-700 p-4">
+            <div className="flex items-center justify-between gap-3">
+              <div className="min-w-0">
+                <p className="font-semibold text-gray-800 dark:text-white">{c.short}</p>
+                <p className="text-sm text-[#E2A9F1]">{c.dateLabel}</p>
+                {c.location && <p className="text-xs text-gray-400 dark:text-gray-500 mt-0.5">{c.location}</p>}
+              </div>
+              <div className="flex flex-col items-end gap-1 shrink-0">
+                {(counts[c.name] ?? 0) > 0 && (
+                  isTrainer ? (
+                    <button onClick={() => toggleExpanded(c.name)} className="flex items-center gap-1 text-xs text-gray-400 dark:text-gray-500 hover:text-[#E2A9F1]">
+                      {counts[c.name]} stk skal delta
+                      {expanded === c.name ? <ChevronUp size={12} /> : <ChevronDown size={12} />}
+                    </button>
+                  ) : (
+                    <p className="text-xs text-gray-400 dark:text-gray-500">{counts[c.name]} stk skal delta</p>
+                  )
+                )}
+                <div className="flex items-center gap-2">
+                  <span className="text-xs font-bold text-[#E2A9F1] bg-[#f5eeff] dark:bg-[#E2A9F1]/10 px-2 py-1 rounded-full whitespace-nowrap">
+                    {days} dager
+                  </span>
+                  <DeltaButton name={c.name} participating={participating} toggling={toggling} onToggle={toggle} />
+                </div>
               </div>
             </div>
+            {isTrainer && expanded === c.name && (
+              <div className="mt-3 border-t border-gray-100 dark:border-gray-700 pt-2 space-y-1">
+                {(participants[c.name] ?? []).map(n => (
+                  <p key={n} className="text-xs text-gray-500 dark:text-gray-400">• {n}</p>
+                ))}
+              </div>
+            )}
           </div>
         );
       })}
