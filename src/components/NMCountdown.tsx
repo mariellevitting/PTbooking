@@ -71,11 +71,24 @@ export default function NMCountdown({ href }: Props) {
   useEffect(() => {
     if (!next) return;
     const supabase = createClient();
-    supabase
-      .from("competition_participations")
-      .select("id", { count: "exact", head: true })
-      .eq("competition_name", next.name)
-      .then(({ count: c }) => setCount(c ?? 0));
+    const competitionName = next.name;
+
+    const fetchCount = async () => {
+      const { count: c } = await supabase
+        .from("competition_participations")
+        .select("id", { count: "exact", head: true })
+        .eq("competition_name", competitionName);
+      setCount(c ?? 0);
+    };
+
+    fetchCount();
+
+    const channel = supabase
+      .channel("competition_participations_count")
+      .on("postgres_changes", { event: "*", schema: "public", table: "competition_participations" }, fetchCount)
+      .subscribe();
+
+    return () => { supabase.removeChannel(channel); };
   }, [next?.name]);
 
   if (upcoming.length === 0) return null;

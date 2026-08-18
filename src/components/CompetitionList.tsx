@@ -34,6 +34,15 @@ export default function CompetitionList({ userId, showCountdown = false }: Props
 
   useEffect(() => {
     const supabase = createClient();
+
+    const fetchCounts = async () => {
+      const { data } = await supabase.from("competition_participations").select("competition_name");
+      if (!data) return;
+      const c: Record<string, number> = {};
+      for (const r of data) c[r.competition_name] = (c[r.competition_name] ?? 0) + 1;
+      setCounts(c);
+    };
+
     supabase
       .from("competition_participations")
       .select("competition_name")
@@ -41,15 +50,15 @@ export default function CompetitionList({ userId, showCountdown = false }: Props
       .then(({ data }) => {
         if (data) setParticipating(new Set(data.map(r => r.competition_name)));
       });
-    supabase
-      .from("competition_participations")
-      .select("competition_name")
-      .then(({ data }) => {
-        if (!data) return;
-        const c: Record<string, number> = {};
-        for (const r of data) c[r.competition_name] = (c[r.competition_name] ?? 0) + 1;
-        setCounts(c);
-      });
+
+    fetchCounts();
+
+    const channel = supabase
+      .channel("competition_participations_list")
+      .on("postgres_changes", { event: "*", schema: "public", table: "competition_participations" }, fetchCounts)
+      .subscribe();
+
+    return () => { supabase.removeChannel(channel); };
   }, [userId]);
 
   async function toggle(name: string) {
