@@ -55,7 +55,9 @@ export default function CompetitionList({ userId, showCountdown = false }: Props
 
     const channel = supabase
       .channel("competition_participations_list")
-      .on("postgres_changes", { event: "*", schema: "public", table: "competition_participations" }, fetchCounts)
+      .on("postgres_changes", { event: "*", schema: "public", table: "competition_participations" }, () => {
+        setTimeout(fetchCounts, 300);
+      })
       .subscribe();
 
     return () => { supabase.removeChannel(channel); };
