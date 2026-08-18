@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useRef } from "react";
+import { useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -16,6 +17,7 @@ interface Props {
 }
 
 export default function DancerProfileClient(props: Props) {
+  const router = useRouter();
   const [nameVal, setNameVal] = useState(props.name);
   const [phoneVal, setPhoneVal] = useState(props.phone);
   const [avatar, setAvatar] = useState<string | null>(props.avatarUrl);
@@ -37,6 +39,7 @@ export default function DancerProfileClient(props: Props) {
       const { data } = supabase.storage.from("avatars").getPublicUrl(path);
       setAvatar(data.publicUrl + "?t=" + Date.now());
       await supabase.from("profiles").update({ avatar_url: data.publicUrl }).eq("id", props.userId);
+      router.refresh();
     }
     setUploading(false);
   }

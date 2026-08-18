@@ -1,12 +1,12 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useRef } from "react";
+import { useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Check, User, Phone, FileText, Music, Camera } from "lucide-react";
-import { useRef } from "react";
 import DeleteAccountSection from "@/components/DeleteAccountSection";
 
 const ALL_STYLES = [
@@ -30,6 +30,7 @@ interface Props {
 }
 
 export default function ProfilForm({ userId, name, phone, bio, danceStyles, avatarUrl }: Props) {
+  const router = useRouter();
   const [nameVal, setNameVal] = useState(name);
   const [phoneVal, setPhoneVal] = useState(phone);
   const [bioVal, setBioVal] = useState(bio);
@@ -54,6 +55,7 @@ export default function ProfilForm({ userId, name, phone, bio, danceStyles, avat
       const url = data.publicUrl + "?t=" + Date.now();
       setAvatar(url);
       await supabase.from("profiles").update({ avatar_url: data.publicUrl }).eq("id", userId);
+      router.refresh();
     }
     setUploading(false);
   }

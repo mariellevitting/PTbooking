@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useRef } from "react";
+import { useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -16,6 +17,7 @@ interface Props {
 }
 
 export default function UserProfileForm({ userId, name, phone, avatarUrl }: Props) {
+  const router = useRouter();
   const [nameVal, setNameVal] = useState(name);
   const [phoneVal, setPhoneVal] = useState(phone.replace(/[^0-9+\s]/g, ""));
   const [avatar, setAvatar] = useState<string | null>(avatarUrl);
@@ -39,6 +41,7 @@ export default function UserProfileForm({ userId, name, phone, avatarUrl }: Prop
       const { data } = supabase.storage.from("avatars").getPublicUrl(path);
       setAvatar(data.publicUrl + "?t=" + Date.now());
       await supabase.from("profiles").update({ avatar_url: data.publicUrl }).eq("id", userId);
+      router.refresh();
     }
     setUploading(false);
   }
