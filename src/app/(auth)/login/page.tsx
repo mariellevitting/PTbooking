@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
 import { registerUser } from "@/app/actions/register";
@@ -17,30 +17,6 @@ const roles: { value: UserRole; label: string; description: string }[] = [
 export default function LoginPage() {
   const router = useRouter();
   const [tab, setTab] = useState<"login" | "register">("login");
-  const [checkingSession, setCheckingSession] = useState(false);
-
-  useEffect(() => {
-    const isCapacitor = typeof window !== "undefined" && !!(window as any).Capacitor;
-    if (!isCapacitor) return;
-    setCheckingSession(true);
-    const supabase = createClient();
-    supabase.auth.getSession().then(async ({ data: { session } }) => {
-      if (session) {
-        const { data: profile } = await supabase.from("profiles").select("role").eq("id", session.user.id).single();
-        if (profile?.role === "trainer") { router.replace("/trainer/dashboard"); return; }
-        if (profile?.role === "parent") { router.replace("/parent/dashboard"); return; }
-        router.replace("/dancer/dashboard");
-      } else {
-        setCheckingSession(false);
-      }
-    });
-  }, []);
-
-  if (checkingSession) return (
-    <div className="min-h-screen flex items-center justify-center bg-[#3A3A3A]">
-      <p className="text-3xl font-bold text-[#E2A9F1] tracking-tight">Danceitude</p>
-    </div>
-  );
 
 // Login state
   const [email, setEmail] = useState("");
