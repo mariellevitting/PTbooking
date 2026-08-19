@@ -4,7 +4,7 @@ import { useEffect } from "react";
 import { useRouter, usePathname } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
 
-const PUBLIC = ["/login", "/register", "/glemt-passord", "/nytt-passord", "/", "/om", "/privacy", "/support"];
+const REDIRECT_ON_SESSION = ["/login", "/register"];
 
 export default function CapacitorSessionRestore() {
   const router = useRouter();
@@ -14,8 +14,8 @@ export default function CapacitorSessionRestore() {
     const isCapacitor = typeof window !== "undefined" && !!(window as any).Capacitor;
     if (!isCapacitor) return;
 
-    const isPublic = PUBLIC.some(p => pathname === p || pathname.startsWith(p + "/"));
-    if (!isPublic) return;
+    const shouldRedirect = REDIRECT_ON_SESSION.some(p => pathname === p || pathname.startsWith(p + "/"));
+    if (!shouldRedirect) return;
 
     const supabase = createClient();
     supabase.auth.getSession().then(async ({ data: { session } }) => {
