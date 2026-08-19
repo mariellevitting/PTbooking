@@ -30,7 +30,9 @@ export async function proxy(request: NextRequest) {
     (route) => pathname === route || pathname.startsWith(route + "/")
   );
 
-  if (!user && !isPublic) {
+  const isCapacitor = request.cookies.get("capacitor")?.value === "1";
+
+  if (!user && !isPublic && !isCapacitor) {
     return NextResponse.redirect(new URL("/login", request.url));
   }
 
