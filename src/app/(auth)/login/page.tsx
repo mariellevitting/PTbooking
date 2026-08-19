@@ -40,10 +40,18 @@ export default function LoginPage() {
     setLoginLoading(true);
     setLoginError("");
     const supabase = createClient();
-    const { error } = await supabase.auth.signInWithPassword({ email, password });
+    const { data, error } = await supabase.auth.signInWithPassword({ email, password });
     if (error) { setLoginError("Feil e-post eller passord"); setLoginLoading(false); return; }
-    router.push("/dashboard");
-    router.refresh();
+    const isCapacitor = typeof window !== "undefined" && !!(window as any).Capacitor;
+    if (isCapacitor) {
+      const { data: profile } = await supabase.from("profiles").select("role").eq("id", data.user!.id).single();
+      if (profile?.role === "trainer") { router.replace("/trainer/dashboard"); return; }
+      if (profile?.role === "parent") { router.replace("/parent/dashboard"); return; }
+      router.replace("/dancer/dashboard");
+    } else {
+      router.push("/dashboard");
+      router.refresh();
+    }
   }
 
   async function handleRegister(e: React.FormEvent) {
