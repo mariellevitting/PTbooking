@@ -37,7 +37,11 @@ export default function LoginPage() {
     });
   }, []);
 
-  if (checkingSession) return null;
+  if (checkingSession) return (
+    <div className="min-h-screen flex items-center justify-center bg-[#3A3A3A]">
+      <p className="text-3xl font-bold text-[#E2A9F1] tracking-tight">Danceitude</p>
+    </div>
+  );
 
 // Login state
   const [email, setEmail] = useState("");
