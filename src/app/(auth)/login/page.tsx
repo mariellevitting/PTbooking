@@ -17,11 +17,12 @@ const roles: { value: UserRole; label: string; description: string }[] = [
 export default function LoginPage() {
   const router = useRouter();
   const [tab, setTab] = useState<"login" | "register">("login");
-  const [checkingSession, setCheckingSession] = useState(true);
+  const [checkingSession, setCheckingSession] = useState(false);
 
   useEffect(() => {
     const isCapacitor = typeof window !== "undefined" && !!(window as any).Capacitor;
-    if (!isCapacitor) { setCheckingSession(false); return; }
+    if (!isCapacitor) return;
+    setCheckingSession(true);
     const supabase = createClient();
     supabase.auth.getSession().then(async ({ data: { session } }) => {
       if (session) {
