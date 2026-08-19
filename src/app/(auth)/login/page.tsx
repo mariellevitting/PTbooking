@@ -6,6 +6,7 @@ import { createClient } from "@/lib/supabase/client";
 import { registerUser } from "@/app/actions/register";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { Eye, EyeOff } from "lucide-react";
 import type { UserRole } from "@/types";
 
 const roles: { value: UserRole; label: string; description: string }[] = [
@@ -23,6 +24,7 @@ export default function LoginPage() {
   const [password, setPassword] = useState("");
   const [loginError, setLoginError] = useState("");
   const [loginLoading, setLoginLoading] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
 
   // Register state
   const [step, setStep] = useState<"role" | "details">("role");
@@ -92,7 +94,12 @@ export default function LoginPage() {
           <label className="text-sm font-medium text-gray-700 dark:text-gray-300">Passord</label>
           <a href="/glemt-passord" className="text-xs text-[#E2A9F1] hover:underline">Glemt passordet?</a>
         </div>
-        <Input type="password" value={password} onChange={e => setPassword(e.target.value)} placeholder="••••••••" required />
+        <div className="relative">
+          <Input type={showPassword ? "text" : "password"} value={password} onChange={e => setPassword(e.target.value)} placeholder="••••••••" required className="pr-10" />
+          <button type="button" onClick={() => setShowPassword(p => !p)} className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600">
+            {showPassword ? <EyeOff size={16} /> : <Eye size={16} />}
+          </button>
+        </div>
       </div>
       {loginError && <p className="text-sm text-red-500">{loginError}</p>}
       <Button type="submit" className="w-full bg-[#3A3A3A] hover:bg-[#2a2a2a] h-11 text-base" disabled={loginLoading}>
