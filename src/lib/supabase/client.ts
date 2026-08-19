@@ -1,9 +1,8 @@
 import { createBrowserClient } from "@supabase/ssr";
 import { createClient as createSupabaseClient } from "@supabase/supabase-js";
 
-const isCapacitor = typeof window !== "undefined" && !!(window as any).Capacitor;
-
 export function createClient() {
+  const isCapacitor = typeof window !== "undefined" && !!(window as any).Capacitor;
   if (isCapacitor) {
     return createSupabaseClient(
       process.env.NEXT_PUBLIC_SUPABASE_URL!,

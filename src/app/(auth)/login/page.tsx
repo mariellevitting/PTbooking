@@ -49,12 +49,8 @@ export default function LoginPage() {
     const supabase = createClient();
     const { error } = await supabase.auth.signInWithPassword({ email, password });
     if (error) { setLoginError("Feil e-post eller passord"); setLoginLoading(false); return; }
-    const { data: { user } } = await supabase.auth.getUser();
-    if (!user) { setLoginError("Feil e-post eller passord"); setLoginLoading(false); return; }
-    const { data: profile } = await supabase.from("profiles").select("role").eq("id", user.id).single();
-    if (profile?.role === "trainer") { router.push("/trainer/dashboard"); return; }
-    if (profile?.role === "parent") { router.push("/parent/dashboard"); return; }
-    router.push("/dancer/dashboard");
+    router.push("/dashboard");
+    router.refresh();
   }
 
   async function handleRegister(e: React.FormEvent) {
