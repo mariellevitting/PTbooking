@@ -364,7 +364,7 @@ export default function ParentDashboardNav({ userName, avatarUrl, notifications,
       <div className="md:ml-56">
         <div className="max-w-lg mx-auto px-4 pb-6 pt-[calc(3.5rem+env(safe-area-inset-top))] md:py-6 space-y-4">
 
-          <h1 className="text-2xl font-bold">Heihei, {userName.split(" ")[0]}! 👋</h1>
+          <h1 className="text-2xl font-bold">Hei, {userName.split(" ")[0]}! 👋</h1>
 
           {/* Mine privattimer */}
           {active === "timer" && (
@@ -552,7 +552,7 @@ export default function ParentDashboardNav({ userName, avatarUrl, notifications,
                 </div>
                 <div className="bg-green-50 border border-green-200 rounded-xl p-4">
                   <p className="text-sm font-semibold text-green-800 mb-1">Booking samme dag?</p>
-                  <p className="text-sm text-green-700">Gi treneren beskjed på forhånd via melding (Messenger, Snapchat e.l.) så de er forberedt. 💬</p>
+                  <p className="text-sm text-green-700">Gi treneren beskjed på forhånd via melding så de er forberedt. 💬</p>
                 </div>
               </div>
               <div className="bg-white dark:bg-gray-900 rounded-2xl border dark:border-gray-700 p-5">

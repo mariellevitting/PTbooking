@@ -38,7 +38,7 @@ export default function InfoBox() {
           </div>
           <div className="bg-green-50 border border-green-100 rounded-xl p-3">
             <p className="text-xs font-semibold text-green-700 mb-0.5">Booking samme dag?</p>
-            <p className="text-xs text-green-600">Gi treneren beskjed på forhånd samme dag via melding (Messenger, Snapchat e.l.) så de er forberedt. 💬</p>
+            <p className="text-xs text-green-600">Gi treneren beskjed på forhånd samme dag via melding så de er forberedt. 💬</p>
           </div>
         </div>
       )}
