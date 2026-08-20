@@ -27,6 +27,18 @@ export async function registerUser(
     }
   }
 
+  if (role === "dancer") {
+    if (!trainerCode || trainerCode !== process.env.DANCER_INVITE_CODE) {
+      return { error: "Feil klubbkode for danser. Ta kontakt med Evolution for å få riktig kode." };
+    }
+  }
+
+  if (role === "parent") {
+    if (!trainerCode || trainerCode !== process.env.PARENT_INVITE_CODE) {
+      return { error: "Feil klubbkode for forelder. Ta kontakt med Evolution for å få riktig kode." };
+    }
+  }
+
   const { data, error: signUpError } = await supabase.auth.signUp({ email, password });
   if (signUpError || !data.user) {
     return { error: signUpError?.message ?? "Noe gikk galt" };
