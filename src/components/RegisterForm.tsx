@@ -110,6 +110,22 @@ export default function RegisterForm({ prefilledCode, clubName }: Props) {
               <p className="text-xs text-gray-400 dark:text-gray-500">Kun trenere med kode kan registrere seg.</p>
             </div>
           )}
+          {role === "dancer" && (
+            <div className="space-y-1.5">
+              <label className="text-sm font-medium">Klubbkode</label>
+              <Input type="text" value={trainerCode} onChange={e => setTrainerCode(e.target.value)}
+                placeholder="Kode fra Evolution" required />
+              <p className="text-xs text-gray-400 dark:text-gray-500">Kun dansere med klubbkode kan registrere seg.</p>
+            </div>
+          )}
+          {role === "parent" && (
+            <div className="space-y-1.5">
+              <label className="text-sm font-medium">Klubbkode</label>
+              <Input type="text" value={trainerCode} onChange={e => setTrainerCode(e.target.value)}
+                placeholder="Kode fra Evolution" required />
+              <p className="text-xs text-gray-400 dark:text-gray-500">Kun foreldre med klubbkode kan registrere seg.</p>
+            </div>
+          )}
           {error && <p className="text-sm text-red-500">{error}</p>}
           <Button type="submit" className="w-full bg-[#3A3A3A] hover:bg-[#2a2a2a] h-11 text-base" disabled={loading}>
             {loading ? "Oppretter konto..." : "Lag konto"}
