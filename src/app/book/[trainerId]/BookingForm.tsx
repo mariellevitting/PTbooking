@@ -210,6 +210,23 @@ export default function BookingForm({ slots, trainerName, bookerId, bookerName, 
     setError("");
     const supabase = createClient();
 
+    // Sjekk at ingen av slotene er blitt booket siden siden ble lastet
+    const slotIds = slotBookings.map(sb => sb.slot.id);
+    const { data: currentSlots } = await supabase
+      .from("availability_slots")
+      .select("id, start_at, is_booked")
+      .in("id", slotIds);
+
+    const takenSlot = currentSlots?.find(s => s.is_booked);
+    if (takenSlot) {
+      const start = new Date(takenSlot.start_at);
+      const label = start.toLocaleDateString("nb-NO", { weekday: "long", day: "numeric", month: "long" }) +
+        " kl. " + start.toLocaleTimeString("nb-NO", { hour: "2-digit", minute: "2-digit" });
+      setError(`Timen ${label} ble booket av noen andre mens du valgte. Gå tilbake og velg en annen tid.`);
+      setLoading(false);
+      return;
+    }
+
     for (const sb of slotBookings) {
       const dancerName = isDouble(sb.danceStyle) ? `${sb.dancer1} & ${sb.dancer2}` : sb.dancer1;
 
