@@ -49,7 +49,7 @@ export default async function OmPage() {
           <p>Danceitude startet med et problem jeg selv kjente godt.</p>
           <p>Som danser i Evolution Danseklubb i Sarpsborg opplevde jeg hvor tungvint det kunne være å booke privattimer. Ledige timer ble delt i et Google Docs-dokument. Dansere og foreldre måtte finne et ledig tidspunkt, skrive seg inn og holde oversikt over bookingen selv.</p>
           <p>Det fungerte. Men det kunne fungere mye bedre.</p>
-          <p>Jeg har en mastergrad med spesialisering i interaksjonsdesign, og brenner for å utvikle digitale løsninger som tar utgangspunkt i menneskene som faktisk skal bruke dem.</p>
+          <p>Jeg har en mastergrad med spesialisering i interaksjonsdesign, og jobber til daglig som Digital Marketing Manager og designer i SkyeTec, samt som Interaction Specialist i MyTalent. Jeg brenner for å utvikle digitale løsninger som tar utgangspunkt i menneskene som faktisk skal bruke dem.</p>
           <p>Derfor ønsket jeg ikke bare å lage en ny bookingløsning. Jeg ønsket å finne ut hva dansere, foreldre og trenere faktisk trenger.</p>
         </section>
 
