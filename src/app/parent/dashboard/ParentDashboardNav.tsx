@@ -542,7 +542,7 @@ export default function ParentDashboardNav({ userName, avatarUrl, notifications,
                 </p>
                 <div className="bg-blue-50 border border-blue-200 rounded-xl p-4">
                   <p className="text-sm font-semibold text-blue-800 mb-1">Betaling</p>
-                  <p className="text-sm text-blue-700">Betaling er som før i <strong>Spond</strong>.</p>
+                  <p className="text-sm text-blue-700">Betaling er som før på <a href="https://club.spond.com/landing/courses/evolutsarpsdans/3A3FA8760C0A49B085117E051204FA8C/main_products?source=direct" target="_blank" rel="noopener noreferrer" className="underline font-semibold">hjemmesiden til Spond</a>.</p>
                 </div>
                 <div className="bg-amber-50 border border-amber-200 rounded-xl p-4">
                   <p className="text-sm font-semibold text-amber-800 mb-1">VIKTIG!</p>

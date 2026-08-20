@@ -30,7 +30,7 @@ export default function InfoBox() {
           </p>
           <div className="bg-blue-50 border border-blue-100 rounded-xl p-3">
             <p className="text-xs font-semibold text-blue-700 mb-0.5">Betaling</p>
-            <p className="text-xs text-blue-600">Betaling er som før i <strong>Spond</strong>.</p>
+            <p className="text-xs text-blue-600">Betaling er som før på <a href="https://club.spond.com/landing/courses/evolutsarpsdans/3A3FA8760C0A49B085117E051204FA8C/main_products?source=direct" target="_blank" rel="noopener noreferrer" className="underline font-semibold">hjemmesiden til Spond</a>.</p>
           </div>
           <div className="bg-amber-50 border border-amber-100 rounded-xl p-3">
             <p className="text-xs font-semibold text-amber-700 mb-0.5">VIKTIG</p>
