@@ -12,10 +12,22 @@ export default function KvitteringPage() {
         <h1 className="text-2xl font-bold mb-2">Booket!</h1>
         <p className="text-gray-500 dark:text-gray-400 mb-6">Timen er bekreftet. Treneren får beskjed.</p>
 
-        <div className="bg-[#f5eeff] dark:bg-[#E2A9F1]/10 border border-[#E2A9F1]/30 rounded-2xl p-4 mb-8 text-left">
+        <div className="bg-[#f5eeff] dark:bg-[#E2A9F1]/10 border border-[#E2A9F1]/30 rounded-2xl p-4 mb-4 text-left">
           <p className="text-sm text-[#c87de0] font-medium mb-1">Husk til timen</p>
           <p className="text-sm text-[#E2A9F1]">
             Husk å komme oppvarmet til privattimen! Gleder meg til å se deg 🌟
+          </p>
+        </div>
+
+        <div className="bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-2xl p-4 mb-8 text-left">
+          <p className="text-sm font-semibold text-gray-800 dark:text-gray-100 mb-1">Betaling</p>
+          <p className="text-sm text-gray-600 dark:text-gray-400">
+            Betaling er som før på{" "}
+            <a href="https://club.spond.com/landing/courses/evolutsarpsdans/3A3FA8760C0A49B085117E051204FA8C/main_products?source=direct"
+              target="_blank" rel="noopener noreferrer"
+              className="text-[#3A3A3A] dark:text-[#E2A9F1] underline font-medium">
+              hjemmesiden til Spond
+            </a>.
           </p>
         </div>
 
