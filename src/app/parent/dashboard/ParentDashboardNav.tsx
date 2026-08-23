@@ -427,7 +427,7 @@ export default function ParentDashboardNav({ userName, avatarUrl, notifications,
                                           </div>
                                           <div className="flex items-center gap-3">
                                             <span className="text-xs bg-green-100 text-green-600 px-2 py-1 rounded-full">Bekreftet</span>
-                                            <Link href={`/booking/avbestill/${booking.id}`}>
+                                            <Link href={`/booking/avbestill/${booking.id}`} prefetch={false}>
                                               <button className="text-xs text-red-400 hover:text-red-600">Avbestill</button>
                                             </Link>
                                           </div>

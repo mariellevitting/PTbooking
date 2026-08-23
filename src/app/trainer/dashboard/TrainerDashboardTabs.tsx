@@ -132,7 +132,7 @@ export default function TrainerDashboardTabs({ slots, completedSlots }: Props) {
                                         <p className="text-sm font-medium text-[#c87de0]">{booking.dancer_name} · {booking.dance_style}</p>
                                       </div>
                                       {end > new Date() && (
-                                        <Link href={`/trainer/avbestill/${booking.id}`} className="text-xs text-red-400 hover:text-red-600 mt-1 inline-block">Avbestill</Link>
+                                        <Link href={`/trainer/avbestill/${booking.id}`} prefetch={false} className="text-xs text-red-400 hover:text-red-600 mt-1 inline-block">Avbestill</Link>
                                       )}
                                     </>
                                   )}
@@ -142,7 +142,7 @@ export default function TrainerDashboardTabs({ slots, completedSlots }: Props) {
                                 ) : (
                                   <div className="flex flex-col items-end gap-1">
                                     <span className="text-xs bg-green-100 text-green-600 px-2 py-1 rounded-full">Ledig</span>
-                                    <Link href={`/trainer/slett-slot/${slot.id}`} className="text-xs text-red-400 hover:text-red-600">Slett</Link>
+                                    <Link href={`/trainer/slett-slot/${slot.id}`} prefetch={false} className="text-xs text-red-400 hover:text-red-600">Slett</Link>
                                   </div>
                                 )}
                               </div>
