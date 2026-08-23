@@ -49,7 +49,7 @@ export default function TrainerSidebar({ name, userId, email, avatarUrl, notific
         </button>
         <p className="text-[#E2A9F1] font-semibold text-sm">Danceitude</p>
         <div className="flex items-center gap-2">
-          <div className="[&_button]:text-[#E2A9F1] [&_svg]:text-[#E2A9F1] [&_span]:bg-[#E2A9F1] [&_span]:text-[#3A3A3A]">
+          <div className="flex items-center gap-3 [&_button]:text-[#E2A9F1] [&_svg]:text-[#E2A9F1] [&_span]:bg-[#E2A9F1] [&_span]:text-[#3A3A3A]">
             <ThemeToggle />
             <NotificationBell notifications={notifications} />
           </div>
@@ -129,8 +129,10 @@ export default function TrainerSidebar({ name, userId, email, avatarUrl, notific
                 <p className="text-xs text-gray-400 dark:text-gray-500">Trener</p>
               </div>
             </Link>
-            <ThemeToggle />
-            <NotificationBell notifications={notifications} />
+            <div className="flex items-center gap-3">
+              <ThemeToggle />
+              <NotificationBell notifications={notifications} />
+            </div>
           </div>
         </div>
         <nav className="flex-1 p-3 space-y-1 overflow-y-auto">
