@@ -166,9 +166,8 @@ function ParentGoalsSection({ children }: { children: Child[] }) {
       )}
       {children.length === 1 && <p className="text-sm font-medium text-gray-700 dark:text-gray-300">{children[0].name}</p>}
       <div className="bg-white dark:bg-gray-900 rounded-2xl border dark:border-gray-700 p-5 space-y-3">
-        <p className="text-xs text-gray-400 dark:text-gray-500">F.eks. triks, mål for konkurranser, hva danseren vil jobbe med</p>
+        <p className="text-xs text-gray-400 dark:text-gray-500 mb-3">F.eks. triks, mål for konkurranser, hva danseren vil jobbe med. Huk av når du har klart målet ditt.</p>
         {loading ? <p className="text-sm text-gray-400">Laster...</p> : <GoalsList value={goals} onChange={g => setGoals(g)} />}
-        {!loading && <p className="text-xs text-gray-400 dark:text-gray-500 mt-1">Huk av når du har klart målet ditt</p>}
       </div>
       {(saving || saved || saveError) && (
         <p className={`text-xs text-center ${saveError ? "text-red-500" : "text-gray-400 dark:text-gray-500"}`}>

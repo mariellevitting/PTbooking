@@ -49,17 +49,18 @@ export default function GoalsList({ value, onChange }: Props) {
       {goals.map((goal, idx) => {
         const done = isDone(goal);
         return (
-          <div key={idx} className="flex items-start gap-2 py-1.5">
+          <div key={idx} className="flex items-center gap-2 py-1.5">
             <button
               type="button"
               onClick={() => toggleGoal(idx)}
-              className={`shrink-0 mt-0.5 w-4 h-4 rounded border flex items-center justify-center transition-colors ${done ? "bg-[#c87de0] border-[#c87de0] text-white" : "border-gray-300 dark:border-gray-600 hover:border-[#c87de0]"}`}
+              className={`shrink-0 w-4 h-4 rounded border flex items-center justify-center transition-colors ${done ? "bg-[#c87de0] border-[#c87de0] text-white" : "border-gray-300 dark:border-gray-600 hover:border-[#c87de0]"}`}
             >
               {done && <svg width="10" height="8" viewBox="0 0 10 8" fill="none"><path d="M1 4L3.5 6.5L9 1" stroke="white" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"/></svg>}
             </button>
             <span className={`text-sm flex-1 ${done ? "line-through text-gray-400 dark:text-gray-500" : "text-gray-700 dark:text-gray-300"}`}>
               {goalText(goal)}
             </span>
+            {done && <span className="text-xs text-green-600 dark:text-green-400 font-medium whitespace-nowrap">Mål nådd</span>}
             <button type="button" onClick={() => removeGoal(idx)} className="text-gray-300 dark:text-gray-600 hover:text-red-400 transition-colors shrink-0 mt-0.5">
               <X size={14} />
             </button>
