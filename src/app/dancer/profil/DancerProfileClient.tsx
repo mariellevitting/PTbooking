@@ -6,7 +6,7 @@ import { createClient } from "@/lib/supabase/client";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { User, Phone, Camera, Check } from "lucide-react";
+import { User, Phone, Camera, Check, Bell } from "lucide-react";
 import DeleteAccountSection from "@/components/DeleteAccountSection";
 
 interface Props {
@@ -14,12 +14,14 @@ interface Props {
   name: string;
   phone: string;
   avatarUrl: string | null;
+  notifyNewSlots: boolean;
 }
 
 export default function DancerProfileClient(props: Props) {
   const router = useRouter();
   const [nameVal, setNameVal] = useState(props.name);
   const [phoneVal, setPhoneVal] = useState(props.phone);
+  const [notifyNewSlots, setNotifyNewSlots] = useState(props.notifyNewSlots);
   const [avatar, setAvatar] = useState<string | null>(props.avatarUrl);
   const [uploading, setUploading] = useState(false);
   const [saving, setSaving] = useState(false);
@@ -54,6 +56,7 @@ export default function DancerProfileClient(props: Props) {
     const { error: err } = await supabase.from("profiles").update({
       name: nameVal,
       phone: phoneVal,
+      notify_new_slots: notifyNewSlots,
     }).eq("id", props.userId);
     if (err) setError("Noe gikk galt");
     else setSuccess(true);
@@ -105,6 +108,34 @@ export default function DancerProfileClient(props: Props) {
               type="tel"
               inputMode="numeric"
             />
+          </div>
+        </CardContent>
+      </Card>
+
+      {/* Varsler */}
+      <Card>
+        <CardHeader>
+          <CardTitle className="text-base flex items-center gap-2">
+            <Bell size={16} className="text-[#E2A9F1]" /> Varsler
+          </CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div className="flex items-center justify-between">
+            <div>
+              <p className="text-sm font-medium text-gray-800 dark:text-gray-100">Nye ledige tider</p>
+              <p className="text-xs text-gray-500 dark:text-gray-400">Varsel når trenere legger ut tider</p>
+            </div>
+            <button
+              type="button"
+              onClick={() => setNotifyNewSlots(v => !v)}
+              className="relative inline-flex h-6 w-11 items-center rounded-full transition-colors"
+              style={{ background: notifyNewSlots ? "#E2A9F1" : "#d1d5db" }}
+            >
+              <span
+                className="inline-block h-5 w-5 transform rounded-full bg-white transition-transform"
+                style={{ transform: notifyNewSlots ? "translateX(22px)" : "translateX(2px)" }}
+              />
+            </button>
           </div>
         </CardContent>
       </Card>

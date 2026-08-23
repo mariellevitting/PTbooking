@@ -177,6 +177,27 @@ export default function AvailabilityPage() {
       }
       setSaving(false);
     } else {
+      const { data: trainerProfile } = await supabase
+        .from("profiles")
+        .select("name")
+        .eq("id", user.id)
+        .single();
+
+      const { data: recipients } = await supabase
+        .from("profiles")
+        .select("id")
+        .in("role", ["dancer", "parent"])
+        .eq("notify_new_slots", true);
+
+      if (recipients && recipients.length > 0) {
+        const trainerName = trainerProfile?.name ?? "Treneren";
+        const notifRows = recipients.map(r => ({
+          user_id: r.id,
+          message: `${trainerName} har lagt ut ${rows.length} ny${rows.length === 1 ? "" : "e"} ledig${rows.length === 1 ? "" : "e"} time${rows.length === 1 ? "" : "r"}`,
+        }));
+        await supabase.from("notifications").insert(notifRows);
+      }
+
       router.push("/trainer/dashboard");
       router.refresh();
     }

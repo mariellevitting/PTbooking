@@ -29,6 +29,7 @@ export default async function DancerProfilPage() {
           name={profile.name}
           phone={profile.phone ?? ""}
           avatarUrl={profile.avatar_url ?? null}
+          notifyNewSlots={profile.notify_new_slots ?? true}
         />
       </div>
     </main>

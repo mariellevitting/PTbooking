@@ -38,6 +38,7 @@ export default async function ParentProfilPage() {
             name={profile.name}
             phone={profile.phone ?? ""}
             avatarUrl={profile.avatar_url ?? null}
+            notifyNewSlots={profile.notify_new_slots ?? true}
           />
           <ChildrenForm parentId={user.id} children={(children ?? []).map(c => ({ id: c.id, name: c.name }))} />
           {children && children.length > 0 && (
