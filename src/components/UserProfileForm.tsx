@@ -108,7 +108,12 @@ export default function UserProfileForm({ userId, name, phone, avatarUrl, notify
             </label>
             <Input
               value={phoneVal}
-              onChange={(e) => setPhoneVal(e.target.value.replace(/[^0-9+\s]/g, ""))}
+              onChange={(e) => {
+                const raw = e.target.value.replace(/[^0-9+\s]/g, "");
+                const digits = raw.replace(/[^0-9]/g, "");
+                const maxDigits = raw.startsWith("+") ? 10 : 8;
+                if (digits.length <= maxDigits) setPhoneVal(raw);
+              }}
               onKeyDown={(e) => { if (!/[0-9+\s]/.test(e.key) && !["Backspace","Delete","ArrowLeft","ArrowRight","Tab"].includes(e.key)) e.preventDefault(); }}
               placeholder="+47 000 00 000"
               type="tel"
@@ -152,9 +157,13 @@ export default function UserProfileForm({ userId, name, phone, avatarUrl, notify
           <Check size={16} /> Profilen er oppdatert!
         </div>
       )}
-      <Button type="submit" className="w-full bg-[#3A3A3A] hover:bg-[#2a2a2a]" disabled={saving || success}>
+      <button
+        type="submit"
+        disabled={saving || success}
+        className={`w-full py-2.5 rounded-lg text-sm font-medium text-white transition-colors ${success ? "bg-[#c87de0]/50 cursor-default" : "bg-[#c87de0] hover:bg-[#b56fd0]"}`}
+      >
         {saving ? "Lagrer..." : "Lagre profil"}
-      </Button>
+      </button>
       <DeleteAccountSection userId={userId} />
     </form>
   );
