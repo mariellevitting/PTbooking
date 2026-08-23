@@ -42,8 +42,19 @@ export default function LoginPage() {
     setLoginLoading(true);
     setLoginError("");
     const supabase = createClient();
-    const { error } = await supabase.auth.signInWithPassword({ email, password });
-    if (error) { setLoginError("Feil e-post eller passord"); setLoginLoading(false); return; }
+    const timeout = new Promise<{ timedOut: true }>(resolve =>
+      setTimeout(() => resolve({ timedOut: true }), 10000)
+    );
+    const result = await Promise.race([
+      supabase.auth.signInWithPassword({ email, password }),
+      timeout,
+    ]);
+    if ("timedOut" in result) {
+      setLoginError("Kunne ikke koble til. Sjekk internettforbindelsen og prøv igjen.");
+      setLoginLoading(false);
+      return;
+    }
+    if (result.error) { setLoginError("Feil e-post eller passord"); setLoginLoading(false); return; }
     router.push("/dashboard");
     router.refresh();
   }
