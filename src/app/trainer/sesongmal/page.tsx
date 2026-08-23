@@ -69,23 +69,6 @@ export default async function TrainerSesongmalPage() {
             );
           })}
 
-          {withoutGoals.length > 0 && (
-            <div className="bg-white dark:bg-gray-900 rounded-xl border dark:border-gray-700 p-4">
-              <p className="text-xs font-semibold text-gray-400 dark:text-gray-500 uppercase tracking-wider mb-3">Ingen mål satt</p>
-              <div className="space-y-2">
-                {withoutGoals.map(p => (
-                  <Link key={p.id} href={`/trainer/danser/${p.id}`} className="flex items-center gap-3 hover:opacity-80 transition-opacity">
-                    <div className="w-8 h-8 rounded-full bg-[#edd5f9] dark:bg-[#E2A9F1]/15 flex items-center justify-center overflow-hidden flex-shrink-0">
-                      {p.avatar_url
-                        ? <img src={p.avatar_url} alt={p.name} className="w-full h-full object-cover" />
-                        : <span className="text-xs font-bold text-[#E2A9F1]">{p.name.charAt(0)}</span>}
-                    </div>
-                    <p className="text-sm text-gray-500 dark:text-gray-400">{p.name}</p>
-                  </Link>
-                ))}
-              </div>
-            </div>
-          )}
         </div>
       </div>
     </main>
