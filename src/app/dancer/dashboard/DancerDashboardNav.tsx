@@ -403,6 +403,7 @@ export default function DancerDashboardNav(props: Props) {
           <CardContent>
             <p className="text-xs text-gray-400 dark:text-gray-500 mb-3">F.eks. triks du vil lære, mål for konkurranser, hva du vil jobbe med denne sesongen</p>
             <GoalsList value={goals} onChange={g => { setGoals(g); setSaved(false); }} />
+            <p className="text-xs text-gray-400 dark:text-gray-500 mt-3">Huk av når du har klart målet ditt</p>
             <label className="flex items-center gap-2 mt-4 cursor-pointer select-none">
               <input
                 type="checkbox"
