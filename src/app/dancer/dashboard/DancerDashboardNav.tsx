@@ -53,6 +53,7 @@ interface Props {
   notifications?: any[];
   mobileNavOnly?: boolean;
   trainers?: { name: string; avatarUrl: string | null; styles: string[] }[];
+  goalsVisibleToTrainer?: boolean;
 }
 
 const COMPETITIONS = [
@@ -78,6 +79,7 @@ export default function DancerDashboardNav(props: Props) {
   const [menuOpen, setMenuOpen] = useState(false);
   const [bookingTab, setBookingTab] = useState<"kommende" | "gjennomforte">("kommende");
   const [goals, setGoals] = useState(props.seasonGoals);
+  const [visibleToTrainer, setVisibleToTrainer] = useState(props.goalsVisibleToTrainer ?? true);
   const [freestyle, setFreestyle] = useState(props.pointsFreestyle);
   const [slow, setSlow] = useState(props.pointsSlow);
   const [levelF, setLevelF] = useState(props.levelFreestyle);
@@ -131,13 +133,14 @@ export default function DancerDashboardNav(props: Props) {
         points_slow: slow,
         level_freestyle: levelF,
         level_slow: levelS,
+        goals_visible_to_trainer: visibleToTrainer,
       }).eq("id", props.userId);
       setSaving(false);
       if (error) { setSaveError("Feil: " + error.message); }
       else { setSaved(true); setSaveError(null); }
     }, 600);
     return () => clearTimeout(timer);
-  }, [goals, freestyle, slow, levelF, levelS]);
+  }, [goals, freestyle, slow, levelF, levelS, visibleToTrainer]);
 
   // Booking sections grouped by week
   const grouped: Record<string, Booking[]> = {};
@@ -400,6 +403,15 @@ export default function DancerDashboardNav(props: Props) {
           <CardContent>
             <p className="text-xs text-gray-400 dark:text-gray-500 mb-3">F.eks. triks du vil lære, mål for konkurranser, hva du vil jobbe med denne sesongen</p>
             <GoalsList value={goals} onChange={g => { setGoals(g); setSaved(false); }} />
+            <label className="flex items-center gap-2 mt-4 cursor-pointer select-none">
+              <input
+                type="checkbox"
+                checked={visibleToTrainer}
+                onChange={e => { setVisibleToTrainer(e.target.checked); setSaved(false); }}
+                className="w-4 h-4 accent-[#c87de0] rounded"
+              />
+              <span className="text-sm text-gray-600 dark:text-gray-400">Vis sesongmål for trenere</span>
+            </label>
           </CardContent>
         </Card>
       )}

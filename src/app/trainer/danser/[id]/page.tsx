@@ -17,7 +17,7 @@ export default async function TrainerDancerProfilePage({ params }: { params: { i
 
   const { data: dancer } = await supabase
     .from("profiles")
-    .select("id, name, avatar_url, season_goals")
+    .select("id, name, avatar_url, season_goals, goals_visible_to_trainer")
     .eq("id", params.id)
     .in("role", ["dancer", "parent"])
     .single();
@@ -63,7 +63,9 @@ export default async function TrainerDancerProfilePage({ params }: { params: { i
         {/* Sesongmål */}
         <div className="bg-white dark:bg-gray-900 rounded-2xl border dark:border-gray-700 p-5 mb-6">
           <h2 className="text-base font-semibold text-gray-900 dark:text-white mb-3">Sesongmål</h2>
-          {goals.length === 0 ? (
+          {dancer.goals_visible_to_trainer === false ? (
+            <p className="text-sm text-gray-400 dark:text-gray-500">Danseren har valgt å ikke dele sesongmål med trenere</p>
+          ) : goals.length === 0 ? (
             <p className="text-sm text-gray-400 dark:text-gray-500">Ingen mål satt ennå</p>
           ) : (
             <ul className="space-y-2">

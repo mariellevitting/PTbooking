@@ -50,6 +50,7 @@ export default async function DancerDashboard() {
           upcomingBookings={upcomingBookings}
           completedBookings={completedBookings}
           seasonGoals={profile.season_goals ?? ""}
+          goalsVisibleToTrainer={profile.goals_visible_to_trainer ?? true}
           pointsFreestyle={profile.points_freestyle ?? 0}
           pointsSlow={profile.points_slow ?? 0}
           levelFreestyle={profile.level_freestyle ?? 0}

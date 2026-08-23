@@ -36,6 +36,7 @@ export default async function TrainerDashboard() {
       .from("profiles")
       .select("id, name, avatar_url, season_goals, role")
       .in("role", ["dancer", "parent"])
+      .eq("goals_visible_to_trainer", true)
       .order("name"),
   ]);
 
