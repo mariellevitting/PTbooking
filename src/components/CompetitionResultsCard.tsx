@@ -164,18 +164,18 @@ export default function CompetitionResultsCard({ userId, initialResults, childId
                   <div className="flex gap-3 flex-wrap">
                     {r.placement_freestyle && (
                       <span className="text-xs">
-                        <span className="text-gray-400 dark:text-gray-500">Freestyle: </span>
+                        <span className="text-gray-400 dark:text-gray-300">Freestyle: </span>
                         <span className={`font-bold ${placementColor(r.placement_freestyle)}`}>{placementLabel(r.placement_freestyle)}</span>
                       </span>
                     )}
                     {r.placement_slow && (
                       <span className="text-xs">
-                        <span className="text-gray-400 dark:text-gray-500">Slow: </span>
+                        <span className="text-gray-400 dark:text-gray-300">Slow: </span>
                         <span className={`font-bold ${placementColor(r.placement_slow)}`}>{placementLabel(r.placement_slow)}</span>
                       </span>
                     )}
                   </div>
-                  {r.notes && <p className="text-xs text-gray-400 dark:text-gray-500 mt-1">{r.notes}</p>}
+                  {r.notes && <p className="text-xs text-gray-400 dark:text-gray-300 mt-1">{r.notes}</p>}
                 </div>
                 <button onClick={() => handleDelete(r.id)} className="ml-3 text-gray-300 dark:text-gray-600 hover:text-red-400 transition-colors shrink-0">
                   <Trash2 size={15} />
