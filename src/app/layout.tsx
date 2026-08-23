@@ -25,7 +25,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="nb" className={`${poppins.variable} h-full antialiased`}>
+    <html lang="nb" className={`${poppins.variable} h-full antialiased`} style={{ background: "#3A3A3A" }}>
       <body className="min-h-full flex flex-col font-[family-name:var(--font-poppins)] bg-[#3A3A3A]">
         <CapacitorSessionRestore />
         {children}
