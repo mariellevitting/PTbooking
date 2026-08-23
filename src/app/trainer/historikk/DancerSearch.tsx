@@ -1,7 +1,8 @@
 "use client";
 
 import { useState, useMemo } from "react";
-import { Search } from "lucide-react";
+import { Search, ChevronRight } from "lucide-react";
+import Link from "next/link";
 import { Input } from "@/components/ui/input";
 import { formatDate, formatTime } from "@/lib/dateUtils";
 
@@ -12,7 +13,12 @@ interface Slot {
   bookings: { id: string; dancer_name: string; dance_style: string; status: string }[] | null;
 }
 
-export default function DancerSearch({ slots }: { slots: Slot[] }) {
+interface Profile {
+  id: string;
+  name: string;
+}
+
+export default function DancerSearch({ slots, profiles }: { slots: Slot[]; profiles: Profile[] }) {
   const [query, setQuery] = useState("");
 
   const allDancers = useMemo(() => {
@@ -38,7 +44,13 @@ export default function DancerSearch({ slots }: { slots: Slot[] }) {
     return allDancers.filter(n => n.toLowerCase().includes(trimmed)).slice(0, 5);
   }, [trimmed, allDancers]);
 
+  function findProfile(name: string) {
+    return profiles.find(p => p.name.toLowerCase() === name.toLowerCase());
+  }
+
   const showResults = trimmed.length > 0;
+  const matchedDancerName = matches[0]?.bookings?.find(b => b.status === "confirmed")?.dancer_name ?? query.trim();
+  const matchedProfile = findProfile(matchedDancerName);
 
   return (
     <div className="mb-8">
@@ -58,7 +70,7 @@ export default function DancerSearch({ slots }: { slots: Slot[] }) {
           <div className="flex flex-wrap gap-2">
             {suggestions.map(name => (
               <button key={name} onClick={() => setQuery(name)}
-                className="text-xs bg-[#f5eeff] dark:bg-[#E2A9F1]/10 text-[#c87de0] px-3 py-1 rounded-full hover:bg-[#edd5f9] dark:hover:bg-[#E2A9F1]/20 dark:bg-[#E2A9F1]/15 transition-colors">
+                className="text-xs bg-[#f5eeff] dark:bg-[#E2A9F1]/10 text-[#c87de0] px-3 py-1 rounded-full hover:bg-[#edd5f9] dark:hover:bg-[#E2A9F1]/20 transition-colors">
                 {name}
               </button>
             ))}
@@ -71,10 +83,16 @@ export default function DancerSearch({ slots }: { slots: Slot[] }) {
               <p className="text-sm text-gray-400 dark:text-gray-500">Ingen treff på «{query.trim()}»</p>
             ) : (
               <>
-                <div className="flex items-baseline gap-2 mb-3">
+                <div className="flex items-center justify-between mb-3">
                   <p className="text-sm font-semibold text-gray-800 dark:text-gray-100">
-                    {matches.length} {matches.length === 1 ? "privattime" : "privattimer"} med {matches[0].bookings?.find(b => b.status === "confirmed")?.dancer_name ?? query.trim()}
+                    {matches.length} {matches.length === 1 ? "privattime" : "privattimer"} med {matchedDancerName}
                   </p>
+                  {matchedProfile && (
+                    <Link href={`/trainer/danser/${matchedProfile.id}`}
+                      className="flex items-center gap-1 text-xs text-[#E2A9F1] hover:underline">
+                      Se profil <ChevronRight size={13} />
+                    </Link>
+                  )}
                 </div>
                 <div className="space-y-2">
                   {matches.map(slot => {

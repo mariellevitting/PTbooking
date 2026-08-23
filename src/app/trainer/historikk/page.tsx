@@ -18,12 +18,18 @@ export default async function TrainerHistorikkPage() {
 
   if (!profile || profile.role !== "trainer") redirect("/dashboard");
 
-  const { data: completedSlots } = await supabase
-    .from("availability_slots")
-    .select("*, bookings(id, dancer_name, dance_style, status)")
-    .eq("trainer_id", user.id)
-    .lt("end_at", new Date().toISOString())
-    .order("start_at", { ascending: false });
+  const [{ data: completedSlots }, { data: dancerProfiles }] = await Promise.all([
+    supabase
+      .from("availability_slots")
+      .select("*, bookings(id, dancer_name, dance_style, status)")
+      .eq("trainer_id", user.id)
+      .lt("end_at", new Date().toISOString())
+      .order("start_at", { ascending: false }),
+    supabase
+      .from("profiles")
+      .select("id, name")
+      .eq("role", "dancer"),
+  ]);
 
   const completed = (completedSlots ?? []).filter(slot =>
     slot.bookings?.some((b: any) => b.status === "confirmed")
@@ -45,12 +51,15 @@ export default async function TrainerHistorikkPage() {
           <ArrowLeft size={24} strokeWidth={2.5} />
         </Link>
 
-        <DancerSearch slots={(completedSlots ?? []).map(s => ({
-          id: s.id,
-          start_at: s.start_at,
-          end_at: s.end_at,
-          bookings: s.bookings ?? null,
-        }))} />
+        <DancerSearch
+          slots={(completedSlots ?? []).map(s => ({
+            id: s.id,
+            start_at: s.start_at,
+            end_at: s.end_at,
+            bookings: s.bookings ?? null,
+          }))}
+          profiles={(dancerProfiles ?? []).map(p => ({ id: p.id, name: p.name }))}
+        />
 
         <div className="flex items-baseline gap-2 mb-6">
           <h1 className="text-2xl font-bold">Gjennomførte privattimer</h1>
