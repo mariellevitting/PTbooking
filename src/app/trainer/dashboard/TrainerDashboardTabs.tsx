@@ -29,9 +29,18 @@ interface CompletedSlot {
   bookings?: { dancer_name: string; dance_style: string; status: string }[];
 }
 
+interface DancerProfile {
+  id: string;
+  name: string;
+  avatar_url: string | null;
+  season_goals: string | null;
+  role: string;
+}
+
 interface Props {
   slots: Slot[];
   completedSlots: CompletedSlot[];
+  dancerProfiles: DancerProfile[];
 }
 
 function getWeekNumber(date: Date) {
@@ -42,8 +51,11 @@ function getWeekNumber(date: Date) {
   return Math.ceil(((d.getTime() - yearStart.getTime()) / 86400000 + 1) / 7);
 }
 
-export default function TrainerDashboardTabs({ slots, completedSlots }: Props) {
-  const [tab, setTab] = useState<"upcoming" | "completed">("upcoming");
+function isDone(goal: string) { return goal.startsWith("[x] "); }
+function goalText(goal: string) { return isDone(goal) ? goal.slice(4) : goal; }
+
+export default function TrainerDashboardTabs({ slots, completedSlots, dancerProfiles }: Props) {
+  const [tab, setTab] = useState<"upcoming" | "completed" | "goals">("upcoming");
 
   const completed = completedSlots.filter(slot =>
     slot.bookings?.some(b => b.status === "confirmed")
@@ -53,24 +65,15 @@ export default function TrainerDashboardTabs({ slots, completedSlots }: Props) {
     <div>
       {/* Tabs */}
       <div className="flex gap-1 bg-gray-100 dark:bg-gray-800 rounded-xl p-1 mb-3">
-        <button
-          onClick={() => setTab("upcoming")}
-          className={`flex-1 px-3 py-1.5 rounded-lg text-sm font-medium transition-colors ${tab === "upcoming" ? "bg-white dark:bg-gray-900 text-[#c87de0] shadow-sm" : "text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300"}`}
-        >
-          Kommende
-        </button>
-        <button
-          onClick={() => setTab("completed")}
-          className={`flex-1 px-3 py-1.5 rounded-lg text-sm font-medium transition-colors ${tab === "completed" ? "bg-white dark:bg-gray-900 text-[#c87de0] shadow-sm" : "text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300"}`}
-        >
-          Gjennomførte
-        </button>
+        <button onClick={() => setTab("upcoming")} className={`flex-1 px-2 py-1.5 rounded-lg text-sm font-medium transition-colors ${tab === "upcoming" ? "bg-white dark:bg-gray-900 text-[#c87de0] shadow-sm" : "text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300"}`}>Kommende</button>
+        <button onClick={() => setTab("completed")} className={`flex-1 px-2 py-1.5 rounded-lg text-sm font-medium transition-colors ${tab === "completed" ? "bg-white dark:bg-gray-900 text-[#c87de0] shadow-sm" : "text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300"}`}>Fullførte</button>
+        <button onClick={() => setTab("goals")} className={`flex-1 px-2 py-1.5 rounded-lg text-sm font-medium transition-colors ${tab === "goals" ? "bg-white dark:bg-gray-900 text-[#c87de0] shadow-sm" : "text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300"}`}>Sesongmål</button>
       </div>
 
-      {/* Legg ut tid-knapp */}
-      <Link href="/trainer/availability" className="block mb-4">
+      {/* Legg ut tid-knapp — bare på kommende og fullførte */}
+      {tab !== "goals" && <Link href="/trainer/availability" className="block mb-4">
         <Button className="w-full bg-[#3A3A3A] hover:bg-[#2a2a2a]">+ Legg ut tid</Button>
-      </Link>
+      </Link>}
 
       {/* Kommende timer */}
       {tab === "upcoming" && (() => {
@@ -155,6 +158,69 @@ export default function TrainerDashboardTabs({ slots, completedSlots }: Props) {
                 </div>
               </div>
             ))}
+          </div>
+        );
+      })()}
+
+      {/* Sesongmål */}
+      {tab === "goals" && (() => {
+        const withGoals = dancerProfiles.filter(p => p.season_goals?.trim());
+        const withoutGoals = dancerProfiles.filter(p => !p.season_goals?.trim());
+        return (
+          <div className="space-y-3">
+            {dancerProfiles.length === 0 && (
+              <div className="bg-white dark:bg-gray-900 rounded-xl border dark:border-gray-700 p-5 text-center text-gray-400 dark:text-gray-500">
+                <p className="font-medium">Ingen dansere registrert ennå</p>
+              </div>
+            )}
+            {withGoals.map(p => {
+              const goals = p.season_goals!.split("\n").filter(g => g.trim() !== "");
+              return (
+                <div key={p.id} className="bg-white dark:bg-gray-900 rounded-xl border dark:border-gray-700 p-4">
+                  <div className="flex items-center gap-3 mb-3">
+                    <div className="w-10 h-10 rounded-full bg-[#edd5f9] dark:bg-[#E2A9F1]/15 flex items-center justify-center overflow-hidden flex-shrink-0">
+                      {p.avatar_url
+                        ? <img src={p.avatar_url} alt={p.name} className="w-full h-full object-cover" />
+                        : <span className="text-sm font-bold text-[#E2A9F1]">{p.name.charAt(0)}</span>}
+                    </div>
+                    <div>
+                      <p className="text-sm font-semibold text-gray-800 dark:text-gray-100">{p.name}</p>
+                      <p className="text-xs text-gray-400 dark:text-gray-500">{p.role === "parent" ? "Forelder" : "Danser"}</p>
+                    </div>
+                  </div>
+                  <ul className="space-y-1.5">
+                    {goals.map((goal, i) => {
+                      const done = isDone(goal);
+                      return (
+                        <li key={i} className={`flex items-start gap-2 text-sm rounded-lg px-3 py-2 ${done ? "bg-green-50 dark:bg-green-900/20" : "bg-[#f5eeff] dark:bg-[#E2A9F1]/10"}`}>
+                          <span className={`mt-0.5 w-4 h-4 rounded border flex items-center justify-center flex-shrink-0 ${done ? "bg-green-500 border-green-500" : "border-[#E2A9F1]"}`}>
+                            {done && <svg width="10" height="8" viewBox="0 0 10 8" fill="none"><path d="M1 4L3.5 6.5L9 1" stroke="white" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"/></svg>}
+                          </span>
+                          <span className={done ? "line-through text-gray-400 dark:text-gray-500" : "text-gray-700 dark:text-gray-300"}>{goalText(goal)}</span>
+                        </li>
+                      );
+                    })}
+                  </ul>
+                </div>
+              );
+            })}
+            {withoutGoals.length > 0 && (
+              <div className="bg-white dark:bg-gray-900 rounded-xl border dark:border-gray-700 p-4">
+                <p className="text-xs font-semibold text-gray-400 dark:text-gray-500 uppercase tracking-wider mb-3">Ingen mål satt</p>
+                <div className="space-y-2">
+                  {withoutGoals.map(p => (
+                    <div key={p.id} className="flex items-center gap-3">
+                      <div className="w-8 h-8 rounded-full bg-[#edd5f9] dark:bg-[#E2A9F1]/15 flex items-center justify-center overflow-hidden flex-shrink-0">
+                        {p.avatar_url
+                          ? <img src={p.avatar_url} alt={p.name} className="w-full h-full object-cover" />
+                          : <span className="text-xs font-bold text-[#E2A9F1]">{p.name.charAt(0)}</span>}
+                      </div>
+                      <p className="text-sm text-gray-500 dark:text-gray-400">{p.name}</p>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
           </div>
         );
       })()}
