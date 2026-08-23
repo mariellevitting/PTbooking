@@ -8,19 +8,28 @@ interface Props {
   onChange: (val: string) => void;
 }
 
+function isDone(goal: string) { return goal.startsWith("[x] "); }
+function goalText(goal: string) { return isDone(goal) ? goal.slice(4) : goal; }
+
 export default function GoalsList({ value, onChange }: Props) {
   const goals = value ? value.split("\n").filter(g => g.trim() !== "") : [];
   const [newGoal, setNewGoal] = useState("");
 
   function addGoal() {
     if (!newGoal.trim()) return;
-    const updated = [...goals, newGoal.trim()];
-    onChange(updated.join("\n"));
+    onChange([...goals, newGoal.trim()].join("\n"));
     setNewGoal("");
   }
 
   function removeGoal(idx: number) {
-    const updated = goals.filter((_, i) => i !== idx);
+    onChange(goals.filter((_, i) => i !== idx).join("\n"));
+  }
+
+  function toggleGoal(idx: number) {
+    const updated = goals.map((g, i) => {
+      if (i !== idx) return g;
+      return isDone(g) ? goalText(g) : `[x] ${g}`;
+    });
     onChange(updated.join("\n"));
   }
 
@@ -37,15 +46,26 @@ export default function GoalsList({ value, onChange }: Props) {
       {goals.length === 0 && (
         <p className="text-sm text-gray-400 dark:text-gray-500 py-1">Ingen mål lagt til ennå</p>
       )}
-      {goals.map((goal, idx) => (
-        <div key={idx} className="flex items-start gap-2 bg-[#f5eeff] dark:bg-[#E2A9F1]/10 rounded-lg px-3 py-2">
-          <span className="text-[#E2A9F1] mt-0.5 shrink-0">•</span>
-          <span className="text-sm text-gray-700 dark:text-gray-300 flex-1">{goal}</span>
-          <button type="button" onClick={() => removeGoal(idx)} className="text-gray-300 dark:text-gray-600 hover:text-red-400 transition-colors shrink-0 mt-0.5">
-            <X size={14} />
-          </button>
-        </div>
-      ))}
+      {goals.map((goal, idx) => {
+        const done = isDone(goal);
+        return (
+          <div key={idx} className={`flex items-start gap-2 rounded-lg px-3 py-2 ${done ? "bg-green-50 dark:bg-green-900/20" : "bg-[#f5eeff] dark:bg-[#E2A9F1]/10"}`}>
+            <button
+              type="button"
+              onClick={() => toggleGoal(idx)}
+              className={`shrink-0 mt-0.5 w-4 h-4 rounded border flex items-center justify-center transition-colors ${done ? "bg-green-500 border-green-500 text-white" : "border-[#E2A9F1] hover:border-[#c87de0]"}`}
+            >
+              {done && <svg width="10" height="8" viewBox="0 0 10 8" fill="none"><path d="M1 4L3.5 6.5L9 1" stroke="white" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"/></svg>}
+            </button>
+            <span className={`text-sm flex-1 ${done ? "line-through text-gray-400 dark:text-gray-500" : "text-gray-700 dark:text-gray-300"}`}>
+              {goalText(goal)}
+            </span>
+            <button type="button" onClick={() => removeGoal(idx)} className="text-gray-300 dark:text-gray-600 hover:text-red-400 transition-colors shrink-0 mt-0.5">
+              <X size={14} />
+            </button>
+          </div>
+        );
+      })}
       <div className="flex gap-2 pt-1">
         <input
           type="text"
