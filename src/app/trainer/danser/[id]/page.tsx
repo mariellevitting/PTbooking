@@ -73,7 +73,10 @@ export default async function TrainerDancerProfilePage({ params }: { params: { i
                 const done = isDone(goal);
                 return (
                   <li key={i} className="flex items-center justify-between gap-2 text-sm py-1.5">
-                    <span className="text-gray-700 dark:text-gray-300">{goalText(goal)}</span>
+                    <span className="flex items-start gap-2 text-gray-700 dark:text-gray-300">
+                      <span className="text-[#c87de0] mt-0.5">•</span>
+                      {goalText(goal)}
+                    </span>
                     {done && <span className="text-xs text-green-600 dark:text-green-400 font-medium whitespace-nowrap">Mål nådd</span>}
                   </li>
                 );
