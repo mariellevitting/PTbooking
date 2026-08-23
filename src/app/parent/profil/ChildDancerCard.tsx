@@ -174,14 +174,14 @@ export default function ChildDancerCard({ parentId, children, hideResults, hideG
                   <div className="flex justify-between text-[10px] px-0.5">
                     {LEVELS.map((name, i) => <span key={i} className={i <= level ? "text-[#E2A9F1] font-semibold" : "text-gray-400 dark:text-gray-500"}>{name}</span>)}
                   </div>
-                  <div style={{ height: "12px", backgroundColor: "#e5e7eb", borderRadius: "9999px", overflow: "hidden" }}>
-                    <div style={{ height: "100%", backgroundColor: "#7c3aed", borderRadius: "9999px", width: `${Math.max(3, (level / 4) * 100 + (percent / 100) * (100 / 4))}%`, transition: "width 0.5s ease" }} />
+                  <div className="bg-gray-200 dark:bg-gray-700" style={{ height: "12px", borderRadius: "9999px", overflow: "hidden" }}>
+                    <div className="bg-[#c87de0]" style={{ height: "100%", borderRadius: "9999px", width: `${Math.max(3, (level / 4) * 100 + (percent / 100) * (100 / 4))}%`, transition: "width 0.5s ease" }} />
                   </div>
                 </div>
                 <PointsStepper value={points} onChange={onChange} />
                 {level >= 3 ? (
-                  <div className="flex items-center gap-2 text-sm text-gray-500 dark:text-gray-400 bg-yellow-50 border border-yellow-200 rounded-lg px-3 py-2">
-                    <Trophy size={14} className="text-yellow-500" /> Neste nivå avgjøres av plasseringer på stevner
+                  <div className="flex items-center gap-2 text-sm text-gray-500 dark:text-gray-400 bg-yellow-50 dark:bg-yellow-900/10 border border-yellow-200 dark:border-yellow-700/30 rounded-lg px-3 py-2">
+                    <Trophy size={14} className="text-yellow-500 dark:text-yellow-600" /> Neste nivå avgjøres av plasseringer på stevner
                   </div>
                 ) : (
                   <div className="flex justify-between text-xs text-gray-500 dark:text-gray-400">
