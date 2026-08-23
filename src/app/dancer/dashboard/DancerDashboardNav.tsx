@@ -290,7 +290,7 @@ export default function DancerDashboardNav(props: Props) {
           <div className="flex justify-between items-center mb-3 mt-4">
             <h2 className="font-semibold text-lg">Mine privattimer</h2>
             <Link href="/book">
-              <Button className="bg-[#3A3A3A] hover:bg-[#2a2a2a] text-sm">+ Book time</Button>
+              <Button className="bg-[#3A3A3A] hover:bg-[#2a2a2a] dark:bg-[#c87de0] dark:hover:bg-[#b56fd0] dark:text-white text-sm">+ Book time</Button>
             </Link>
           </div>
 
