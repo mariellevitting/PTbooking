@@ -49,11 +49,11 @@ export default function GoalsList({ value, onChange }: Props) {
       {goals.map((goal, idx) => {
         const done = isDone(goal);
         return (
-          <div key={idx} className={`flex items-start gap-2 rounded-lg px-3 py-2 ${done ? "bg-green-50 dark:bg-green-900/20" : "bg-[#f5eeff] dark:bg-[#E2A9F1]/10"}`}>
+          <div key={idx} className="flex items-start gap-2 py-1.5">
             <button
               type="button"
               onClick={() => toggleGoal(idx)}
-              className={`shrink-0 mt-0.5 w-4 h-4 rounded border flex items-center justify-center transition-colors ${done ? "bg-green-500 border-green-500 text-white" : "border-[#E2A9F1] hover:border-[#c87de0]"}`}
+              className={`shrink-0 mt-0.5 w-4 h-4 rounded border flex items-center justify-center transition-colors ${done ? "bg-[#c87de0] border-[#c87de0] text-white" : "border-gray-300 dark:border-gray-600 hover:border-[#c87de0]"}`}
             >
               {done && <svg width="10" height="8" viewBox="0 0 10 8" fill="none"><path d="M1 4L3.5 6.5L9 1" stroke="white" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"/></svg>}
             </button>

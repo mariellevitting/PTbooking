@@ -192,8 +192,8 @@ export default function TrainerDashboardTabs({ slots, completedSlots, dancerProf
                     {goals.map((goal, i) => {
                       const done = isDone(goal);
                       return (
-                        <li key={i} className={`flex items-start gap-2 text-sm rounded-lg px-3 py-2 ${done ? "bg-green-50 dark:bg-green-900/20" : "bg-[#f5eeff] dark:bg-[#E2A9F1]/10"}`}>
-                          <span className={`mt-0.5 w-4 h-4 rounded border flex items-center justify-center flex-shrink-0 ${done ? "bg-green-500 border-green-500" : "border-[#E2A9F1]"}`}>
+                        <li key={i} className="flex items-start gap-2 text-sm py-1.5">
+                          <span className={`mt-0.5 w-4 h-4 rounded border flex items-center justify-center flex-shrink-0 ${done ? "bg-[#c87de0] border-[#c87de0]" : "border-gray-300 dark:border-gray-600"}`}>
                             {done && <svg width="10" height="8" viewBox="0 0 10 8" fill="none"><path d="M1 4L3.5 6.5L9 1" stroke="white" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"/></svg>}
                           </span>
                           <span className={done ? "line-through text-gray-400 dark:text-gray-500" : "text-gray-700 dark:text-gray-300"}>{goalText(goal)}</span>
