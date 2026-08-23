@@ -15,8 +15,7 @@ export default function PointsStepper({ value, onChange, min = 0, disableIncreme
       <button
         type="button"
         onClick={() => onChange(value - 1)}
-        disabled={value <= min}
-        className="w-10 h-10 rounded-full bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 active:bg-gray-300 flex items-center justify-center transition-colors disabled:opacity-30 disabled:cursor-not-allowed"
+        className="w-10 h-10 rounded-full bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 active:bg-gray-300 flex items-center justify-center transition-colors"
       >
         <Minus size={18} className="text-gray-600 dark:text-gray-400" />
       </button>
