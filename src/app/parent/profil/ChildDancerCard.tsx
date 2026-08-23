@@ -178,7 +178,7 @@ export default function ChildDancerCard({ parentId, children, hideResults, hideG
                     <div style={{ height: "100%", backgroundColor: "#7c3aed", borderRadius: "9999px", width: `${Math.max(3, (level / 4) * 100 + (percent / 100) * (100 / 4))}%`, transition: "width 0.5s ease" }} />
                   </div>
                 </div>
-                <PointsStepper value={points} onChange={onChange} disableIncrement={level >= 3} />
+                <PointsStepper value={points} onChange={onChange} />
                 {level >= 3 ? (
                   <div className="flex items-center gap-2 text-sm text-gray-500 dark:text-gray-400 bg-yellow-50 border border-yellow-200 rounded-lg px-3 py-2">
                     <Trophy size={14} className="text-yellow-500" /> Neste nivå avgjøres av plasseringer på stevner
