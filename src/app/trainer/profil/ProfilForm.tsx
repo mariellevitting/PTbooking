@@ -18,6 +18,7 @@ const ALL_STYLES = [
   "Slow dobbel",
   "Akro",
   "Hiphop",
+  "Show",
 ];
 
 interface Props {
