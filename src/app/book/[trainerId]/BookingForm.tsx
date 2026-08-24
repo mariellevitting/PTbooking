@@ -251,10 +251,17 @@ export default function BookingForm({ slots, trainerName, bookerId, bookerName, 
 
       const { data: slotData } = await supabase.from("availability_slots").select("trainer_id").eq("id", sb.slot.id).single();
       if (slotData) {
+        const notifMessage = `${dancerName} har booket time i ${sb.danceStyle} – ${tidspunkt}`;
         await supabase.from("notifications").insert({
           user_id: slotData.trainer_id,
-          message: `${dancerName} har booket time i ${sb.danceStyle} – ${tidspunkt}`,
+          message: notifMessage,
         });
+        // Send push-varsel til trener
+        fetch("/api/notify-trainer", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ trainerId: slotData.trainer_id, message: notifMessage }),
+        }).catch(() => {});
       }
 
       if (sb.linkedUserId) {
