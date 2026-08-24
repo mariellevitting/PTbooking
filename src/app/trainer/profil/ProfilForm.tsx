@@ -3,9 +3,11 @@
 import { useState, useRef } from "react";
 import { useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
-import { Check, FileText, Music, Camera } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Check, User, Phone, FileText, Music, Camera } from "lucide-react";
 import DeleteAccountSection from "@/components/DeleteAccountSection";
-import { styleColor } from "@/lib/danceStyleColors";
 
 const ALL_STYLES = [
   "Slow",
@@ -31,12 +33,7 @@ interface Props {
 export default function ProfilForm({ userId, name, phone, bio, danceStyles, avatarUrl }: Props) {
   const router = useRouter();
   const [nameVal, setNameVal] = useState(name);
-  const [phoneVal, setPhoneVal] = useState(() => {
-    const raw = phone.replace(/[^0-9+\s]/g, "");
-    const digits = raw.replace(/[^0-9]/g, "");
-    const maxDigits = raw.startsWith("+") ? 10 : 8;
-    return digits.length <= maxDigits ? raw : raw.startsWith("+") ? "+" + digits.slice(0, 10) : digits.slice(0, 8);
-  });
+  const [phoneVal, setPhoneVal] = useState(phone);
   const [bioVal, setBioVal] = useState(bio);
   const [selected, setSelected] = useState<Set<string>>(new Set(danceStyles));
   const [avatar, setAvatar] = useState<string | null>(avatarUrl ?? null);
@@ -81,130 +78,130 @@ export default function ProfilForm({ userId, name, phone, bio, danceStyles, avat
     setSaving(true);
     setError("");
     setSuccess(false);
+
     const supabase = createClient();
-    const { error: profileError } = await supabase.from("profiles").update({ name: nameVal, phone: phoneVal }).eq("id", userId);
-    const { error: trainerError } = await supabase.from("trainers").update({ bio: bioVal, dance_styles: Array.from(selected) }).eq("id", userId);
-    if (profileError || trainerError) setError("Noe gikk galt, prøv igjen");
-    else setSuccess(true);
+
+    const { error: profileError } = await supabase
+      .from("profiles")
+      .update({ name: nameVal, phone: phoneVal })
+      .eq("id", userId);
+
+    const { error: trainerError } = await supabase
+      .from("trainers")
+      .update({ bio: bioVal, dance_styles: Array.from(selected) })
+      .eq("id", userId);
+
+    if (profileError || trainerError) {
+      setError("Noe gikk galt, prøv igjen");
+    } else {
+      setSuccess(true);
+    }
     setSaving(false);
   }
 
   return (
-    <form onSubmit={handleSave}>
-      {/* Hero-header */}
-      <div className="relative bg-gradient-to-br from-[#c87de0] to-[#9b4fc2] dark:from-[#7a2fa0] dark:to-[#4a1260] px-6 pt-8 pb-20 flex flex-col items-center gap-3 -mx-6 -mt-6 rounded-b-[2.5rem]">
-        <div className="relative">
-          <div className="w-24 h-24 rounded-full border-4 border-white/40 overflow-hidden bg-white/20 flex items-center justify-center">
-            {avatar
-              ? <img src={avatar} alt="Profilbilde" className="w-full h-full object-cover" />
-              : <span className="text-3xl font-bold text-white">{nameVal.charAt(0)}</span>}
+    <form onSubmit={handleSave} className="space-y-4">
+      {/* Profilbilde */}
+      <Card>
+        <CardContent className="pt-5 flex flex-col items-center gap-3">
+          <div className="relative">
+            <div className="w-24 h-24 rounded-full bg-[#edd5f9] dark:bg-[#E2A9F1]/15 flex items-center justify-center overflow-hidden">
+              {avatar ? (
+                <img src={avatar} alt="Profilbilde" className="w-full h-full object-cover" />
+              ) : (
+                <span className="text-3xl font-bold text-[#E2A9F1]">{nameVal.charAt(0)}</span>
+              )}
+            </div>
+            <button type="button" onClick={() => fileRef.current?.click()}
+              className="absolute bottom-0 right-0 bg-[#3A3A3A] text-[#E2A9F1] rounded-full p-1.5 hover:bg-[#2a2a2a]">
+              <Camera size={14} />
+            </button>
           </div>
-          <button type="button" onClick={() => fileRef.current?.click()}
-            className="absolute bottom-0 right-0 bg-white/90 text-[#9b4fc2] rounded-full p-1.5 shadow">
-            <Camera size={14} />
-          </button>
-        </div>
-        <input ref={fileRef} type="file" accept="image/*" className="hidden" onChange={handleAvatarUpload} />
-        {uploading && <p className="text-xs text-white/70">Laster opp...</p>}
-        <p className="text-white font-semibold text-lg">{nameVal || "Navn"}</p>
-        {phoneVal && <p className="text-white/80 text-sm">{phoneVal}</p>}
-      </div>
+          <input ref={fileRef} type="file" accept="image/*" className="hidden" onChange={handleAvatarUpload} />
+          {uploading && <p className="text-xs text-gray-400 dark:text-gray-500">Laster opp...</p>}
+        </CardContent>
+      </Card>
 
-      {/* Innhold */}
-      <div className="relative -mt-8 mx-2 bg-white dark:bg-gray-900 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-800 px-5 py-5 space-y-5">
-        <div className="space-y-1.5">
-          <label className="text-xs font-semibold uppercase tracking-wide text-[#c87de0]">Navn</label>
-          <input
-            value={nameVal}
-            onChange={(e) => setNameVal(e.target.value)}
-            required
-            className="w-full border border-gray-200 dark:border-gray-700 rounded-xl px-3 py-2.5 text-sm bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-[#E2A9F1]/50"
-          />
-        </div>
-
-        <div className="space-y-1.5">
-          <label className="text-xs font-semibold uppercase tracking-wide text-[#c87de0]">Telefon</label>
-          <input
-            value={phoneVal}
-            onChange={(e) => {
-              const raw = e.target.value.replace(/[^0-9+\s]/g, "");
-              const digits = raw.replace(/[^0-9]/g, "");
-              const maxDigits = raw.startsWith("+") ? 10 : 8;
-              if (digits.length <= maxDigits) setPhoneVal(raw);
-            }}
-            onKeyDown={(e) => { if (!/[0-9+\s]/.test(e.key) && !["Backspace","Delete","ArrowLeft","ArrowRight","Tab"].includes(e.key)) e.preventDefault(); }}
-            placeholder="+47 000 00 000"
-            type="tel"
-            inputMode="numeric"
-            className="w-full border border-gray-200 dark:border-gray-700 rounded-xl px-3 py-2.5 text-sm bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-[#E2A9F1]/50"
-          />
-        </div>
-
-        <div className="space-y-1.5">
-          <label className="text-xs font-semibold uppercase tracking-wide text-[#c87de0] flex items-center gap-1.5">
-            <FileText size={13} /> Bio (valgfritt)
-          </label>
-          <textarea
-            value={bioVal}
-            onChange={(e) => setBioVal(e.target.value)}
-            rows={3}
-            placeholder="Kort beskrivelse av deg som trener..."
-            className="w-full border border-gray-200 dark:border-gray-700 rounded-xl px-3 py-2.5 text-sm bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-[#E2A9F1]/50 resize-none"
-          />
-        </div>
-      </div>
-
-      {/* Dansestiler */}
-      <div className="mx-2 mt-4 bg-white dark:bg-gray-900 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-800 px-5 py-5">
-        <p className="text-xs font-semibold uppercase tracking-wide text-[#c87de0] flex items-center gap-1.5 mb-3">
-          <Music size={13} /> Dansestiler du tilbyr
-        </p>
-        <div className="grid grid-cols-2 gap-2">
-          {ALL_STYLES.map((style) => {
-            const isSelected = selected.has(style);
-            const c = styleColor(style);
-            return (
-              <button
-                key={style}
-                type="button"
-                onClick={() => toggleStyle(style)}
-                className={`flex items-center gap-2 px-3 py-2.5 rounded-xl border text-sm font-medium transition-all ${
-                  isSelected
-                    ? `${c.bg} ${c.text} ${c.border} ${c.darkBg} ${c.darkText} ring-2 ring-offset-1 ring-current`
-                    : "bg-white dark:bg-gray-900 text-gray-500 dark:text-gray-400 border-gray-200 dark:border-gray-700 hover:border-gray-300"
-                }`}
-              >
-                <div className={`w-4 h-4 rounded border flex items-center justify-center shrink-0 ${
-                  isSelected ? "bg-current border-current opacity-80" : "border-gray-300 dark:border-gray-600"
-                }`}>
-                  {isSelected && <Check size={11} className="text-white" strokeWidth={3} />}
-                </div>
-                {style}
-              </button>
-            );
-          })}
-        </div>
-        {selected.size > 0 && (
-          <p className="text-xs text-[#E2A9F1] mt-3">{selected.size} stil{selected.size !== 1 ? "er" : ""} valgt</p>
-        )}
-      </div>
-
-      <div className="mt-5 px-2 space-y-3">
-        {error && <p className="text-sm text-red-500">{error}</p>}
-        {success && (
-          <div className="flex items-center gap-2 text-[#c87de0] text-sm bg-[#f5eeff] dark:bg-[#E2A9F1]/10 border border-[#E2A9F1]/40 rounded-xl p-3">
-            <Check size={16} /> Profilen er oppdatert!
+      <Card>
+        <CardHeader>
+          <CardTitle className="text-base flex items-center gap-2">
+            <User size={16} className="text-[#E2A9F1]" /> Personlig informasjon
+          </CardTitle>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          <div className="space-y-1.5">
+            <label className="text-sm font-medium">Navn</label>
+            <Input value={nameVal} onChange={(e) => setNameVal(e.target.value)} required />
           </div>
-        )}
-        <button
-          type="submit"
-          disabled={saving || success}
-          className={`w-full py-3 rounded-xl text-sm font-semibold text-white transition-colors shadow-sm ${success ? "bg-[#c87de0]/50 cursor-default" : "bg-[#c87de0] hover:bg-[#b56fd0]"}`}
-        >
-          {saving ? "Lagrer..." : "Lagre profil"}
-        </button>
-        <DeleteAccountSection userId={userId} />
-      </div>
+          <div className="space-y-1.5">
+            <label className="text-sm font-medium flex items-center gap-1.5">
+              <Phone size={14} className="text-gray-400 dark:text-gray-500" /> Telefon
+            </label>
+            <Input value={phoneVal} onChange={(e) => setPhoneVal(e.target.value)} placeholder="+47 000 00 000" type="tel" />
+          </div>
+          <div className="space-y-1.5">
+            <label className="text-sm font-medium flex items-center gap-1.5">
+              <FileText size={14} className="text-gray-400 dark:text-gray-500" /> Bio (valgfritt)
+            </label>
+            <textarea
+              value={bioVal}
+              onChange={(e) => setBioVal(e.target.value)}
+              rows={3}
+              placeholder="Kort beskrivelse av deg som trener..."
+              className="w-full border dark:border-gray-700 bg-white dark:bg-gray-900 text-gray-900 dark:text-white rounded-lg px-3 py-2 text-sm resize-none focus:outline-none focus:ring-2 focus:ring-[#E2A9F1]"
+            />
+          </div>
+        </CardContent>
+      </Card>
+
+      <Card>
+        <CardHeader>
+          <CardTitle className="text-base flex items-center gap-2">
+            <Music size={16} className="text-[#E2A9F1]" /> Dansestiler du tilbyr
+          </CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div className="grid grid-cols-2 gap-2">
+            {ALL_STYLES.map((style) => {
+              const isSelected = selected.has(style);
+              return (
+                <button
+                  key={style}
+                  type="button"
+                  onClick={() => toggleStyle(style)}
+                  className={`flex items-center gap-2 px-3 py-2.5 rounded-xl border text-sm font-medium transition-colors ${
+                    isSelected
+                      ? "bg-[#3A3A3A] text-[#E2A9F1] border-[#3A3A3A]"
+                      : "bg-white dark:bg-gray-900 text-gray-700 dark:text-gray-300 border-gray-200 dark:border-gray-700 hover:border-[#E2A9F1]"
+                  }`}
+                >
+                  <div className={`w-4 h-4 rounded border flex items-center justify-center shrink-0 ${
+                    isSelected ? "bg-white border-white" : "border-gray-300 dark:border-gray-600"
+                  }`}>
+                    {isSelected && <Check size={11} className="text-[#E2A9F1]" strokeWidth={3} />}
+                  </div>
+                  {style}
+                </button>
+              );
+            })}
+          </div>
+          {selected.size > 0 && (
+            <p className="text-xs text-[#E2A9F1] mt-3">{selected.size} stil{selected.size !== 1 ? "er" : ""} valgt</p>
+          )}
+        </CardContent>
+      </Card>
+
+      {error && <p className="text-sm text-red-500">{error}</p>}
+      {success && (
+        <div className="flex items-center gap-2 text-[#c87de0] text-sm bg-[#f5eeff] dark:bg-[#E2A9F1]/10 border border-[#E2A9F1]/40 rounded-xl p-3">
+          <Check size={16} /> Profilen er oppdatert!
+        </div>
+      )}
+
+      <Button type="submit" className="w-full bg-[#3A3A3A] hover:bg-[#2a2a2a]" disabled={saving || success}>
+        {saving ? "Lagrer..." : "Lagre profil"}
+      </Button>
+      <DeleteAccountSection userId={userId} />
     </form>
   );
 }
