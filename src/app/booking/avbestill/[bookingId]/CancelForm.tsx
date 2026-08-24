@@ -52,10 +52,18 @@ export default function CancelForm({ bookingId, slotId, trainerId, dancerName, d
       console.error("Slot update failed:", slotError);
     }
 
+    const cancelMessage = `${dancerName} har avbestilt timen i ${danceStyle} – ${tidspunkt}`;
     await supabase.from("notifications").insert({
       user_id: trainerId,
-      message: `${dancerName} har avbestilt timen i ${danceStyle} – ${tidspunkt}`,
+      message: cancelMessage,
     });
+
+    // Send push-varsel til trener
+    fetch("/api/notify-trainer", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ trainerId, message: cancelMessage }),
+    }).catch(() => {});
 
     router.push(dashboardUrl);
     router.refresh();

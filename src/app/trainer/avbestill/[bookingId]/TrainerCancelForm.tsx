@@ -46,10 +46,18 @@ export default function TrainerCancelForm({ bookingId, slotId, bookerId, dancerN
       .update({ is_booked: false })
       .eq("id", slotId);
 
+    const cancelMessage = `Treneren har avbestilt timen din i ${danceStyle} – ${tidspunkt}`;
     await supabase.from("notifications").insert({
       user_id: bookerId,
-      message: `Treneren har avbestilt timen din i ${danceStyle} – ${tidspunkt}`,
+      message: cancelMessage,
     });
+
+    // Send push-varsel til danser/forelder
+    fetch("/api/notify-trainer", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ trainerId: bookerId, message: cancelMessage }),
+    }).catch(() => {});
 
     router.push("/trainer/dashboard");
     router.refresh();
