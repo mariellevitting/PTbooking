@@ -69,7 +69,7 @@ export default function UserProfileForm({ userId, name, phone, avatarUrl, notify
   return (
     <form onSubmit={handleSave}>
       {/* Hero-header */}
-      <div className="relative bg-gradient-to-br from-[#c87de0] to-[#9b4fc2] dark:from-[#7a2fa0] dark:to-[#4a1260] px-6 pt-8 pb-16 flex flex-col items-center gap-3 -mx-6 -mt-6">
+      <div className="relative bg-gradient-to-br from-[#c87de0] to-[#9b4fc2] dark:from-[#7a2fa0] dark:to-[#4a1260] px-6 pt-8 pb-20 flex flex-col items-center gap-3 -mx-6 -mt-6 rounded-b-[2.5rem]">
         <div className="relative">
           <div className="w-24 h-24 rounded-full border-4 border-white/40 overflow-hidden bg-white/20 flex items-center justify-center">
             {avatar ? (
