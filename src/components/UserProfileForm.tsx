@@ -3,10 +3,7 @@
 import { useState, useRef } from "react";
 import { useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { User, Phone, Camera, Check, Bell } from "lucide-react";
+import { Camera, Check, Bell } from "lucide-react";
 import DeleteAccountSection from "@/components/DeleteAccountSection";
 
 interface Props {
@@ -70,76 +67,72 @@ export default function UserProfileForm({ userId, name, phone, avatarUrl, notify
   }
 
   return (
-    <form onSubmit={handleSave} className="space-y-4">
-      {/* Profilbilde */}
-      <Card>
-        <CardContent className="pt-5 flex flex-col items-center gap-3">
-          <div className="relative">
-            <div className="w-24 h-24 rounded-full bg-[#edd5f9] dark:bg-[#E2A9F1]/15 flex items-center justify-center overflow-hidden">
-              {avatar ? (
-                <img src={avatar} alt="Profilbilde" className="w-full h-full object-cover" />
-              ) : (
-                <span className="text-3xl font-bold text-[#E2A9F1]">{nameVal.charAt(0)}</span>
-              )}
-            </div>
-            <button
-              type="button"
-              onClick={() => fileRef.current?.click()}
-              className="absolute bottom-0 right-0 bg-[#3A3A3A] text-[#E2A9F1] rounded-full p-1.5 hover:bg-[#2a2a2a]"
-            >
-              <Camera size={14} />
-            </button>
+    <form onSubmit={handleSave}>
+      {/* Hero-header */}
+      <div className="relative bg-gradient-to-br from-[#c87de0] to-[#9b4fc2] dark:from-[#7a2fa0] dark:to-[#4a1260] px-6 pt-8 pb-16 flex flex-col items-center gap-3 -mx-6 -mt-6">
+        <div className="relative">
+          <div className="w-24 h-24 rounded-full border-4 border-white/40 overflow-hidden bg-white/20 flex items-center justify-center">
+            {avatar ? (
+              <img src={avatar} alt="Profilbilde" className="w-full h-full object-cover" />
+            ) : (
+              <span className="text-3xl font-bold text-white">{nameVal.charAt(0)}</span>
+            )}
           </div>
-          <input ref={fileRef} type="file" accept="image/*" className="hidden" onChange={handleAvatarUpload} />
-          {uploading && <p className="text-xs text-gray-400 dark:text-gray-500">Laster opp...</p>}
-        </CardContent>
-      </Card>
+          <button
+            type="button"
+            onClick={() => fileRef.current?.click()}
+            className="absolute bottom-0 right-0 bg-white/90 text-[#9b4fc2] rounded-full p-1.5 shadow"
+          >
+            <Camera size={14} />
+          </button>
+        </div>
+        <input ref={fileRef} type="file" accept="image/*" className="hidden" onChange={handleAvatarUpload} />
+        {uploading && <p className="text-xs text-white/70">Laster opp...</p>}
+        <p className="text-white font-semibold text-lg">{nameVal || "Navn"}</p>
+        {phoneVal && <p className="text-white/80 text-sm">{phoneVal}</p>}
+      </div>
 
-      {/* Info */}
-      <Card>
-        <CardHeader>
-          <CardTitle className="text-base flex items-center gap-2">
-            <User size={16} className="text-[#E2A9F1]" /> Personlig informasjon
-          </CardTitle>
-        </CardHeader>
-        <CardContent className="space-y-4">
-          <div className="space-y-1.5">
-            <label className="text-sm font-medium">Navn</label>
-            <Input value={nameVal} onChange={(e) => setNameVal(e.target.value)} required />
-          </div>
-          <div className="space-y-1.5">
-            <label className="text-sm font-medium flex items-center gap-1.5">
-              <Phone size={14} className="text-gray-400 dark:text-gray-500" /> Telefon
-            </label>
-            <Input
-              value={phoneVal}
-              onChange={(e) => {
-                const raw = e.target.value.replace(/[^0-9+\s]/g, "");
-                const digits = raw.replace(/[^0-9]/g, "");
-                const maxDigits = raw.startsWith("+") ? 10 : 8;
-                if (digits.length <= maxDigits) setPhoneVal(raw);
-              }}
-              onKeyDown={(e) => { if (!/[0-9+\s]/.test(e.key) && !["Backspace","Delete","ArrowLeft","ArrowRight","Tab"].includes(e.key)) e.preventDefault(); }}
-              placeholder="+47 000 00 000"
-              type="tel"
-              inputMode="numeric"
-            />
-          </div>
-        </CardContent>
-      </Card>
+      {/* Innhold */}
+      <div className="relative -mt-8 mx-2 bg-white dark:bg-gray-900 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-800 px-5 py-5 space-y-5">
 
-      {/* Varsler */}
-      <Card>
-        <CardHeader>
-          <CardTitle className="text-base flex items-center gap-2">
-            <Bell size={16} className="text-[#E2A9F1]" /> Varsler
-          </CardTitle>
-        </CardHeader>
-        <CardContent>
+        {/* Navn */}
+        <div className="space-y-1.5">
+          <label className="text-xs font-semibold uppercase tracking-wide text-[#c87de0]">Navn</label>
+          <input
+            value={nameVal}
+            onChange={(e) => setNameVal(e.target.value)}
+            required
+            className="w-full border border-gray-200 dark:border-gray-700 rounded-xl px-3 py-2.5 text-sm bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-[#E2A9F1]/50"
+          />
+        </div>
+
+        {/* Telefon */}
+        <div className="space-y-1.5">
+          <label className="text-xs font-semibold uppercase tracking-wide text-[#c87de0]">Telefon</label>
+          <input
+            value={phoneVal}
+            onChange={(e) => {
+              const raw = e.target.value.replace(/[^0-9+\s]/g, "");
+              const digits = raw.replace(/[^0-9]/g, "");
+              const maxDigits = raw.startsWith("+") ? 10 : 8;
+              if (digits.length <= maxDigits) setPhoneVal(raw);
+            }}
+            onKeyDown={(e) => { if (!/[0-9+\s]/.test(e.key) && !["Backspace","Delete","ArrowLeft","ArrowRight","Tab"].includes(e.key)) e.preventDefault(); }}
+            placeholder="+47 000 00 000"
+            type="tel"
+            inputMode="numeric"
+            className="w-full border border-gray-200 dark:border-gray-700 rounded-xl px-3 py-2.5 text-sm bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-[#E2A9F1]/50"
+          />
+        </div>
+
+        <div className="border-t border-gray-100 dark:border-gray-800 pt-4">
           <div className="flex items-center justify-between">
-            <div>
-              <p className="text-sm font-medium text-gray-800 dark:text-gray-100">Nye ledige tider</p>
-              <p className="text-xs text-gray-500 dark:text-gray-400">Varsel når trenere legger ut tider</p>
+            <div className="flex items-center gap-2">
+              <Bell size={15} className="text-[#E2A9F1]" />
+              <div>
+                <p className="text-sm font-medium text-gray-800 dark:text-gray-100">Nye ledige tider</p>
+                <p className="text-xs text-gray-400 dark:text-gray-500">Varsel når trenere legger ut tider</p>
+              </div>
             </div>
             <button
               type="button"
@@ -153,23 +146,25 @@ export default function UserProfileForm({ userId, name, phone, avatarUrl, notify
               />
             </button>
           </div>
-        </CardContent>
-      </Card>
-
-      {error && <p className="text-sm text-red-500">{error}</p>}
-      {success && (
-        <div className="flex items-center gap-2 text-[#c87de0] text-sm bg-[#f5eeff] dark:bg-[#E2A9F1]/10 border border-[#E2A9F1]/40 rounded-xl p-3">
-          <Check size={16} /> Profilen er oppdatert!
         </div>
-      )}
-      <button
-        type="submit"
-        disabled={saving || success}
-        className={`w-full py-2.5 rounded-lg text-sm font-medium text-white transition-colors ${success ? "bg-[#c87de0]/50 cursor-default" : "bg-[#c87de0] hover:bg-[#b56fd0]"}`}
-      >
-        {saving ? "Lagrer..." : "Lagre profil"}
-      </button>
-      <DeleteAccountSection userId={userId} />
+      </div>
+
+      <div className="mt-5 px-2 space-y-3">
+        {error && <p className="text-sm text-red-500">{error}</p>}
+        {success && (
+          <div className="flex items-center gap-2 text-[#c87de0] text-sm bg-[#f5eeff] dark:bg-[#E2A9F1]/10 border border-[#E2A9F1]/40 rounded-xl p-3">
+            <Check size={16} /> Profilen er oppdatert!
+          </div>
+        )}
+        <button
+          type="submit"
+          disabled={saving || success}
+          className={`w-full py-3 rounded-xl text-sm font-semibold text-white transition-colors shadow-sm ${success ? "bg-[#c87de0]/50 cursor-default" : "bg-[#c87de0] hover:bg-[#b56fd0]"}`}
+        >
+          {saving ? "Lagrer..." : "Lagre profil"}
+        </button>
+        <DeleteAccountSection userId={userId} />
+      </div>
     </form>
   );
 }
