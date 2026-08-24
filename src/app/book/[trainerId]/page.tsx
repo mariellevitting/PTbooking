@@ -3,6 +3,7 @@ import Link from "next/link";
 import { createClient } from "@/lib/supabase/server";
 import BookingForm from "./BookingForm";
 import { ArrowLeft, Phone } from "lucide-react";
+import { styleColor } from "@/lib/danceStyleColors";
 
 export default async function TrainerBookPage({ params }: { params: Promise<{ trainerId: string }> }) {
   const { trainerId } = await params;
@@ -76,11 +77,14 @@ export default async function TrainerBookPage({ params }: { params: Promise<{ tr
 
           {styles.length > 0 && (
             <div className="flex flex-wrap gap-1.5 mb-4">
-              {styles.map((style) => (
-                <span key={style} className="text-xs bg-[#f5eeff] dark:bg-[#E2A9F1]/10 text-[#E2A9F1] border border-[#E2A9F1]/30 px-2.5 py-1 rounded-full">
-                  {style}
-                </span>
-              ))}
+              {styles.map((style) => {
+                const c = styleColor(style);
+                return (
+                  <span key={style} className={`text-xs ${c.bg} ${c.text} ${c.border} ${c.darkBg} ${c.darkText} border px-2.5 py-1 rounded-full font-medium`}>
+                    {style}
+                  </span>
+                );
+              })}
             </div>
           )}
 
