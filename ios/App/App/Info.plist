@@ -51,5 +51,7 @@
 	<string>Danceitude trenger tilgang til bilder for at du skal kunne velge et profilbilde.</string>
 	<key>NSPhotoLibraryAddUsageDescription</key>
 	<string>Danceitude trenger tilgang til å lagre bilder.</string>
+	<key>NSLocationWhenInUseUsageDescription</key>
+	<string>Danceitude bruker ikke lokasjon, men noen av våre biblioteker krever denne tillatelsen.</string>
 </dict>
 </plist>
