@@ -2,7 +2,7 @@
 
 import { useEffect } from "react";
 
-const ONESIGNAL_APP_ID = process.env.NEXT_PUBLIC_ONESIGNAL_APP_ID ?? "";
+const ONESIGNAL_APP_ID = process.env.NEXT_PUBLIC_ONESIGNAL_APP_ID ?? "b9607f9e-6dbe-49b0-8bcc-edf5f6728575";
 
 export default function OneSignalInit() {
   useEffect(() => {
