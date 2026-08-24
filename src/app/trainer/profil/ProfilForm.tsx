@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
 import { Check, FileText, Music, Camera } from "lucide-react";
 import DeleteAccountSection from "@/components/DeleteAccountSection";
+import { styleColor } from "@/lib/danceStyleColors";
 
 const ALL_STYLES = [
   "Slow",
@@ -161,21 +162,22 @@ export default function ProfilForm({ userId, name, phone, bio, danceStyles, avat
         <div className="grid grid-cols-2 gap-2">
           {ALL_STYLES.map((style) => {
             const isSelected = selected.has(style);
+            const c = styleColor(style);
             return (
               <button
                 key={style}
                 type="button"
                 onClick={() => toggleStyle(style)}
-                className={`flex items-center gap-2 px-3 py-2.5 rounded-xl border text-sm font-medium transition-colors ${
+                className={`flex items-center gap-2 px-3 py-2.5 rounded-xl border text-sm font-medium transition-all ${
                   isSelected
-                    ? "bg-[#3A3A3A] text-[#E2A9F1] border-[#3A3A3A]"
-                    : "bg-white dark:bg-gray-900 text-gray-700 dark:text-gray-300 border-gray-200 dark:border-gray-700 hover:border-[#E2A9F1]"
+                    ? `${c.bg} ${c.text} ${c.border} ${c.darkBg} ${c.darkText} ring-2 ring-offset-1 ring-current`
+                    : "bg-white dark:bg-gray-900 text-gray-500 dark:text-gray-400 border-gray-200 dark:border-gray-700 hover:border-gray-300"
                 }`}
               >
                 <div className={`w-4 h-4 rounded border flex items-center justify-center shrink-0 ${
-                  isSelected ? "bg-white border-white" : "border-gray-300 dark:border-gray-600"
+                  isSelected ? "bg-current border-current opacity-80" : "border-gray-300 dark:border-gray-600"
                 }`}>
-                  {isSelected && <Check size={11} className="text-[#E2A9F1]" strokeWidth={3} />}
+                  {isSelected && <Check size={11} className="text-white" strokeWidth={3} />}
                 </div>
                 {style}
               </button>

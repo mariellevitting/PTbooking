@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Search, X } from "lucide-react";
+import { styleColor } from "@/lib/danceStyleColors";
 
 const DOUBLE_STYLES = ["Freestyle dobbel", "Slow dobbel"];
 
@@ -387,26 +388,30 @@ export default function BookingForm({ slots, trainerName, bookerId, bookerName, 
           <div className="space-y-2">
             <label className="text-sm font-medium">Dansestil</label>
             <div className="grid grid-cols-2 gap-2">
-              {danceStyles.map((style) => (
-                <button
-                  key={style}
-                  type="button"
-                  onClick={() => {
-                    updateCurrent("danceStyle", style);
-                    updateCurrent("dancer2", "");
-                    updateCurrent("linkedUserId", null);
-                    setLinkedPartner(null);
-                    setPartnerQuery("");
-                  }}
-                  className={`py-2 px-3 rounded-lg text-sm border transition-colors ${
-                    current.danceStyle === style
-                      ? "bg-[#3A3A3A] text-[#E2A9F1] border-[#3A3A3A]"
-                      : "bg-white dark:bg-gray-900 text-gray-700 dark:text-gray-300 border-gray-200 dark:border-gray-700 hover:border-[#E2A9F1]"
-                  }`}
-                >
-                  {style}
-                </button>
-              ))}
+              {danceStyles.map((style) => {
+                const isSelected = current.danceStyle === style;
+                const c = styleColor(style);
+                return (
+                  <button
+                    key={style}
+                    type="button"
+                    onClick={() => {
+                      updateCurrent("danceStyle", style);
+                      updateCurrent("dancer2", "");
+                      updateCurrent("linkedUserId", null);
+                      setLinkedPartner(null);
+                      setPartnerQuery("");
+                    }}
+                    className={`py-2.5 px-3 rounded-xl text-sm font-medium border transition-all ${
+                      isSelected
+                        ? `${c.bg} ${c.text} ${c.border} ${c.darkBg} ${c.darkText} ring-2 ring-offset-1 ring-current`
+                        : "bg-white dark:bg-gray-900 text-gray-500 dark:text-gray-400 border-gray-200 dark:border-gray-700 hover:border-gray-300"
+                    }`}
+                  >
+                    {style}
+                  </button>
+                );
+              })}
             </div>
           </div>
 
