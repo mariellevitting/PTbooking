@@ -3,6 +3,7 @@ import { Poppins } from "next/font/google";
 import "./globals.css";
 import Footer from "@/components/Footer";
 import CapacitorSessionRestore from "@/components/CapacitorSessionRestore";
+import OneSignalInit from "@/components/OneSignalInit";
 
 const poppins = Poppins({
   subsets: ["latin"],
@@ -28,6 +29,7 @@ export default function RootLayout({
     <html lang="nb" className={`${poppins.variable} h-full antialiased`} style={{ background: "#3A3A3A" }}>
       <body className="min-h-full flex flex-col font-[family-name:var(--font-poppins)] bg-[#3A3A3A]">
         <CapacitorSessionRestore />
+        <OneSignalInit />
         {children}
         <Footer />
       </body>

@@ -4,11 +4,69 @@ PODS:
   - CapacitorCordova (8.5.0)
   - CapacitorPreferences (8.0.1):
     - Capacitor
+  - OnesignalCapacitorPlugin (1.1.8):
+    - Capacitor
+    - OneSignalXCFramework (= 5.5.6)
+  - OneSignalXCFramework (5.5.6):
+    - OneSignalXCFramework/OneSignalComplete (= 5.5.6)
+  - OneSignalXCFramework/OneSignal (5.5.6):
+    - OneSignalXCFramework/OneSignalCore
+    - OneSignalXCFramework/OneSignalExtension
+    - OneSignalXCFramework/OneSignalLiveActivities
+    - OneSignalXCFramework/OneSignalNotifications
+    - OneSignalXCFramework/OneSignalOSCore
+    - OneSignalXCFramework/OneSignalOutcomes
+    - OneSignalXCFramework/OneSignalUser
+  - OneSignalXCFramework/OneSignalComplete (5.5.6):
+    - OneSignalXCFramework/OneSignal
+    - OneSignalXCFramework/OneSignalInAppMessages
+    - OneSignalXCFramework/OneSignalLocation
+  - OneSignalXCFramework/OneSignalCore (5.5.6)
+  - OneSignalXCFramework/OneSignalExtension (5.5.6):
+    - OneSignalXCFramework/OneSignalCore
+    - OneSignalXCFramework/OneSignalOSCore
+    - OneSignalXCFramework/OneSignalOutcomes
+  - OneSignalXCFramework/OneSignalInAppMessages (5.5.6):
+    - OneSignalXCFramework/OneSignalCore
+    - OneSignalXCFramework/OneSignalNotifications
+    - OneSignalXCFramework/OneSignalOSCore
+    - OneSignalXCFramework/OneSignalOutcomes
+    - OneSignalXCFramework/OneSignalUser
+  - OneSignalXCFramework/OneSignalLiveActivities (5.5.6):
+    - OneSignalXCFramework/OneSignalCore
+    - OneSignalXCFramework/OneSignalOSCore
+    - OneSignalXCFramework/OneSignalUser
+  - OneSignalXCFramework/OneSignalLocation (5.5.6):
+    - OneSignalXCFramework/OneSignalCore
+    - OneSignalXCFramework/OneSignalNotifications
+    - OneSignalXCFramework/OneSignalOSCore
+    - OneSignalXCFramework/OneSignalUser
+  - OneSignalXCFramework/OneSignalNotifications (5.5.6):
+    - OneSignalXCFramework/OneSignalCore
+    - OneSignalXCFramework/OneSignalExtension
+    - OneSignalXCFramework/OneSignalOSCore
+    - OneSignalXCFramework/OneSignalOutcomes
+  - OneSignalXCFramework/OneSignalOSCore (5.5.6):
+    - OneSignalXCFramework/OneSignalCore
+  - OneSignalXCFramework/OneSignalOutcomes (5.5.6):
+    - OneSignalXCFramework/OneSignalCore
+    - OneSignalXCFramework/OneSignalOSCore
+  - OneSignalXCFramework/OneSignalUser (5.5.6):
+    - OneSignalXCFramework/OneSignalCore
+    - OneSignalXCFramework/OneSignalNotifications
+    - OneSignalXCFramework/OneSignalOSCore
+    - OneSignalXCFramework/OneSignalOutcomes
 
 DEPENDENCIES:
   - "Capacitor (from `../../node_modules/@capacitor/ios`)"
   - "CapacitorCordova (from `../../node_modules/@capacitor/ios`)"
   - "CapacitorPreferences (from `../../node_modules/@capacitor/preferences`)"
+  - "OnesignalCapacitorPlugin (from `../../node_modules/@onesignal/capacitor-plugin`)"
+  - OneSignalXCFramework (< 6.0, >= 5.0)
+
+SPEC REPOS:
+  trunk:
+    - OneSignalXCFramework
 
 EXTERNAL SOURCES:
   Capacitor:
@@ -17,12 +75,16 @@ EXTERNAL SOURCES:
     :path: "../../node_modules/@capacitor/ios"
   CapacitorPreferences:
     :path: "../../node_modules/@capacitor/preferences"
+  OnesignalCapacitorPlugin:
+    :path: "../../node_modules/@onesignal/capacitor-plugin"
 
 SPEC CHECKSUMS:
   Capacitor: 00b87168591cc006ea6f5c0de681ec5c39a2c8eb
   CapacitorCordova: 9d3acbb574048e7167d2af127a0af2123e619f2f
   CapacitorPreferences: cca2021f386efb75947c850334447d9ff22b14f1
+  OnesignalCapacitorPlugin: ec1a912fdd75ae7d4898aca122e346aaca3ec872
+  OneSignalXCFramework: 9a0f33eaef7544788a2b04f067e90fe18759fdf9
 
-PODFILE CHECKSUM: f5867f722eda93f598c5e6eb26d396df932acf66
+PODFILE CHECKSUM: dc3c05a501c35efa638b01294d7090b94b3f0e8e
 
 COCOAPODS: 1.17.0

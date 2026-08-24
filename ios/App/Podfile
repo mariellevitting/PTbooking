@@ -12,11 +12,16 @@ def capacitor_pods
   pod 'Capacitor', :path => '../../node_modules/@capacitor/ios'
   pod 'CapacitorCordova', :path => '../../node_modules/@capacitor/ios'
   pod 'CapacitorPreferences', :path => '../../node_modules/@capacitor/preferences'
+  pod 'OnesignalCapacitorPlugin', :path => '../../node_modules/@onesignal/capacitor-plugin'
 end
 
 target 'App' do
   capacitor_pods
   # Add your Pods here
+end
+
+target 'OneSignalNotificationServiceExtension' do
+  pod 'OneSignalXCFramework', '>= 5.0', '< 6.0'
 end
 
 post_install do |installer|
