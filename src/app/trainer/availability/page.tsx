@@ -196,6 +196,16 @@ export default function AvailabilityPage() {
           message: `${trainerName} har lagt ut ${rows.length} ny${rows.length === 1 ? "" : "e"} ledig${rows.length === 1 ? "" : "e"} time${rows.length === 1 ? "" : "r"}`,
         }));
         await supabase.from("notifications").insert(notifRows);
+
+        // Send push-varsel til dansere/foreldre
+        fetch("/api/notify-new-slots", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            userIds: recipients.map(r => r.id),
+            message: notifRows[0].message,
+          }),
+        }).catch(() => {});
       }
 
       router.push("/trainer/dashboard");
