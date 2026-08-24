@@ -6,17 +6,11 @@ const ONESIGNAL_APP_ID = process.env.NEXT_PUBLIC_ONESIGNAL_APP_ID ?? "b9607f9e-6
 
 export default function OneSignalInit() {
   useEffect(() => {
-    if (!ONESIGNAL_APP_ID) return;
-
     async function init() {
       try {
-        const { OneSignal } = await import("@onesignal/capacitor-plugin");
-        await OneSignal.initialize(ONESIGNAL_APP_ID, {
-          iOSSettings: {
-            kOSSettingsKeyInAppLaunchURL: false,
-          },
-        } as any);
-        // App Group for Notification Service Extension
+        const mod = await import("@onesignal/capacitor-plugin");
+        const OneSignal = (mod as any).OneSignal ?? mod.default ?? mod;
+        await OneSignal.initialize(ONESIGNAL_APP_ID);
         (OneSignal as any).setAppGroupIdentifier?.("group.no.danceitude.app.onesignal");
         await OneSignal.Notifications.requestPermission(true);
       } catch {
