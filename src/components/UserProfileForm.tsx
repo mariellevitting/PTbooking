@@ -20,7 +20,12 @@ interface Props {
 export default function UserProfileForm({ userId, name, phone, avatarUrl, notifyNewSlots: initialNotify = true }: Props) {
   const router = useRouter();
   const [nameVal, setNameVal] = useState(name);
-  const [phoneVal, setPhoneVal] = useState(phone.replace(/[^0-9+\s]/g, ""));
+  const [phoneVal, setPhoneVal] = useState(() => {
+    const raw = phone.replace(/[^0-9+\s]/g, "");
+    const digits = raw.replace(/[^0-9]/g, "");
+    const maxDigits = raw.startsWith("+") ? 10 : 8;
+    return digits.length <= maxDigits ? raw : raw.startsWith("+") ? "+" + digits.slice(0, 10) : digits.slice(0, 8);
+  });
   const [notifyNewSlots, setNotifyNewSlots] = useState(initialNotify);
   const [avatar, setAvatar] = useState<string | null>(avatarUrl);
   const [uploading, setUploading] = useState(false);
