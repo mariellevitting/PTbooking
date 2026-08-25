@@ -3,7 +3,7 @@
 import { useState } from "react";
 
 type Profile = { id: string; name: string; role: string; created_at: string; club_id?: string };
-type Feedback = { id: string; user_name: string; role: string; message: string; created_at: string };
+type Feedback = { id: string; user_name: string; role: string; message: string; created_at: string; profiles?: { club_id: string } | null };
 type SlotBooking = { id: string; dancer_name: string; dance_style: string; status: string };
 type Slot = { id: string; start_at: string; end_at: string; trainer_id: string; bookings?: SlotBooking[] };
 type Club = { id: string; name: string; invite_code: string; trainer_code: string | null; dancer_code: string | null; parent_code: string | null; created_at: string };
@@ -266,7 +266,7 @@ export default function AdminClient({ profiles, feedback, slots, trainerMap, isA
                       </div>
                       <div className="text-left">
                         <p className="font-semibold text-sm text-gray-800 dark:text-gray-100">{trainer.name}</p>
-                        <p className="text-xs text-gray-400">{bookedCount} bookinger · {availableCount} ledige fremover</p>
+                        <p className="text-xs text-gray-400">{bookedCount} bookinger · {availableCount} ledige fremover{isAdmin && trainer.club_id ? ` · ${clubs.find(c => c.id === trainer.club_id)?.name ?? ""}` : ""}</p>
                       </div>
                     </div>
                     <span className="text-gray-400 text-sm">{isOpen ? "▲" : "▼"}</span>
@@ -306,7 +306,10 @@ export default function AdminClient({ profiles, feedback, slots, trainerMap, isA
                       <div className={`w-8 h-8 rounded-full ${colors?.bg} flex items-center justify-center ${colors?.text} font-bold text-sm shrink-0`}>
                         {p.name?.charAt(0) ?? "?"}
                       </div>
-                      <p className="text-sm font-medium text-gray-800 dark:text-gray-100">{p.name}</p>
+                      <div>
+                        <p className="text-sm font-medium text-gray-800 dark:text-gray-100">{p.name}</p>
+                        {isAdmin && p.club_id && <p className="text-xs text-gray-400">{clubs.find(c => c.id === p.club_id)?.name ?? "Ukjent klubb"}</p>}
+                      </div>
                     </div>
                     <span className="text-xs text-gray-400 shrink-0 ml-2">{timeAgo(p.created_at)}</span>
                   </div>
@@ -333,7 +336,10 @@ export default function AdminClient({ profiles, feedback, slots, trainerMap, isA
                         <p className="text-sm font-semibold text-gray-800 dark:text-gray-100">{f.user_name}</p>
                         <span className="text-xs text-gray-400">{timeAgo(f.created_at)}</span>
                       </div>
-                      {colors && <span className={`text-xs ${colors.text} ${colors.bg} px-2 py-0.5 rounded-full`}>{colors.label}</span>}
+                      <div className="flex items-center gap-2 flex-wrap">
+                        {colors && <span className={`text-xs ${colors.text} ${colors.bg} px-2 py-0.5 rounded-full`}>{colors.label}</span>}
+                        {f.profiles?.club_id && <span className="text-xs text-gray-400 bg-gray-100 dark:bg-gray-800 px-2 py-0.5 rounded-full">{clubs.find(c => c.id === f.profiles?.club_id)?.name ?? ""}</span>}
+                      </div>
                       <p className="text-sm text-gray-600 dark:text-gray-400 mt-2 leading-relaxed">{f.message}</p>
                     </div>
                   );
