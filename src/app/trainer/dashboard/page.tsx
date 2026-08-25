@@ -34,9 +34,10 @@ export default async function TrainerDashboard() {
       .order("start_at", { ascending: false }),
     supabase
       .from("profiles")
-      .select("id, name, avatar_url, season_goals, role")
+      .select("id, name, avatar_url, season_goals, role, club_id")
       .in("role", ["dancer", "parent"])
       .eq("goals_visible_to_trainer", true)
+      .eq("club_id", (profile as any).club_id ?? "")
       .order("name"),
   ]);
 

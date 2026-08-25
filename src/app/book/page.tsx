@@ -11,7 +11,7 @@ export default async function BookPage() {
 
   const { data: profile } = await supabase
     .from("profiles")
-    .select("role")
+    .select("role, club_id")
     .eq("id", user.id)
     .single();
 
@@ -19,7 +19,7 @@ export default async function BookPage() {
 
   const now = new Date().toISOString();
   const [{ data: trainers }, { data: pins }, { data: slots }] = await Promise.all([
-    supabase.from("profiles").select("id, name, avatar_url, trainers(dance_styles, price)").eq("role", "trainer").order("name"),
+    supabase.from("profiles").select("id, name, avatar_url, trainers(dance_styles, price)").eq("role", "trainer").eq("club_id", profile?.club_id ?? "").order("name"),
     supabase.from("pinned_trainers").select("trainer_id").eq("user_id", user.id),
     supabase.from("availability_slots").select("trainer_id").eq("is_booked", false).gte("start_at", now),
   ]);

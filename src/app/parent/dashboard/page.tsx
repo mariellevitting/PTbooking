@@ -25,7 +25,7 @@ export default async function ParentDashboard() {
   ] = await Promise.all([
     supabase.from("notifications").select("*").eq("user_id", user.id).order("created_at", { ascending: false }),
     supabase.from("children").select("id, name, season_goals, points_freestyle, points_slow, level_freestyle, level_slow").eq("parent_id", user.id).order("created_at"),
-    supabase.from("profiles").select("id, name, avatar_url, trainers(dance_styles)").eq("role", "trainer").order("name"),
+    supabase.from("profiles").select("id, name, avatar_url, trainers(dance_styles)").eq("role", "trainer").eq("club_id", profile?.club_id ?? "").order("name"),
   ]);
 
   const { data: bookings } = await supabase
