@@ -203,8 +203,8 @@ export default function AdminClient({ profiles, feedback, slots, trainerMap, isA
           </div>
         </div>
 
-        {/* KLUBBER */}
-        <div className="bg-white dark:bg-gray-900 rounded-2xl border dark:border-gray-700 p-5">
+        {/* KLUBBER — kun synlig for admin */}
+        {isAdmin && <div className="bg-white dark:bg-gray-900 rounded-2xl border dark:border-gray-700 p-5">
           <h2 className="font-bold text-gray-900 dark:text-white mb-4">Klubber</h2>
           <div className="space-y-3">
             {clubs.map(club => {
@@ -245,7 +245,7 @@ export default function AdminClient({ profiles, feedback, slots, trainerMap, isA
               );
             })}
           </div>
-        </div>
+        </div>}
 
         <div className="bg-white dark:bg-gray-900 rounded-2xl border dark:border-gray-700 p-5">
           <h2 className="font-bold text-gray-900 dark:text-white mb-4">Treneroversikt</h2>
