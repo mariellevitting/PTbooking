@@ -111,9 +111,10 @@ export default function RegisterForm({ prefilledCode, clubName, clubs = [] }: Pr
               <select
                 value={selectedClub}
                 onChange={e => setSelectedClub(e.target.value)}
+                required
                 className="w-full border dark:border-gray-700 rounded-lg px-3 py-2 text-sm bg-white dark:bg-gray-900 text-gray-900 dark:text-white"
               >
-                <option value="">Velg klubb (valgfritt)</option>
+                <option value="">Velg klubb</option>
                 {clubs.map(c => (
                   <option key={c.id} value={c.id}>{c.name}</option>
                 ))}
