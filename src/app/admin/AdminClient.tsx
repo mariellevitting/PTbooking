@@ -2,18 +2,20 @@
 
 import { useState } from "react";
 
-type Profile = { id: string; name: string; role: string; created_at: string };
+type Profile = { id: string; name: string; role: string; created_at: string; club_id?: string };
 type Feedback = { id: string; user_name: string; role: string; message: string; created_at: string };
 type SlotBooking = { id: string; dancer_name: string; dance_style: string; status: string };
 type Slot = { id: string; start_at: string; end_at: string; trainer_id: string; bookings?: SlotBooking[] };
+type Club = { id: string; name: string; invite_code: string; trainer_code: string | null; dancer_code: string | null; parent_code: string | null; created_at: string };
 
 interface Props {
   profiles: Profile[];
   feedback: Feedback[];
-  bookings: Slot[];  // slots with bookings (alias)
+  bookings: Slot[];
   slots: Slot[];
   trainerMap: Record<string, string>;
   isAdmin: boolean;
+  clubs: Club[];
 }
 
 const ROLE_COLORS = {
@@ -168,7 +170,7 @@ function TrainerCalendar({ trainer, slots }: { trainer: Profile; slots: Slot[] }
   );
 }
 
-export default function AdminClient({ profiles, feedback, slots, trainerMap, isAdmin }: Props) {
+export default function AdminClient({ profiles, feedback, slots, trainerMap, isAdmin, clubs }: Props) {
   const [roleFilter, setRoleFilter] = useState<RoleFilter | null>(null);
   const [trainerOpen, setTrainerOpen] = useState<string | null>(null);
 
@@ -198,6 +200,50 @@ export default function AdminClient({ profiles, feedback, slots, trainerMap, isA
           <div>
             <h1 className="text-3xl font-bold text-gray-900 dark:text-white">Admin</h1>
             <p className="text-gray-500 dark:text-gray-400 text-sm mt-1">Kun synlig for trenere · <span className="font-medium">{profiles.length} brukere totalt</span></p>
+          </div>
+        </div>
+
+        {/* KLUBBER */}
+        <div className="bg-white dark:bg-gray-900 rounded-2xl border dark:border-gray-700 p-5">
+          <h2 className="font-bold text-gray-900 dark:text-white mb-4">Klubber</h2>
+          <div className="space-y-3">
+            {clubs.map(club => {
+              const members = profiles.filter(p => p.club_id === club.id);
+              const trainersInClub = members.filter(p => p.role === "trainer");
+              const dancersInClub = members.filter(p => p.role === "dancer");
+              const parentsInClub = members.filter(p => p.role === "parent");
+              return (
+                <div key={club.id} className="border dark:border-gray-700 rounded-xl p-4">
+                  <div className="flex items-center justify-between mb-3">
+                    <h3 className="font-bold text-gray-900 dark:text-white">{club.name}</h3>
+                    <span className="text-xs text-gray-400">{members.length} medlemmer</span>
+                  </div>
+                  <div className="grid grid-cols-3 gap-2 mb-3">
+                    <div className="bg-orange-50 dark:bg-orange-900/20 rounded-lg p-2 text-center">
+                      <p className="text-lg font-bold text-orange-600">{trainersInClub.length}</p>
+                      <p className="text-xs text-gray-500">Trenere</p>
+                    </div>
+                    <div className="bg-blue-50 dark:bg-blue-900/20 rounded-lg p-2 text-center">
+                      <p className="text-lg font-bold text-blue-600">{dancersInClub.length}</p>
+                      <p className="text-xs text-gray-500">Dansere</p>
+                    </div>
+                    <div className="bg-green-50 dark:bg-green-900/20 rounded-lg p-2 text-center">
+                      <p className="text-lg font-bold text-green-600">{parentsInClub.length}</p>
+                      <p className="text-xs text-gray-500">Foreldre</p>
+                    </div>
+                  </div>
+                  <div className="bg-gray-50 dark:bg-gray-800 rounded-lg p-3 space-y-1.5">
+                    <p className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-2">Klubbkoder</p>
+                    {club.trainer_code && <div className="flex justify-between text-sm"><span className="text-gray-500">Trener</span><span className="font-mono font-bold text-gray-900 dark:text-white">{club.trainer_code}</span></div>}
+                    {club.dancer_code && <div className="flex justify-between text-sm"><span className="text-gray-500">Danser</span><span className="font-mono font-bold text-gray-900 dark:text-white">{club.dancer_code}</span></div>}
+                    {club.parent_code && <div className="flex justify-between text-sm"><span className="text-gray-500">Forelder</span><span className="font-mono font-bold text-gray-900 dark:text-white">{club.parent_code}</span></div>}
+                    {!club.trainer_code && !club.dancer_code && !club.parent_code && (
+                      <p className="text-xs text-gray-400">Bruker env-variabler (Evolution)</p>
+                    )}
+                  </div>
+                </div>
+              );
+            })}
           </div>
         </div>
 
