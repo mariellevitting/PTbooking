@@ -14,37 +14,33 @@ export async function registerUser(
 ): Promise<{ error?: string }> {
   const supabase = await createClient();
 
-  // Finn klubben basert på invitasjonskode, fallback til Evolution
-  const code = clubInviteCode?.toUpperCase() || "EVOLUTION";
-  const { data: club } = await supabase
+  if (!trainerCode) return { error: "Du må oppgi en klubbkode." };
+
+  // Finn klubben basert på rolle-koden
+  const { data: allClubs } = await supabase
     .from("clubs")
-    .select("id, name, trainer_code, dancer_code, parent_code")
-    .eq("invite_code", code)
-    .single();
+    .select("id, name, trainer_code, dancer_code, parent_code");
 
-  if (!club) return { error: "Ugyldig klubbkode. Ta kontakt med klubben din." };
+  // Sjekk env-koder for Evolution (bakoverkompatibilitet)
+  const evolutionClub = allClubs?.find(c => !c.trainer_code && !c.dancer_code && !c.parent_code);
+  const isEvolutionCode =
+    (role === "trainer" && trainerCode === process.env.TRAINER_INVITE_CODE) ||
+    (role === "dancer" && trainerCode === process.env.DANCER_INVITE_CODE) ||
+    (role === "parent" && trainerCode === process.env.PARENT_INVITE_CODE);
 
-  // Sjekk rolle-kode: bruk klubbens egne koder hvis de finnes, ellers env-variabler (Evolution)
-  if (role === "trainer") {
-    const expected = club.trainer_code ?? process.env.TRAINER_INVITE_CODE;
-    if (!trainerCode || trainerCode !== expected) {
-      return { error: "Feil trenerkode. Ta kontakt med klubben for å få riktig kode." };
-    }
+  let club = isEvolutionCode ? evolutionClub : null;
+
+  // Sjekk klubb-spesifikke koder
+  if (!club) {
+    club = allClubs?.find(c => {
+      if (role === "trainer") return c.trainer_code === trainerCode;
+      if (role === "dancer") return c.dancer_code === trainerCode;
+      if (role === "parent") return c.parent_code === trainerCode;
+      return false;
+    }) ?? null;
   }
 
-  if (role === "dancer") {
-    const expected = club.dancer_code ?? process.env.DANCER_INVITE_CODE;
-    if (!trainerCode || trainerCode !== expected) {
-      return { error: "Feil klubbkode for danser. Ta kontakt med klubben din for å få riktig kode." };
-    }
-  }
-
-  if (role === "parent") {
-    const expected = club.parent_code ?? process.env.PARENT_INVITE_CODE;
-    if (!trainerCode || trainerCode !== expected) {
-      return { error: "Feil klubbkode for forelder. Ta kontakt med klubben din for å få riktig kode." };
-    }
-  }
+  if (!club) return { error: "Feil kode. Ta kontakt med klubben din for å få riktig kode." };
 
   const { data, error: signUpError } = await supabase.auth.signUp({ email, password });
   if (signUpError || !data.user) {
