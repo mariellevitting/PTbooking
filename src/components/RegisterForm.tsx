@@ -17,9 +17,10 @@ const roles: { value: UserRole; label: string; description: string }[] = [
 interface Props {
   prefilledCode?: string;
   clubName?: string;
+  clubs?: { id: string; name: string; invite_code: string }[];
 }
 
-export default function RegisterForm({ prefilledCode, clubName }: Props) {
+export default function RegisterForm({ prefilledCode, clubName, clubs = [] }: Props) {
   const router = useRouter();
   const [step, setStep] = useState<"role" | "details">("role");
   const [role, setRole] = useState<UserRole | null>(null);
@@ -27,6 +28,7 @@ export default function RegisterForm({ prefilledCode, clubName }: Props) {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [trainerCode, setTrainerCode] = useState("");
+  const [selectedClub, setSelectedClub] = useState("");
   const [dancerNames, setDancerNames] = useState([""]);
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
@@ -101,6 +103,21 @@ export default function RegisterForm({ prefilledCode, clubName }: Props) {
               ))}
               <button type="button" onClick={() => setDancerNames([...dancerNames, ""])}
                 className="text-sm text-[#E2A9F1] hover:underline">+ Legg til danser</button>
+            </div>
+          )}
+          {clubs.length > 0 && (
+            <div className="space-y-1.5">
+              <label className="text-sm font-medium">Klubb</label>
+              <select
+                value={selectedClub}
+                onChange={e => setSelectedClub(e.target.value)}
+                className="w-full border dark:border-gray-700 rounded-lg px-3 py-2 text-sm bg-white dark:bg-gray-900 text-gray-900 dark:text-white"
+              >
+                <option value="">Velg klubb (valgfritt)</option>
+                {clubs.map(c => (
+                  <option key={c.id} value={c.id}>{c.name}</option>
+                ))}
+              </select>
             </div>
           )}
           <div className="space-y-1.5">
