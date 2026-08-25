@@ -73,9 +73,14 @@ export default function RegisterForm({ prefilledCode, clubName, clubs = [] }: Pr
 
       {step === "details" && (
         <form onSubmit={handleRegister} className="space-y-4">
-          <button type="button" onClick={() => setStep("role")} className="text-sm text-[#E2A9F1] hover:underline mb-2">
-            ← Endre rolle
-          </button>
+          <div className="flex items-center justify-between mb-2">
+            <span className="text-sm font-semibold bg-[#f0e0ff] dark:bg-[#E2A9F1]/20 text-[#9b59c4] dark:text-[#E2A9F1] px-3 py-1 rounded-full">
+              {roles.find(r => r.value === role)?.label}
+            </span>
+            <button type="button" onClick={() => setStep("role")} className="text-sm text-[#E2A9F1] hover:underline">
+              ← Endre rolle
+            </button>
+          </div>
           <div className="space-y-1.5">
             <label className="text-sm font-medium">Navn</label>
             <Input value={name} onChange={e => setName(e.target.value)} placeholder="Ditt fulle navn" required />
