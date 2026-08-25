@@ -14,12 +14,15 @@ export async function registerUser(
 ): Promise<{ error?: string }> {
   const supabase = await createClient();
 
-  // Finn Evolution-klubben som standard
+  // Finn klubben basert på invitasjonskode, fallback til Evolution
+  const code = clubInviteCode?.toUpperCase() || "EVOLUTION";
   const { data: club } = await supabase
     .from("clubs")
     .select("id, name")
-    .eq("invite_code", "EVOLUTION")
+    .eq("invite_code", code)
     .single();
+
+  if (!club) return { error: "Ugyldig klubbkode. Ta kontakt med klubben din." };
 
   if (role === "trainer") {
     if (!trainerCode || trainerCode !== process.env.TRAINER_INVITE_CODE) {

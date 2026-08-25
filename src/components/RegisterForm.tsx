@@ -40,7 +40,8 @@ export default function RegisterForm({ prefilledCode, clubName }: Props) {
     const result = await registerUser(
       email, password, name, role,
       trainerCode || undefined,
-      filteredDancers.length > 0 ? filteredDancers : undefined
+      filteredDancers.length > 0 ? filteredDancers : undefined,
+      prefilledCode || undefined
     );
     if (result.error) { setError(result.error); setLoading(false); return; }
     router.push("/dashboard");
