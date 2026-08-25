@@ -484,19 +484,15 @@ export default function DancerDashboardNav(props: Props) {
               <p className="text-gray-600 dark:text-gray-400 text-sm leading-relaxed">
                 En privattime varer i <strong>30 minutter</strong> og koster <strong>250,-</strong>, <strong>200,-</strong> eller <strong>150,-</strong> avhengig av trener.
               </p>
-              <div className="bg-blue-50 border border-blue-200 rounded-xl p-4">
-                <p className="text-sm font-semibold text-blue-800 mb-1">Betaling</p>
-                <p className="text-sm text-blue-700">Betaling er som før på <a href="https://club.spond.com/landing/courses/evolutsarpsdans/3A3FA8760C0A49B085117E051204FA8C/main_products?source=direct" target="_blank" rel="noopener noreferrer" className="underline font-semibold">hjemmesiden til Spond</a>.</p>
+              <div className="bg-[#f5eeff] border border-[#E2A9F1]/40 rounded-xl p-4">
+                <p className="text-sm font-semibold text-[#9b59c4] mb-1">Betaling</p>
+                <p className="text-sm text-[#9b59c4]">Betaling er som før på <a href="https://club.spond.com/landing/courses/evolutsarpsdans/3A3FA8760C0A49B085117E051204FA8C/main_products?source=direct" target="_blank" rel="noopener noreferrer" className="underline font-semibold">hjemmesiden til Spond</a>.</p>
               </div>
-              <div className="bg-amber-50 border border-amber-200 rounded-xl p-4">
-                <p className="text-sm font-semibold text-amber-800 mb-1">VIKTIG!</p>
-                <p className="text-sm text-amber-700">
+              <div className="bg-[#f5eeff] border border-[#E2A9F1]/40 rounded-xl p-4">
+                <p className="text-sm font-semibold text-[#9b59c4] mb-1">VIKTIG!</p>
+                <p className="text-sm text-[#9b59c4]">
                   Kvitteringen du mottar for betalt privattime må danseren ha med til timen! Du kan også sende bilde av kvitteringen til treneren i forkant.
                 </p>
-              </div>
-              <div className="bg-green-50 border border-green-200 rounded-xl p-4">
-                <p className="text-sm font-semibold text-green-800 mb-1">Booking samme dag?</p>
-                <p className="text-sm text-green-700">Gi treneren beskjed på forhånd via melding så de er forberedt. 💬</p>
               </div>
             </div>
 
