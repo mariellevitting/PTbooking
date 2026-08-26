@@ -3,7 +3,7 @@
 import { useState } from "react";
 
 type Profile = { id: string; name: string; role: string; created_at: string; club_id?: string };
-type Feedback = { id: string; user_name: string; role: string; message: string; created_at: string; profiles?: { club_id: string } | null };
+type Feedback = { id: string; user_name: string; role: string; message: string; created_at: string };
 type SlotBooking = { id: string; dancer_name: string; dance_style: string; status: string };
 type Slot = { id: string; start_at: string; end_at: string; trainer_id: string; bookings?: SlotBooking[] };
 type Club = { id: string; name: string; invite_code: string; trainer_code: string | null; dancer_code: string | null; parent_code: string | null; created_at: string };
@@ -336,10 +336,7 @@ export default function AdminClient({ profiles, feedback, slots, trainerMap, isA
                         <p className="text-sm font-semibold text-gray-800 dark:text-gray-100">{f.user_name}</p>
                         <span className="text-xs text-gray-400">{timeAgo(f.created_at)}</span>
                       </div>
-                      <div className="flex items-center gap-2 flex-wrap">
-                        {colors && <span className={`text-xs ${colors.text} ${colors.bg} px-2 py-0.5 rounded-full`}>{colors.label}</span>}
-                        {f.profiles?.club_id && <span className="text-xs text-gray-400 bg-gray-100 dark:bg-gray-800 px-2 py-0.5 rounded-full">{clubs.find(c => c.id === f.profiles?.club_id)?.name ?? ""}</span>}
-                      </div>
+                      {colors && <span className={`text-xs ${colors.text} ${colors.bg} px-2 py-0.5 rounded-full`}>{colors.label}</span>}
                       <p className="text-sm text-gray-600 dark:text-gray-400 mt-2 leading-relaxed">{f.message}</p>
                     </div>
                   );

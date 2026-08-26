@@ -23,7 +23,7 @@ export default async function AdminPage() {
     { data: clubs },
   ] = await Promise.all([
     supabase.from("profiles").select("id, name, role, created_at, club_id").order("created_at", { ascending: false }),
-    isAdmin ? supabase.from("feedback").select("*, profiles!feedback_user_id_fkey(club_id)").order("created_at", { ascending: false }) : Promise.resolve({ data: [] }),
+    isAdmin ? supabase.from("feedback").select("*").order("created_at", { ascending: false }) : Promise.resolve({ data: [] }),
     supabase.from("availability_slots").select("id, start_at, end_at, trainer_id").gte("start_at", new Date().toISOString()).order("start_at").limit(200) as any,
     supabase.from("bookings").select("id, slot_id, dancer_name, dance_style, status").eq("status", "confirmed").limit(200) as any,
     supabase.from("clubs").select("id, name, invite_code, trainer_code, dancer_code, parent_code, created_at").order("created_at"),
