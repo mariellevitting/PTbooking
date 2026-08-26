@@ -19,7 +19,7 @@ export default async function TrainerBookPage({ params }: { params: Promise<{ tr
 
   const { data: trainer } = await supabase
     .from("profiles")
-    .select("id, name, phone, avatar_url")
+    .select("id, name, phone, avatar_url, club_id, clubs(name)")
     .eq("id", trainerId)
     .eq("role", "trainer")
     .single();
@@ -67,7 +67,7 @@ export default async function TrainerBookPage({ params }: { params: Promise<{ tr
             </div>
             <div>
               <h1 className="text-xl font-bold">{trainer.name}</h1>
-              <p className="text-gray-400 dark:text-gray-500 text-sm">Trener – Evolution Danseklubb</p>
+              <p className="text-gray-400 dark:text-gray-500 text-sm">Trener – {(trainer.clubs as any)?.name ?? "Evolution Danseklubb"}</p>
             </div>
           </div>
 
