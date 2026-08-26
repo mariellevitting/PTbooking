@@ -23,20 +23,29 @@ export default async function TrainerSesongmalPage() {
       .order("name"),
     supabase
       .from("children")
-      .select("id, name, season_goals, parent_id, profiles!children_parent_id_fkey(name, avatar_url)")
+      .select("id, name, season_goals, parent_id")
       .not("season_goals", "is", null)
       .neq("season_goals", "")
       .order("name"),
   ]);
 
   const profiles = dancerProfiles ?? [];
+
+  // Slå opp foreldrenavn fra profiles
+  const parentIds = [...new Set((childrenWithGoals ?? []).map((c: any) => c.parent_id))];
+  const { data: parentProfiles } = parentIds.length > 0
+    ? await supabase.from("profiles").select("id, name, avatar_url").in("id", parentIds)
+    : { data: [] };
+  const parentMap: Record<string, { name: string; avatar_url: string | null }> = {};
+  for (const p of parentProfiles ?? []) parentMap[p.id] = { name: p.name, avatar_url: p.avatar_url };
+
   const children = (childrenWithGoals ?? []).map((c: any) => ({
     id: c.id,
     name: c.name,
-    avatar_url: c.profiles?.avatar_url ?? null,
+    avatar_url: parentMap[c.parent_id]?.avatar_url ?? null,
     season_goals: c.season_goals,
     role: "child" as const,
-    parentName: c.profiles?.name ?? null,
+    parentName: parentMap[c.parent_id]?.name ?? null,
   }));
 
   return (
