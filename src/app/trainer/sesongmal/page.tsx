@@ -9,35 +9,44 @@ export default async function TrainerSesongmalPage() {
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) redirect("/login");
 
-  const { data: profile } = await supabase.from("profiles").select("role").eq("id", user.id).single();
+  const { data: profile } = await supabase.from("profiles").select("role, club_id").eq("id", user.id).single();
   if (!profile || profile.role !== "trainer") redirect("/dashboard");
+
+  const clubId = profile.club_id ?? "";
+
+  // Hent foreldre fra samme klubb
+  const { data: clubParents } = await supabase
+    .from("profiles")
+    .select("id, name, avatar_url")
+    .eq("role", "parent")
+    .eq("club_id", clubId);
+
+  const clubParentIds = (clubParents ?? []).map(p => p.id);
+  const parentMap: Record<string, { name: string; avatar_url: string | null }> = {};
+  for (const p of clubParents ?? []) parentMap[p.id] = { name: p.name, avatar_url: p.avatar_url };
 
   const [{ data: dancerProfiles }, { data: childrenWithGoals }] = await Promise.all([
     supabase
       .from("profiles")
       .select("id, name, avatar_url, season_goals, role")
       .in("role", ["dancer", "parent"])
+      .eq("club_id", clubId)
       .eq("goals_visible_to_trainer", true)
       .not("season_goals", "is", null)
       .neq("season_goals", "")
       .order("name"),
-    supabase
-      .from("children")
-      .select("id, name, season_goals, parent_id")
-      .not("season_goals", "is", null)
-      .neq("season_goals", "")
-      .order("name"),
+    clubParentIds.length > 0
+      ? supabase
+          .from("children")
+          .select("id, name, season_goals, parent_id")
+          .in("parent_id", clubParentIds)
+          .not("season_goals", "is", null)
+          .neq("season_goals", "")
+          .order("name")
+      : Promise.resolve({ data: [] }),
   ]);
 
   const profiles = dancerProfiles ?? [];
-
-  // Slå opp foreldrenavn fra profiles
-  const parentIds = [...new Set((childrenWithGoals ?? []).map((c: any) => c.parent_id))];
-  const { data: parentProfiles } = parentIds.length > 0
-    ? await supabase.from("profiles").select("id, name, avatar_url").in("id", parentIds)
-    : { data: [] };
-  const parentMap: Record<string, { name: string; avatar_url: string | null }> = {};
-  for (const p of parentProfiles ?? []) parentMap[p.id] = { name: p.name, avatar_url: p.avatar_url };
 
   const children = (childrenWithGoals ?? []).map((c: any) => ({
     id: c.id,
