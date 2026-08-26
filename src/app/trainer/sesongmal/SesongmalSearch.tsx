@@ -15,12 +15,21 @@ interface Profile {
   role: string;
 }
 
-export default function SesongmalSearch({ profiles }: { profiles: Profile[] }) {
-  const [query, setQuery] = useState("");
+interface Child {
+  id: string;
+  name: string;
+  avatar_url: string | null;
+  season_goals: string | null;
+  role: "child";
+  parentName: string | null;
+}
 
-  const filtered = query.trim()
-    ? profiles.filter(p => p.name.toLowerCase().includes(query.trim().toLowerCase()))
-    : profiles;
+export default function SesongmalSearch({ profiles, children = [] }: { profiles: Profile[]; children?: Child[] }) {
+  const [query, setQuery] = useState("");
+  const q = query.trim().toLowerCase();
+
+  const filtered = q ? profiles.filter(p => p.name.toLowerCase().includes(q)) : profiles;
+  const filteredChildren = q ? children.filter(c => c.name.toLowerCase().includes(q) || c.parentName?.toLowerCase().includes(q)) : children;
 
   return (
     <div className="space-y-4">
@@ -35,11 +44,44 @@ export default function SesongmalSearch({ profiles }: { profiles: Profile[] }) {
         />
       </div>
 
-      {filtered.length === 0 && (
+      {filtered.length === 0 && filteredChildren.length === 0 && (
         <div className="bg-white dark:bg-gray-900 rounded-xl border dark:border-gray-700 p-5 text-center text-gray-400 dark:text-gray-500">
           <p className="text-sm">Ingen treff på «{query.trim()}»</p>
         </div>
       )}
+
+      {filteredChildren.map(c => {
+        const goals = c.season_goals!.split("\n").filter(g => g.trim() !== "");
+        return (
+          <div key={c.id} className="bg-white dark:bg-gray-900 rounded-xl border dark:border-gray-700 p-4">
+            <div className="flex items-center gap-3 mb-3">
+              <div className="w-10 h-10 rounded-full bg-[#edd5f9] dark:bg-[#E2A9F1]/15 flex items-center justify-center overflow-hidden flex-shrink-0">
+                {c.avatar_url
+                  ? <img src={c.avatar_url} alt={c.name} className="w-full h-full object-cover" />
+                  : <span className="text-sm font-bold text-[#E2A9F1]">{c.name.charAt(0)}</span>}
+              </div>
+              <div>
+                <p className="text-sm font-semibold text-gray-800 dark:text-gray-100">{c.name}</p>
+                <p className="text-xs text-gray-400 dark:text-gray-500">Barn {c.parentName ? `· Forelder: ${c.parentName}` : ""}</p>
+              </div>
+            </div>
+            <ul className="space-y-1.5">
+              {goals.map((goal, i) => {
+                const done = isDone(goal);
+                return (
+                  <li key={i} className="flex items-center justify-between gap-2 text-sm py-1">
+                    <span className="flex items-start gap-2 text-gray-700 dark:text-gray-300">
+                      <span className="text-[#c87de0] mt-0.5">•</span>
+                      {goalText(goal)}
+                    </span>
+                    {done && <span className="text-xs text-green-600 dark:text-green-400 font-medium whitespace-nowrap">Mål nådd</span>}
+                  </li>
+                );
+              })}
+            </ul>
+          </div>
+        );
+      })}
 
       {filtered.map(p => {
         const goals = p.season_goals!.split("\n").filter(g => g.trim() !== "");
