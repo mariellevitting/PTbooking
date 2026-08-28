@@ -52,7 +52,11 @@ export default function NyttPassordPage() {
     const { error } = await supabase.auth.updateUser({ password });
 
     if (error) {
-      setError("Noe gikk galt, prøv igjen");
+      if (error.message.toLowerCase().includes("same password") || error.message.toLowerCase().includes("different")) {
+        setError("Du kan ikke bruke det samme passordet som før. Velg et nytt passord.");
+      } else {
+        setError("Noe gikk galt, prøv igjen");
+      }
       setLoading(false);
       return;
     }
