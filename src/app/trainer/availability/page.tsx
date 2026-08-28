@@ -191,9 +191,14 @@ export default function AvailabilityPage() {
 
       if (recipients && recipients.length > 0) {
         const trainerName = trainerProfile?.name ?? "Treneren";
+        const uniqueDates = [...new Set(rows.map(r => {
+          const d = new Date(r.start_at);
+          return d.toLocaleDateString("nb-NO", { day: "numeric", month: "short" });
+        }))];
+        const dateStr = uniqueDates.join(", ");
         const notifRows = recipients.map(r => ({
           user_id: r.id,
-          message: `${trainerName} har lagt ut ${rows.length} ny${rows.length === 1 ? "" : "e"} ledig${rows.length === 1 ? "" : "e"} time${rows.length === 1 ? "" : "r"}`,
+          message: `${trainerName} har lagt ut ${rows.length} ny${rows.length === 1 ? "" : "e"} ledig${rows.length === 1 ? "" : "e"} time${rows.length === 1 ? "" : "r"}: ${dateStr}`,
         }));
         await supabase.from("notifications").insert(notifRows);
 
