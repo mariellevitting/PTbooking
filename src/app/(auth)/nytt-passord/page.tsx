@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
 import { Button } from "@/components/ui/button";
@@ -12,6 +12,22 @@ export default function NyttPassordPage() {
   const [confirm, setConfirm] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+  const [ready, setReady] = useState(false);
+
+  useEffect(() => {
+    // Supabase sender token som hash-fragment i URL-en ved password reset
+    // Vi må la Supabase-klienten lese hash-fragmentet og opprette sesjon
+    const supabase = createClient();
+    supabase.auth.onAuthStateChange((event) => {
+      if (event === "PASSWORD_RECOVERY") {
+        setReady(true);
+      }
+    });
+    // Trigger parsing av hash
+    supabase.auth.getSession().then(({ data }) => {
+      if (data.session) setReady(true);
+    });
+  }, []);
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -25,6 +41,12 @@ export default function NyttPassordPage() {
     }
     setLoading(true);
     setError("");
+
+    if (!ready) {
+      setError("Lenken er ugyldig eller utløpt. Be om ny lenke.");
+      setLoading(false);
+      return;
+    }
 
     const supabase = createClient();
     const { error } = await supabase.auth.updateUser({ password });
@@ -64,6 +86,9 @@ export default function NyttPassordPage() {
             <p className="text-gray-500 dark:text-gray-400 mt-1 text-sm">Velg et nytt passord for kontoen din.</p>
           </div>
 
+          {!ready && (
+            <p className="text-sm text-amber-600 mb-4">Laster inn... Åpne lenken direkte fra e-posten.</p>
+          )}
           <form onSubmit={handleSubmit} className="space-y-4">
             <div className="space-y-1.5">
               <label className="text-sm font-medium text-gray-700 dark:text-gray-300">Nytt passord</label>
