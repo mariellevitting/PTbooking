@@ -1,14 +1,13 @@
 "use client";
 
 import { useState, useEffect, Suspense } from "react";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 
 function NyttPassordForm() {
   const router = useRouter();
-  const searchParams = useSearchParams();
   const [password, setPassword] = useState("");
   const [confirm, setConfirm] = useState("");
   const [loading, setLoading] = useState(false);
@@ -18,24 +17,11 @@ function NyttPassordForm() {
 
   useEffect(() => {
     const supabase = createClient();
-    const code = searchParams.get("code");
-
-    async function init() {
-      if (code) {
-        // Prøv å veksle kode — ignorer feil hvis koden allerede er brukt (dobbel render)
-        await supabase.auth.exchangeCodeForSession(code).catch(() => {});
-      }
-      // Sjekk om vi nå har en gyldig sesjon
-      const { data } = await supabase.auth.getSession();
-      if (data.session) {
-        setReady(true);
-      } else {
-        setExpired(true);
-      }
-    }
-
-    init();
-  }, []); // eslint-disable-line react-hooks/exhaustive-deps
+    supabase.auth.getSession().then(({ data }) => {
+      if (data.session) setReady(true);
+      else setExpired(true);
+    });
+  }, []);
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
