@@ -13,22 +13,16 @@ function NyttPassordForm() {
   const [confirm, setConfirm] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
-  const [ready, setReady] = useState(false);
+  const [sessionReady, setSessionReady] = useState(false);
 
   useEffect(() => {
     const supabase = createClient();
-
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((event) => {
-      if (event === "PASSWORD_RECOVERY" || event === "SIGNED_IN") {
-        setReady(true);
-      }
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
+      if (session) setSessionReady(true);
     });
-
-    // Sjekk om sesjon allerede finnes
     supabase.auth.getSession().then(({ data }) => {
-      if (data.session) setReady(true);
+      if (data.session) setSessionReady(true);
     });
-
     return () => subscription.unsubscribe();
   }, []);
 
@@ -87,7 +81,7 @@ function NyttPassordForm() {
             <p className="text-gray-500 dark:text-gray-400 mt-1 text-sm">Velg et nytt passord for kontoen din.</p>
           </div>
 
-          {!ready && <p className="text-sm text-gray-500 mb-4">Laster inn...</p>}
+          {!sessionReady && <p className="text-sm text-gray-400 mb-2">Verifiserer lenke...</p>}
           <form onSubmit={handleSubmit} className="space-y-4">
             <div className="space-y-1.5">
               <label className="text-sm font-medium text-gray-700 dark:text-gray-300">Nytt passord</label>
