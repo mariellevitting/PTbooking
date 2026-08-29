@@ -13,19 +13,24 @@ function NyttPassordForm() {
   const [confirm, setConfirm] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+  const [ready, setReady] = useState(false);
 
   useEffect(() => {
     const supabase = createClient();
-    const code = searchParams.get("code");
 
-    if (code) {
-      // PKCE-flyt: veksle koden client-side
-      supabase.auth.exchangeCodeForSession(code).catch(() => {});
-    }
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((event) => {
+      if (event === "PASSWORD_RECOVERY" || event === "SIGNED_IN") {
+        setReady(true);
+      }
+    });
 
-    // Lytter for PASSWORD_RECOVERY event (implicit flow)
-    supabase.auth.onAuthStateChange(() => {});
-  }, []); // eslint-disable-line react-hooks/exhaustive-deps
+    // Sjekk om sesjon allerede finnes
+    supabase.auth.getSession().then(({ data }) => {
+      if (data.session) setReady(true);
+    });
+
+    return () => subscription.unsubscribe();
+  }, []);
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -46,8 +51,6 @@ function NyttPassordForm() {
     if (error) {
       if (error.message.toLowerCase().includes("same password") || error.message.toLowerCase().includes("different")) {
         setError("Du kan ikke bruke det samme passordet som før. Velg et nytt passord.");
-      } else if (error.message.toLowerCase().includes("session")) {
-        setError("Lenken er utløpt. Gå til 'Glemt passord' og prøv på nytt.");
       } else {
         setError(error.message);
       }
@@ -84,6 +87,7 @@ function NyttPassordForm() {
             <p className="text-gray-500 dark:text-gray-400 mt-1 text-sm">Velg et nytt passord for kontoen din.</p>
           </div>
 
+          {!ready && <p className="text-sm text-gray-500 mb-4">Laster inn...</p>}
           <form onSubmit={handleSubmit} className="space-y-4">
             <div className="space-y-1.5">
               <label className="text-sm font-medium text-gray-700 dark:text-gray-300">Nytt passord</label>
