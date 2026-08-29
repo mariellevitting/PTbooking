@@ -17,11 +17,9 @@ function NyttPassordForm() {
 
   useEffect(() => {
     const supabase = createClient();
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
+    // onAuthStateChange håndterer implicit flow hash automatisk
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
       if (session) setSessionReady(true);
-    });
-    supabase.auth.getSession().then(({ data }) => {
-      if (data.session) setSessionReady(true);
     });
     return () => subscription.unsubscribe();
   }, []);
@@ -81,7 +79,6 @@ function NyttPassordForm() {
             <p className="text-gray-500 dark:text-gray-400 mt-1 text-sm">Velg et nytt passord for kontoen din.</p>
           </div>
 
-          {!sessionReady && <p className="text-sm text-gray-400 mb-2">Verifiserer lenke...</p>}
           <form onSubmit={handleSubmit} className="space-y-4">
             <div className="space-y-1.5">
               <label className="text-sm font-medium text-gray-700 dark:text-gray-300">Nytt passord</label>
