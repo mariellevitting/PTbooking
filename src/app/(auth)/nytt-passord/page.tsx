@@ -2,20 +2,45 @@
 
 import { useState, useEffect, Suspense } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
-import { updatePassword } from "./actions";
+import { createClient } from "@/lib/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 
 function NyttPassordForm() {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const code = searchParams.get("code") ?? undefined;
   const [password, setPassword] = useState("");
   const [confirm, setConfirm] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
-  const [ready] = useState(true);
-  const [expired] = useState(false);
+  const [ready, setReady] = useState(false);
+  const [expired, setExpired] = useState(false);
+
+  useEffect(() => {
+    const supabase = createClient();
+    const code = searchParams.get("code");
+
+    async function init() {
+      if (code) {
+        const { error } = await supabase.auth.exchangeCodeForSession(code);
+        if (error) {
+          setExpired(true);
+          return;
+        }
+        setReady(true);
+        return;
+      }
+      // Ingen code — sjekk om det allerede finnes en sesjon
+      const { data } = await supabase.auth.getSession();
+      if (data.session) {
+        setReady(true);
+      } else {
+        setExpired(true);
+      }
+    }
+
+    init();
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -30,13 +55,14 @@ function NyttPassordForm() {
     setLoading(true);
     setError("");
 
-    const { error } = await updatePassword(password, code);
+    const supabase = createClient();
+    const { error } = await supabase.auth.updateUser({ password });
 
     if (error) {
-      if (error.toLowerCase().includes("same password") || error.toLowerCase().includes("different")) {
+      if (error.message.toLowerCase().includes("same password") || error.message.toLowerCase().includes("different")) {
         setError("Du kan ikke bruke det samme passordet som før. Velg et nytt passord.");
       } else {
-        setError(error);
+        setError(error.message);
       }
       setLoading(false);
       return;
@@ -84,23 +110,11 @@ function NyttPassordForm() {
             <form onSubmit={handleSubmit} className="space-y-4">
               <div className="space-y-1.5">
                 <label className="text-sm font-medium text-gray-700 dark:text-gray-300">Nytt passord</label>
-                <Input
-                  type="password"
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  placeholder="••••••••"
-                  required
-                />
+                <Input type="password" value={password} onChange={(e) => setPassword(e.target.value)} placeholder="••••••••" required />
               </div>
               <div className="space-y-1.5">
                 <label className="text-sm font-medium text-gray-700 dark:text-gray-300">Bekreft passord</label>
-                <Input
-                  type="password"
-                  value={confirm}
-                  onChange={(e) => setConfirm(e.target.value)}
-                  placeholder="••••••••"
-                  required
-                />
+                <Input type="password" value={confirm} onChange={(e) => setConfirm(e.target.value)} placeholder="••••••••" required />
               </div>
               {error && <p className="text-sm text-red-500">{error}</p>}
               <Button type="submit" className="w-full bg-[#3A3A3A] hover:bg-[#2a2a2a] h-11 text-base" disabled={loading}>
