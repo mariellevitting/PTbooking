@@ -2,7 +2,7 @@
 
 import { useState, useEffect, Suspense } from "react";
 import { useRouter } from "next/navigation";
-import { createClient } from "@/lib/supabase/client";
+import { updatePassword } from "./actions";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 
@@ -28,11 +28,10 @@ function NyttPassordForm() {
     setLoading(true);
     setError("");
 
-    const supabase = createClient();
-    const { error } = await supabase.auth.updateUser({ password });
+    const { error } = await updatePassword(password);
 
     if (error) {
-      if (error.message.toLowerCase().includes("same password") || error.message.toLowerCase().includes("different")) {
+      if (error.toLowerCase().includes("same password") || error.toLowerCase().includes("different")) {
         setError("Du kan ikke bruke det samme passordet som før. Velg et nytt passord.");
       } else {
         setError("Noe gikk galt, prøv igjen");
