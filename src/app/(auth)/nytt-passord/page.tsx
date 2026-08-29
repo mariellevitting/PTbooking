@@ -36,7 +36,7 @@ function NyttPassordForm() {
       if (error.toLowerCase().includes("same password") || error.toLowerCase().includes("different")) {
         setError("Du kan ikke bruke det samme passordet som før. Velg et nytt passord.");
       } else {
-        setError("Noe gikk galt, prøv igjen");
+        setError(error);
       }
       setLoading(false);
       return;
