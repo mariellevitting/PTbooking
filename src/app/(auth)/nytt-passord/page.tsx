@@ -20,25 +20,22 @@ function NyttPassordForm() {
     const supabase = createClient();
     const code = searchParams.get("code");
 
-    if (code) {
-      supabase.auth.exchangeCodeForSession(code).then(({ error }) => {
-        if (error) {
-          setExpired(true);
-        } else {
-          setReady(true);
-        }
-      });
-    } else {
-      // Fallback: sjekk eksisterende sesjon (hash-flyt)
-      supabase.auth.onAuthStateChange((event) => {
-        if (event === "PASSWORD_RECOVERY") setReady(true);
-      });
-      supabase.auth.getSession().then(({ data }) => {
-        if (data.session) setReady(true);
-        else setExpired(true);
-      });
+    async function init() {
+      if (code) {
+        // Prøv å veksle kode — ignorer feil hvis koden allerede er brukt (dobbel render)
+        await supabase.auth.exchangeCodeForSession(code).catch(() => {});
+      }
+      // Sjekk om vi nå har en gyldig sesjon
+      const { data } = await supabase.auth.getSession();
+      if (data.session) {
+        setReady(true);
+      } else {
+        setExpired(true);
+      }
     }
-  }, [searchParams]);
+
+    init();
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
