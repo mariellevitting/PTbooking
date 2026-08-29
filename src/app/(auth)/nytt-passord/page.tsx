@@ -1,33 +1,44 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 
 export default function NyttPassordPage() {
   const router = useRouter();
+  const searchParams = useSearchParams();
   const [password, setPassword] = useState("");
   const [confirm, setConfirm] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [ready, setReady] = useState(false);
+  const [expired, setExpired] = useState(false);
 
   useEffect(() => {
-    // Supabase sender token som hash-fragment i URL-en ved password reset
-    // Vi må la Supabase-klienten lese hash-fragmentet og opprette sesjon
     const supabase = createClient();
-    supabase.auth.onAuthStateChange((event) => {
-      if (event === "PASSWORD_RECOVERY") {
-        setReady(true);
-      }
-    });
-    // Trigger parsing av hash
-    supabase.auth.getSession().then(({ data }) => {
-      if (data.session) setReady(true);
-    });
-  }, []);
+    const code = searchParams.get("code");
+
+    if (code) {
+      supabase.auth.exchangeCodeForSession(code).then(({ error }) => {
+        if (error) {
+          setExpired(true);
+        } else {
+          setReady(true);
+        }
+      });
+    } else {
+      // Fallback: sjekk eksisterende sesjon (hash-flyt)
+      supabase.auth.onAuthStateChange((event) => {
+        if (event === "PASSWORD_RECOVERY") setReady(true);
+      });
+      supabase.auth.getSession().then(({ data }) => {
+        if (data.session) setReady(true);
+        else setExpired(true);
+      });
+    }
+  }, [searchParams]);
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -41,12 +52,6 @@ export default function NyttPassordPage() {
     }
     setLoading(true);
     setError("");
-
-    if (!ready) {
-      setError("Lenken er ugyldig eller utløpt. Be om ny lenke.");
-      setLoading(false);
-      return;
-    }
 
     const supabase = createClient();
     const { error } = await supabase.auth.updateUser({ password });
@@ -90,35 +95,43 @@ export default function NyttPassordPage() {
             <p className="text-gray-500 dark:text-gray-400 mt-1 text-sm">Velg et nytt passord for kontoen din.</p>
           </div>
 
-          {!ready && (
-            <p className="text-sm text-amber-600 mb-4">Laster inn... Åpne lenken direkte fra e-posten.</p>
+          {expired ? (
+            <div className="space-y-4">
+              <p className="text-sm text-red-500">Lenken er utløpt. Be om en ny lenke for å tilbakestille passordet.</p>
+              <Button onClick={() => router.push("/glemt-passord")} className="w-full bg-[#3A3A3A] hover:bg-[#2a2a2a] h-11 text-base">
+                Be om ny lenke
+              </Button>
+            </div>
+          ) : !ready ? (
+            <p className="text-sm text-gray-500">Laster inn...</p>
+          ) : (
+            <form onSubmit={handleSubmit} className="space-y-4">
+              <div className="space-y-1.5">
+                <label className="text-sm font-medium text-gray-700 dark:text-gray-300">Nytt passord</label>
+                <Input
+                  type="password"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  placeholder="••••••••"
+                  required
+                />
+              </div>
+              <div className="space-y-1.5">
+                <label className="text-sm font-medium text-gray-700 dark:text-gray-300">Bekreft passord</label>
+                <Input
+                  type="password"
+                  value={confirm}
+                  onChange={(e) => setConfirm(e.target.value)}
+                  placeholder="••••••••"
+                  required
+                />
+              </div>
+              {error && <p className="text-sm text-red-500">{error}</p>}
+              <Button type="submit" className="w-full bg-[#3A3A3A] hover:bg-[#2a2a2a] h-11 text-base" disabled={loading}>
+                {loading ? "Lagrer..." : "Sett nytt passord"}
+              </Button>
+            </form>
           )}
-          <form onSubmit={handleSubmit} className="space-y-4">
-            <div className="space-y-1.5">
-              <label className="text-sm font-medium text-gray-700 dark:text-gray-300">Nytt passord</label>
-              <Input
-                type="password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                placeholder="••••••••"
-                required
-              />
-            </div>
-            <div className="space-y-1.5">
-              <label className="text-sm font-medium text-gray-700 dark:text-gray-300">Bekreft passord</label>
-              <Input
-                type="password"
-                value={confirm}
-                onChange={(e) => setConfirm(e.target.value)}
-                placeholder="••••••••"
-                required
-              />
-            </div>
-            {error && <p className="text-sm text-red-500">{error}</p>}
-            <Button type="submit" className="w-full bg-[#3A3A3A] hover:bg-[#2a2a2a] h-11 text-base" disabled={loading}>
-              {loading ? "Lagrer..." : "Sett nytt passord"}
-            </Button>
-          </form>
         </div>
       </div>
     </div>
