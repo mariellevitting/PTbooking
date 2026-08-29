@@ -12,16 +12,8 @@ function NyttPassordForm() {
   const [confirm, setConfirm] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
-  const [ready, setReady] = useState(false);
-  const [expired, setExpired] = useState(false);
-
-  useEffect(() => {
-    const supabase = createClient();
-    supabase.auth.getSession().then(({ data }) => {
-      if (data.session) setReady(true);
-      else setExpired(true);
-    });
-  }, []);
+  const [ready] = useState(true);
+  const [expired] = useState(false);
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
