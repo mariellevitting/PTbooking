@@ -19,7 +19,7 @@ export default function GlemtPassordPage() {
 
     const supabase = createClient();
     const { error } = await supabase.auth.resetPasswordForEmail(email, {
-      redirectTo: `${window.location.origin}/nytt-passord`,
+      redirectTo: `https://app.danceitude.no/nytt-passord`,
     });
 
     if (error) {
