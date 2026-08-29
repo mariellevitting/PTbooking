@@ -1,13 +1,15 @@
 "use client";
 
 import { useState, useEffect, Suspense } from "react";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { updatePassword } from "./actions";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 
 function NyttPassordForm() {
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const code = searchParams.get("code") ?? undefined;
   const [password, setPassword] = useState("");
   const [confirm, setConfirm] = useState("");
   const [loading, setLoading] = useState(false);
@@ -28,7 +30,7 @@ function NyttPassordForm() {
     setLoading(true);
     setError("");
 
-    const { error } = await updatePassword(password);
+    const { error } = await updatePassword(password, code);
 
     if (error) {
       if (error.toLowerCase().includes("same password") || error.toLowerCase().includes("different")) {
