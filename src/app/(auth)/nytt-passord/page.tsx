@@ -13,33 +13,18 @@ function NyttPassordForm() {
   const [confirm, setConfirm] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
-  const [ready, setReady] = useState(false);
-  const [expired, setExpired] = useState(false);
 
   useEffect(() => {
     const supabase = createClient();
     const code = searchParams.get("code");
 
-    async function init() {
-      if (code) {
-        const { error } = await supabase.auth.exchangeCodeForSession(code);
-        if (error) {
-          setExpired(true);
-          return;
-        }
-        setReady(true);
-        return;
-      }
-      // Ingen code — sjekk om det allerede finnes en sesjon
-      const { data } = await supabase.auth.getSession();
-      if (data.session) {
-        setReady(true);
-      } else {
-        setExpired(true);
-      }
+    if (code) {
+      // PKCE-flyt: veksle koden client-side
+      supabase.auth.exchangeCodeForSession(code).catch(() => {});
     }
 
-    init();
+    // Lytter for PASSWORD_RECOVERY event (implicit flow)
+    supabase.auth.onAuthStateChange(() => {});
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   async function handleSubmit(e: React.FormEvent) {
@@ -61,6 +46,8 @@ function NyttPassordForm() {
     if (error) {
       if (error.message.toLowerCase().includes("same password") || error.message.toLowerCase().includes("different")) {
         setError("Du kan ikke bruke det samme passordet som før. Velg et nytt passord.");
+      } else if (error.message.toLowerCase().includes("session")) {
+        setError("Lenken er utløpt. Gå til 'Glemt passord' og prøv på nytt.");
       } else {
         setError(error.message);
       }
@@ -97,31 +84,20 @@ function NyttPassordForm() {
             <p className="text-gray-500 dark:text-gray-400 mt-1 text-sm">Velg et nytt passord for kontoen din.</p>
           </div>
 
-          {expired ? (
-            <div className="space-y-4">
-              <p className="text-sm text-red-500">Lenken er utløpt. Be om en ny lenke for å tilbakestille passordet.</p>
-              <Button onClick={() => router.push("/glemt-passord")} className="w-full bg-[#3A3A3A] hover:bg-[#2a2a2a] h-11 text-base">
-                Be om ny lenke
-              </Button>
+          <form onSubmit={handleSubmit} className="space-y-4">
+            <div className="space-y-1.5">
+              <label className="text-sm font-medium text-gray-700 dark:text-gray-300">Nytt passord</label>
+              <Input type="password" value={password} onChange={(e) => setPassword(e.target.value)} placeholder="••••••••" required />
             </div>
-          ) : !ready ? (
-            <p className="text-sm text-gray-500">Laster inn...</p>
-          ) : (
-            <form onSubmit={handleSubmit} className="space-y-4">
-              <div className="space-y-1.5">
-                <label className="text-sm font-medium text-gray-700 dark:text-gray-300">Nytt passord</label>
-                <Input type="password" value={password} onChange={(e) => setPassword(e.target.value)} placeholder="••••••••" required />
-              </div>
-              <div className="space-y-1.5">
-                <label className="text-sm font-medium text-gray-700 dark:text-gray-300">Bekreft passord</label>
-                <Input type="password" value={confirm} onChange={(e) => setConfirm(e.target.value)} placeholder="••••••••" required />
-              </div>
-              {error && <p className="text-sm text-red-500">{error}</p>}
-              <Button type="submit" className="w-full bg-[#3A3A3A] hover:bg-[#2a2a2a] h-11 text-base" disabled={loading}>
-                {loading ? "Lagrer..." : "Sett nytt passord"}
-              </Button>
-            </form>
-          )}
+            <div className="space-y-1.5">
+              <label className="text-sm font-medium text-gray-700 dark:text-gray-300">Bekreft passord</label>
+              <Input type="password" value={confirm} onChange={(e) => setConfirm(e.target.value)} placeholder="••••••••" required />
+            </div>
+            {error && <p className="text-sm text-red-500">{error}</p>}
+            <Button type="submit" className="w-full bg-[#3A3A3A] hover:bg-[#2a2a2a] h-11 text-base" disabled={loading}>
+              {loading ? "Lagrer..." : "Sett nytt passord"}
+            </Button>
+          </form>
         </div>
       </div>
     </div>
