@@ -50,7 +50,7 @@ export default function RegisterForm({ prefilledCode, clubName, clubs = [] }: Pr
     router.refresh();
   }
 
-  const displayName = clubName || "Evolution Danseklubb";
+  const displayName = clubName || "";
 
   const formContent = (
     <>
@@ -150,7 +150,7 @@ export default function RegisterForm({ prefilledCode, clubName, clubs = [] }: Pr
         <div className="relative z-10 flex flex-col justify-end p-10 text-white">
           <p className="text-white/90 text-lg italic mb-3">✦ Av dansere, for dansere</p>
           <h1 className="text-5xl font-bold mb-1">Danceitude</h1>
-          <p className="text-white/70 text-lg mb-2">{displayName}</p>
+          {displayName && <p className="text-white/70 text-lg mb-2">{displayName}</p>}
           <p className="text-white/80 text-lg">Book din privattime enkelt og raskt</p>
         </div>
       </div>

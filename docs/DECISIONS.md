@@ -54,8 +54,17 @@ Utsettes til v2:
 
 ## Betaling
 
-- **Leverandør**: Ikke integrert. Bruker Spond som før. Betalingsboks på bekreftelsessiden minner brukeren om å sende kvittering til treneren. (2026-06-08)
+- **Leverandør**: Ikke integrert. Hver klubb har egen betalingsmåte lagret i `clubs` (`payment_label`, `payment_info`, `payment_url`). Evolution = Spond, Trondheim = Vipps til hver trener. Betalingsboks på bekreftelsessiden minner brukeren om å sende kvittering til treneren. (2026-08-31)
 - **Refusjons- og avbestillingsregler**: Advarsel vises ved avbestilling under 24 timer. Ingen automatisk gebyrberegning ennå.
+
+## Multi-tenancy / klubber (2026-08-31)
+
+- Danceitude er multi-tenant: én rad per klubb i `clubs`. Se `docs/CLUBS.md`.
+- **Prinsipp**: klubb-spesifikt innhold (navn, farge, priser, betaling, info-tekst, dansestiler) ligger som data på `clubs`-raden, ikke hardkodet i komponenter. App-logikk (booking, avbestilling, varsler) er felles kode.
+- **Fase 1 (ferdig)**: flyttet info-boksen "Bestille privattimer", priser, betaling og dansestiler til `clubs`. Kjør `supabase/club_config.sql`. Helper: `src/lib/club.ts`. Komponent: `src/components/PrivattimeInfo.tsx`.
+- **Nasjonal standard, forblir i kode**: nivå-/poengsystemet (Rekrutt→Elite) og konkurransekalenderen (NM/FDJ/DOTY) – likt for alle norske freestyle-klubber.
+- **Fase 2 (planlagt)**: klubb-filtrere "deltar"-tellere/deltakerlister/trenerlister; samle konkurransekalenderen ett sted.
+- **Fase 3 (planlagt)**: rydde registreringskoder – fjerne env-variabel-hacket for Evolution, alt via `clubs`.
 
 ## Viktige tekniske valg og løsninger (2026-06-08)
 

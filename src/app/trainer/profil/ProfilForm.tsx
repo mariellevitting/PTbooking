@@ -9,28 +9,20 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Check, User, Phone, FileText, Music, Camera } from "lucide-react";
 import DeleteAccountSection from "@/components/DeleteAccountSection";
 
-const ALL_STYLES = [
-  "Slow",
-  "Freestyle",
-  "Jazz",
-  "Moderne",
-  "Freestyle dobbel",
-  "Slow dobbel",
-  "Akro",
-  "Hiphop",
-  "Show",
-];
-
 interface Props {
   userId: string;
   name: string;
   phone: string;
   bio: string;
   danceStyles: string[];
+  styleOptions?: string[];
   avatarUrl?: string | null;
 }
 
-export default function ProfilForm({ userId, name, phone, bio, danceStyles, avatarUrl }: Props) {
+const FALLBACK_STYLES = ["Slow", "Freestyle", "Jazz", "Moderne", "Freestyle dobbel", "Slow dobbel", "Akro", "Hiphop", "Show"];
+
+export default function ProfilForm({ userId, name, phone, bio, danceStyles, styleOptions, avatarUrl }: Props) {
+  const allStyles = styleOptions && styleOptions.length > 0 ? styleOptions : FALLBACK_STYLES;
   const router = useRouter();
   const [nameVal, setNameVal] = useState(name);
   const [phoneVal, setPhoneVal] = useState(phone);
@@ -162,7 +154,7 @@ export default function ProfilForm({ userId, name, phone, bio, danceStyles, avat
         </CardHeader>
         <CardContent>
           <div className="grid grid-cols-2 gap-2">
-            {ALL_STYLES.map((style) => {
+            {allStyles.map((style) => {
               const isSelected = selected.has(style);
               return (
                 <button

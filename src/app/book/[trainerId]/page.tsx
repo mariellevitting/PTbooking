@@ -4,6 +4,7 @@ import { createClient } from "@/lib/supabase/server";
 import BookingForm from "./BookingForm";
 import { ArrowLeft, Phone } from "lucide-react";
 import { styleColor } from "@/lib/danceStyleColors";
+import { getClubById, danceStylesFor, defaultPriceFor } from "@/lib/club";
 
 export default async function TrainerBookPage({ params }: { params: Promise<{ trainerId: string }> }) {
   const { trainerId } = await params;
@@ -27,6 +28,8 @@ export default async function TrainerBookPage({ params }: { params: Promise<{ tr
   if (!profile || !["dancer", "parent"].includes(profile.role)) redirect("/dashboard");
   if (!trainer) redirect("/book");
 
+  const club = await getClubById(supabase, profile.club_id);
+
   const { data: trainerDetails } = await supabase
     .from("trainers")
     .select("dance_styles, bio, price")
@@ -45,10 +48,9 @@ export default async function TrainerBookPage({ params }: { params: Promise<{ tr
     .gte("start_at", new Date().toISOString())
     .order("start_at");
 
-  const DEFAULT_STYLES = ["Slow", "Freestyle", "Jazz", "Moderne", "Freestyle dobbel", "Slow dobbel", "Akro"];
   const styles: string[] = (trainerDetails?.dance_styles?.length ?? 0) > 0
     ? trainerDetails!.dance_styles
-    : DEFAULT_STYLES;
+    : danceStylesFor(club);
 
   return (
     <main className="bg-gray-50 dark:bg-gray-950 px-6 pb-6 page-safe-top">
@@ -67,7 +69,7 @@ export default async function TrainerBookPage({ params }: { params: Promise<{ tr
             </div>
             <div>
               <h1 className="text-xl font-bold">{trainer.name}</h1>
-              <p className="text-gray-400 dark:text-gray-500 text-sm">Trener – {(trainer.clubs as any)?.name ?? "Evolution Danseklubb"}</p>
+              <p className="text-gray-400 dark:text-gray-500 text-sm">Trener{(trainer.clubs as any)?.name ? ` – ${(trainer.clubs as any).name}` : ""}</p>
             </div>
           </div>
 
@@ -110,7 +112,8 @@ export default async function TrainerBookPage({ params }: { params: Promise<{ tr
             bookerRole={profile?.role ?? "dancer"}
             danceStyles={styles}
             children={children ?? []}
-            price={trainerDetails?.price ?? 150}
+            price={trainerDetails?.price ?? defaultPriceFor(club)}
+            paymentLabel={club?.payment_label ?? null}
           />
         )}
       </div>
