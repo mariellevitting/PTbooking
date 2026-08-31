@@ -52,6 +52,7 @@ export default async function TrainerProfilPage() {
           name={profile.name}
           phone={profile.phone ?? ""}
           bio={trainerDetails?.bio ?? ""}
+          price={trainerDetails?.price ?? null}
           danceStyles={trainerDetails?.dance_styles ?? []}
           styleOptions={danceStylesFor(club)}
           avatarUrl={profile.avatar_url ?? null}
