@@ -179,7 +179,7 @@ export default function AvailabilityPage() {
     } else {
       const { data: trainerProfile } = await supabase
         .from("profiles")
-        .select("name")
+        .select("name, club_id")
         .eq("id", user.id)
         .single();
 
@@ -187,7 +187,8 @@ export default function AvailabilityPage() {
         .from("profiles")
         .select("id")
         .in("role", ["dancer", "parent"])
-        .eq("notify_new_slots", true);
+        .eq("notify_new_slots", true)
+        .eq("club_id", trainerProfile?.club_id ?? "");
 
       if (recipients && recipients.length > 0) {
         const trainerName = trainerProfile?.name ?? "Treneren";

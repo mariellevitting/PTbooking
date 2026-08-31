@@ -11,7 +11,7 @@ export default async function BookForDancerPage() {
 
   const { data: profile } = await supabase
     .from("profiles")
-    .select("role")
+    .select("role, club_id")
     .eq("id", user.id)
     .single();
 
@@ -32,7 +32,7 @@ export default async function BookForDancerPage() {
           <ArrowLeft size={24} strokeWidth={2.5} />
         </Link>
         <h1 className="text-2xl font-bold mb-6">Book time for danser</h1>
-        <BookForDancerForm trainerId={user.id} danceStyles={danceStyles} />
+        <BookForDancerForm trainerId={user.id} danceStyles={danceStyles} clubId={profile.club_id ?? null} />
       </div>
     </main>
   );

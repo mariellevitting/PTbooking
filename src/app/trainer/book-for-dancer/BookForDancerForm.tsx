@@ -68,9 +68,10 @@ interface LinkedUser {
 interface Props {
   trainerId: string;
   danceStyles: string[];
+  clubId: string | null;
 }
 
-export default function BookForDancerForm({ trainerId, danceStyles }: Props) {
+export default function BookForDancerForm({ trainerId, danceStyles, clubId }: Props) {
   const router = useRouter();
   const today = new Date();
   today.setHours(0, 0, 0, 0);
@@ -101,17 +102,19 @@ export default function BookForDancerForm({ trainerId, danceStyles }: Props) {
     const timeout = setTimeout(async () => {
       setSearching(true);
       const supabase = createClient();
-      const { data } = await supabase
+      let q = supabase
         .from("profiles")
         .select("id, name, role")
         .in("role", ["dancer", "parent"])
         .ilike("name", `%${trimmed}%`)
         .limit(6);
+      if (clubId) q = q.eq("club_id", clubId);
+      const { data } = await q;
       setSearchResults(data ?? []);
       setSearching(false);
     }, 250);
     return () => clearTimeout(timeout);
-  }, [searchQuery]);
+  }, [searchQuery, clubId]);
 
   useEffect(() => {
     function handleClick(e: MouseEvent) {

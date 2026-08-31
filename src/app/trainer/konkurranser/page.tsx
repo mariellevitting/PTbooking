@@ -9,7 +9,7 @@ export default async function TrainerKonkurranserPage() {
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) redirect("/login");
 
-  const { data: profile } = await supabase.from("profiles").select("role").eq("id", user.id).single();
+  const { data: profile } = await supabase.from("profiles").select("role, club_id").eq("id", user.id).single();
   if (!profile || profile.role !== "trainer") redirect("/dashboard");
 
   return (
@@ -19,7 +19,7 @@ export default async function TrainerKonkurranserPage() {
           <ArrowLeft size={24} strokeWidth={2.5} />
         </Link>
         <h1 className="text-2xl font-bold mb-6">Kommende konkurranser</h1>
-        <CompetitionList userId={user.id} showCountdown isTrainer />
+        <CompetitionList userId={user.id} showCountdown isTrainer clubId={(profile as any).club_id ?? null} />
       </div>
     </main>
   );

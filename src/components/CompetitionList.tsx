@@ -22,9 +22,10 @@ interface Props {
   userId: string;
   showCountdown?: boolean;
   isTrainer?: boolean;
+  clubId?: string | null;
 }
 
-export default function CompetitionList({ userId, showCountdown = false, isTrainer = false }: Props) {
+export default function CompetitionList({ userId, showCountdown = false, isTrainer = false, clubId }: Props) {
   const upcoming = COMPETITIONS.filter(c => daysUntil(c.date) > 0);
   const next = upcoming[0];
   const rest = upcoming.slice(1);
@@ -39,10 +40,15 @@ export default function CompetitionList({ userId, showCountdown = false, isTrain
     const supabase = createClient();
 
     const fetchCounts = async () => {
-      const { data } = await supabase.from("competition_participations").select("competition_name");
+      const sel: string = clubId ? "competition_name, profiles!inner(club_id)" : "competition_name";
+      let q = supabase.from("competition_participations").select(sel);
+      if (clubId) q = q.eq("profiles.club_id", clubId);
+      const { data } = await q;
       if (!data) return;
       const c: Record<string, number> = {};
-      for (const r of data) c[r.competition_name] = (c[r.competition_name] ?? 0) + 1;
+      for (const r of data as unknown as { competition_name: string }[]) {
+        c[r.competition_name] = (c[r.competition_name] ?? 0) + 1;
+      }
       setCounts(c);
     };
 
@@ -64,15 +70,17 @@ export default function CompetitionList({ userId, showCountdown = false, isTrain
       .subscribe();
 
     return () => { supabase.removeChannel(channel); };
-  }, [userId]);
+  }, [userId, clubId]);
 
   async function fetchParticipants(name: string) {
     if (participants[name]) return;
     const supabase = createClient();
-    const { data } = await supabase
+    let q = supabase
       .from("competition_participations")
-      .select("profiles(name)")
+      .select("profiles!inner(name, club_id)")
       .eq("competition_name", name);
+    if (clubId) q = q.eq("profiles.club_id", clubId);
+    const { data } = await q;
     if (data) {
       setParticipants(prev => ({
         ...prev,

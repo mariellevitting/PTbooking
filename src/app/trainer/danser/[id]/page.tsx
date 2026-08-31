@@ -7,19 +7,21 @@ import { formatDate, formatTime } from "@/lib/dateUtils";
 function isDone(goal: string) { return goal.startsWith("[x] "); }
 function goalText(goal: string) { return isDone(goal) ? goal.slice(4) : goal; }
 
-export default async function TrainerDancerProfilePage({ params }: { params: { id: string } }) {
+export default async function TrainerDancerProfilePage({ params }: { params: Promise<{ id: string }> }) {
+  const { id } = await params;
   const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) redirect("/login");
 
-  const { data: trainerProfile } = await supabase.from("profiles").select("role").eq("id", user.id).single();
+  const { data: trainerProfile } = await supabase.from("profiles").select("role, club_id").eq("id", user.id).single();
   if (!trainerProfile || trainerProfile.role !== "trainer") redirect("/dashboard");
 
   const { data: dancer } = await supabase
     .from("profiles")
     .select("id, name, avatar_url, season_goals, goals_visible_to_trainer")
-    .eq("id", params.id)
+    .eq("id", id)
     .in("role", ["dancer", "parent"])
+    .eq("club_id", trainerProfile.club_id ?? "")
     .single();
 
   if (!dancer) redirect("/trainer/historikk");

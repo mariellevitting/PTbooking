@@ -48,9 +48,10 @@ interface Props {
   children: Child[];
   price: number;
   paymentLabel?: string | null;
+  clubId?: string | null;
 }
 
-export default function BookingForm({ slots, trainerName, bookerId, bookerName, bookerRole, danceStyles, children, price, paymentLabel }: Props) {
+export default function BookingForm({ slots, trainerName, bookerId, bookerName, bookerRole, danceStyles, children, price, paymentLabel, clubId }: Props) {
   const router = useRouter();
   const isParent = bookerRole === "parent";
   const isDouble = (style: string) => DOUBLE_STYLES.includes(style);
@@ -81,18 +82,20 @@ export default function BookingForm({ slots, trainerName, bookerId, bookerName, 
     const timeout = setTimeout(async () => {
       setSearching(true);
       const supabase = createClient();
-      const { data } = await supabase
+      let q = supabase
         .from("profiles")
         .select("id, name, role")
         .in("role", ["dancer", "parent"])
         .ilike("name", `%${trimmed}%`)
         .neq("id", bookerId)
         .limit(6);
+      if (clubId) q = q.eq("club_id", clubId);
+      const { data } = await q;
       setPartnerResults(data ?? []);
       setSearching(false);
     }, 250);
     return () => clearTimeout(timeout);
-  }, [partnerQuery, bookerId]);
+  }, [partnerQuery, bookerId, clubId]);
 
   useEffect(() => {
     function handleClick(e: MouseEvent) {

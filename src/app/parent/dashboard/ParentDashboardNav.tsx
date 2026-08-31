@@ -376,7 +376,7 @@ export default function ParentDashboardNav({ userName, avatarUrl, notifications,
           {/* Mine privattimer */}
           {active === "timer" && (
             <div>
-              <NMCountdown />
+              <NMCountdown clubId={club?.id ?? null} />
               <div className="flex justify-between items-center mb-3 mt-4">
                 <h2 className="font-semibold text-lg">Mine privattimer</h2>
                 <Link href="/book">
@@ -532,7 +532,7 @@ export default function ParentDashboardNav({ userName, avatarUrl, notifications,
           {active === "konkurranser" && (
             <div className="space-y-3">
               <h2 className="font-semibold text-lg mb-1">Kommende konkurranser</h2>
-              <CompetitionList userId={parentId} showCountdown />
+              <CompetitionList userId={parentId} showCountdown clubId={club?.id ?? null} />
             </div>
           )}
 

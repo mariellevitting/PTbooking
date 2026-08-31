@@ -12,7 +12,7 @@ export default async function TrainerHistorikkPage() {
 
   const { data: profile } = await supabase
     .from("profiles")
-    .select("role")
+    .select("role, club_id")
     .eq("id", user.id)
     .single();
 
@@ -28,7 +28,8 @@ export default async function TrainerHistorikkPage() {
     supabase
       .from("profiles")
       .select("id, name")
-      .eq("role", "dancer"),
+      .eq("role", "dancer")
+      .eq("club_id", profile.club_id ?? ""),
   ]);
 
   const completed = (completedSlots ?? []).filter(slot =>
