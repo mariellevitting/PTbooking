@@ -216,7 +216,12 @@ export default function AdminClient({ profiles, feedback, slots, trainerMap, isA
                 <div key={club.id} className="border dark:border-gray-700 rounded-xl p-4">
                   <div className="flex items-center justify-between mb-3">
                     <h3 className="font-bold text-gray-900 dark:text-white">{club.name}</h3>
-                    <span className="text-xs text-gray-400">{members.length} medlemmer</span>
+                    <div className="flex items-center gap-3">
+                      <span className="text-xs text-gray-400">{members.length} medlemmer</span>
+                      <a href={`/admin/klubb/${club.id}`} className="text-xs font-semibold text-[#9b59c4] dark:text-[#E2A9F1] hover:underline">
+                        Rediger innstillinger →
+                      </a>
+                    </div>
                   </div>
                   <div className="grid grid-cols-3 gap-2 mb-3">
                     <div className="bg-orange-50 dark:bg-orange-900/20 rounded-lg p-2 text-center">
