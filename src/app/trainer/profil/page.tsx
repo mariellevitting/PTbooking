@@ -3,6 +3,7 @@ import { createClient } from "@/lib/supabase/server";
 import ProfilForm from "./ProfilForm";
 import Link from "next/link";
 import { ArrowLeft, Users } from "lucide-react";
+import { getClubById, danceStylesFor } from "@/lib/club";
 
 const ROLE_LABEL: Record<string, string> = {
   trainer: "Trener",
@@ -29,6 +30,8 @@ export default async function TrainerProfilPage() {
     .eq("id", user.id)
     .single();
 
+  const club = await getClubById(supabase, profile.club_id);
+
   const isAdmin = user.email === "miemarielle@live.no";
 
   const { data: allUsers } = isAdmin ? await supabase
@@ -50,6 +53,7 @@ export default async function TrainerProfilPage() {
           phone={profile.phone ?? ""}
           bio={trainerDetails?.bio ?? ""}
           danceStyles={trainerDetails?.dance_styles ?? []}
+          styleOptions={danceStylesFor(club)}
           avatarUrl={profile.avatar_url ?? null}
         />
 

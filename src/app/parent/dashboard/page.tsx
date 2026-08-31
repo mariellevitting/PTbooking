@@ -2,6 +2,7 @@ import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import OnboardingOverlay from "@/components/OnboardingOverlay";
 import ParentDashboardNav from "./ParentDashboardNav";
+import { getClubById } from "@/lib/club";
 
 export const dynamic = "force-dynamic";
 
@@ -17,6 +18,8 @@ export default async function ParentDashboard() {
     .single();
 
   if (!profile || profile.role !== "parent") redirect("/dashboard");
+
+  const club = await getClubById(supabase, profile.club_id);
 
   const [
     { data: notifications },
@@ -56,6 +59,7 @@ export default async function ParentDashboard() {
           completedBookings={completedBookings}
           children={children ?? []}
           trainers={(trainers ?? []).map(t => ({ name: t.name, avatarUrl: t.avatar_url ?? null, styles: (Array.isArray(t.trainers) ? t.trainers[0]?.dance_styles : (t.trainers as any)?.dance_styles) ?? [] }))}
+          club={club}
         />
       </div>
     </main>

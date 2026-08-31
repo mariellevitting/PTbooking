@@ -12,8 +12,8 @@ const poppins = Poppins({
 });
 
 export const metadata: Metadata = {
-  title: "Danceitude – Evolution Danseklubb",
-  description: "Book privattimer hos Evolution Danseklubb",
+  title: "Danceitude",
+  description: "Book privattimer enkelt og raskt – for danseklubben din.",
 };
 
 export const viewport = {

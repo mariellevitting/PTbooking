@@ -47,9 +47,10 @@ interface Props {
   danceStyles: string[];
   children: Child[];
   price: number;
+  paymentLabel?: string | null;
 }
 
-export default function BookingForm({ slots, trainerName, bookerId, bookerName, bookerRole, danceStyles, children, price }: Props) {
+export default function BookingForm({ slots, trainerName, bookerId, bookerName, bookerRole, danceStyles, children, price, paymentLabel }: Props) {
   const router = useRouter();
   const isParent = bookerRole === "parent";
   const isDouble = (style: string) => DOUBLE_STYLES.includes(style);
@@ -530,7 +531,7 @@ export default function BookingForm({ slots, trainerName, bookerId, bookerName, 
             <p className="text-sm font-semibold text-blue-800">Betaling</p>
             <p className="text-sm font-bold text-blue-800">{slotBookings.length} × {price} kr = <span className="text-base">{slotBookings.length * price} kr</span></p>
           </div>
-          <p className="text-sm text-blue-700">Betaling skjer som før i <strong>Spond</strong>. Husk å send kvittering til <strong>{trainerName}</strong> etter betaling.</p>
+          <p className="text-sm text-blue-700">Betaling skjer som før i <strong>{paymentLabel || "Spond"}</strong>. Husk å send kvittering til <strong>{trainerName}</strong> etter betaling.</p>
         </div>
 
         {error && <p className="text-sm text-red-500">{error}</p>}

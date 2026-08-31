@@ -1,8 +1,18 @@
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { CheckCircle } from "lucide-react";
+import { createClient } from "@/lib/supabase/server";
+import { getClubForUser, CLUB_DEFAULTS } from "@/lib/club";
+import { PaymentText } from "@/components/PrivattimeInfo";
 
-export default function KvitteringPage() {
+export const dynamic = "force-dynamic";
+
+export default async function KvitteringPage() {
+  const supabase = await createClient();
+  const { data: { user } } = await supabase.auth.getUser();
+  const club = user ? await getClubForUser(supabase, user.id) : null;
+  const paymentInfo = club?.payment_info?.trim() || CLUB_DEFAULTS.payment_info;
+
   return (
     <main className="bg-gray-50 dark:bg-gray-950 flex items-center justify-center p-6">
       <div className="max-w-sm w-full text-center">
@@ -22,12 +32,7 @@ export default function KvitteringPage() {
         <div className="bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-2xl p-4 mb-8 text-left">
           <p className="text-sm font-semibold text-gray-800 dark:text-gray-100 mb-1">Betaling</p>
           <p className="text-sm text-gray-600 dark:text-gray-400">
-            Betaling er som før på{" "}
-            <a href="https://club.spond.com/landing/courses/evolutsarpsdans/3A3FA8760C0A49B085117E051204FA8C/main_products?source=direct"
-              target="_blank" rel="noopener noreferrer"
-              className="text-[#3A3A3A] dark:text-[#E2A9F1] underline font-medium">
-              hjemmesiden til Spond
-            </a>.
+            <PaymentText info={paymentInfo} label={club?.payment_label ?? null} url={club?.payment_url ?? null} />
           </p>
         </div>
 

@@ -171,7 +171,7 @@ function WelcomeSlide({ onNext }: { onNext: () => void }) {
 
       {/* Tekst */}
       <div style={{ animation: "fadeUp 0.6s ease forwards", animationDelay: "0.2s", opacity: 0 }}>
-        <p className="text-[#e8c4f5] text-sm font-semibold uppercase tracking-widest mb-3">Evolution Dance Studio</p>
+        <p className="text-[#e8c4f5] text-sm font-semibold uppercase tracking-widest mb-3">Av dansere, for dansere</p>
         <h1 className="text-4xl font-bold text-white leading-tight mb-4">
           Velkommen til<br />Danceitude
         </h1>

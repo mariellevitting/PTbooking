@@ -12,6 +12,8 @@ import FeedbackButton from "@/components/FeedbackButton";
 import ThemeToggle from "@/components/ThemeToggle";
 import NMCountdown from "@/components/NMCountdown";
 import CompetitionList from "@/components/CompetitionList";
+import PrivattimeInfo from "@/components/PrivattimeInfo";
+import type { ClubConfig } from "@/lib/club";
 import ChildDancerCard from "@/app/parent/profil/ChildDancerCard";
 import CompetitionResultsCard from "@/components/CompetitionResultsCard";
 import { formatDate, formatTime, formatDateKey } from "@/lib/dateUtils";
@@ -210,9 +212,10 @@ interface Props {
   parentId: string;
   children: { id: string; name: string; season_goals: string | null; points_freestyle: number | null; points_slow: number | null; level_freestyle: number | null; level_slow: number | null }[];
   trainers?: { name: string; avatarUrl: string | null; styles: string[] }[];
+  club?: ClubConfig | null;
 }
 
-export default function ParentDashboardNav({ userName, avatarUrl, notifications, upcomingBookings, completedBookings, parentId, children, trainers = [] }: Props) {
+export default function ParentDashboardNav({ userName, avatarUrl, notifications, upcomingBookings, completedBookings, parentId, children, trainers = [], club = null }: Props) {
   const [active, setActive] = useState("timer");
   // parentId brukes som userId for feedback
   const [bookingTab, setBookingTab] = useState<"kommende" | "gjennomforte">("kommende");
@@ -536,25 +539,7 @@ export default function ParentDashboardNav({ userName, avatarUrl, notifications,
           {/* Om privattimer */}
           {active === "om" && (
             <div className="space-y-4">
-              <div className="bg-white dark:bg-gray-900 rounded-2xl border dark:border-gray-700 p-5 space-y-4">
-                <h2 className="text-lg font-bold">Bestille privattimer</h2>
-                <p className="text-gray-600 dark:text-gray-400 text-sm leading-relaxed">
-                  Evolutions instruktører tilbyr privattimer. Disse kan benyttes etter ønske – koreografi, teknikk, akrobatikk o.l. Dette er en flott mulighet for danserne til å utvikle seg og få tett oppfølging av trenerteamet.
-                </p>
-                <p className="text-gray-600 dark:text-gray-400 text-sm leading-relaxed">
-                  En privattime varer i <strong>30 minutter</strong> og koster <strong>250,-</strong>, <strong>200,-</strong> eller <strong>150,-</strong> avhengig av trener.
-                </p>
-                <div className="bg-[#f5eeff] border border-[#E2A9F1]/40 rounded-xl p-4">
-                  <p className="text-sm font-semibold text-[#9b59c4] mb-1">Betaling</p>
-                  <p className="text-sm text-[#9b59c4]">Betaling er som før på <a href="https://club.spond.com/landing/courses/evolutsarpsdans/3A3FA8760C0A49B085117E051204FA8C/main_products?source=direct" target="_blank" rel="noopener noreferrer" className="underline font-semibold">hjemmesiden til Spond</a>.</p>
-                </div>
-                <div className="bg-[#f5eeff] border border-[#E2A9F1]/40 rounded-xl p-4">
-                  <p className="text-sm font-semibold text-[#9b59c4] mb-1">VIKTIG!</p>
-                  <p className="text-sm text-[#9b59c4]">
-                    Kvitteringen du mottar for betalt privattime må danseren ha med til timen! Du kan også sende bilde av kvitteringen til treneren i forkant.
-                  </p>
-                </div>
-              </div>
+              <PrivattimeInfo club={club} />
               <div className="bg-white dark:bg-gray-900 rounded-2xl border dark:border-gray-700 p-5">
                 <h3 className="font-semibold text-lg mb-4">Våre trenere</h3>
                 <div className="space-y-1">

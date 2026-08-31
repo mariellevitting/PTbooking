@@ -2,6 +2,7 @@ import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import DancerDashboardNav from "./DancerDashboardNav";
 import OnboardingOverlay from "@/components/OnboardingOverlay";
+import { getClubById } from "@/lib/club";
 
 export const dynamic = "force-dynamic";
 
@@ -17,6 +18,8 @@ export default async function DancerDashboard() {
     .single();
 
   if (!profile || profile.role !== "dancer") redirect("/dashboard");
+
+  const club = await getClubById(supabase, profile.club_id);
 
   const [
     { data: notifications },
@@ -59,6 +62,7 @@ export default async function DancerDashboard() {
           now={now.toISOString()}
           notifications={notifications ?? []}
           trainers={(trainers ?? []).map(t => ({ name: t.name, avatarUrl: t.avatar_url ?? null, styles: (Array.isArray(t.trainers) ? t.trainers[0]?.dance_styles : (t.trainers as any)?.dance_styles) ?? [] }))}
+          club={club}
         />
       </div>
     </main>

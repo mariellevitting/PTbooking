@@ -175,14 +175,14 @@ export default function LoginPage() {
           {role === "dancer" && (
             <div className="space-y-1.5">
               <label className="text-sm font-medium">Klubbkode</label>
-              <Input type="text" value={trainerCode} onChange={e => setTrainerCode(e.target.value)} placeholder="Kode fra Evolution" required />
+              <Input type="text" value={trainerCode} onChange={e => setTrainerCode(e.target.value)} placeholder="Kode fra klubben din" required />
               <p className="text-xs text-gray-400 dark:text-gray-500">Kun dansere med klubbkode kan registrere seg.</p>
             </div>
           )}
           {role === "parent" && (
             <div className="space-y-1.5">
               <label className="text-sm font-medium">Klubbkode</label>
-              <Input type="text" value={trainerCode} onChange={e => setTrainerCode(e.target.value)} placeholder="Kode fra Evolution" required />
+              <Input type="text" value={trainerCode} onChange={e => setTrainerCode(e.target.value)} placeholder="Kode fra klubben din" required />
               <p className="text-xs text-gray-400 dark:text-gray-500">Kun foreldre med klubbkode kan registrere seg.</p>
             </div>
           )}
@@ -204,7 +204,6 @@ export default function LoginPage() {
         <div className="relative z-10 flex flex-col justify-end p-10 text-white">
           <p className="text-white/90 text-lg italic mb-3">✦ Av dansere, for dansere</p>
           <h1 className="text-5xl font-bold mb-1">Danceitude</h1>
-          <p className="text-white/70 text-lg mb-2">Evolution Danseklubb</p>
           <p className="text-white/80 text-lg">Book din privattime enkelt og raskt</p>
         </div>
       </div>
