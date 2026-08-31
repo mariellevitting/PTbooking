@@ -26,7 +26,7 @@ export default async function AdminPage() {
     isAdmin ? supabase.from("feedback").select("*").order("created_at", { ascending: false }) : Promise.resolve({ data: [] }),
     supabase.from("availability_slots").select("id, start_at, end_at, trainer_id").gte("start_at", new Date().toISOString()).order("start_at").limit(200) as any,
     supabase.from("bookings").select("id, slot_id, dancer_name, dance_style, status").eq("status", "confirmed").limit(200) as any,
-    supabase.from("clubs").select("id, name, invite_code, trainer_code, dancer_code, parent_code, created_at").order("created_at"),
+    isAdmin ? supabase.rpc("admin_list_clubs") : Promise.resolve({ data: [] }),
   ]);
 
   // Merge bookings into slots

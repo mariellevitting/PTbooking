@@ -12,7 +12,8 @@ export default async function AdminClubPage({ params }: { params: Promise<{ id: 
   const { data: { user } } = await supabase.auth.getUser();
   if (!user || user.email !== ADMIN_EMAIL) redirect("/dashboard");
 
-  const { data: club } = await supabase.from("clubs").select("*").eq("id", id).single();
+  const { data: clubs } = await supabase.rpc("admin_list_clubs");
+  const club = (clubs as any[] | null)?.find(c => c.id === id) ?? null;
   if (!club) redirect("/admin");
 
   return (
