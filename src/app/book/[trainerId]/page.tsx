@@ -114,6 +114,7 @@ export default async function TrainerBookPage({ params }: { params: Promise<{ tr
             children={children ?? []}
             price={trainerDetails?.price ?? defaultPriceFor(club)}
             paymentLabel={club?.payment_label ?? null}
+            clubId={profile.club_id ?? null}
           />
         )}
       </div>

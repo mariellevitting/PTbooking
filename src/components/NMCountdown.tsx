@@ -54,9 +54,10 @@ function getTimeLeft(date: Date) {
 
 interface Props {
   href?: string;
+  clubId?: string | null;
 }
 
-export default function NMCountdown({ href }: Props) {
+export default function NMCountdown({ href, clubId }: Props) {
   const [tick, setTick] = useState(0);
   const [count, setCount] = useState<number | null>(null);
 
@@ -74,10 +75,12 @@ export default function NMCountdown({ href }: Props) {
     const competitionName = next.name;
 
     const fetchCount = async () => {
-      const { count: c } = await supabase
+      let q = supabase
         .from("competition_participations")
-        .select("id", { count: "exact", head: true })
+        .select(clubId ? "id, profiles!inner(club_id)" : "id", { count: "exact", head: true })
         .eq("competition_name", competitionName);
+      if (clubId) q = q.eq("profiles.club_id", clubId);
+      const { count: c } = await q;
       setCount(c ?? 0);
     };
 
@@ -89,7 +92,7 @@ export default function NMCountdown({ href }: Props) {
       .subscribe();
 
     return () => { supabase.removeChannel(channel); };
-  }, [next?.name]);
+  }, [next?.name, clubId]);
 
   if (upcoming.length === 0) return null;
   const timeLeft = getTimeLeft(next.date)!;

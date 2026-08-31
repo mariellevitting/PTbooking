@@ -46,7 +46,7 @@ export default async function TrainerDashboard() {
       <div className="max-w-lg mx-auto">
         <h1 className="text-2xl font-bold mb-1">Hei, {profile.name.split(" ")[0]}! 👋</h1>
         <p className="text-gray-500 dark:text-gray-400 mb-6 text-sm">{(profile.clubs as any)?.name ? `${(profile.clubs as any).name} – ` : ""}Trener</p>
-        <NMCountdown href="/trainer/konkurranser" />
+        <NMCountdown href="/trainer/konkurranser" clubId={(profile as any).club_id ?? null} />
         <TrainerDashboardTabs
           slots={(slots ?? []) as any}
           completedSlots={(completedSlots ?? []) as any}
