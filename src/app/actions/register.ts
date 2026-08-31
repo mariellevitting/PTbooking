@@ -16,31 +16,27 @@ export async function registerUser(
 
   if (!trainerCode) return { error: "Du må oppgi en klubbkode." };
 
-  // Finn klubben basert på rolle-koden
-  const { data: allClubs } = await supabase
-    .from("clubs")
-    .select("id, name, trainer_code, dancer_code, parent_code");
-
-  // Sjekk env-koder for Evolution (bakoverkompatibilitet)
-  const evolutionClub = allClubs?.find(c => !c.trainer_code && !c.dancer_code && !c.parent_code);
+  // Evolution bruker fortsatt miljøvariabel-koder (bakoverkompatibilitet).
   const isEvolutionCode =
     (role === "trainer" && trainerCode === process.env.TRAINER_INVITE_CODE) ||
     (role === "dancer" && trainerCode === process.env.DANCER_INVITE_CODE) ||
     (role === "parent" && trainerCode === process.env.PARENT_INVITE_CODE);
 
-  let club = isEvolutionCode ? evolutionClub : null;
+  let clubId: string | null = null;
 
-  // Sjekk klubb-spesifikke koder
-  if (!club) {
-    club = allClubs?.find(c => {
-      if (role === "trainer") return c.trainer_code === trainerCode;
-      if (role === "dancer") return c.dancer_code === trainerCode;
-      if (role === "parent") return c.parent_code === trainerCode;
-      return false;
-    }) ?? null;
+  if (isEvolutionCode) {
+    const { data } = await supabase.from("clubs").select("id").eq("invite_code", "EVOLUTION").single();
+    clubId = data?.id ?? null;
   }
 
-  if (!club) return { error: "Feil kode. Ta kontakt med klubben din for å få riktig kode." };
+  // Andre klubber: kodene sjekkes server-side via en sikret DB-funksjon,
+  // så de aldri eksponeres i det offentlige API-et.
+  if (!clubId) {
+    const { data } = await supabase.rpc("verify_club_code", { p_code: trainerCode, p_role: role });
+    clubId = (data as string | null) ?? null;
+  }
+
+  if (!clubId) return { error: "Feil kode. Ta kontakt med klubben din for å få riktig kode." };
 
   const { data, error: signUpError } = await supabase.auth.signUp({ email, password });
   if (signUpError || !data.user) {
@@ -52,7 +48,7 @@ export async function registerUser(
     name,
     role,
     email,
-    club_id: club?.id ?? null,
+    club_id: clubId,
   });
 
   if (profileError) {
