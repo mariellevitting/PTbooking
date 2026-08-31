@@ -20,7 +20,13 @@ interface Props {
 export default function DancerProfileClient(props: Props) {
   const router = useRouter();
   const [nameVal, setNameVal] = useState(props.name);
-  const [phoneVal, setPhoneVal] = useState(props.phone);
+  const [phoneVal, setPhoneVal] = useState(() => {
+    const raw = props.phone.replace(/[^0-9+\s]/g, "");
+    const digits = raw.replace(/[^0-9]/g, "");
+    const maxDigits = raw.startsWith("+") ? 10 : 8;
+    if (digits.length <= maxDigits) return raw;
+    return raw.startsWith("+") ? "+" + digits.slice(0, 10) : digits.slice(0, 8);
+  });
   const [notifyNewSlots, setNotifyNewSlots] = useState(props.notifyNewSlots);
   const [avatar, setAvatar] = useState<string | null>(props.avatarUrl);
   const [uploading, setUploading] = useState(false);
@@ -102,9 +108,14 @@ export default function DancerProfileClient(props: Props) {
             </label>
             <Input
               value={phoneVal}
-              onChange={e => { setPhoneVal(e.target.value.replace(/[^0-9+\s]/g, "")); setSuccess(false); }}
+              onChange={e => {
+                const raw = e.target.value.replace(/[^0-9+\s]/g, "");
+                const digits = raw.replace(/[^0-9]/g, "");
+                const maxDigits = raw.startsWith("+") ? 10 : 8;
+                if (digits.length <= maxDigits) { setPhoneVal(raw); setSuccess(false); }
+              }}
               onKeyDown={e => { if (!/[0-9+\s]/.test(e.key) && !["Backspace","Delete","ArrowLeft","ArrowRight","Tab"].includes(e.key)) e.preventDefault(); }}
-              placeholder="+47 000 00 000"
+              placeholder="8 siffer"
               type="tel"
               inputMode="numeric"
             />

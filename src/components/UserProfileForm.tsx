@@ -120,7 +120,7 @@ export default function UserProfileForm({ userId, name, phone, avatarUrl, notify
                 if (digits.length <= maxDigits) setPhoneVal(raw);
               }}
               onKeyDown={(e) => { if (!/[0-9+\s]/.test(e.key) && !["Backspace","Delete","ArrowLeft","ArrowRight","Tab"].includes(e.key)) e.preventDefault(); }}
-              placeholder="+47 000 00 000"
+              placeholder="8 siffer"
               type="tel"
               inputMode="numeric"
             />

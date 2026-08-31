@@ -26,7 +26,13 @@ export default function ProfilForm({ userId, name, phone, bio, price, danceStyle
   const allStyles = styleOptions && styleOptions.length > 0 ? styleOptions : FALLBACK_STYLES;
   const router = useRouter();
   const [nameVal, setNameVal] = useState(name);
-  const [phoneVal, setPhoneVal] = useState(phone);
+  const [phoneVal, setPhoneVal] = useState(() => {
+    const raw = phone.replace(/[^0-9+\s]/g, "");
+    const digits = raw.replace(/[^0-9]/g, "");
+    const maxDigits = raw.startsWith("+") ? 10 : 8;
+    if (digits.length <= maxDigits) return raw;
+    return raw.startsWith("+") ? "+" + digits.slice(0, 10) : digits.slice(0, 8);
+  });
   const [bioVal, setBioVal] = useState(bio);
   const [priceVal, setPriceVal] = useState(price != null ? String(price) : "");
   const [selected, setSelected] = useState<Set<string>>(new Set(danceStyles));
@@ -135,7 +141,19 @@ export default function ProfilForm({ userId, name, phone, bio, price, danceStyle
             <label className="text-sm font-medium flex items-center gap-1.5">
               <Phone size={14} className="text-gray-400 dark:text-gray-500" /> Telefon
             </label>
-            <Input value={phoneVal} onChange={(e) => setPhoneVal(e.target.value)} placeholder="+47 000 00 000" type="tel" />
+            <Input
+              value={phoneVal}
+              onChange={(e) => {
+                const raw = e.target.value.replace(/[^0-9+\s]/g, "");
+                const digits = raw.replace(/[^0-9]/g, "");
+                const maxDigits = raw.startsWith("+") ? 10 : 8;
+                if (digits.length <= maxDigits) setPhoneVal(raw);
+              }}
+              onKeyDown={(e) => { if (!/[0-9+\s]/.test(e.key) && !["Backspace", "Delete", "ArrowLeft", "ArrowRight", "Tab"].includes(e.key)) e.preventDefault(); }}
+              placeholder="8 siffer"
+              type="tel"
+              inputMode="numeric"
+            />
           </div>
           <div className="space-y-1.5">
             <label className="text-sm font-medium flex items-center gap-1.5">
