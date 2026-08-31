@@ -199,7 +199,7 @@ export default function LoginPage() {
     <div className="min-h-screen flex flex-col md:flex-row">
 
       {/* Desktop – venstre bildekolonne */}
-      <div className="hidden md:flex md:w-1/2 relative min-h-screen" style={{ backgroundImage: "url('/dans2.jpg')", backgroundSize: "cover", backgroundPosition: "center" }}>
+      <div className="hidden md:flex md:w-1/2 relative min-h-screen" style={{ backgroundImage: "url('/login-bg.png')", backgroundSize: "cover", backgroundPosition: "center" }}>
         <div className="absolute inset-0 bg-black/20" />
         <div className="relative z-10 flex flex-col justify-end p-10 text-white">
           <p className="text-white/90 text-lg italic mb-3">✦ Av dansere, for dansere</p>
@@ -209,7 +209,7 @@ export default function LoginPage() {
       </div>
 
       {/* Mobil – fullt bakgrunnsbilde med kort oppå */}
-      <div className="md:hidden relative min-h-screen flex items-center" style={{ backgroundImage: "url('/dans2.jpg')", backgroundSize: "cover", backgroundPosition: "center top" }}>
+      <div className="md:hidden relative min-h-screen flex items-center" style={{ backgroundImage: "url('/login-bg.png')", backgroundSize: "cover", backgroundPosition: "center top" }}>
         <div className="absolute inset-0 bg-black/20" />
         <div className="relative z-10 w-full px-4 pb-4 pt-8">
           <p className="text-white/90 text-sm italic mb-1 px-2">✦ Av dansere, for dansere</p>
