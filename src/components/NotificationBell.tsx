@@ -37,6 +37,21 @@ export default function NotificationBell({ notifications: initial }: Props) {
     return () => document.removeEventListener("mousedown", handleClick);
   }, []);
 
+  // Hent ferske varsler ved mount, så bjella viser sann tilstand fra databasen
+  // (komponenten kan re-monteres ved menyklikk – da må «lest» ikke nullstilles).
+  useEffect(() => {
+    const supabase = createClient();
+    supabase.auth.getUser().then(({ data: { user } }) => {
+      if (!user) return;
+      supabase
+        .from("notifications")
+        .select("id, message, created_at, read")
+        .eq("user_id", user.id)
+        .order("created_at", { ascending: false })
+        .then(({ data }) => { if (data) setNotifications(data as Notification[]); });
+    });
+  }, []);
+
   async function handleOpen() {
     if (!open && buttonRef.current) {
       const rect = buttonRef.current.getBoundingClientRect();
@@ -49,8 +64,12 @@ export default function NotificationBell({ notifications: initial }: Props) {
     if (!open && unread > 0) {
       const supabase = createClient();
       const ids = notifications.filter((n) => !n.read).map((n) => n.id);
-      await supabase.from("notifications").update({ read: true }).in("id", ids);
       setNotifications((prev) => prev.map((n) => ({ ...n, read: true })));
+      const { error } = await supabase.from("notifications").update({ read: true }).in("id", ids);
+      if (error) {
+        // Rull tilbake hvis skrivingen feilet
+        setNotifications((prev) => prev.map((n) => (ids.includes(n.id) ? { ...n, read: false } : n)));
+      }
     }
   }
 
