@@ -2,15 +2,14 @@
 alter table bookings add column if not exists paid boolean not null default false;
 alter table bookings add column if not exists paid_at timestamptz;
 
--- "Trainers can cancel bookings on their slots" tillater allerede UPDATE for
--- trenerens egne timer. Men "Bookers can cancel their own bookings" gir
--- danser/forelder full UPDATE på egen booking – så vi hindrer at de endrer
--- betalt-status via en trigger.
+-- "Bookers can cancel their own bookings" gir danser/forelder full UPDATE på
+-- egen booking. Denne triggeren hindrer at de endrer betalt-status – kun
+-- slotens trener kan.
+-- SECURITY INVOKER (default): auth.uid() virker garantert, og
+-- availability_slots har allerede "Everyone can view slots".
 create or replace function public.enforce_paid_by_trainer()
 returns trigger
 language plpgsql
-security definer
-set search_path = public
 as $$
 begin
   if new.paid is distinct from old.paid then

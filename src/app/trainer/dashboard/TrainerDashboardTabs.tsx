@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { Check } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { createClient } from "@/lib/supabase/client";
@@ -33,34 +34,47 @@ interface CompletedSlot {
 }
 
 function PaidToggle({ bookingId, initialPaid }: { bookingId: string; initialPaid: boolean }) {
+  const router = useRouter();
   const [paid, setPaid] = useState(initialPaid);
   const [saving, setSaving] = useState(false);
+  const [failed, setFailed] = useState(false);
 
   async function toggle() {
     if (saving) return;
     setSaving(true);
+    setFailed(false);
     const next = !paid;
     setPaid(next);
-    const { error } = await createClient()
+    const { data, error } = await createClient()
       .from("bookings")
       .update({ paid: next, paid_at: next ? new Date().toISOString() : null })
-      .eq("id", bookingId);
-    if (error) setPaid(!next);
+      .eq("id", bookingId)
+      .select("paid")
+      .maybeSingle();
     setSaving(false);
+    if (error || !data || data.paid !== next) {
+      setPaid(!next);
+      setFailed(true);
+      return;
+    }
+    router.refresh();
   }
 
   return (
-    <button
-      onClick={toggle}
-      disabled={saving}
-      className={`inline-flex items-center gap-1 text-xs font-semibold px-2.5 py-1 rounded-full transition-colors disabled:opacity-50 ${
-        paid
-          ? "bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-300"
-          : "bg-gray-100 text-gray-500 dark:bg-gray-800 dark:text-gray-400 hover:bg-gray-200 dark:hover:bg-gray-700"
-      }`}
-    >
-      {paid ? <><Check size={12} strokeWidth={3} /> Betalt</> : "Marker betalt"}
-    </button>
+    <span className="inline-flex items-center gap-1.5">
+      <button
+        onClick={toggle}
+        disabled={saving}
+        className={`inline-flex items-center gap-1 text-xs font-semibold px-2.5 py-1 rounded-full transition-colors disabled:opacity-50 ${
+          paid
+            ? "bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-300"
+            : "bg-gray-100 text-gray-500 dark:bg-gray-800 dark:text-gray-400 hover:bg-gray-200 dark:hover:bg-gray-700"
+        }`}
+      >
+        {paid ? <><Check size={12} strokeWidth={3} /> Betalt</> : "Marker betalt"}
+      </button>
+      {failed && <span className="text-xs text-red-500">Kunne ikke lagre</span>}
+    </span>
   );
 }
 
