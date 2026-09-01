@@ -22,7 +22,7 @@ export default async function TrainerLayout({ children }: { children: React.Reac
     .order("created_at", { ascending: false });
 
   return (
-    <div className="bg-gray-50 dark:bg-gray-950">
+    <div className="bg-gray-50 dark:bg-gray-950 min-h-screen">
       <TrainerSidebar
         name={profile.name}
         userId={user.id}
