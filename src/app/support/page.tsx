@@ -41,7 +41,7 @@ export default function SupportPage() {
         <section>
           <h2 className="text-xl font-bold text-gray-900 dark:text-white mb-3">Om appen</h2>
           <p className="text-gray-600 dark:text-gray-400 text-sm">
-            Danceitude er en bookingapp for privattimer ved Evolution Danseklubb i Sarpsborg. Appen er utviklet av Mie Marielle Øverås Vitting som en del av masterarbeid i interaksjonsdesign.
+            Danceitude er en bookingapp for privattimer for danseklubber. Appen er utviklet av Mie Marielle Øverås Vitting som en del av masterarbeid i interaksjonsdesign.
           </p>
         </section>
       </div>

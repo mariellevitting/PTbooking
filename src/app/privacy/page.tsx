@@ -6,7 +6,7 @@ export default function PrivacyPage() {
 
       <section className="mb-8">
         <h2 className="text-xl font-semibold mb-2">Om appen</h2>
-        <p>Danceitude er en bookingapp for privattimer ved Evolution Dance Studio i Sarpsborg. Appen er utviklet og driftes av Mie Marielle Øverås Vitting.</p>
+        <p>Danceitude er en bookingapp for privattimer for danseklubber. Appen er utviklet og driftes av Mie Marielle Øverås Vitting.</p>
       </section>
 
       <section className="mb-8">
