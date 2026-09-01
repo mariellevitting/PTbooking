@@ -1,6 +1,12 @@
+import Link from "next/link";
+import { ArrowLeft } from "lucide-react";
+
 export default function PrivacyPage() {
   return (
     <main className="max-w-2xl mx-auto px-6 py-12 text-gray-800 dark:text-gray-100">
+      <Link href="/login" className="inline-flex items-center gap-2 text-sm text-gray-500 dark:text-gray-400 hover:text-[#E2A9F1] mb-6">
+        <ArrowLeft size={16} /> Tilbake
+      </Link>
       <h1 className="text-3xl font-bold mb-2">Personvernerklæring</h1>
       <p className="text-sm text-gray-500 mb-8">Sist oppdatert: august 2026</p>
 
