@@ -4,7 +4,6 @@ import Link from "next/link";
 import { ArrowLeft } from "lucide-react";
 import UserProfileForm from "@/components/UserProfileForm";
 import ChildrenForm from "./ChildrenForm";
-import ChildDancerCard from "./ChildDancerCard";
 
 export default async function ParentProfilPage() {
   const supabase = await createClient();
@@ -41,9 +40,6 @@ export default async function ParentProfilPage() {
             notifyNewSlots={profile.notify_new_slots ?? true}
           />
           <ChildrenForm parentId={user.id} children={(children ?? []).map(c => ({ id: c.id, name: c.name }))} />
-          {children && children.length > 0 && (
-            <ChildDancerCard parentId={user.id} children={children} />
-          )}
         </div>
       </div>
     </main>
