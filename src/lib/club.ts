@@ -39,7 +39,6 @@ export const CLUB_DEFAULTS = {
     "Show",
   ],
   payment_info: "Avtal betaling med treneren.",
-  receipt_note: "Husk kvittering for betalt privattime til timen.",
 } as const;
 
 const CLUB_COLUMNS =

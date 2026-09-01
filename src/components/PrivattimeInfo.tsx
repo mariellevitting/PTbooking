@@ -13,7 +13,7 @@ export default function PrivattimeInfo({ club }: { club: ClubConfig | null }) {
     club?.lesson_info?.trim() ||
     "Trenerne tilbyr privattimer – en fin mulighet til å jobbe med teknikk og utvikling med tett oppfølging.";
   const paymentInfo = club?.payment_info?.trim() || CLUB_DEFAULTS.payment_info;
-  const receiptNote = club?.receipt_note?.trim() || CLUB_DEFAULTS.receipt_note;
+  const receiptNote = club?.receipt_note?.trim();
 
   return (
     <div className="space-y-4">
@@ -34,10 +34,12 @@ export default function PrivattimeInfo({ club }: { club: ClubConfig | null }) {
             />
           </p>
         </div>
-        <div className="bg-[#f5eeff] border border-[#E2A9F1]/40 rounded-xl p-4">
-          <p className="text-sm font-semibold text-[#9b59c4] mb-1">VIKTIG!</p>
-          <p className="text-sm text-[#9b59c4]">{receiptNote}</p>
-        </div>
+        {receiptNote && (
+          <div className="bg-[#f5eeff] border border-[#E2A9F1]/40 rounded-xl p-4">
+            <p className="text-sm font-semibold text-[#9b59c4] mb-1">VIKTIG!</p>
+            <p className="text-sm text-[#9b59c4]">{receiptNote}</p>
+          </div>
+        )}
       </div>
     </div>
   );
