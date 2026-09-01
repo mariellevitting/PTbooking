@@ -34,7 +34,7 @@ export default async function OmPage() {
               </Link>
             )}
           </div>
-          <p className="text-[#e8c4f5] text-sm font-semibold uppercase tracking-widest mb-3">Evolution Danseklubb</p>
+          <p className="text-[#e8c4f5] text-sm font-semibold uppercase tracking-widest mb-3">Danceitude</p>
           <h1 className="text-3xl md:text-5xl font-bold leading-tight mb-4">
             Danceitude ble laget fordi dansemiljøet fortjener bedre verktøy
           </h1>
