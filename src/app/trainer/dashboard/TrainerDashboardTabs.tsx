@@ -2,7 +2,9 @@
 
 import { useState } from "react";
 import Link from "next/link";
+import { Check } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { createClient } from "@/lib/supabase/client";
 import { formatDate, formatTime, formatDateKey } from "@/lib/dateUtils";
 
 interface Booking {
@@ -10,6 +12,7 @@ interface Booking {
   dancer_name: string;
   dance_style: string;
   status: string;
+  paid?: boolean;
   booker?: { avatar_url?: string } | null;
   linked_profile?: { avatar_url?: string } | null;
 }
@@ -26,7 +29,39 @@ interface CompletedSlot {
   id: string;
   start_at: string;
   end_at: string;
-  bookings?: { dancer_name: string; dance_style: string; status: string }[];
+  bookings?: { id: string; dancer_name: string; dance_style: string; status: string; paid?: boolean }[];
+}
+
+function PaidToggle({ bookingId, initialPaid }: { bookingId: string; initialPaid: boolean }) {
+  const [paid, setPaid] = useState(initialPaid);
+  const [saving, setSaving] = useState(false);
+
+  async function toggle() {
+    if (saving) return;
+    setSaving(true);
+    const next = !paid;
+    setPaid(next);
+    const { error } = await createClient()
+      .from("bookings")
+      .update({ paid: next, paid_at: next ? new Date().toISOString() : null })
+      .eq("id", bookingId);
+    if (error) setPaid(!next);
+    setSaving(false);
+  }
+
+  return (
+    <button
+      onClick={toggle}
+      disabled={saving}
+      className={`inline-flex items-center gap-1 text-xs font-semibold px-2.5 py-1 rounded-full transition-colors disabled:opacity-50 ${
+        paid
+          ? "bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-300"
+          : "bg-gray-100 text-gray-500 dark:bg-gray-800 dark:text-gray-400 hover:bg-gray-200 dark:hover:bg-gray-700"
+      }`}
+    >
+      {paid ? <><Check size={12} strokeWidth={3} /> Betalt</> : "Marker betalt"}
+    </button>
+  );
 }
 
 interface Props {
@@ -122,9 +157,12 @@ export default function TrainerDashboardTabs({ slots, completedSlots }: Props) {
                                         )}
                                         <p className="text-sm font-medium text-[#c87de0]">{booking.dancer_name} · {booking.dance_style}</p>
                                       </div>
-                                      {end > new Date() && (
-                                        <Link href={`/trainer/avbestill/${booking.id}`} prefetch={false} className="text-xs text-red-400 hover:text-red-600 mt-1 inline-block">Avbestill</Link>
-                                      )}
+                                      <div className="flex items-center gap-2 mt-1.5">
+                                        <PaidToggle bookingId={booking.id} initialPaid={!!booking.paid} />
+                                        {end > new Date() && (
+                                          <Link href={`/trainer/avbestill/${booking.id}`} prefetch={false} className="text-xs text-red-400 hover:text-red-600">Avbestill</Link>
+                                        )}
+                                      </div>
                                     </>
                                   )}
                                 </div>
@@ -187,6 +225,7 @@ export default function TrainerDashboardTabs({ slots, completedSlots }: Props) {
                             <p className="text-sm font-semibold text-gray-600 dark:text-gray-400">{dayLabel.charAt(0).toUpperCase() + dayLabel.slice(1)}</p>
                             <p className="text-sm text-gray-400 dark:text-gray-500">{formatTime(start)}–{formatTime(end)}</p>
                             {booking && <p className="text-sm text-[#E2A9F1] mt-0.5">{booking.dancer_name} · {booking.dance_style}</p>}
+                            {booking && <div className="mt-1.5"><PaidToggle bookingId={booking.id} initialPaid={!!(booking as any).paid} /></div>}
                           </div>
                           <span className="text-xs bg-gray-100 dark:bg-gray-800 text-gray-500 dark:text-gray-400 px-2 py-1 rounded-full">Fullført</span>
                         </div>
