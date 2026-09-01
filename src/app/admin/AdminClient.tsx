@@ -170,9 +170,28 @@ function TrainerCalendar({ trainer, slots }: { trainer: Profile; slots: Slot[] }
   );
 }
 
-export default function AdminClient({ profiles, feedback, slots, trainerMap, isAdmin, clubs }: Props) {
+export default function AdminClient({ profiles: initialProfiles, feedback, slots, trainerMap, isAdmin, clubs }: Props) {
   const [roleFilter, setRoleFilter] = useState<RoleFilter | null>(null);
   const [trainerOpen, setTrainerOpen] = useState<string | null>(null);
+  const [profiles, setProfiles] = useState(initialProfiles);
+  const [deletingId, setDeletingId] = useState<string | null>(null);
+
+  async function handleDeleteUser(id: string, name: string) {
+    if (!confirm(`Slette «${name}» for godt? Bookinger, mål og resultater forsvinner også.`)) return;
+    setDeletingId(id);
+    const res = await fetch("/api/admin/delete-user", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ userId: id }),
+    });
+    setDeletingId(null);
+    if (res.ok) {
+      setProfiles(prev => prev.filter(p => p.id !== id));
+    } else {
+      const { error } = await res.json().catch(() => ({ error: "Ukjent feil" }));
+      alert(`Kunne ikke slette: ${error}`);
+    }
+  }
 
   const dancers = profiles.filter(p => p.role === "dancer");
   const parents = profiles.filter(p => p.role === "parent");
@@ -316,7 +335,19 @@ export default function AdminClient({ profiles, feedback, slots, trainerMap, isA
                         {isAdmin && p.club_id && <p className="text-xs text-gray-400">{clubs.find(c => c.id === p.club_id)?.name ?? "Ukjent klubb"}</p>}
                       </div>
                     </div>
-                    <span className="text-xs text-gray-400 shrink-0 ml-2">{timeAgo(p.created_at)}</span>
+                    <div className="flex items-center gap-3 shrink-0 ml-2">
+                      <span className="text-xs text-gray-400">{timeAgo(p.created_at)}</span>
+                      {isAdmin && (
+                        <button
+                          onClick={() => handleDeleteUser(p.id, p.name)}
+                          disabled={deletingId === p.id}
+                          className="text-xs text-gray-300 hover:text-red-500 disabled:opacity-40"
+                          title="Slett bruker"
+                        >
+                          {deletingId === p.id ? "…" : "Slett"}
+                        </button>
+                      )}
+                    </div>
                   </div>
                 );
               })}
