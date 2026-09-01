@@ -15,6 +15,7 @@ interface Props {
   phone: string;
   bio: string;
   price?: number | null;
+  priceDouble?: number | null;
   danceStyles: string[];
   styleOptions?: string[];
   avatarUrl?: string | null;
@@ -22,7 +23,7 @@ interface Props {
 
 const FALLBACK_STYLES = ["Slow", "Freestyle", "Jazz", "Moderne", "Freestyle dobbel", "Slow dobbel", "Akro", "Hiphop", "Show"];
 
-export default function ProfilForm({ userId, name, phone, bio, price, danceStyles, styleOptions, avatarUrl }: Props) {
+export default function ProfilForm({ userId, name, phone, bio, price, priceDouble, danceStyles, styleOptions, avatarUrl }: Props) {
   const allStyles = styleOptions && styleOptions.length > 0 ? styleOptions : FALLBACK_STYLES;
   const router = useRouter();
   const [nameVal, setNameVal] = useState(name);
@@ -35,6 +36,7 @@ export default function ProfilForm({ userId, name, phone, bio, price, danceStyle
   });
   const [bioVal, setBioVal] = useState(bio);
   const [priceVal, setPriceVal] = useState(price != null ? String(price) : "");
+  const [priceDoubleVal, setPriceDoubleVal] = useState(priceDouble != null ? String(priceDouble) : "");
   const [selected, setSelected] = useState<Set<string>>(new Set(danceStyles));
   const [avatar, setAvatar] = useState<string | null>(avatarUrl ?? null);
   const [uploading, setUploading] = useState(false);
@@ -92,6 +94,7 @@ export default function ProfilForm({ userId, name, phone, bio, price, danceStyle
         bio: bioVal,
         dance_styles: Array.from(selected),
         price: priceVal.trim() === "" ? null : Number(priceVal),
+        price_double: priceDoubleVal.trim() === "" ? null : Number(priceDoubleVal),
       })
       .eq("id", userId);
 
@@ -174,10 +177,22 @@ export default function ProfilForm({ userId, name, phone, bio, price, danceStyle
             <Input
               value={priceVal}
               onChange={(e) => setPriceVal(e.target.value.replace(/[^0-9]/g, ""))}
-              placeholder="F.eks. 250"
+              placeholder="F.eks. 150"
               inputMode="numeric"
             />
-            <p className="text-xs text-gray-400 dark:text-gray-500">Prisen danseren ser når de booker en time hos deg.</p>
+            <p className="text-xs text-gray-400 dark:text-gray-500">Prisen danseren ser når de booker en vanlig time hos deg.</p>
+          </div>
+          <div className="space-y-1.5">
+            <label className="text-sm font-medium flex items-center gap-1.5">
+              <Wallet size={14} className="text-gray-400 dark:text-gray-500" /> Timepris dobbel / par (kr)
+            </label>
+            <Input
+              value={priceDoubleVal}
+              onChange={(e) => setPriceDoubleVal(e.target.value.replace(/[^0-9]/g, ""))}
+              placeholder="F.eks. 200"
+              inputMode="numeric"
+            />
+            <p className="text-xs text-gray-400 dark:text-gray-500">La stå tom hvis du ikke tar dobbeltimer, eller hvis prisen er den samme.</p>
           </div>
         </CardContent>
       </Card>

@@ -9,7 +9,7 @@ import { Input } from "@/components/ui/input";
 import { Search, X } from "lucide-react";
 import { styleColor } from "@/lib/danceStyleColors";
 
-const DOUBLE_STYLES = ["Freestyle dobbel", "Slow dobbel"];
+const isDoubleStyle = (style: string) => style.toLowerCase().includes("dobbel");
 
 interface Slot {
   id: string;
@@ -47,14 +47,16 @@ interface Props {
   danceStyles: string[];
   children: Child[];
   price: number;
+  priceDouble?: number | null;
   paymentLabel?: string | null;
   clubId?: string | null;
 }
 
-export default function BookingForm({ slots, trainerName, bookerId, bookerName, bookerRole, danceStyles, children, price, paymentLabel, clubId }: Props) {
+export default function BookingForm({ slots, trainerName, bookerId, bookerName, bookerRole, danceStyles, children, price, priceDouble, paymentLabel, clubId }: Props) {
   const router = useRouter();
   const isParent = bookerRole === "parent";
-  const isDouble = (style: string) => DOUBLE_STYLES.includes(style);
+  const isDouble = isDoubleStyle;
+  const priceFor = (style: string) => (isDoubleStyle(style) ? (priceDouble ?? price) : price);
   const autoFill = isParent && children.length === 1 ? children[0].name : "";
 
   const [childrenList, setChildrenList] = useState<Child[]>(children);
@@ -65,6 +67,8 @@ export default function BookingForm({ slots, trainerName, bookerId, bookerName, 
   const [step, setStep] = useState<"pick" | "configure" | "confirm">("pick");
   const [selectedSlots, setSelectedSlots] = useState<Slot[]>([]);
   const [slotBookings, setSlotBookings] = useState<SlotBooking[]>([]);
+  const totalPrice = slotBookings.reduce((sum, sb) => sum + priceFor(sb.danceStyle), 0);
+  const uniformPrice = slotBookings.every(sb => priceFor(sb.danceStyle) === priceFor(slotBookings[0]?.danceStyle ?? ""));
   const [configIndex, setConfigIndex] = useState(0);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
@@ -532,7 +536,11 @@ export default function BookingForm({ slots, trainerName, bookerId, bookerName, 
         <div className="bg-blue-50 border border-blue-200 rounded-xl px-4 py-3 space-y-2">
           <div className="flex justify-between items-center">
             <p className="text-sm font-semibold text-blue-800">Betaling</p>
-            <p className="text-sm font-bold text-blue-800">{slotBookings.length} × {price} kr = <span className="text-base">{slotBookings.length * price} kr</span></p>
+            <p className="text-sm font-bold text-blue-800">
+              {uniformPrice
+                ? <>{slotBookings.length} × {priceFor(slotBookings[0]?.danceStyle ?? "")} kr = <span className="text-base">{totalPrice} kr</span></>
+                : <span className="text-base">{totalPrice} kr</span>}
+            </p>
           </div>
           <p className="text-sm text-blue-700">Betaling skjer som før i <strong>{paymentLabel || "Spond"}</strong>. Husk å send kvittering til <strong>{trainerName}</strong> etter betaling.</p>
         </div>

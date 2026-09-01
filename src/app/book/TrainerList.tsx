@@ -12,6 +12,7 @@ type Trainer = {
   styles: string[];
   isPinned: boolean;
   price: number;
+  priceDouble: number | null;
   availableSlots: number;
 };
 
@@ -45,7 +46,7 @@ function TrainerCard({ trainer }: { trainer: Trainer }) {
         </div>
         <div className="flex items-center gap-2 shrink-0 text-right">
           <div>
-            <p className="text-sm font-semibold text-[#E2A9F1]">{trainer.price} kr</p>
+            <p className="text-sm font-semibold text-[#E2A9F1]">{trainer.priceDouble && trainer.priceDouble !== trainer.price ? `fra ${trainer.price} kr` : `${trainer.price} kr`}</p>
             <p className="text-xs text-gray-400">{trainer.availableSlots > 0 ? `${trainer.availableSlots} ledige` : "Ingen ledige"}</p>
           </div>
           <ChevronRight size={18} className="text-gray-300 dark:text-gray-600" />

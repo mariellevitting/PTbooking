@@ -32,7 +32,7 @@ export default async function TrainerBookPage({ params }: { params: Promise<{ tr
 
   const { data: trainerDetails } = await supabase
     .from("trainers")
-    .select("dance_styles, bio, price")
+    .select("dance_styles, bio, price, price_double")
     .eq("id", trainerId)
     .single();
 
@@ -113,6 +113,7 @@ export default async function TrainerBookPage({ params }: { params: Promise<{ tr
             danceStyles={styles}
             children={children ?? []}
             price={trainerDetails?.price ?? defaultPriceFor(club)}
+            priceDouble={(trainerDetails as any)?.price_double ?? null}
             paymentLabel={club?.payment_label ?? null}
             clubId={profile.club_id ?? null}
           />
