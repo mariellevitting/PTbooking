@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { createClient } from "@/lib/supabase/client";
+import { createAuthClient } from "@/lib/supabase/authClient";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 
@@ -17,7 +17,7 @@ export default function GlemtPassordPage() {
     setLoading(true);
     setError("");
 
-    const supabase = createClient();
+    const supabase = createAuthClient();
     const { error } = await supabase.auth.resetPasswordForEmail(email, {
       redirectTo: `https://app.danceitude.no/nytt-passord`,
     });

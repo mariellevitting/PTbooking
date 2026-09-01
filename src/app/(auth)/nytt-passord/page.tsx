@@ -1,23 +1,27 @@
 "use client";
 
-import { useState, useEffect, Suspense } from "react";
-import { useRouter, useSearchParams } from "next/navigation";
-import { createClient } from "@/lib/supabase/client";
+import { useState, useEffect, useRef, Suspense } from "react";
+import Link from "next/link";
+import { useSearchParams } from "next/navigation";
+import { createAuthClient } from "@/lib/supabase/authClient";
+import type { SupabaseClient } from "@supabase/supabase-js";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 
 function NyttPassordForm() {
-  const router = useRouter();
   const searchParams = useSearchParams();
+  const clientRef = useRef<SupabaseClient | null>(null);
   const [password, setPassword] = useState("");
   const [confirm, setConfirm] = useState("");
   const [loading, setLoading] = useState(false);
+  const [done, setDone] = useState(false);
   const [error, setError] = useState("");
   const [sessionReady, setSessionReady] = useState(false);
   const [verifying, setVerifying] = useState(true);
 
   useEffect(() => {
-    const supabase = createClient();
+    const supabase = createAuthClient();
+    clientRef.current = supabase;
 
     const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
       if (session) { setSessionReady(true); setVerifying(false); }
@@ -65,7 +69,7 @@ function NyttPassordForm() {
     setLoading(true);
     setError("");
 
-    const supabase = createClient();
+    const supabase = clientRef.current ?? createAuthClient();
     const { error } = await supabase.auth.updateUser({ password });
 
     if (error) {
@@ -78,8 +82,9 @@ function NyttPassordForm() {
       return;
     }
 
-    router.push("/dashboard");
-    router.refresh();
+    await supabase.auth.signOut();
+    setDone(true);
+    setLoading(false);
   }
 
   return (
@@ -107,7 +112,14 @@ function NyttPassordForm() {
             <p className="text-gray-500 dark:text-gray-400 mt-1 text-sm">Velg et nytt passord for kontoen din.</p>
           </div>
 
-          {verifying ? (
+          {done ? (
+            <div className="space-y-4">
+              <p className="text-sm text-green-600 dark:text-green-400">Passordet er endret! 🎉</p>
+              <Link href="/login" className="inline-block w-full">
+                <Button className="w-full bg-[#3A3A3A] hover:bg-[#2a2a2a] h-11 text-base">Logg inn med nytt passord</Button>
+              </Link>
+            </div>
+          ) : verifying ? (
             <p className="text-sm text-gray-500 dark:text-gray-400">Verifiserer lenken…</p>
           ) : !sessionReady ? (
             <div className="space-y-4">
