@@ -206,9 +206,10 @@ export default function LoginPage() {
     <div className="min-h-screen flex flex-col md:flex-row">
 
       {/* Desktop – venstre bildekolonne */}
-      <div className="hidden md:flex md:w-1/2 relative min-h-screen" style={{ backgroundImage: "url('/login-bg.png')", backgroundSize: "cover", backgroundPosition: "center" }}>
-        <div className="absolute inset-0 bg-white/25" />
-        <div className="absolute inset-x-0 bottom-0 h-1/2 bg-gradient-to-t from-black/40 to-transparent" />
+      <div className="hidden md:flex md:w-1/2 relative min-h-screen overflow-hidden">
+        <div className="absolute inset-0 bg-cover bg-center" style={{ backgroundImage: "url('/login-bg.png')", filter: "brightness(1.4) contrast(1.03)" }} />
+        <div className="absolute inset-0 bg-black/15" />
+        <div className="absolute inset-x-0 bottom-0 h-1/2 bg-gradient-to-t from-black/55 to-transparent" />
         <div className="relative z-10 flex flex-col justify-end p-10 text-white">
           <p className="text-white/90 text-lg italic mb-3">✦ Av dansere, for dansere</p>
           <h1 className="text-5xl font-bold mb-1">Danceitude</h1>
@@ -217,8 +218,9 @@ export default function LoginPage() {
       </div>
 
       {/* Mobil – fullt bakgrunnsbilde med kort oppå */}
-      <div className="md:hidden relative min-h-screen flex items-center" style={{ backgroundImage: "url('/login-bg.png')", backgroundSize: "cover", backgroundPosition: "center top" }}>
-        <div className="absolute inset-0 bg-white/25" />
+      <div className="md:hidden relative min-h-screen flex items-center overflow-hidden">
+        <div className="absolute inset-0 bg-cover" style={{ backgroundImage: "url('/login-bg.png')", backgroundPosition: "center top", filter: "brightness(1.4) contrast(1.03)" }} />
+        <div className="absolute inset-0 bg-black/15" />
         <div className="relative z-10 w-full px-4 pb-4 pt-8">
           <p className="text-white/90 text-sm italic mb-1 px-2">✦ Av dansere, for dansere</p>
           <h1 className="text-3xl font-bold text-white mb-4 px-2">Danceitude</h1>
