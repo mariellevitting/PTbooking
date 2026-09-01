@@ -14,15 +14,43 @@ function NyttPassordForm() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [sessionReady, setSessionReady] = useState(false);
+  const [verifying, setVerifying] = useState(true);
 
   useEffect(() => {
     const supabase = createClient();
-    // onAuthStateChange håndterer implicit flow hash automatisk
+
     const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
-      if (session) setSessionReady(true);
+      if (session) { setSessionReady(true); setVerifying(false); }
     });
+
+    // Ny lenke-type: token_hash i URL-en byttes mot en sesjon.
+    // Fungerer uansett nettleser/enhet (ingen PKCE-verifier trengs).
+    const tokenHash = searchParams.get("token_hash");
+    const type = searchParams.get("type");
+    const code = searchParams.get("code");
+
+    (async () => {
+      if (tokenHash) {
+        const { error } = await supabase.auth.verifyOtp({
+          type: (type as "recovery") || "recovery",
+          token_hash: tokenHash,
+        });
+        if (error) setError("Lenken er ugyldig eller utløpt. Be om en ny tilbakestillingslenke.");
+      } else if (code) {
+        // Eldre PKCE-lenke – funker bare i samme nettleser som ba om lenka
+        const { error } = await supabase.auth.exchangeCodeForSession(code);
+        if (error) setError("Lenken virker ikke i denne nettleseren. Åpne den i samme nettleser du ba om tilbakestilling fra, eller be om en ny lenke.");
+      }
+      // Gi implicit-hash / onAuthStateChange et øyeblikk før vi konkluderer
+      setTimeout(async () => {
+        const { data: { session } } = await supabase.auth.getSession();
+        if (session) setSessionReady(true);
+        setVerifying(false);
+      }, 400);
+    })();
+
     return () => subscription.unsubscribe();
-  }, []);
+  }, [searchParams]);
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -79,20 +107,33 @@ function NyttPassordForm() {
             <p className="text-gray-500 dark:text-gray-400 mt-1 text-sm">Velg et nytt passord for kontoen din.</p>
           </div>
 
-          <form onSubmit={handleSubmit} className="space-y-4">
-            <div className="space-y-1.5">
-              <label className="text-sm font-medium text-gray-700 dark:text-gray-300">Nytt passord</label>
-              <Input type="password" value={password} onChange={(e) => setPassword(e.target.value)} placeholder="••••••••" required />
+          {verifying ? (
+            <p className="text-sm text-gray-500 dark:text-gray-400">Verifiserer lenken…</p>
+          ) : !sessionReady ? (
+            <div className="space-y-4">
+              <p className="text-sm text-red-500">
+                {error || "Lenken er ugyldig eller utløpt."}
+              </p>
+              <a href="/glemt-passord" className="inline-block text-sm text-[#E2A9F1] hover:underline font-medium">
+                Be om en ny tilbakestillingslenke →
+              </a>
             </div>
-            <div className="space-y-1.5">
-              <label className="text-sm font-medium text-gray-700 dark:text-gray-300">Bekreft passord</label>
-              <Input type="password" value={confirm} onChange={(e) => setConfirm(e.target.value)} placeholder="••••••••" required />
-            </div>
-            {error && <p className="text-sm text-red-500">{error}</p>}
-            <Button type="submit" className="w-full bg-[#3A3A3A] hover:bg-[#2a2a2a] h-11 text-base" disabled={loading}>
-              {loading ? "Lagrer..." : "Sett nytt passord"}
-            </Button>
-          </form>
+          ) : (
+            <form onSubmit={handleSubmit} className="space-y-4">
+              <div className="space-y-1.5">
+                <label className="text-sm font-medium text-gray-700 dark:text-gray-300">Nytt passord</label>
+                <Input type="password" value={password} onChange={(e) => setPassword(e.target.value)} placeholder="••••••••" required />
+              </div>
+              <div className="space-y-1.5">
+                <label className="text-sm font-medium text-gray-700 dark:text-gray-300">Bekreft passord</label>
+                <Input type="password" value={confirm} onChange={(e) => setConfirm(e.target.value)} placeholder="••••••••" required />
+              </div>
+              {error && <p className="text-sm text-red-500">{error}</p>}
+              <Button type="submit" className="w-full bg-[#3A3A3A] hover:bg-[#2a2a2a] h-11 text-base" disabled={loading}>
+                {loading ? "Lagrer..." : "Sett nytt passord"}
+              </Button>
+            </form>
+          )}
         </div>
       </div>
     </div>
