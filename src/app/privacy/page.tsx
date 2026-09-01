@@ -4,8 +4,8 @@ import { ArrowLeft } from "lucide-react";
 export default function PrivacyPage() {
   return (
     <main className="max-w-2xl mx-auto px-6 py-12 text-gray-800 dark:text-gray-100">
-      <Link href="/login" className="inline-flex items-center gap-2 text-sm text-gray-500 dark:text-gray-400 hover:text-[#E2A9F1] mb-6">
-        <ArrowLeft size={16} /> Tilbake
+      <Link href="/login" className="inline-flex items-center justify-center w-12 h-12 rounded-full bg-gray-100 dark:bg-gray-800 hover:bg-[#E2A9F1]/20 text-gray-700 dark:text-gray-200 mb-4 -ml-2">
+        <ArrowLeft size={24} strokeWidth={2.5} />
       </Link>
       <h1 className="text-3xl font-bold mb-2">Personvernerklæring</h1>
       <p className="text-sm text-gray-500 mb-8">Sist oppdatert: august 2026</p>

@@ -9,8 +9,8 @@ export const metadata = {
 export default function SupportPage() {
   return (
     <div className="min-h-screen bg-white dark:bg-gray-950 px-6 py-12 max-w-2xl mx-auto">
-      <Link href="/login" className="inline-flex items-center gap-2 text-sm text-gray-500 dark:text-gray-400 hover:text-[#E2A9F1] mb-6">
-        <ArrowLeft size={16} /> Tilbake
+      <Link href="/login" className="inline-flex items-center justify-center w-12 h-12 rounded-full bg-gray-100 dark:bg-gray-800 hover:bg-[#E2A9F1]/20 text-gray-700 dark:text-gray-200 mb-4 -ml-2">
+        <ArrowLeft size={24} strokeWidth={2.5} />
       </Link>
       <h1 className="text-3xl font-bold text-gray-900 dark:text-white mb-2">Support</h1>
       <p className="text-gray-500 dark:text-gray-400 mb-10">Trenger du hjelp med Danceitude? Her finner du svar på vanlige spørsmål.</p>
