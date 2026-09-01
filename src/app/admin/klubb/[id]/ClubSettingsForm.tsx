@@ -62,6 +62,8 @@ export default function ClubSettingsForm({ club }: { club: Club }) {
     payment_info: club.payment_info ?? "",
     payment_url: club.payment_url ?? "",
     receipt_note: club.receipt_note ?? "",
+    contact_name: club.contact_name ?? "",
+    contact_info: club.contact_info ?? "",
   });
   const [styles, setStyles] = useState<string[]>(club.dance_styles ?? []);
   const [saving, setSaving] = useState(false);
@@ -104,6 +106,8 @@ export default function ClubSettingsForm({ club }: { club: Club }) {
         payment_info: form.payment_info.trim() || null,
         payment_url: form.payment_url.trim() || null,
         receipt_note: form.receipt_note.trim() || null,
+        contact_name: form.contact_name.trim() || null,
+        contact_info: form.contact_info.trim() || null,
         dance_styles: styles,
       })
       .eq("id", club.id);
@@ -229,6 +233,18 @@ export default function ClubSettingsForm({ club }: { club: Club }) {
             rows={2}
             className={fieldCls}
           />
+        </div>
+      </Section>
+
+      <Section title="Kontakt">
+        <p className="text-xs text-gray-400 dark:text-gray-500 -mt-2">Vises nederst i «Om privattimer»</p>
+        <div>
+          <Label>Kontaktperson</Label>
+          <Input value={form.contact_name} onChange={e => set("contact_name", e.target.value)} />
+        </div>
+        <div>
+          <Label hint="E-post eller telefon">Kontaktinfo</Label>
+          <Input value={form.contact_info} onChange={e => set("contact_info", e.target.value)} />
         </div>
       </Section>
 

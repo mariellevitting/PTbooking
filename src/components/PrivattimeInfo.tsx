@@ -41,8 +41,27 @@ export default function PrivattimeInfo({ club }: { club: ClubConfig | null }) {
           </div>
         )}
       </div>
+
+      {(club?.contact_name?.trim() || club?.contact_info?.trim()) && (
+        <div className="bg-white dark:bg-gray-900 rounded-2xl border dark:border-gray-700 p-5">
+          <h3 className="font-semibold text-lg mb-1">Kontakt</h3>
+          <p className="text-sm text-gray-500 dark:text-gray-400 mb-3">Spørsmål om timer, klubben eller appen?</p>
+          {club?.contact_name?.trim() && (
+            <p className="text-sm text-gray-800 dark:text-gray-100 font-medium">{club.contact_name.trim()}</p>
+          )}
+          {club?.contact_info?.trim() && <ContactLine value={club.contact_info.trim()} />}
+        </div>
+      )}
     </div>
   );
+}
+
+function ContactLine({ value }: { value: string }) {
+  const isEmail = value.includes("@") && !value.includes(" ");
+  const isPhone = /^[+\d][\d\s]{6,}$/.test(value);
+  if (isEmail) return <a href={`mailto:${value}`} className="text-sm text-[#c87de0] hover:underline">{value}</a>;
+  if (isPhone) return <a href={`tel:${value.replace(/\s/g, "")}`} className="text-sm text-[#c87de0] hover:underline">{value}</a>;
+  return <p className="text-sm text-gray-600 dark:text-gray-400">{value}</p>;
 }
 
 /**

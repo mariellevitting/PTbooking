@@ -220,6 +220,8 @@ export default function LoginPage() {
           </div>
           <p className="text-center text-xs text-white/70 mt-4">
             <a href="/om" className="hover:text-white underline">Om Danceitude</a>
+            <span className="mx-2">·</span>
+            <a href="/support" className="hover:text-white underline">Hjelp</a>
           </p>
         </div>
       </div>
@@ -238,6 +240,8 @@ export default function LoginPage() {
           </p>
           <p className="text-center text-xs text-gray-400 dark:text-gray-600 mt-3">
             <a href="/om" className="hover:text-[#E2A9F1] hover:underline">Om Danceitude</a>
+            <span className="mx-2">·</span>
+            <a href="/support" className="hover:text-[#E2A9F1] hover:underline">Hjelp</a>
           </p>
         </div>
       </div>
