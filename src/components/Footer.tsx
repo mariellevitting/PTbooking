@@ -1,7 +1,16 @@
+"use client";
+
 import { Heart } from "lucide-react";
 import Link from "next/link";
+import { usePathname } from "next/navigation";
+
+// Kredit-footeren vises kun på «Om Danceitude», ikke inne i selve appen.
+const FOOTER_PATHS = ["/om"];
 
 export default function Footer() {
+  const pathname = usePathname();
+  if (!FOOTER_PATHS.includes(pathname)) return null;
+
   return (
     <footer className="border-t dark:border-gray-700 bg-white dark:bg-gray-900 py-6 px-4 mt-auto">
       <div className="max-w-lg mx-auto flex flex-col items-center gap-2 text-center">
