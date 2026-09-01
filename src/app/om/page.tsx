@@ -53,29 +53,6 @@ export default async function OmPage() {
           <p>Derfor ønsket jeg ikke bare å lage en ny bookingløsning. Jeg ønsket å finne ut hva dansere, foreldre og trenere faktisk trenger.</p>
         </section>
 
-        {/* AI og teknologi */}
-        <section>
-          <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-4">Fra Google Docs til App Store – med AI som utviklingspartner</h2>
-          <div className="space-y-4 text-gray-700 dark:text-gray-300 text-lg leading-relaxed">
-            <p>Det tekniske ble bygget end-to-end med AI som utviklingspartner ved hjelp av Claude Code. Ved å la AI håndtere arkitektur, kodegenerering og feilsøking kunne jeg holde fullt fokus på brukeropplevelsen og produktlogikken.</p>
-          </div>
-          <div className="mt-6 bg-gray-50 dark:bg-gray-900 rounded-2xl p-6 space-y-3">
-            <p className="text-sm font-semibold uppercase tracking-widest text-gray-400 dark:text-gray-500 mb-4">Stacken under panseret</p>
-            {[
-              { name: "Next.js", desc: "Fullstack rammeverk med server-side rendering" },
-              { name: "Supabase", desc: "Database, autentisering og row-level security" },
-              { name: "Vercel", desc: "Kontinuerlig deployment med preview-miljøer" },
-              { name: "Capacitor + Xcode", desc: "Native iOS-app fra samme kodebase" },
-              { name: "Claude Code", desc: "AI-drevet utviklingsprosess gjennom hele prosjektet" },
-            ].map(item => (
-              <div key={item.name} className="flex items-start gap-3">
-                <span className="text-[#E2A9F1] mt-0.5">•</span>
-                <p className="text-gray-700 dark:text-gray-300 text-sm"><strong className="text-gray-900 dark:text-white">{item.name}</strong> – {item.desc}</p>
-              </div>
-            ))}
-          </div>
-        </section>
-
         {/* Utviklet sammen */}
         <section>
           <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-4">Utviklet sammen med dansemiljøet</h2>
