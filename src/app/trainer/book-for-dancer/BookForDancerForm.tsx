@@ -7,10 +7,8 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Search, X } from "lucide-react";
 
-const DOUBLE_STYLES = ["Freestyle dobbel", "Slow dobbel"];
-
 function isDouble(style: string) {
-  return DOUBLE_STYLES.includes(style);
+  return style.toLowerCase().includes("dobbel");
 }
 
 function getMondayOfWeek(date: Date) {
