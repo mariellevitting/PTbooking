@@ -14,6 +14,10 @@ export async function registerUser(
 ): Promise<{ error?: string }> {
   const supabase = await createClient();
 
+  if (name.trim().split(/\s+/).length < 2) {
+    return { error: "Du må oppgi både fornavn og etternavn." };
+  }
+
   if (!trainerCode) return { error: "Du må oppgi en klubbkode." };
 
   // Evolution bruker fortsatt miljøvariabel-koder (bakoverkompatibilitet).

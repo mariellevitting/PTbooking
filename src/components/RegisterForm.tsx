@@ -24,7 +24,8 @@ export default function RegisterForm({ prefilledCode, clubName, clubs = [] }: Pr
   const router = useRouter();
   const [step, setStep] = useState<"role" | "details">("role");
   const [role, setRole] = useState<UserRole | null>(null);
-  const [name, setName] = useState("");
+  const [firstName, setFirstName] = useState("");
+  const [lastName, setLastName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [trainerCode, setTrainerCode] = useState("");
@@ -39,8 +40,9 @@ export default function RegisterForm({ prefilledCode, clubName, clubs = [] }: Pr
     setLoading(true);
     setError("");
     const filteredDancers = dancerNames.filter(n => n.trim() !== "");
+    const fullName = `${firstName.trim()} ${lastName.trim()}`.trim();
     const result = await registerUser(
-      email, password, name, role,
+      email, password, fullName, role,
       trainerCode || undefined,
       filteredDancers.length > 0 ? filteredDancers : undefined,
       prefilledCode || undefined
@@ -81,9 +83,15 @@ export default function RegisterForm({ prefilledCode, clubName, clubs = [] }: Pr
               ← Endre rolle
             </button>
           </div>
-          <div className="space-y-1.5">
-            <label className="text-sm font-medium">Navn</label>
-            <Input value={name} onChange={e => setName(e.target.value)} placeholder="Ditt fulle navn" required />
+          <div className="flex gap-2">
+            <div className="space-y-1.5 flex-1">
+              <label className="text-sm font-medium">Fornavn</label>
+              <Input value={firstName} onChange={e => setFirstName(e.target.value)} required />
+            </div>
+            <div className="space-y-1.5 flex-1">
+              <label className="text-sm font-medium">Etternavn</label>
+              <Input value={lastName} onChange={e => setLastName(e.target.value)} required />
+            </div>
           </div>
           <div className="space-y-1.5">
             <label className="text-sm font-medium">E-post</label>

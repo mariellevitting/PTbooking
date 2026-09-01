@@ -29,7 +29,8 @@ export default function LoginPage() {
   // Register state
   const [step, setStep] = useState<"role" | "details">("role");
   const [role, setRole] = useState<UserRole | null>(null);
-  const [name, setName] = useState("");
+  const [firstName, setFirstName] = useState("");
+  const [lastName, setLastName] = useState("");
   const [regEmail, setRegEmail] = useState("");
   const [regPassword, setRegPassword] = useState("");
   const [trainerCode, setTrainerCode] = useState("");
@@ -66,7 +67,7 @@ export default function LoginPage() {
     setRegError("");
     const filteredDancers = dancerNames.filter(n => n.trim() !== "");
     const result = await registerUser(
-      regEmail, regPassword, name, role,
+      regEmail, regPassword, `${firstName.trim()} ${lastName.trim()}`.trim(), role,
       trainerCode || undefined,
       filteredDancers.length > 0 ? filteredDancers : undefined
     );
@@ -136,9 +137,15 @@ export default function LoginPage() {
       {step === "details" && (
         <form onSubmit={handleRegister} className="space-y-4">
           <button type="button" onClick={() => setStep("role")} className="text-sm text-[#E2A9F1] hover:underline">← Endre rolle</button>
-          <div className="space-y-1.5">
-            <label className="text-sm font-medium">Navn</label>
-            <Input value={name} onChange={e => setName(e.target.value)} placeholder="Ditt fulle navn" required />
+          <div className="flex gap-2">
+            <div className="space-y-1.5 flex-1">
+              <label className="text-sm font-medium">Fornavn</label>
+              <Input value={firstName} onChange={e => setFirstName(e.target.value)} required />
+            </div>
+            <div className="space-y-1.5 flex-1">
+              <label className="text-sm font-medium">Etternavn</label>
+              <Input value={lastName} onChange={e => setLastName(e.target.value)} required />
+            </div>
           </div>
           <div className="space-y-1.5">
             <label className="text-sm font-medium">E-post</label>
