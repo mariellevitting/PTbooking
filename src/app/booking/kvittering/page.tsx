@@ -37,7 +37,7 @@ export default async function KvitteringPage() {
         </div>
 
         <Link href="/dancer/dashboard">
-          <Button className="w-full bg-[#3A3A3A] hover:bg-[#2a2a2a]">
+          <Button className="w-full bg-[#3A3A3A] hover:bg-[#2a2a2a] dark:bg-[#c87de0] dark:hover:bg-[#b56fd0] dark:text-white">
             Tilbake til mine timer
           </Button>
         </Link>

@@ -87,7 +87,7 @@ export default function GlemtPassordPage() {
                   />
                 </div>
                 {error && <p className="text-sm text-red-500">{error}</p>}
-                <Button type="submit" className="w-full bg-[#3A3A3A] hover:bg-[#2a2a2a] h-11 text-base" disabled={loading}>
+                <Button type="submit" className="w-full bg-[#3A3A3A] hover:bg-[#2a2a2a] dark:bg-[#c87de0] dark:hover:bg-[#b56fd0] dark:text-white h-11 text-base" disabled={loading}>
                   {loading ? "Sender..." : "Send tilbakestillingslenke"}
                 </Button>
               </form>

@@ -360,7 +360,7 @@ export default function BookingForm({ slots, trainerName, bookerId, bookerName, 
           <p className="text-sm text-[#E2A9F1] text-center">{selectedSlots.length} time{selectedSlots.length !== 1 ? "r" : ""} valgt</p>
         )}
 
-        <Button className="w-full bg-[#3A3A3A] hover:bg-[#2a2a2a]" disabled={selectedSlots.length === 0} onClick={startConfigure}>
+        <Button className="w-full bg-[#3A3A3A] hover:bg-[#2a2a2a] dark:bg-[#c87de0] dark:hover:bg-[#b56fd0] dark:text-white" disabled={selectedSlots.length === 0} onClick={startConfigure}>
           Gå videre
         </Button>
       </div>
@@ -438,7 +438,7 @@ export default function BookingForm({ slots, trainerName, bookerId, bookerName, 
               {addingChild && (
                 <div className="flex gap-2">
                   <Input value={newChildName} onChange={(e) => setNewChildName(e.target.value)} placeholder="Navn på barn" className="text-sm" />
-                  <Button type="button" onClick={handleAddChild} disabled={savingChild} className="bg-[#3A3A3A] hover:bg-[#2a2a2a] text-sm px-3">{savingChild ? "..." : "Legg til"}</Button>
+                  <Button type="button" onClick={handleAddChild} disabled={savingChild} className="bg-[#3A3A3A] hover:bg-[#2a2a2a] dark:bg-[#c87de0] dark:hover:bg-[#b56fd0] dark:text-white text-sm px-3">{savingChild ? "..." : "Legg til"}</Button>
                 </div>
               )}
             </div>
@@ -493,7 +493,7 @@ export default function BookingForm({ slots, trainerName, bookerId, bookerName, 
             </div>
           )}
 
-          <Button className="w-full bg-[#3A3A3A] hover:bg-[#2a2a2a]" disabled={!canNext} onClick={nextConfig}>
+          <Button className="w-full bg-[#3A3A3A] hover:bg-[#2a2a2a] dark:bg-[#c87de0] dark:hover:bg-[#b56fd0] dark:text-white" disabled={!canNext} onClick={nextConfig}>
             {configIndex < slotBookings.length - 1 ? "Neste time →" : "Se oppsummering"}
           </Button>
           <button type="button" onClick={() => configIndex === 0 ? setStep("pick") : setConfigIndex(configIndex - 1)} className="w-full text-sm text-gray-400 dark:text-gray-500 hover:text-gray-600 dark:hover:text-gray-300 py-2">
@@ -547,7 +547,7 @@ export default function BookingForm({ slots, trainerName, bookerId, bookerName, 
 
         {error && <p className="text-sm text-red-500">{error}</p>}
 
-        <Button className="w-full bg-[#3A3A3A] hover:bg-[#2a2a2a]" onClick={handleBook} disabled={loading}>
+        <Button className="w-full bg-[#3A3A3A] hover:bg-[#2a2a2a] dark:bg-[#c87de0] dark:hover:bg-[#b56fd0] dark:text-white" onClick={handleBook} disabled={loading}>
           {loading ? "Booker..." : `Bekreft ${slotBookings.length} booking${slotBookings.length !== 1 ? "er" : ""}`}
         </Button>
         <button type="button" onClick={() => { setConfigIndex(slotBookings.length - 1); setStep("configure"); }} className="w-full text-sm text-gray-400 dark:text-gray-500 hover:text-gray-600 dark:hover:text-gray-300 py-2">

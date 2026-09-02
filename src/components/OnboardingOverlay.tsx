@@ -117,7 +117,7 @@ export default function OnboardingOverlay() {
         <div className="px-6 pb-10 pt-4 flex flex-col items-center gap-4">
           <button
             onClick={next}
-            className="w-full max-w-sm bg-[#3A3A3A] hover:bg-[#2a2a2a] text-[#E2A9F1] font-semibold py-3.5 rounded-2xl transition-colors flex items-center justify-center gap-2"
+            className="w-full max-w-sm bg-[#3A3A3A] hover:bg-[#2a2a2a] dark:bg-[#c87de0] dark:hover:bg-[#b56fd0] dark:text-white text-[#E2A9F1] font-semibold py-3.5 rounded-2xl transition-colors flex items-center justify-center gap-2"
           >
             {slide === SLIDES.length - 1 ? "Kom i gang!" : "Neste"}
             {slide < SLIDES.length - 1 && <ChevronRight size={18} />}

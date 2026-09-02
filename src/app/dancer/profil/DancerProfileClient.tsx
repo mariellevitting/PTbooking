@@ -157,7 +157,7 @@ export default function DancerProfileClient(props: Props) {
           <Check size={16} /> Profilen er oppdatert!
         </div>
       )}
-      <Button type="submit" className="w-full bg-[#3A3A3A] hover:bg-[#2a2a2a]" disabled={saving || success}>
+      <Button type="submit" className="w-full bg-[#3A3A3A] hover:bg-[#2a2a2a] dark:bg-[#c87de0] dark:hover:bg-[#b56fd0] dark:text-white" disabled={saving || success}>
         {saving ? "Lagrer..." : "Lagre profil"}
       </Button>
       <DeleteAccountSection userId={props.userId} />

@@ -114,7 +114,7 @@ export default function LoginPage() {
         </div>
       </div>
       {loginError && <p className="text-sm text-red-500">{loginError}</p>}
-      <Button type="submit" className="w-full bg-[#3A3A3A] hover:bg-[#2a2a2a] h-11 text-base" disabled={loginLoading}>
+      <Button type="submit" className="w-full bg-[#3A3A3A] hover:bg-[#2a2a2a] dark:bg-[#c87de0] dark:hover:bg-[#b56fd0] dark:text-white h-11 text-base" disabled={loginLoading}>
         {loginLoading ? "Logger inn..." : "Logg inn"}
       </Button>
     </form>
@@ -194,7 +194,7 @@ export default function LoginPage() {
             </div>
           )}
           {regError && <p className="text-sm text-red-500">{regError}</p>}
-          <Button type="submit" className="w-full bg-[#3A3A3A] hover:bg-[#2a2a2a] h-11 text-base" disabled={regLoading}>
+          <Button type="submit" className="w-full bg-[#3A3A3A] hover:bg-[#2a2a2a] dark:bg-[#c87de0] dark:hover:bg-[#b56fd0] dark:text-white h-11 text-base" disabled={regLoading}>
             {regLoading ? "Oppretter konto..." : "Lag konto"}
           </Button>
         </form>

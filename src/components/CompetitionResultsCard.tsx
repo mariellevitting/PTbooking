@@ -132,7 +132,7 @@ export default function CompetitionResultsCard({ userId, initialResults, childId
             </div>
             <div className="flex gap-2">
               <button onClick={handleAdd} disabled={saving || (!placementF && !placementS)}
-                className="flex-1 bg-[#3A3A3A] hover:bg-[#2a2a2a] disabled:opacity-50 text-white text-sm font-medium rounded-lg py-2">
+                className="flex-1 bg-[#3A3A3A] hover:bg-[#2a2a2a] dark:bg-[#c87de0] dark:hover:bg-[#b56fd0] dark:text-white disabled:opacity-50 text-white text-sm font-medium rounded-lg py-2">
                 {saving ? "Lagrer..." : "Lagre resultat"}
               </button>
               <button onClick={() => setAdding(false)} className="px-4 text-sm text-gray-500 dark:text-gray-400 hover:text-gray-700 border dark:border-gray-700 rounded-lg bg-white dark:bg-gray-900">

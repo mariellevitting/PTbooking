@@ -147,7 +147,7 @@ export default function TrainerDashboardTabs({ slots, completedSlots, trainerNam
 
       {/* Legg ut tid-knapp */}
       {<Link href="/trainer/availability" className="block mb-4">
-        <Button className="w-full bg-[#3A3A3A] hover:bg-[#2a2a2a]">+ Legg ut tid</Button>
+        <Button className="w-full bg-[#3A3A3A] hover:bg-[#2a2a2a] dark:bg-[#c87de0] dark:hover:bg-[#b56fd0] dark:text-white">+ Legg ut tid</Button>
       </Link>}
 
       {/* Kommende timer */}

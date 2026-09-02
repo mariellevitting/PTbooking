@@ -78,7 +78,7 @@ export default function ChildrenForm({ parentId, children: initial }: { parentId
           placeholder="Legg til danser"
           className="text-sm"
         />
-        <Button type="submit" className="bg-[#3A3A3A] hover:bg-[#2a2a2a] shrink-0 text-sm px-3" disabled={saving}>
+        <Button type="submit" className="bg-[#3A3A3A] hover:bg-[#2a2a2a] dark:bg-[#c87de0] dark:hover:bg-[#b56fd0] dark:text-white shrink-0 text-sm px-3" disabled={saving}>
           {saving ? "..." : "Legg til"}
         </Button>
       </form>

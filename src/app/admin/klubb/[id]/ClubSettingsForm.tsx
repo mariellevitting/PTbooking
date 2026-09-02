@@ -278,7 +278,7 @@ export default function ClubSettingsForm({ club }: { club: Club }) {
         <Button
           onClick={handleSave}
           disabled={saving}
-          className="w-full h-11 bg-[#3A3A3A] hover:bg-[#2a2a2a] text-base shadow-lg"
+          className="w-full h-11 bg-[#3A3A3A] hover:bg-[#2a2a2a] dark:bg-[#c87de0] dark:hover:bg-[#b56fd0] dark:text-white text-base shadow-lg"
         >
           {saving ? "Lagrer..." : saved ? "✓ Lagret" : "Lagre endringer"}
         </Button>

@@ -116,7 +116,7 @@ function NyttPassordForm() {
             <div className="space-y-4">
               <p className="text-sm text-green-600 dark:text-green-400">Passordet er endret! 🎉</p>
               <Link href="/login" className="inline-block w-full">
-                <Button className="w-full bg-[#3A3A3A] hover:bg-[#2a2a2a] h-11 text-base">Logg inn med nytt passord</Button>
+                <Button className="w-full bg-[#3A3A3A] hover:bg-[#2a2a2a] dark:bg-[#c87de0] dark:hover:bg-[#b56fd0] dark:text-white h-11 text-base">Logg inn med nytt passord</Button>
               </Link>
             </div>
           ) : verifying ? (
@@ -141,7 +141,7 @@ function NyttPassordForm() {
                 <Input type="password" value={confirm} onChange={(e) => setConfirm(e.target.value)} placeholder="••••••••" required />
               </div>
               {error && <p className="text-sm text-red-500">{error}</p>}
-              <Button type="submit" className="w-full bg-[#3A3A3A] hover:bg-[#2a2a2a] h-11 text-base" disabled={loading}>
+              <Button type="submit" className="w-full bg-[#3A3A3A] hover:bg-[#2a2a2a] dark:bg-[#c87de0] dark:hover:bg-[#b56fd0] dark:text-white h-11 text-base" disabled={loading}>
                 {loading ? "Lagrer..." : "Sett nytt passord"}
               </Button>
             </form>

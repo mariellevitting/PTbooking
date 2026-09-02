@@ -172,7 +172,7 @@ export default async function OmPage() {
             <p className="text-2xl font-bold text-[#c87de0] dark:text-[#E2A9F1] mb-1">Danceitude</p>
             <p className="text-[#E2A9F1] dark:text-[#E2A9F1] italic mb-6">Utviklet sammen med dansemiljøet. Laget for hele dansehverdagen.</p>
             {!user && (
-              <Link href="/login" className="inline-block bg-[#3A3A3A] hover:bg-[#2a2a2a] text-[#E2A9F1] font-semibold px-8 py-3 rounded-xl transition-colors">
+              <Link href="/login" className="inline-block bg-[#3A3A3A] hover:bg-[#2a2a2a] dark:bg-[#c87de0] dark:hover:bg-[#b56fd0] dark:text-white text-[#E2A9F1] font-semibold px-8 py-3 rounded-xl transition-colors">
                 Kom i gang
               </Link>
             )}

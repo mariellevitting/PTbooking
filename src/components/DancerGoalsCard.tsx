@@ -193,7 +193,7 @@ export default function DancerGoalsCard({ userId, seasonGoals, pointsFreestyle, 
           <Check size={16} /> Lagret!
         </div>
       )}
-      <Button onClick={handleSave} className="w-full bg-[#3A3A3A] hover:bg-[#2a2a2a]" disabled={saving}>
+      <Button onClick={handleSave} className="w-full bg-[#3A3A3A] hover:bg-[#2a2a2a] dark:bg-[#c87de0] dark:hover:bg-[#b56fd0] dark:text-white" disabled={saving}>
         {saving ? "Lagrer..." : "Lagre mål og poeng"}
       </Button>
     </div>

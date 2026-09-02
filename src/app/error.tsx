@@ -14,7 +14,7 @@ export default function Error({
       <p className="text-gray-500 dark:text-gray-400 max-w-sm">
         Kunne ikke laste siden. Dette kan skyldes en midlertidig feil på serveren.
       </p>
-      <Button onClick={() => reset()} className="bg-[#3A3A3A] hover:bg-[#2a2a2a]">
+      <Button onClick={() => reset()} className="bg-[#3A3A3A] hover:bg-[#2a2a2a] dark:bg-[#c87de0] dark:hover:bg-[#b56fd0] dark:text-white">
         Prøv igjen
       </Button>
     </div>

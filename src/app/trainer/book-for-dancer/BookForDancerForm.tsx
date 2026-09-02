@@ -396,7 +396,7 @@ export default function BookForDancerForm({ trainerId, danceStyles, clubId }: Pr
 
       <Button
         type="submit"
-        className="w-full bg-[#3A3A3A] hover:bg-[#2a2a2a]"
+        className="w-full bg-[#3A3A3A] hover:bg-[#2a2a2a] dark:bg-[#c87de0] dark:hover:bg-[#b56fd0] dark:text-white"
         disabled={loading || !time || !dancer1 || (double && !dancer2)}
       >
         {loading ? "Lagrer..." : "Book time"}

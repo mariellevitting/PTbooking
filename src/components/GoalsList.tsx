@@ -81,7 +81,7 @@ export default function GoalsList({ value, onChange }: Props) {
           type="button"
           onClick={addGoal}
           disabled={!newGoal.trim()}
-          className="w-10 h-10 bg-[#3A3A3A] hover:bg-[#2a2a2a] disabled:opacity-40 text-white rounded-lg flex items-center justify-center transition-colors shrink-0"
+          className="w-10 h-10 bg-[#3A3A3A] hover:bg-[#2a2a2a] dark:bg-[#c87de0] dark:hover:bg-[#b56fd0] dark:text-white disabled:opacity-40 text-white rounded-lg flex items-center justify-center transition-colors shrink-0"
         >
           <Plus size={16} />
         </button>

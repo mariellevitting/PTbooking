@@ -326,7 +326,7 @@ export default function AdminClient({ profiles: initialProfiles, feedback, slots
             <textarea value={msgBody} onChange={e => setMsgBody(e.target.value)} rows={3} placeholder="Meldingstekst…" className="w-full border dark:border-gray-700 rounded-lg px-3 py-2 text-sm bg-white dark:bg-gray-900 text-gray-900 dark:text-white mb-3" />
             <div className="flex items-center gap-3">
               <button onClick={sendBroadcast} disabled={sending || !msgBody.trim() || msgRecipients.length === 0}
-                className="bg-[#3A3A3A] hover:bg-[#2a2a2a] text-white text-sm font-semibold px-4 py-2 rounded-lg disabled:opacity-50">
+                className="bg-[#3A3A3A] hover:bg-[#2a2a2a] dark:bg-[#c87de0] dark:hover:bg-[#b56fd0] text-white text-sm font-semibold px-4 py-2 rounded-lg disabled:opacity-50">
                 {sending ? "Sender…" : `Send til ${msgRecipients.length}`}
               </button>
               {sentInfo && <span className="text-sm text-green-600 dark:text-green-400">{sentInfo}</span>}

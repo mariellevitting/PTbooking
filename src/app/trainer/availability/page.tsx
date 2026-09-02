@@ -351,7 +351,7 @@ export default function AvailabilityPage() {
 
                 <Button
                   type="submit"
-                  className="w-full bg-[#3A3A3A] hover:bg-[#2a2a2a]"
+                  className="w-full bg-[#3A3A3A] hover:bg-[#2a2a2a] dark:bg-[#c87de0] dark:hover:bg-[#b56fd0] dark:text-white"
                   disabled={saving || totalSelected === 0}
                 >
                   {saving ? "Lagrer..." : `Legg ut ${totalSelected > 0 ? totalSelected + " " : ""}time${totalSelected !== 1 ? "r" : ""}`}

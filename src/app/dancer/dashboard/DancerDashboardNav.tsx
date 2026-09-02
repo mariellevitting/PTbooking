@@ -315,7 +315,7 @@ export default function DancerDashboardNav(props: Props) {
               <div className="bg-white dark:bg-gray-900 rounded-xl border dark:border-gray-700 p-6 text-center text-gray-400 dark:text-gray-500">
                 <p className="text-lg font-medium mb-2">Ingen kommende timer</p>
                 <p className="text-sm mb-4">Finn en trener og book din første privattime</p>
-                <Link href="/book"><Button className="bg-[#3A3A3A] hover:bg-[#2a2a2a]">Book privattime</Button></Link>
+                <Link href="/book"><Button className="bg-[#3A3A3A] hover:bg-[#2a2a2a] dark:bg-[#c87de0] dark:hover:bg-[#b56fd0] dark:text-white">Book privattime</Button></Link>
               </div>
             ) : (
               <div className="space-y-6">
