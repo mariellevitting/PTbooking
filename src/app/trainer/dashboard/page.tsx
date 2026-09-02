@@ -28,7 +28,7 @@ export default async function TrainerDashboard() {
   const [{ data: completedSlots }, { data: dancerProfiles }] = await Promise.all([
     supabase
       .from("availability_slots")
-      .select("*, bookings(id, dancer_name, dance_style, status, paid)")
+      .select("*, bookings(id, dancer_name, dance_style, status, paid, booker_id, linked_user_id)")
       .eq("trainer_id", user.id)
       .lt("end_at", new Date().toISOString())
       .order("start_at", { ascending: false }),
@@ -51,6 +51,7 @@ export default async function TrainerDashboard() {
           slots={(slots ?? []) as any}
           completedSlots={(completedSlots ?? []) as any}
           dancerProfiles={(dancerProfiles ?? []) as any}
+          trainerName={profile.name}
         />
       </div>
     </main>

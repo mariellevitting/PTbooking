@@ -14,6 +14,8 @@ interface Booking {
   dance_style: string;
   status: string;
   paid?: boolean;
+  booker_id?: string;
+  linked_user_id?: string | null;
   booker?: { avatar_url?: string } | null;
   linked_profile?: { avatar_url?: string } | null;
 }
@@ -30,7 +32,37 @@ interface CompletedSlot {
   id: string;
   start_at: string;
   end_at: string;
-  bookings?: { id: string; dancer_name: string; dance_style: string; status: string; paid?: boolean }[];
+  bookings?: { id: string; dancer_name: string; dance_style: string; status: string; paid?: boolean; booker_id?: string; linked_user_id?: string | null }[];
+}
+
+function KvitteringReminder({ booking, when, trainerName }: { booking: { id: string; booker_id?: string; linked_user_id?: string | null }; when: string; trainerName: string }) {
+  const [sent, setSent] = useState(false);
+  const [sending, setSending] = useState(false);
+
+  async function send() {
+    if (sending || sent || !booking.booker_id) return;
+    setSending(true);
+    const ids = [booking.booker_id, booking.linked_user_id].filter((x): x is string => !!x);
+    const message = `Husk å sende bilde av kvittering for privattimen ${when} til ${trainerName}.`;
+    await createClient().from("notifications").insert(ids.map(user_id => ({ user_id, message })));
+    await fetch("/api/notify", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ userIds: ids, title: "Kvittering", message }),
+    }).catch(() => {});
+    setSending(false);
+    setSent(true);
+  }
+
+  return (
+    <button
+      onClick={send}
+      disabled={sending || sent}
+      className="text-xs text-[#9b59c4] dark:text-[#E2A9F1] hover:underline disabled:opacity-50 disabled:no-underline"
+    >
+      {sent ? "Påminnelse sendt ✓" : sending ? "Sender…" : "Purr på kvittering"}
+    </button>
+  );
 }
 
 function PaidToggle({ bookingId, initialPaid }: { bookingId: string; initialPaid: boolean }) {
@@ -82,6 +114,7 @@ interface Props {
   slots: Slot[];
   completedSlots: CompletedSlot[];
   dancerProfiles?: unknown[];
+  trainerName: string;
 }
 
 function getWeekNumber(date: Date) {
@@ -92,7 +125,7 @@ function getWeekNumber(date: Date) {
   return Math.ceil(((d.getTime() - yearStart.getTime()) / 86400000 + 1) / 7);
 }
 
-export default function TrainerDashboardTabs({ slots, completedSlots }: Props) {
+export default function TrainerDashboardTabs({ slots, completedSlots, trainerName }: Props) {
   const [tab, setTab] = useState<"upcoming" | "completed">("upcoming");
 
   const completed = completedSlots.filter(slot =>
@@ -171,8 +204,11 @@ export default function TrainerDashboardTabs({ slots, completedSlots }: Props) {
                                         )}
                                         <p className="text-sm font-medium text-[#c87de0]">{booking.dancer_name} · {booking.dance_style}</p>
                                       </div>
-                                      <div className="flex items-center gap-2 mt-1.5">
+                                      <div className="flex flex-wrap items-center gap-x-3 gap-y-1 mt-1.5">
                                         <PaidToggle bookingId={booking.id} initialPaid={!!booking.paid} />
+                                        {!booking.paid && (
+                                          <KvitteringReminder booking={booking} when={`${dayLabel} kl ${formatTime(start)}`} trainerName={trainerName} />
+                                        )}
                                         {end > new Date() && (
                                           <Link href={`/trainer/avbestill/${booking.id}`} prefetch={false} className="text-xs text-red-400 hover:text-red-600">Avbestill</Link>
                                         )}
@@ -239,7 +275,14 @@ export default function TrainerDashboardTabs({ slots, completedSlots }: Props) {
                             <p className="text-sm font-semibold text-gray-600 dark:text-gray-400">{dayLabel.charAt(0).toUpperCase() + dayLabel.slice(1)}</p>
                             <p className="text-sm text-gray-400 dark:text-gray-500">{formatTime(start)}–{formatTime(end)}</p>
                             {booking && <p className="text-sm text-[#E2A9F1] mt-0.5">{booking.dancer_name} · {booking.dance_style}</p>}
-                            {booking && <div className="mt-1.5"><PaidToggle bookingId={booking.id} initialPaid={!!(booking as any).paid} /></div>}
+                            {booking && (
+                              <div className="mt-1.5 flex flex-wrap items-center gap-x-3 gap-y-1">
+                                <PaidToggle bookingId={booking.id} initialPaid={!!(booking as any).paid} />
+                                {!(booking as any).paid && (
+                                  <KvitteringReminder booking={booking as any} when={`${dayLabel} kl ${formatTime(start)}`} trainerName={trainerName} />
+                                )}
+                              </div>
+                            )}
                           </div>
                           <span className="text-xs bg-gray-100 dark:bg-gray-800 text-gray-500 dark:text-gray-400 px-2 py-1 rounded-full">Fullført</span>
                         </div>
