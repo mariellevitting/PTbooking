@@ -6,6 +6,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Target, Trophy, Check, ChevronLeft } from "lucide-react";
 import PointsStepper from "@/components/PointsStepper";
+import PoengForklaring from "@/components/PoengForklaring";
 import CompetitionResultsCard from "@/components/CompetitionResultsCard";
 import GoalsList from "@/components/GoalsList";
 
@@ -192,6 +193,7 @@ export default function ChildDancerCard({ parentId, children, hideResults, hideG
               </div>
             </div>
           ))}
+          <PoengForklaring />
         </CardContent>
       </Card>
 

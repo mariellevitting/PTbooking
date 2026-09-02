@@ -15,6 +15,7 @@ import FeedbackButton from "@/components/FeedbackButton";
 import NMCountdown from "@/components/NMCountdown";
 import CompetitionList from "@/components/CompetitionList";
 import PrivattimeInfo from "@/components/PrivattimeInfo";
+import PoengForklaring from "@/components/PoengForklaring";
 import type { ClubConfig } from "@/lib/club";
 import { createClient } from "@/lib/supabase/client";
 import { formatDate, formatTime, formatDateKey } from "@/lib/dateUtils";
@@ -468,6 +469,7 @@ export default function DancerDashboardNav(props: Props) {
                 </div>
               </div>
             ))}
+            <PoengForklaring />
           </CardContent>
         </Card>
       )}
