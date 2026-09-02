@@ -5,8 +5,8 @@ import { createClient } from "@/lib/supabase/client";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Target, Trophy, Check, ChevronLeft } from "lucide-react";
-import PointsStepper from "@/components/PointsStepper";
 import PoengForklaring from "@/components/PoengForklaring";
+import PoengNivaa from "@/components/PoengNivaa";
 import CompetitionResultsCard from "@/components/CompetitionResultsCard";
 import GoalsList from "@/components/GoalsList";
 
@@ -120,9 +120,7 @@ export default function ChildDancerCard({ parentId, children, hideResults, hideG
   if (loading) return <p className="text-sm text-gray-400 py-4">Laster...</p>;
 
   const neededF = getNeeded(levelF, true);
-  const percentF = neededF > 0 ? Math.round((Math.min(freestyle, neededF) / neededF) * 100) : 100;
   const neededS = getNeeded(levelS, false);
-  const percentS = neededS > 0 ? Math.round((Math.min(slow, neededS) / neededS) * 100) : 100;
 
   return (
     <div className="space-y-4">
@@ -162,35 +160,11 @@ export default function ChildDancerCard({ parentId, children, hideResults, hideG
         </CardHeader>
         <CardContent className="space-y-6">
           {[
-            { label: "Freestyle", points: freestyle, level: levelF, percent: percentF, needed: neededF, onChange: handleFreestyleChange, disc: "freestyle" as const },
-            { label: "Slow", points: slow, level: levelS, percent: percentS, needed: neededS, onChange: handleSlowChange, disc: "slow" as const },
-          ].map(({ label, points, level, percent, needed, onChange, disc }, idx) => (
+            { label: "Freestyle", points: freestyle, level: levelF, needed: neededF, onChange: handleFreestyleChange },
+            { label: "Slow", points: slow, level: levelS, needed: neededS, onChange: handleSlowChange },
+          ].map(({ label, points, level, needed, onChange }, idx) => (
             <div key={label} className={idx > 0 ? "border-t dark:border-gray-700 pt-6" : ""}>
-              <div className="space-y-3">
-                <div className="flex items-center justify-between">
-                  <p className="text-sm font-semibold text-gray-700 dark:text-gray-300">{label}</p>
-                  <span className="text-xs font-bold text-[#E2A9F1] bg-[#f5eeff] dark:bg-[#E2A9F1]/10 px-2 py-0.5 rounded-full">{LEVELS[level]}</span>
-                </div>
-                <div className="space-y-1.5">
-                  <div className="flex justify-between text-[10px] px-0.5">
-                    {LEVELS.map((name, i) => <span key={i} className={i <= level ? "text-[#E2A9F1] font-semibold" : "text-gray-400 dark:text-gray-500"}>{name}</span>)}
-                  </div>
-                  <div className="bg-gray-200 dark:bg-gray-700" style={{ height: "12px", borderRadius: "9999px", overflow: "hidden" }}>
-                    <div className="bg-[#c87de0]" style={{ height: "100%", borderRadius: "9999px", width: `${Math.max(3, (level / 4) * 100 + (percent / 100) * (100 / 4))}%`, transition: "width 0.5s ease" }} />
-                  </div>
-                </div>
-                <PointsStepper value={points} onChange={onChange} />
-                {level >= 3 ? (
-                  <div className="flex items-center gap-2 text-sm text-gray-500 dark:text-gray-400 bg-yellow-50 dark:bg-yellow-900/10 border border-yellow-200 dark:border-yellow-700/30 rounded-lg px-3 py-2">
-                    <Trophy size={14} className="text-yellow-500 dark:text-yellow-600" /> Neste nivå avgjøres av plasseringer på stevner
-                  </div>
-                ) : (
-                  <div className="flex justify-between text-xs text-gray-500 dark:text-gray-400">
-                    <span>{Math.min(points, needed)} / {needed} poeng mot {LEVELS[level + 1]}</span>
-                    <span>{percent}%</span>
-                  </div>
-                )}
-              </div>
+              <PoengNivaa label={label} points={points} level={level} needed={needed} onChange={onChange} />
             </div>
           ))}
           <PoengForklaring />
