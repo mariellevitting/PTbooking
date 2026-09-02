@@ -226,10 +226,13 @@ export default function BookForDancerForm({ trainerId, danceStyles, clubId }: Pr
     if (linkedUser) {
       const tidspunkt = start.toLocaleDateString("nb-NO", { weekday: "long", day: "numeric", month: "long" }) +
         " kl. " + start.toLocaleTimeString("nb-NO", { hour: "2-digit", minute: "2-digit" });
-      await supabase.from("notifications").insert({
-        user_id: linkedUser.id,
-        message: `Treneren har booket en privattime for deg i ${style || "ukjent stil"} – ${tidspunkt}`,
-      });
+      const message = `Treneren har booket en privattime for deg i ${style || "ukjent stil"} – ${tidspunkt}`;
+      await supabase.from("notifications").insert({ user_id: linkedUser.id, message });
+      fetch("/api/notify", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ userIds: [linkedUser.id], title: "Ny privattime", message }),
+      }).catch(() => {});
     }
 
     router.push("/trainer/dashboard");
