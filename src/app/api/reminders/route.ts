@@ -1,10 +1,11 @@
 import { NextResponse } from "next/server";
 import { createClient } from "@supabase/supabase-js";
 
-// Denne ruten kalles én gang om morgenen og sender "du har privattime i dag"-varsler
-// til alle som har booking i dag (både danser/forelder og instruktør)
+const ONESIGNAL_APP_ID = "b9607f9e-6dbe-49b0-8bcc-edf5f6728575";
+
+// Kalles én gang om morgenen (Vercel Cron). Sender "Husk privattime i dag kl …"
+// til danser/forelder, den koblede danseren, og treneren – i appen og som push.
 export async function GET(request: Request) {
-  // Enkel sikkerhet: sjekk at kallet kommer med riktig secret
   const secret = request.headers.get("authorization")?.replace("Bearer ", "");
   if (secret !== process.env.CRON_SECRET) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
@@ -15,82 +16,87 @@ export async function GET(request: Request) {
     process.env.SUPABASE_SERVICE_ROLE_KEY!
   );
 
-  // Finn start og slutt for dagens dato
-  const todayStart = new Date();
-  todayStart.setHours(0, 0, 0, 0);
-  const todayEnd = new Date();
-  todayEnd.setHours(23, 59, 59, 999);
+  // Dagens dato i Oslo-tid (Vercel kjører i UTC)
+  const osloNow = new Date(new Date().toLocaleString("en-US", { timeZone: "Europe/Oslo" }));
+  const y = osloNow.getFullYear();
+  const m = String(osloNow.getMonth() + 1).padStart(2, "0");
+  const d = String(osloNow.getDate()).padStart(2, "0");
+  // Oslo er UTC+1/+2 – ta et romslig vindu og filtrer nøyaktig etterpå
+  const windowStart = new Date(`${y}-${m}-${d}T00:00:00+00:00`);
+  windowStart.setUTCDate(windowStart.getUTCDate() - 1);
+  const windowEnd = new Date(`${y}-${m}-${d}T00:00:00+00:00`);
+  windowEnd.setUTCDate(windowEnd.getUTCDate() + 2);
 
-  // Hent alle bekreftede bookinger i dag med slot- og booker-info
   const { data: bookings, error } = await supabase
     .from("bookings")
-    .select(`
-      id,
-      booker_id,
-      dancer_name,
-      dance_style,
-      availability_slots (
-        start_at,
-        trainer_id
-      )
-    `)
+    .select("id, booker_id, linked_user_id, dancer_name, availability_slots(start_at, trainer_id)")
     .eq("status", "confirmed")
-    .gte("availability_slots.start_at", todayStart.toISOString())
-    .lte("availability_slots.start_at", todayEnd.toISOString());
+    .gte("availability_slots.start_at", windowStart.toISOString())
+    .lte("availability_slots.start_at", windowEnd.toISOString());
 
-  if (error) {
-    return NextResponse.json({ error: error.message }, { status: 500 });
-  }
+  if (error) return NextResponse.json({ error: error.message }, { status: 500 });
 
-  if (!bookings || bookings.length === 0) {
+  const osloDateKey = `${y}-${m}-${d}`;
+  const todays = (bookings ?? []).filter(b => {
+    const slot = Array.isArray(b.availability_slots) ? b.availability_slots[0] : b.availability_slots;
+    if (!slot?.start_at) return false;
+    const key = new Date(slot.start_at).toLocaleDateString("en-CA", { timeZone: "Europe/Oslo" });
+    return key === osloDateKey;
+  });
+
+  if (todays.length === 0) {
     return NextResponse.json({ message: "Ingen timer i dag", sent: 0 });
   }
 
-  // Tell hvor mange timer hver bruker har i dag
-  const bookerCount: Record<string, number> = {};
-  const trainerCount: Record<string, number> = {};
+  // Trenernavn
+  const trainerIds = [...new Set(todays.map(b => {
+    const slot = Array.isArray(b.availability_slots) ? b.availability_slots[0] : b.availability_slots;
+    return slot?.trainer_id;
+  }).filter(Boolean))] as string[];
+  const { data: trainers } = await supabase.from("profiles").select("id, name").in("id", trainerIds);
+  const trainerName: Record<string, string> = {};
+  for (const t of trainers ?? []) trainerName[t.id] = t.name;
 
-  for (const booking of bookings) {
-    const slot = Array.isArray(booking.availability_slots)
-      ? booking.availability_slots[0]
-      : booking.availability_slots;
-    if (!slot) continue;
-
-    bookerCount[booking.booker_id] = (bookerCount[booking.booker_id] || 0) + 1;
-    trainerCount[slot.trainer_id] = (trainerCount[slot.trainer_id] || 0) + 1;
-  }
-
-  // Bygg opp varsler
   const notifications: { user_id: string; message: string }[] = [];
-
-  for (const [userId, count] of Object.entries(bookerCount)) {
-    notifications.push({
-      user_id: userId,
-      message:
-        count === 1
-          ? "Du har 1 privattime i dag 🎉"
-          : `Du har ${count} privattimer i dag 🎉`,
+  for (const b of todays) {
+    const slot = Array.isArray(b.availability_slots) ? b.availability_slots[0] : b.availability_slots;
+    if (!slot) continue;
+    const time = new Date(slot.start_at).toLocaleTimeString("nb-NO", {
+      timeZone: "Europe/Oslo", hour: "2-digit", minute: "2-digit",
     });
+    const tName = trainerName[slot.trainer_id] ?? "treneren";
+
+    notifications.push({ user_id: b.booker_id, message: `Husk privattime i dag kl ${time} med ${tName}` });
+    if (b.linked_user_id && b.linked_user_id !== b.booker_id) {
+      notifications.push({ user_id: b.linked_user_id, message: `Husk privattime i dag kl ${time} med ${tName}` });
+    }
+    if (slot.trainer_id) {
+      notifications.push({ user_id: slot.trainer_id, message: `Husk privattime i dag kl ${time} med ${b.dancer_name}` });
+    }
   }
 
-  for (const [userId, count] of Object.entries(trainerCount)) {
-    notifications.push({
-      user_id: userId,
-      message:
-        count === 1
-          ? "Du har 1 privattime i dag 🎉"
-          : `Du har ${count} privattimer i dag 🎉`,
-    });
+  const { error: insertError } = await supabase.from("notifications").insert(notifications);
+  if (insertError) return NextResponse.json({ error: insertError.message }, { status: 500 });
+
+  // Push
+  const restKey = process.env.ONESIGNAL_REST_API_KEY;
+  let pushed = 0;
+  if (restKey) {
+    await Promise.all(notifications.map(async n => {
+      const res = await fetch("https://onesignal.com/api/v1/notifications", {
+        method: "POST",
+        headers: { "Content-Type": "application/json", Authorization: `Basic ${restKey}` },
+        body: JSON.stringify({
+          app_id: ONESIGNAL_APP_ID,
+          include_aliases: { external_id: [n.user_id] },
+          target_channel: "push",
+          headings: { en: "Privattime i dag", nb: "Privattime i dag" },
+          contents: { en: n.message, nb: n.message },
+        }),
+      }).catch(() => null);
+      if (res?.ok) pushed++;
+    }));
   }
 
-  // Sett inn varsler (ignorer duplikater hvis ruten kjøres to ganger)
-  const { error: insertError } = await supabase
-    .from("notifications")
-    .insert(notifications);
-
-  if (insertError) {
-    return NextResponse.json({ error: insertError.message }, { status: 500 });
-  }
-
-  return NextResponse.json({ message: "Varsler sendt", sent: notifications.length });
+  return NextResponse.json({ message: "Varsler sendt", sent: notifications.length, pushed });
 }
