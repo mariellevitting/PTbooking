@@ -10,7 +10,7 @@ interface Slot {
   id: string;
   start_at: string;
   end_at: string;
-  bookings: { id: string; dancer_name: string; dance_style: string; status: string }[] | null;
+  bookings: { id: string; dancer_name: string; dance_style: string; status: string; paid?: boolean }[] | null;
 }
 
 interface Profile {
@@ -83,7 +83,7 @@ export default function DancerSearch({ slots, profiles }: { slots: Slot[]; profi
               <p className="text-sm text-gray-400 dark:text-gray-500">Ingen treff på «{query.trim()}»</p>
             ) : (
               <>
-                <div className="flex items-center justify-between mb-3">
+                <div className="flex items-center justify-between mb-1">
                   <p className="text-sm font-semibold text-gray-800 dark:text-gray-100">
                     {matches.length} {matches.length === 1 ? "privattime" : "privattimer"} med {matchedDancerName}
                   </p>
@@ -94,6 +94,10 @@ export default function DancerSearch({ slots, profiles }: { slots: Slot[]; profi
                     </Link>
                   )}
                 </div>
+                {(() => {
+                  const paidCount = matches.filter(s => s.bookings?.some(b => b.status === "confirmed" && b.paid)).length;
+                  return <p className="text-xs text-gray-400 dark:text-gray-500 mb-3">{paidCount} av {matches.length} betalt</p>;
+                })()}
                 <div className="space-y-2">
                   {matches.map(slot => {
                     const booking = slot.bookings?.find(b => b.status === "confirmed");
@@ -101,11 +105,14 @@ export default function DancerSearch({ slots, profiles }: { slots: Slot[]; profi
                     const end = new Date(slot.end_at);
                     const dayLabel = formatDate(start, { weekday: "long", day: "numeric", month: "long", year: "numeric" });
                     return (
-                      <div key={slot.id} className="flex justify-between items-center text-sm border-t dark:border-gray-700 pt-2">
+                      <div key={slot.id} className="flex justify-between items-center gap-2 text-sm border-t dark:border-gray-700 pt-2">
                         <div>
                           <p className="text-gray-700 dark:text-gray-300 capitalize">{dayLabel}</p>
                           <p className="text-gray-400 dark:text-gray-500">{formatTime(start)}–{formatTime(end)} · {booking?.dance_style}</p>
                         </div>
+                        {booking?.paid
+                          ? <span className="text-xs text-green-700 dark:text-green-300 shrink-0">Betalt ✓</span>
+                          : <span className="text-xs text-amber-700 dark:text-amber-400 shrink-0">Ikke betalt</span>}
                       </div>
                     );
                   })}

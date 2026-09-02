@@ -21,7 +21,7 @@ export default async function TrainerHistorikkPage() {
   const [{ data: completedSlots }, { data: dancerProfiles }] = await Promise.all([
     supabase
       .from("availability_slots")
-      .select("*, bookings(id, dancer_name, dance_style, status)")
+      .select("*, bookings(id, dancer_name, dance_style, status, paid)")
       .eq("trainer_id", user.id)
       .lt("end_at", new Date().toISOString())
       .order("start_at", { ascending: false }),
@@ -100,7 +100,12 @@ export default async function TrainerHistorikkPage() {
                               </p>
                             )}
                           </div>
-                          <span className="text-xs bg-gray-100 dark:bg-gray-800 text-gray-500 dark:text-gray-400 px-2 py-1 rounded-full">Fullført</span>
+                          <div className="flex flex-col items-end gap-1 shrink-0">
+                            <span className="text-xs bg-gray-100 dark:bg-gray-800 text-gray-500 dark:text-gray-400 px-2 py-1 rounded-full">Fullført</span>
+                            {booking && ((booking as any).paid
+                              ? <span className="text-xs bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-300 px-2 py-1 rounded-full">Betalt ✓</span>
+                              : <span className="text-xs bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-300 px-2 py-1 rounded-full">Ikke betalt</span>)}
+                          </div>
                         </div>
                       </div>
                     );
