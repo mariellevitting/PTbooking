@@ -473,7 +473,12 @@ export default function ParentDashboardNav({ userName, avatarUrl, notifications,
                                 <p className="text-xs text-gray-400 dark:text-gray-500 mt-0.5">Trener: {(booking.availability_slots as any).profiles.name}</p>
                               )}
                             </div>
-                            <span className="text-xs bg-gray-100 dark:bg-gray-800 text-gray-500 dark:text-gray-400 px-2 py-1 rounded-full">Fullført</span>
+                            <div className="flex flex-col items-end gap-1 shrink-0">
+                              <span className="text-xs bg-gray-100 dark:bg-gray-800 text-gray-500 dark:text-gray-400 px-2 py-1 rounded-full">Fullført</span>
+                              {(booking as any).paid
+                                ? <span className="text-xs bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-300 px-2 py-1 rounded-full">Betalt ✓</span>
+                                : <span className="text-xs bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-300 px-2 py-1 rounded-full">Ikke betalt</span>}
+                            </div>
                           </div>
                         </div>
                       );
