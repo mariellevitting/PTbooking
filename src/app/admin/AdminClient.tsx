@@ -176,6 +176,40 @@ export default function AdminClient({ profiles: initialProfiles, feedback, slots
   const [profiles, setProfiles] = useState(initialProfiles);
   const [deletingId, setDeletingId] = useState<string | null>(null);
 
+  const [msgRole, setMsgRole] = useState<"all" | "trainer" | "dancer" | "parent">("all");
+  const [msgClub, setMsgClub] = useState<string>("all");
+  const [msgTitle, setMsgTitle] = useState("");
+  const [msgBody, setMsgBody] = useState("");
+  const [sending, setSending] = useState(false);
+  const [sentInfo, setSentInfo] = useState("");
+
+  const msgRecipients = profiles.filter(p =>
+    (msgRole === "all" || p.role === msgRole) &&
+    (msgClub === "all" || p.club_id === msgClub)
+  );
+
+  async function sendBroadcast() {
+    if (!msgBody.trim() || sending) return;
+    const ids = msgRecipients.map(p => p.id);
+    if (ids.length === 0) return;
+    if (!confirm(`Sende melding til ${ids.length} bruker(e)?`)) return;
+    setSending(true);
+    setSentInfo("");
+    const { createClient } = await import("@/lib/supabase/client");
+    const supabase = createClient();
+    const message = msgBody.trim();
+    await supabase.from("notifications").insert(ids.map(user_id => ({ user_id, message })));
+    await fetch("/api/notify", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ userIds: ids, title: msgTitle.trim() || "Danceitude", message }),
+    }).catch(() => {});
+    setSending(false);
+    setSentInfo(`Sendt til ${ids.length} bruker(e)`);
+    setMsgTitle("");
+    setMsgBody("");
+  }
+
   async function handleDeleteUser(id: string, name: string) {
     if (!confirm(`Slette «${name}» for godt? Bookinger, mål og resultater forsvinner også.`)) return;
     setDeletingId(id);
@@ -270,6 +304,35 @@ export default function AdminClient({ profiles: initialProfiles, feedback, slots
             })}
           </div>
         </div>}
+
+        {/* SEND MELDING — kun admin */}
+        {isAdmin && (
+          <div className="bg-white dark:bg-gray-900 rounded-2xl border dark:border-gray-700 p-5">
+            <h2 className="font-bold text-gray-900 dark:text-white mb-1">Send melding</h2>
+            <p className="text-xs text-gray-400 mb-4">Varsel i appen + push til valgte brukere</p>
+            <div className="grid grid-cols-2 gap-3 mb-3">
+              <select value={msgRole} onChange={e => setMsgRole(e.target.value as any)} className="border dark:border-gray-700 rounded-lg px-3 py-2 text-sm bg-white dark:bg-gray-900 text-gray-900 dark:text-white">
+                <option value="all">Alle roller</option>
+                <option value="trainer">Trenere</option>
+                <option value="dancer">Dansere</option>
+                <option value="parent">Foreldre</option>
+              </select>
+              <select value={msgClub} onChange={e => setMsgClub(e.target.value)} className="border dark:border-gray-700 rounded-lg px-3 py-2 text-sm bg-white dark:bg-gray-900 text-gray-900 dark:text-white">
+                <option value="all">Alle klubber</option>
+                {clubs.map(c => <option key={c.id} value={c.id}>{c.name}</option>)}
+              </select>
+            </div>
+            <input value={msgTitle} onChange={e => setMsgTitle(e.target.value)} placeholder="Tittel (valgfritt)" className="w-full border dark:border-gray-700 rounded-lg px-3 py-2 text-sm bg-white dark:bg-gray-900 text-gray-900 dark:text-white mb-2" />
+            <textarea value={msgBody} onChange={e => setMsgBody(e.target.value)} rows={3} placeholder="Meldingstekst…" className="w-full border dark:border-gray-700 rounded-lg px-3 py-2 text-sm bg-white dark:bg-gray-900 text-gray-900 dark:text-white mb-3" />
+            <div className="flex items-center gap-3">
+              <button onClick={sendBroadcast} disabled={sending || !msgBody.trim() || msgRecipients.length === 0}
+                className="bg-[#3A3A3A] hover:bg-[#2a2a2a] text-white text-sm font-semibold px-4 py-2 rounded-lg disabled:opacity-50">
+                {sending ? "Sender…" : `Send til ${msgRecipients.length}`}
+              </button>
+              {sentInfo && <span className="text-sm text-green-600 dark:text-green-400">{sentInfo}</span>}
+            </div>
+          </div>
+        )}
 
         <div className="bg-white dark:bg-gray-900 rounded-2xl border dark:border-gray-700 p-5">
           <h2 className="font-bold text-gray-900 dark:text-white mb-4">Treneroversikt</h2>
