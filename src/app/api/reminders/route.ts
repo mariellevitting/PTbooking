@@ -75,14 +75,27 @@ export async function GET(request: Request) {
     }
   }
 
-  const { error: insertError } = await supabase.from("notifications").insert(notifications);
+  // Unngå duplikater hvis ruten kjøres flere ganger samme dag
+  const { data: existing } = await supabase
+    .from("notifications")
+    .select("user_id, message")
+    .gte("created_at", windowStart.toISOString())
+    .ilike("message", "Husk privattime i dag%");
+  const seen = new Set((existing ?? []).map(n => `${n.user_id}|${n.message}`));
+  const fresh = notifications.filter(n => !seen.has(`${n.user_id}|${n.message}`));
+
+  if (fresh.length === 0) {
+    return NextResponse.json({ message: "Allerede sendt", sent: 0 });
+  }
+
+  const { error: insertError } = await supabase.from("notifications").insert(fresh);
   if (insertError) return NextResponse.json({ error: insertError.message }, { status: 500 });
 
   // Push
   const restKey = process.env.ONESIGNAL_REST_API_KEY;
   let pushed = 0;
   if (restKey) {
-    await Promise.all(notifications.map(async n => {
+    await Promise.all(fresh.map(async n => {
       const res = await fetch("https://onesignal.com/api/v1/notifications", {
         method: "POST",
         headers: { "Content-Type": "application/json", Authorization: `Basic ${restKey}` },
@@ -98,5 +111,5 @@ export async function GET(request: Request) {
     }));
   }
 
-  return NextResponse.json({ message: "Varsler sendt", sent: notifications.length, pushed });
+  return NextResponse.json({ message: "Varsler sendt", sent: fresh.length, pushed });
 }
