@@ -278,7 +278,11 @@ export default function TrainerDashboardTabs({ slots, completedSlots, trainerNam
 
         return (
           <div className="space-y-6">
-            <p className="text-xs text-[#E2A9F1]">{completed.length} gjennomførte privattimer totalt</p>
+            <p className="text-xs text-[#E2A9F1]">
+              {onlyUnpaid
+                ? `${completed.length} time${completed.length === 1 ? "" : "r"} mangler betaling`
+                : `${completed.length} gjennomførte privattimer totalt`}
+            </p>
             {Object.entries(monthGroups).map(([month, monthSlots]) => (
               <div key={month}>
                 <p className="text-xs font-semibold text-gray-400 dark:text-gray-500 uppercase tracking-wider mb-2">{month}</p>
