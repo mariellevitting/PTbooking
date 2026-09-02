@@ -248,16 +248,20 @@ export default function TrainerDashboardTabs({ slots, completedSlots, trainerNam
         return (
           <>
             {completedAll.length > 0 && (
-              <button
-                onClick={() => setOnlyUnpaid(v => !v)}
-                className={`mb-3 text-xs font-semibold px-3 py-1.5 rounded-full border transition-colors ${
-                  onlyUnpaid
-                    ? "bg-amber-100 text-amber-800 border-amber-200 dark:bg-amber-900/30 dark:text-amber-300 dark:border-amber-800"
-                    : "bg-white text-gray-500 border-gray-200 dark:bg-gray-900 dark:text-gray-400 dark:border-gray-700"
-                }`}
-              >
-                {onlyUnpaid ? "Viser kun ubetalte" : `Vis kun ubetalte${unpaidCount ? ` (${unpaidCount})` : ""}`}
-              </button>
+              <div className="flex gap-1 bg-gray-100 dark:bg-gray-800 rounded-xl p-1 mb-3">
+                <button
+                  onClick={() => setOnlyUnpaid(false)}
+                  className={`flex-1 px-2 py-1.5 rounded-lg text-sm font-medium transition-colors ${!onlyUnpaid ? "bg-white dark:bg-gray-900 text-[#c87de0] shadow-sm" : "text-gray-500 dark:text-gray-400"}`}
+                >
+                  Alle ({completedAll.length})
+                </button>
+                <button
+                  onClick={() => setOnlyUnpaid(true)}
+                  className={`flex-1 px-2 py-1.5 rounded-lg text-sm font-medium transition-colors ${onlyUnpaid ? "bg-white dark:bg-gray-900 text-amber-700 dark:text-amber-300 shadow-sm" : "text-gray-500 dark:text-gray-400"}`}
+                >
+                  Mangler betaling ({unpaidCount})
+                </button>
+              </div>
             )}
             {(() => {
         if (completed.length === 0) {
