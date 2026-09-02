@@ -66,8 +66,11 @@ export async function GET(request: Request) {
     });
     const tName = trainerName[slot.trainer_id] ?? "treneren";
 
-    notifications.push({ user_id: b.booker_id, message: `Husk privattime i dag kl ${time} med ${tName}` });
-    if (b.linked_user_id && b.linked_user_id !== b.booker_id) {
+    // booker_id kan være treneren selv (trener booket for danser) – hopp over
+    if (b.booker_id && b.booker_id !== slot.trainer_id) {
+      notifications.push({ user_id: b.booker_id, message: `Husk privattime i dag kl ${time} med ${tName}` });
+    }
+    if (b.linked_user_id && b.linked_user_id !== b.booker_id && b.linked_user_id !== slot.trainer_id) {
       notifications.push({ user_id: b.linked_user_id, message: `Husk privattime i dag kl ${time} med ${tName}` });
     }
     if (slot.trainer_id) {

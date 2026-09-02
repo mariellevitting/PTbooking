@@ -35,14 +35,17 @@ interface CompletedSlot {
   bookings?: { id: string; dancer_name: string; dance_style: string; status: string; paid?: boolean; booker_id?: string; linked_user_id?: string | null }[];
 }
 
-function KvitteringReminder({ booking, when, trainerName }: { booking: { id: string; booker_id?: string; linked_user_id?: string | null }; when: string; trainerName: string }) {
+function KvitteringReminder({ booking, when, trainerName, trainerId }: { booking: { id: string; booker_id?: string; linked_user_id?: string | null }; when: string; trainerName: string; trainerId: string }) {
   const [sent, setSent] = useState(false);
   const [sending, setSending] = useState(false);
 
+  // Ikke send til treneren selv (skjer når treneren booket for danseren)
+  const ids = [...new Set([booking.booker_id, booking.linked_user_id])]
+    .filter((x): x is string => !!x && x !== trainerId);
+
   async function send() {
-    if (sending || sent || !booking.booker_id) return;
+    if (sending || sent || ids.length === 0) return;
     setSending(true);
-    const ids = [booking.booker_id, booking.linked_user_id].filter((x): x is string => !!x);
     const message = `Husk å sende bilde av kvittering for privattimen ${when} til ${trainerName}.`;
     await createClient().from("notifications").insert(ids.map(user_id => ({ user_id, message })));
     await fetch("/api/notify", {
@@ -53,6 +56,8 @@ function KvitteringReminder({ booking, when, trainerName }: { booking: { id: str
     setSending(false);
     setSent(true);
   }
+
+  if (ids.length === 0) return null;
 
   return (
     <button
@@ -115,6 +120,7 @@ interface Props {
   completedSlots: CompletedSlot[];
   dancerProfiles?: unknown[];
   trainerName: string;
+  trainerId: string;
 }
 
 function getWeekNumber(date: Date) {
@@ -125,7 +131,7 @@ function getWeekNumber(date: Date) {
   return Math.ceil(((d.getTime() - yearStart.getTime()) / 86400000 + 1) / 7);
 }
 
-export default function TrainerDashboardTabs({ slots, completedSlots, trainerName }: Props) {
+export default function TrainerDashboardTabs({ slots, completedSlots, trainerName, trainerId }: Props) {
   const [tab, setTab] = useState<"upcoming" | "completed">("upcoming");
   const [onlyUnpaid, setOnlyUnpaid] = useState(false);
 
@@ -212,7 +218,7 @@ export default function TrainerDashboardTabs({ slots, completedSlots, trainerNam
                                       <div className="flex flex-wrap items-center gap-x-3 gap-y-1 mt-1.5">
                                         <PaidToggle bookingId={booking.id} initialPaid={!!booking.paid} />
                                         {!booking.paid && (
-                                          <KvitteringReminder booking={booking} when={`${dayLabel} kl ${formatTime(start)}`} trainerName={trainerName} />
+                                          <KvitteringReminder booking={booking} when={`${dayLabel} kl ${formatTime(start)}`} trainerName={trainerName} trainerId={trainerId} />
                                         )}
                                         {end > new Date() && (
                                           <Link href={`/trainer/avbestill/${booking.id}`} prefetch={false} className="text-xs text-red-400 hover:text-red-600">Avbestill</Link>
@@ -307,7 +313,7 @@ export default function TrainerDashboardTabs({ slots, completedSlots, trainerNam
                               <div className="mt-1.5 flex flex-wrap items-center gap-x-3 gap-y-1">
                                 <PaidToggle bookingId={booking.id} initialPaid={!!(booking as any).paid} />
                                 {!(booking as any).paid && (
-                                  <KvitteringReminder booking={booking as any} when={`${dayLabel} kl ${formatTime(start)}`} trainerName={trainerName} />
+                                  <KvitteringReminder booking={booking as any} when={`${dayLabel} kl ${formatTime(start)}`} trainerName={trainerName} trainerId={trainerId} />
                                 )}
                               </div>
                             )}

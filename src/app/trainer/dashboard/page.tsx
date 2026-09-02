@@ -52,6 +52,7 @@ export default async function TrainerDashboard() {
           completedSlots={(completedSlots ?? []) as any}
           dancerProfiles={(dancerProfiles ?? []) as any}
           trainerName={profile.name}
+          trainerId={user.id}
         />
       </div>
     </main>
