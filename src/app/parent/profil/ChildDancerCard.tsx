@@ -15,7 +15,7 @@ const LEVELS = ["Rekrutt", "Litt øvet", "Mester", "Champ", "Elite"];
 function getNeeded(level: number, isFreestyle: boolean) {
   if (level === 0) return 8;
   if (level === 1) return 14;
-  if (level === 2) return isFreestyle ? 21 : 28;
+  if (level === 2) return 28;
   return 0;
 }
 

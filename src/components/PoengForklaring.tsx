@@ -40,7 +40,7 @@ export default function PoengForklaring() {
             <ul className="space-y-0.5">
               <li>Rekrutt → Litt øvet: <strong>8 poeng</strong></li>
               <li>Litt øvet → Mester: <strong>14 poeng</strong></li>
-              <li>Mester → Champ: <strong>21 poeng</strong> (freestyle) / <strong>28 poeng</strong> (slow)</li>
+              <li>Mester → Champ: <strong>28 poeng</strong></li>
               <li>Champ og Elite: avgjøres av <strong>ranking</strong>, ikke poeng</li>
             </ul>
           </div>
