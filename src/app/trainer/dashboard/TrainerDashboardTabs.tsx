@@ -127,10 +127,15 @@ function getWeekNumber(date: Date) {
 
 export default function TrainerDashboardTabs({ slots, completedSlots, trainerName }: Props) {
   const [tab, setTab] = useState<"upcoming" | "completed">("upcoming");
+  const [onlyUnpaid, setOnlyUnpaid] = useState(false);
 
-  const completed = completedSlots.filter(slot =>
+  const completedAll = completedSlots.filter(slot =>
     slot.bookings?.some(b => b.status === "confirmed")
   );
+  const unpaidCount = completedAll.filter(s => s.bookings?.some(b => b.status === "confirmed" && !b.paid)).length;
+  const completed = onlyUnpaid
+    ? completedAll.filter(s => s.bookings?.some(b => b.status === "confirmed" && !b.paid))
+    : completedAll;
 
   return (
     <div>
@@ -240,10 +245,25 @@ export default function TrainerDashboardTabs({ slots, completedSlots, trainerNam
 
       {/* Gjennomførte timer */}
       {tab === "completed" && (() => {
+        return (
+          <>
+            {completedAll.length > 0 && (
+              <button
+                onClick={() => setOnlyUnpaid(v => !v)}
+                className={`mb-3 text-xs font-semibold px-3 py-1.5 rounded-full border transition-colors ${
+                  onlyUnpaid
+                    ? "bg-amber-100 text-amber-800 border-amber-200 dark:bg-amber-900/30 dark:text-amber-300 dark:border-amber-800"
+                    : "bg-white text-gray-500 border-gray-200 dark:bg-gray-900 dark:text-gray-400 dark:border-gray-700"
+                }`}
+              >
+                {onlyUnpaid ? "Viser kun ubetalte" : `Vis kun ubetalte${unpaidCount ? ` (${unpaidCount})` : ""}`}
+              </button>
+            )}
+            {(() => {
         if (completed.length === 0) {
           return (
             <div className="bg-white dark:bg-gray-900 rounded-xl border dark:border-gray-700 p-5 text-center text-gray-400 dark:text-gray-500">
-              <p className="font-medium">Ingen gjennomførte timer ennå</p>
+              <p className="font-medium">{onlyUnpaid ? "Alt er betalt 🎉" : "Ingen gjennomførte timer ennå"}</p>
             </div>
           );
         }
@@ -293,6 +313,9 @@ export default function TrainerDashboardTabs({ slots, completedSlots, trainerNam
               </div>
             ))}
           </div>
+        );
+            })()}
+          </>
         );
       })()}
     </div>
