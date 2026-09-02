@@ -27,6 +27,7 @@ export default async function TrainerBookPage({ params }: { params: Promise<{ tr
 
   if (!profile || !["dancer", "parent"].includes(profile.role)) redirect("/dashboard");
   if (!trainer) redirect("/book");
+  if (trainer.club_id !== profile.club_id) redirect("/book");
 
   const club = await getClubById(supabase, profile.club_id);
 
