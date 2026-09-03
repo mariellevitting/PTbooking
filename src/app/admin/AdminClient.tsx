@@ -176,6 +176,31 @@ export default function AdminClient({ profiles: initialProfiles, feedback, slots
   const [profiles, setProfiles] = useState(initialProfiles);
   const [deletingId, setDeletingId] = useState<string | null>(null);
 
+  const [newClubOpen, setNewClubOpen] = useState(false);
+  const [ncName, setNcName] = useState("");
+  const [ncShort, setNcShort] = useState("");
+  const [ncCode, setNcCode] = useState("");
+  const [ncSaving, setNcSaving] = useState(false);
+  const [ncError, setNcError] = useState("");
+
+  async function createClub() {
+    if (ncSaving || !ncName.trim() || !ncCode.trim()) return;
+    setNcSaving(true);
+    setNcError("");
+    const res = await fetch("/api/admin/create-club", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ name: ncName, shortName: ncShort, inviteCode: ncCode }),
+    });
+    const body = await res.json().catch(() => ({ error: "Ukjent feil" }));
+    setNcSaving(false);
+    if (res.ok && body.id) {
+      window.location.href = `/admin/klubb/${body.id}`;
+    } else {
+      setNcError(body.error ?? "Kunne ikke opprette");
+    }
+  }
+
   const [msgRole, setMsgRole] = useState<"all" | "trainer" | "dancer" | "parent">("all");
   const [msgClub, setMsgClub] = useState<string>("all");
   const [msgTitle, setMsgTitle] = useState("");
@@ -258,7 +283,27 @@ export default function AdminClient({ profiles: initialProfiles, feedback, slots
 
         {/* KLUBBER — kun synlig for admin */}
         {isAdmin && <div className="bg-white dark:bg-gray-900 rounded-2xl border dark:border-gray-700 p-5">
-          <h2 className="font-bold text-gray-900 dark:text-white mb-4">Klubber</h2>
+          <div className="flex items-center justify-between mb-4">
+            <h2 className="font-bold text-gray-900 dark:text-white">Klubber</h2>
+            <button onClick={() => setNewClubOpen(o => !o)} className="text-xs font-semibold text-[#9b59c4] dark:text-[#E2A9F1] hover:underline">
+              {newClubOpen ? "Avbryt" : "+ Ny klubb"}
+            </button>
+          </div>
+
+          {newClubOpen && (
+            <div className="border dark:border-gray-700 rounded-xl p-4 mb-3 space-y-2 bg-[#f5eeff] dark:bg-[#E2A9F1]/5">
+              <input value={ncName} onChange={e => setNcName(e.target.value)} placeholder="Klubbnavn (f.eks. Victory Dance)" className="w-full border dark:border-gray-700 rounded-lg px-3 py-2 text-sm bg-white dark:bg-gray-900 text-gray-900 dark:text-white" />
+              <input value={ncShort} onChange={e => setNcShort(e.target.value)} placeholder="Kortnavn (valgfritt)" className="w-full border dark:border-gray-700 rounded-lg px-3 py-2 text-sm bg-white dark:bg-gray-900 text-gray-900 dark:text-white" />
+              <input value={ncCode} onChange={e => setNcCode(e.target.value.toUpperCase())} placeholder="Klubbkode (f.eks. VICTORY)" className="w-full border dark:border-gray-700 rounded-lg px-3 py-2 text-sm bg-white dark:bg-gray-900 text-gray-900 dark:text-white font-mono" />
+              {ncError && <p className="text-xs text-red-500">{ncError}</p>}
+              <button onClick={createClub} disabled={ncSaving || !ncName.trim() || !ncCode.trim()}
+                className="bg-[#3A3A3A] hover:bg-[#2a2a2a] dark:bg-[#c87de0] dark:hover:bg-[#b56fd0] dark:text-white text-white text-sm font-semibold px-4 py-2 rounded-lg disabled:opacity-50">
+                {ncSaving ? "Oppretter…" : "Opprett klubb"}
+              </button>
+              <p className="text-xs text-gray-400">Resten (priser, betaling, koder, dansestiler) fyller du inn på «Rediger innstillinger» etterpå.</p>
+            </div>
+          )}
+
           <div className="space-y-3">
             {clubs.map(club => {
               const members = profiles.filter(p => p.club_id === club.id);
