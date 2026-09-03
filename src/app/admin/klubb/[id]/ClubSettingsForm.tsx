@@ -155,21 +155,24 @@ export default function ClubSettingsForm({ club }: { club: Club }) {
       </Section>
 
       <Section title="Registreringskoder">
+        <p className="text-xs text-gray-400 dark:text-gray-500 -mt-2">
+          Trener-, danser- og foreldrekoden er det medlemmene skriver inn ved registrering. Del dem kun internt i klubben.
+        </p>
         <div>
-          <Label hint="Gir lenken /register/KODE">Klubbkode</Label>
-          <Input value={form.invite_code} onChange={e => set("invite_code", e.target.value.toUpperCase())} />
-        </div>
-        <div>
-          <Label hint="Valgfritt – egen kode per rolle">Trenerkode</Label>
-          <Input value={form.trainer_code} onChange={e => set("trainer_code", e.target.value)} />
+          <Label>Trenerkode</Label>
+          <Input value={form.trainer_code} onChange={e => set("trainer_code", e.target.value)} placeholder="F.eks. VICTORY-TRENER2026!" />
         </div>
         <div>
           <Label>Danserkode</Label>
-          <Input value={form.dancer_code} onChange={e => set("dancer_code", e.target.value)} />
+          <Input value={form.dancer_code} onChange={e => set("dancer_code", e.target.value)} placeholder="F.eks. VICTORY-DANSER2026!" />
         </div>
         <div>
           <Label>Foreldrekode</Label>
-          <Input value={form.parent_code} onChange={e => set("parent_code", e.target.value)} />
+          <Input value={form.parent_code} onChange={e => set("parent_code", e.target.value)} placeholder="F.eks. VICTORY-FORELDER2026!" />
+        </div>
+        <div>
+          <Label hint="Bare for lenkeadressen /register/DENNE – ikke noe medlemmene skriver inn">Lenke-kode</Label>
+          <Input value={form.invite_code} onChange={e => set("invite_code", e.target.value.toUpperCase())} />
         </div>
       </Section>
 

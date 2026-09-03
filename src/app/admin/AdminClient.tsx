@@ -179,18 +179,17 @@ export default function AdminClient({ profiles: initialProfiles, feedback, slots
   const [newClubOpen, setNewClubOpen] = useState(false);
   const [ncName, setNcName] = useState("");
   const [ncShort, setNcShort] = useState("");
-  const [ncCode, setNcCode] = useState("");
   const [ncSaving, setNcSaving] = useState(false);
   const [ncError, setNcError] = useState("");
 
   async function createClub() {
-    if (ncSaving || !ncName.trim() || !ncCode.trim()) return;
+    if (ncSaving || !ncName.trim()) return;
     setNcSaving(true);
     setNcError("");
     const res = await fetch("/api/admin/create-club", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ name: ncName, shortName: ncShort, inviteCode: ncCode }),
+      body: JSON.stringify({ name: ncName, shortName: ncShort }),
     });
     const body = await res.json().catch(() => ({ error: "Ukjent feil" }));
     setNcSaving(false);
@@ -294,13 +293,12 @@ export default function AdminClient({ profiles: initialProfiles, feedback, slots
             <div className="border dark:border-gray-700 rounded-xl p-4 mb-3 space-y-2 bg-[#f5eeff] dark:bg-[#E2A9F1]/5">
               <input value={ncName} onChange={e => setNcName(e.target.value)} placeholder="Klubbnavn (f.eks. Victory Dance)" className="w-full border dark:border-gray-700 rounded-lg px-3 py-2 text-sm bg-white dark:bg-gray-900 text-gray-900 dark:text-white" />
               <input value={ncShort} onChange={e => setNcShort(e.target.value)} placeholder="Kortnavn (valgfritt)" className="w-full border dark:border-gray-700 rounded-lg px-3 py-2 text-sm bg-white dark:bg-gray-900 text-gray-900 dark:text-white" />
-              <input value={ncCode} onChange={e => setNcCode(e.target.value.toUpperCase())} placeholder="Klubbkode (f.eks. VICTORY)" className="w-full border dark:border-gray-700 rounded-lg px-3 py-2 text-sm bg-white dark:bg-gray-900 text-gray-900 dark:text-white font-mono" />
               {ncError && <p className="text-xs text-red-500">{ncError}</p>}
-              <button onClick={createClub} disabled={ncSaving || !ncName.trim() || !ncCode.trim()}
+              <button onClick={createClub} disabled={ncSaving || !ncName.trim()}
                 className="bg-[#3A3A3A] hover:bg-[#2a2a2a] dark:bg-[#c87de0] dark:hover:bg-[#b56fd0] dark:text-white text-white text-sm font-semibold px-4 py-2 rounded-lg disabled:opacity-50">
                 {ncSaving ? "Oppretter…" : "Opprett klubb"}
               </button>
-              <p className="text-xs text-gray-400">Resten (priser, betaling, koder, dansestiler) fyller du inn på «Rediger innstillinger» etterpå.</p>
+              <p className="text-xs text-gray-400">Registreringskodene (trener/danser/forelder), priser, betaling og dansestiler fyller du inn på «Rediger innstillinger» etterpå.</p>
             </div>
           )}
 

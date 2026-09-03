@@ -11,13 +11,10 @@ export async function POST(req: Request) {
     return NextResponse.json({ error: "Ikke autorisert" }, { status: 403 });
   }
 
-  const { name, shortName, inviteCode } = await req.json();
-  const code = String(inviteCode ?? "").trim().toUpperCase();
-  if (!name || !code) {
-    return NextResponse.json({ error: "Mangler navn eller klubbkode" }, { status: 400 });
-  }
-  if (!/^[A-Z0-9-]+$/.test(code)) {
-    return NextResponse.json({ error: "Klubbkode kan bare inneholde bokstaver, tall og bindestrek" }, { status: 400 });
+  const { name, shortName } = await req.json();
+  const cleanName = String(name ?? "").trim();
+  if (!cleanName) {
+    return NextResponse.json({ error: "Mangler klubbnavn" }, { status: 400 });
   }
 
   const serviceKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
@@ -30,16 +27,20 @@ export async function POST(req: Request) {
     auth: { autoRefreshToken: false, persistSession: false },
   });
 
+  // Lag en unik lenke-kode automatisk fra navnet (kan endres senere)
+  const base = cleanName.toUpperCase().replace(/[^A-Z0-9]+/g, "-").replace(/^-|-$/g, "") || "KLUBB";
+  const { data: existing } = await admin.from("clubs").select("invite_code");
+  const taken = new Set((existing ?? []).map(c => c.invite_code));
+  let code = base;
+  for (let i = 2; taken.has(code); i++) code = `${base}-${i}`;
+
   const { data, error } = await admin
     .from("clubs")
-    .insert({ name: String(name).trim(), short_name: shortName?.trim() || null, invite_code: code })
+    .insert({ name: cleanName, short_name: shortName?.trim() || null, invite_code: code })
     .select("id")
     .single();
 
-  if (error) {
-    const msg = error.code === "23505" ? "Klubbkoden er allerede i bruk" : error.message;
-    return NextResponse.json({ error: msg }, { status: 400 });
-  }
+  if (error) return NextResponse.json({ error: error.message }, { status: 400 });
 
   return NextResponse.json({ ok: true, id: data.id });
 }
