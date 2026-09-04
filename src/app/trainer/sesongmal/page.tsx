@@ -14,6 +14,8 @@ export default async function TrainerSesongmalPage() {
 
   const clubId = profile.club_id ?? "";
 
+  const POINT_COLS = "points_freestyle, points_slow, level_freestyle, level_slow";
+
   // Hent foreldre fra samme klubb
   const { data: clubParents } = await supabase
     .from("profiles")
@@ -25,47 +27,56 @@ export default async function TrainerSesongmalPage() {
   const parentMap: Record<string, { name: string; avatar_url: string | null }> = {};
   for (const p of clubParents ?? []) parentMap[p.id] = { name: p.name, avatar_url: p.avatar_url };
 
-  const [{ data: dancerProfiles }, { data: childrenWithGoals }] = await Promise.all([
+  const [{ data: dancerProfiles }, { data: allChildren }] = await Promise.all([
     supabase
       .from("profiles")
-      .select("id, name, avatar_url, season_goals, role")
+      .select(`id, name, avatar_url, season_goals, goals_visible_to_trainer, role, ${POINT_COLS}`)
       .in("role", ["dancer", "parent"])
       .eq("club_id", clubId)
-      .eq("goals_visible_to_trainer", true)
-      .not("season_goals", "is", null)
-      .neq("season_goals", "")
       .order("name"),
     clubParentIds.length > 0
       ? supabase
           .from("children")
-          .select("id, name, season_goals, parent_id")
+          .select(`id, name, season_goals, parent_id, ${POINT_COLS}`)
           .in("parent_id", clubParentIds)
-          .not("season_goals", "is", null)
-          .neq("season_goals", "")
           .order("name")
       : Promise.resolve({ data: [] }),
   ]);
 
-  const profiles = dancerProfiles ?? [];
+  const profiles = (dancerProfiles ?? []).map((p: any) => ({
+    id: p.id,
+    name: p.name,
+    avatar_url: p.avatar_url,
+    season_goals: p.goals_visible_to_trainer === false ? null : p.season_goals,
+    role: p.role as string,
+    points_freestyle: p.points_freestyle ?? 0,
+    points_slow: p.points_slow ?? 0,
+    level_freestyle: p.level_freestyle ?? 0,
+    level_slow: p.level_slow ?? 0,
+  }));
 
-  const children = (childrenWithGoals ?? []).map((c: any) => ({
+  const children = (allChildren ?? []).map((c: any) => ({
     id: c.id,
     name: c.name,
     avatar_url: parentMap[c.parent_id]?.avatar_url ?? null,
     season_goals: c.season_goals,
     role: "child" as const,
     parentName: parentMap[c.parent_id]?.name ?? null,
+    points_freestyle: c.points_freestyle ?? 0,
+    points_slow: c.points_slow ?? 0,
+    level_freestyle: c.level_freestyle ?? 0,
+    level_slow: c.level_slow ?? 0,
   }));
 
   return (
     <main className="bg-gray-50 dark:bg-gray-950 min-h-screen p-6">
       <div className="max-w-lg mx-auto">
         <h1 className="text-2xl font-bold mb-1">Sesongmål</h1>
-        <p className="text-gray-500 dark:text-gray-400 text-sm mb-6">Mål dansere og foreldre har delt med deg</p>
+        <p className="text-gray-500 dark:text-gray-400 text-sm mb-6">Søk opp en danser for å se mål og poeng</p>
 
         {profiles.length === 0 && children.length === 0 ? (
           <div className="bg-white dark:bg-gray-900 rounded-xl border dark:border-gray-700 p-5 text-center text-gray-400 dark:text-gray-500">
-            <p className="font-medium">Ingen har delt sesongmål ennå</p>
+            <p className="font-medium">Ingen dansere i klubben ennå</p>
           </div>
         ) : (
           <SesongmalSearch profiles={profiles} children={children} />

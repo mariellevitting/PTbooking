@@ -1,5 +1,6 @@
 import UIKit
 import Capacitor
+import OneSignalFramework
 
 @UIApplicationMain
 class AppDelegate: UIResponder, UIApplicationDelegate {
@@ -7,7 +8,10 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     var window: UIWindow?
 
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
-        // Override point for customization after application launch.
+        OneSignal.initialize("b9607f9e-6dbe-49b0-8bcc-edf5f6728575", withLaunchOptions: launchOptions)
+        OneSignal.Notifications.requestPermission({ accepted in
+            print("OneSignal push permission: \(accepted)")
+        }, fallbackToSettings: true)
         return true
     }
 

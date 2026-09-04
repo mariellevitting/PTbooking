@@ -1,0 +1,419 @@
+<title>Danceitude</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=Inter:wght@400;500;600&display=swap">
+
+<style>
+  :root {
+    --ink: #1a1228;
+    --accent: #e2a9f1;
+    --accent-deep: #c87de0;
+    --accent-bg: #f5eeff;
+    --surface: #ffffff;
+    --muted: #6b7280;
+    --border: #e5e7eb;
+    --hero-bg: #1a1228;
+    --card-bg: #ffffff;
+    --text: #1a1228;
+    --text-soft: #4b5563;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --ink: #f3e8ff; --surface: #12101a; --card-bg: #1e1a2e;
+      --text: #f3e8ff; --text-soft: #a78bba; --border: #2e2840;
+      --accent-bg: rgba(226,169,241,0.08); --muted: #a78bba;
+    }
+  }
+  :root[data-theme="dark"] {
+    --ink: #f3e8ff; --surface: #12101a; --card-bg: #1e1a2e;
+    --text: #f3e8ff; --text-soft: #a78bba; --border: #2e2840;
+    --accent-bg: rgba(226,169,241,0.08); --muted: #a78bba;
+  }
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'Inter', sans-serif; background: var(--surface); color: var(--text); line-height: 1.6; overflow-x: hidden; }
+
+  /* NAV */
+  nav {
+    position: sticky; top: 0; z-index: 100;
+    background: #1a1228;
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 0 clamp(1.5rem, 5vw, 4rem); height: 64px;
+  }
+  .nav-logo { font-family: 'Syne', sans-serif; font-weight: 800; font-size: 1.35rem; color: var(--accent); letter-spacing: 0.04em; text-decoration: none; }
+  .nav-cta { background: var(--accent); color: #1a1228; font-weight: 600; font-size: 0.875rem; padding: 0.5rem 1.25rem; border-radius: 999px; text-decoration: none; transition: background 0.18s; }
+  .nav-cta:hover { background: var(--accent-deep); color: #fff; }
+
+  /* HERO */
+  .hero {
+    background: #1a1228; color: #fff;
+    padding: clamp(4rem, 10vw, 8rem) clamp(1.5rem, 5vw, 4rem);
+    display: grid; grid-template-columns: 1fr 1fr; gap: 3rem; align-items: center; min-height: 90vh;
+  }
+  @media (max-width: 800px) { .hero { grid-template-columns: 1fr; min-height: auto; padding: 4rem 1.5rem; } .hero-visual { display: none; } }
+  .hero-eyebrow { font-size: 0.75rem; font-weight: 600; letter-spacing: 0.18em; text-transform: uppercase; color: var(--accent); margin-bottom: 1.25rem; }
+  .hero h1 { font-family: 'Syne', sans-serif; font-weight: 800; font-size: clamp(2.6rem, 5.5vw, 4.5rem); line-height: 1.08; text-wrap: balance; margin-bottom: 1.5rem; color: #fff; }
+  .hero h1 em { font-style: normal; color: var(--accent); }
+  .hero-sub { font-size: 1.125rem; color: rgba(255,255,255,0.65); margin-bottom: 2.5rem; max-width: 440px; }
+  .hero-actions { display: flex; gap: 1rem; flex-wrap: wrap; align-items: center; }
+  .btn-primary { display: inline-flex; align-items: center; gap: 0.5rem; background: var(--accent); color: #1a1228; font-weight: 700; font-size: 0.95rem; padding: 0.85rem 1.75rem; border-radius: 999px; text-decoration: none; transition: background 0.18s, transform 0.14s; }
+  .btn-primary:hover { background: var(--accent-deep); color: #fff; transform: translateY(-1px); }
+  .btn-ghost { display: inline-flex; align-items: center; gap: 0.5rem; border: 1.5px solid rgba(255,255,255,0.25); color: rgba(255,255,255,0.8); font-weight: 600; font-size: 0.875rem; padding: 0.75rem 1.5rem; border-radius: 999px; text-decoration: none; transition: border-color 0.18s, color 0.18s; }
+  .btn-ghost:hover { border-color: var(--accent); color: var(--accent); }
+
+  /* Phone mockup */
+  .hero-visual { display: flex; justify-content: center; align-items: center; position: relative; }
+  .phone-frame { width: 240px; background: #fff; border-radius: 36px; padding: 12px; box-shadow: 0 32px 80px rgba(0,0,0,0.6), 0 0 0 1px rgba(255,255,255,0.08); position: relative; }
+  .phone-notch { width: 80px; height: 22px; background: #1a1228; border-radius: 999px; margin: 0 auto 12px; }
+  .phone-screen { background: #f9f5ff; border-radius: 24px; padding: 16px 14px; min-height: 380px; }
+  .phone-screen-header { font-family: 'Syne', sans-serif; font-size: 1.1rem; font-weight: 800; color: #1a1228; margin-bottom: 12px; }
+  .booking-card { background: #fff; border-radius: 14px; padding: 12px; margin-bottom: 8px; border-left: 3px solid var(--accent-deep); box-shadow: 0 1px 4px rgba(0,0,0,0.08); }
+  .booking-card-time { font-size: 0.65rem; color: #888; margin-bottom: 2px; }
+  .booking-card-name { font-size: 0.78rem; font-weight: 700; color: #1a1228; }
+  .booking-card-style { display: inline-block; font-size: 0.6rem; font-weight: 600; background: #f3e8ff; color: #a855f7; padding: 1px 8px; border-radius: 999px; margin-top: 4px; }
+  .floating-chip { position: absolute; background: #fff; border-radius: 14px; padding: 10px 14px; box-shadow: 0 8px 24px rgba(0,0,0,0.18); font-size: 0.72rem; font-weight: 600; color: #1a1228; display: flex; align-items: center; gap: 8px; }
+  .floating-chip-dot { width: 8px; height: 8px; border-radius: 50%; background: #22c55e; }
+  .chip-left { left: -40px; top: 60px; }
+  .chip-right { right: -50px; bottom: 80px; }
+
+  /* SECTIONS */
+  section { padding: clamp(4rem, 8vw, 7rem) clamp(1.5rem, 5vw, 4rem); }
+  .section-inner { max-width: 1100px; margin: 0 auto; }
+  .section-eyebrow { font-size: 0.7rem; font-weight: 700; letter-spacing: 0.18em; text-transform: uppercase; color: var(--accent-deep); margin-bottom: 0.75rem; }
+  .section-heading { font-family: 'Syne', sans-serif; font-weight: 800; font-size: clamp(1.9rem, 3.5vw, 3rem); line-height: 1.1; text-wrap: balance; color: var(--text); margin-bottom: 1rem; }
+  .section-lead { font-size: 1.1rem; color: var(--text-soft); max-width: 560px; margin-bottom: 3rem; }
+
+  /* PROBLEM BAND */
+  .problem-band { background: var(--accent-bg); padding: clamp(2.5rem, 5vw, 4rem) clamp(1.5rem, 5vw, 4rem); }
+  .problem-band .section-inner { display: grid; grid-template-columns: 1fr 1fr; gap: 3rem; align-items: center; }
+  @media (max-width: 700px) { .problem-band .section-inner { grid-template-columns: 1fr; } }
+  .problem-quote { font-family: 'Syne', sans-serif; font-size: clamp(1.4rem, 2.5vw, 2rem); font-weight: 800; line-height: 1.25; color: var(--text); }
+  .problem-quote em { font-style: normal; color: var(--accent-deep); }
+  .problem-text { font-size: 1rem; color: var(--text-soft); line-height: 1.75; }
+
+  /* STORY */
+  .story-section { background: var(--surface); }
+  .story-inner { max-width: 1100px; margin: 0 auto; display: grid; grid-template-columns: 1fr 1fr; gap: 4rem; align-items: start; }
+  @media (max-width: 750px) { .story-inner { grid-template-columns: 1fr; gap: 2rem; } }
+  .story-text { font-size: 1.05rem; color: var(--text-soft); line-height: 1.8; }
+  .story-text p + p { margin-top: 1.25rem; }
+  .story-text strong { color: var(--text); font-weight: 600; }
+  .stack-list { background: var(--accent-bg); border-radius: 20px; padding: 1.75rem; }
+  .stack-eyebrow { font-size: 0.65rem; font-weight: 700; letter-spacing: 0.18em; text-transform: uppercase; color: var(--accent-deep); margin-bottom: 1.25rem; }
+  .stack-item { display: flex; gap: 0.75rem; padding: 0.65rem 0; border-bottom: 1px solid var(--border); font-size: 0.9rem; align-items: flex-start; }
+  .stack-item:last-child { border-bottom: none; }
+  .stack-item-name { font-weight: 700; color: var(--text); min-width: 130px; flex-shrink: 0; }
+  .stack-item-desc { color: var(--text-soft); }
+
+  /* FEATURES GRID */
+  .features-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.5rem; }
+  @media (max-width: 800px) { .features-grid { grid-template-columns: 1fr; } }
+  .feature-card { background: var(--card-bg); border: 1px solid var(--border); border-radius: 20px; padding: 2rem; }
+  .feature-icon { font-size: 2rem; margin-bottom: 1rem; }
+  .feature-title { font-family: 'Syne', sans-serif; font-weight: 800; font-size: 1.1rem; color: var(--text); margin-bottom: 0.5rem; }
+  .feature-desc { font-size: 0.9rem; color: var(--text-soft); line-height: 1.65; }
+
+  /* ROLES */
+  .roles-section { background: #1a1228; }
+  .roles-section .section-heading { color: #fff; }
+  .roles-section .section-eyebrow { color: var(--accent); }
+  .roles-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.5rem; }
+  @media (max-width: 800px) { .roles-grid { grid-template-columns: 1fr; } }
+  .role-card { background: rgba(255,255,255,0.05); border: 1px solid rgba(226,169,241,0.15); border-radius: 20px; padding: 2rem; transition: background 0.2s, border-color 0.2s; }
+  .role-card:hover { background: rgba(226,169,241,0.08); border-color: rgba(226,169,241,0.4); }
+  .role-avatar { width: 48px; height: 48px; border-radius: 50%; background: rgba(226,169,241,0.15); display: flex; align-items: center; justify-content: center; font-family: 'Syne', sans-serif; font-weight: 800; font-size: 1.1rem; color: var(--accent); margin-bottom: 1.25rem; }
+  .role-title { font-family: 'Syne', sans-serif; font-weight: 800; font-size: 1.25rem; color: #fff; margin-bottom: 0.5rem; }
+  .role-desc { font-size: 0.9rem; color: rgba(255,255,255,0.55); margin-bottom: 1.25rem; }
+  .role-features { list-style: none; }
+  .role-features li { display: flex; align-items: flex-start; gap: 0.6rem; font-size: 0.85rem; color: rgba(255,255,255,0.75); padding: 0.3rem 0; border-bottom: 1px solid rgba(255,255,255,0.06); }
+  .role-features li:last-child { border-bottom: none; }
+  .role-features li::before { content: '→'; color: var(--accent); font-weight: 700; flex-shrink: 0; margin-top: 1px; }
+  .role-tagline { font-size: 0.8rem; color: var(--accent); font-style: italic; margin-top: 1rem; }
+
+  /* MORE THAN BOOKING */
+  .more-section { background: var(--surface); }
+  .more-inner { max-width: 760px; margin: 0 auto; }
+  .more-text { font-size: 1.1rem; color: var(--text-soft); line-height: 1.8; }
+  .more-text p + p { margin-top: 1.25rem; }
+  .more-text strong { color: var(--text); }
+
+  /* BEGINNING */
+  .beginning-section { background: var(--accent-bg); padding: clamp(4rem, 8vw, 7rem) clamp(1.5rem, 5vw, 4rem); }
+  .beginning-inner { max-width: 760px; margin: 0 auto; }
+  .beginning-text { font-size: 1.1rem; color: var(--text-soft); line-height: 1.8; }
+  .beginning-text p + p { margin-top: 1.25rem; }
+  .beginning-highlight { font-size: 1.15rem; font-weight: 600; color: var(--text); font-style: italic; border-left: 3px solid var(--accent-deep); padding-left: 1.25rem; margin: 2rem 0; }
+
+  /* CTA */
+  .cta-section { background: #1a1228; text-align: center; }
+  .cta-card { background: rgba(226,169,241,0.08); border: 1px solid rgba(226,169,241,0.2); border-radius: 24px; padding: 3rem 2rem; max-width: 600px; margin: 0 auto; }
+  .cta-logo { font-family: 'Syne', sans-serif; font-weight: 800; font-size: 2rem; color: var(--accent); margin-bottom: 0.5rem; }
+  .cta-tagline { font-size: 1rem; color: rgba(255,255,255,0.5); font-style: italic; margin-bottom: 2.5rem; }
+  .store-buttons { display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap; }
+  .store-btn { display: inline-flex; align-items: center; gap: 0.75rem; background: rgba(255,255,255,0.08); border: 1.5px solid rgba(255,255,255,0.18); color: #fff; padding: 0.75rem 1.5rem; border-radius: 14px; text-decoration: none; font-size: 0.875rem; transition: background 0.18s, border-color 0.18s; }
+  .store-btn:hover { background: rgba(226,169,241,0.15); border-color: var(--accent); }
+  .store-btn svg { width: 22px; height: 22px; fill: #fff; }
+  .store-btn-text { text-align: left; line-height: 1.3; }
+  .store-btn-sub { font-size: 0.65rem; opacity: 0.65; display: block; }
+  .store-btn-name { font-weight: 700; font-size: 1rem; }
+
+  /* FOOTER */
+  footer { background: #120e1e; padding: 3rem clamp(1.5rem, 5vw, 4rem); }
+  .footer-inner { max-width: 1100px; margin: 0 auto; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 1.5rem; }
+  .footer-logo { font-family: 'Syne', sans-serif; font-weight: 800; font-size: 1.1rem; color: var(--accent); letter-spacing: 0.04em; }
+  .footer-tagline { font-size: 0.8rem; color: rgba(255,255,255,0.35); margin-top: 0.25rem; }
+  .footer-credit { text-align: right; }
+  .footer-credit p { font-size: 0.8rem; color: rgba(255,255,255,0.35); }
+  .footer-credit a { color: var(--accent); text-decoration: none; }
+  .footer-credit a:hover { color: #fff; }
+  .footer-heart { color: var(--accent); }
+</style>
+
+<!-- NAV -->
+<nav>
+  <a class="nav-logo" href="#">DANCEITUDE</a>
+  <a class="nav-cta" href="https://p-tbooking.vercel.app">Last ned appen</a>
+</nav>
+
+<!-- HERO -->
+<div class="hero">
+  <div class="hero-content">
+    <p class="hero-eyebrow">Evolution Danseklubb · Sarpsborg</p>
+    <h1>Danceitude ble laget fordi dansemiljøet fortjener <em>bedre verktøy</em></h1>
+    <p class="hero-sub">Av dansere, for dansere.</p>
+    <div class="hero-actions">
+      <a class="btn-primary" href="https://p-tbooking.vercel.app">Kom i gang gratis →</a>
+      <a class="btn-ghost" href="#om">Les historien</a>
+    </div>
+  </div>
+  <div class="hero-visual">
+    <div style="position:relative;">
+      <div class="floating-chip chip-left">
+        <span class="floating-chip-dot"></span>
+        Ny booking mottatt!
+      </div>
+      <div class="phone-frame">
+        <div class="phone-notch"></div>
+        <div class="phone-screen">
+          <div class="phone-screen-header">Kommende timer</div>
+          <div class="booking-card">
+            <div class="booking-card-time">Tirsdag 17:00 · 45 min</div>
+            <div class="booking-card-name">Sofia Hansen</div>
+            <span class="booking-card-style">Freestyle</span>
+          </div>
+          <div class="booking-card" style="border-left-color:#818cf8;">
+            <div class="booking-card-time">Onsdag 16:30 · 45 min</div>
+            <div class="booking-card-name">Emma & Nora</div>
+            <span class="booking-card-style" style="background:#ede9fe;color:#6d28d9;">Slow dobbel</span>
+          </div>
+          <div class="booking-card" style="border-left-color:#fb923c;">
+            <div class="booking-card-time">Fredag 15:00 · 45 min</div>
+            <div class="booking-card-name">Lucas Eriksen</div>
+            <span class="booking-card-style" style="background:#fff7ed;color:#c2410c;">Akro</span>
+          </div>
+        </div>
+      </div>
+      <div class="floating-chip chip-right">
+        <span class="floating-chip-dot" style="background:#e2a9f1;"></span>
+        3 ledige tider lagt ut
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- PROBLEM BAND -->
+<div class="problem-band">
+  <div class="section-inner">
+    <div>
+      <p class="section-eyebrow">Bakgrunnen</p>
+      <p class="problem-quote">Ledige timer ble delt i et <em>Google Docs-dokument.</em> Det fungerte. Men det kunne fungere mye bedre.</p>
+    </div>
+    <p class="problem-text">Som danser i Evolution Danseklubb i Sarpsborg opplevde jeg på nært hold hvor tungvint booking av privattimer var. Dansere og foreldre måtte finne et ledig tidspunkt, skrive seg inn og holde oversikt selv – uten varsler, uten historikk, uten system.<br><br>Danceitude ble laget for å fikse nettopp det.</p>
+  </div>
+</div>
+
+<!-- STORY + TECH -->
+<section class="story-section" id="om">
+  <div class="story-inner">
+    <div>
+      <p class="section-eyebrow">Historien bak</p>
+      <h2 class="section-heading" style="margin-bottom:1.5rem;">Fra Google Docs til App Store – med AI som utviklingspartner</h2>
+      <div class="story-text">
+        <p>Danceitude startet med et problem jeg selv kjente godt. Jeg har en mastergrad med spesialisering i interaksjonsdesign, og jobber til daglig som Digital Marketing Manager og designer i SkyeTec, samt som Interaction Specialist i MyTalent.</p>
+        <p>Jeg brenner for å utvikle digitale løsninger som tar utgangspunkt i menneskene som faktisk skal bruke dem. Derfor ønsket jeg ikke bare å lage en ny bookingløsning – jeg ønsket å finne ut hva dansere, foreldre og trenere faktisk trenger.</p>
+        <p>Det tekniske ble bygget end-to-end med <strong>AI som utviklingspartner ved hjelp av Claude Code</strong>. Ved å la AI håndtere arkitektur, kodegenerering og feilsøking kunne jeg holde fullt fokus på brukeropplevelsen og produktlogikken.</p>
+      </div>
+    </div>
+    <div>
+      <div class="stack-list">
+        <p class="stack-eyebrow">Stacken under panseret</p>
+        <div class="stack-item"><span class="stack-item-name">Next.js</span><span class="stack-item-desc">Fullstack rammeverk med server-side rendering</span></div>
+        <div class="stack-item"><span class="stack-item-name">Supabase</span><span class="stack-item-desc">Database, autentisering og row-level security</span></div>
+        <div class="stack-item"><span class="stack-item-name">Vercel</span><span class="stack-item-desc">Kontinuerlig deployment med preview-miljøer</span></div>
+        <div class="stack-item"><span class="stack-item-name">Capacitor + Xcode</span><span class="stack-item-desc">Native iOS-app fra samme kodebase</span></div>
+        <div class="stack-item"><span class="stack-item-name">Claude Code</span><span class="stack-item-desc">AI-drevet utviklingsprosess gjennom hele prosjektet</span></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- UTVIKLET SAMMEN -->
+<section style="background: var(--accent-bg); padding: clamp(4rem, 8vw, 7rem) clamp(1.5rem, 5vw, 4rem);">
+  <div style="max-width: 760px; margin: 0 auto;">
+    <p class="section-eyebrow">Prosessen</p>
+    <h2 class="section-heading">Utviklet sammen med dansemiljøet</h2>
+    <div class="story-text">
+      <p>Danceitude startet som en del av masterarbeidet mitt og ble utviklet gjennom en brukersentrert designprosess.</p>
+      <p>Gjennom <strong>workshops med dansere, foreldre og trenere</strong> kartla vi utfordringene med dagens løsning. Deltakerne fikk dele erfaringer, diskutere behov og selv skissere hvordan de ønsket at en bedre løsning skulle fungere.</p>
+      <p>Ideene ble deretter utviklet til prototyper, testet med brukere og forbedret basert på tilbakemeldingene vi fikk.</p>
+      <p><strong>Danceitude er derfor ikke bygget på antakelser om hva dansemiljøet trenger. Den er utviklet sammen med menneskene som kjenner hverdagen best.</strong></p>
+    </div>
+  </div>
+</section>
+
+<!-- FEATURES -->
+<section style="background: var(--surface);">
+  <div class="section-inner">
+    <p class="section-eyebrow">Hva du får</p>
+    <h2 class="section-heading">Booking er bare starten</h2>
+    <p class="section-lead">Danceitude samler booking, trening, utvikling og konkurranser på ett sted.</p>
+    <div class="features-grid">
+      <div class="feature-card">
+        <div class="feature-icon">📅</div>
+        <div class="feature-title">Enkel booking</div>
+        <div class="feature-desc">Book privattimer med noen få trykk. Trenere legger ut ledige tider, og du booker direkte i appen – ingen meldinger, ingen ventetid.</div>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">🔔</div>
+        <div class="feature-title">Push-varsler</div>
+        <div class="feature-desc">Trenere får varsel ved nye bookinger og avbestillinger. Dansere og foreldre varsles når nye tider legges ut eller en time bookes for dem.</div>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">🏆</div>
+        <div class="feature-title">Utvikling og mål</div>
+        <div class="feature-desc">Logg freestyle- og slow-poeng, følg fremgangen fra Rekrutt til Elite, sett personlige mål og samle konkurranseresultater på ett sted.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ROLES -->
+<section class="roles-section">
+  <div class="section-inner">
+    <p class="section-eyebrow">Hvem er det for?</p>
+    <h2 class="section-heading" style="color:#fff; margin-bottom:0.5rem;">Én app. Tre roller. En enklere dansehverdag.</h2>
+    <p class="section-lead" style="color:rgba(255,255,255,0.5); margin-bottom:3rem;">Danceitude samler booking, trening, utvikling og konkurranser på ett sted. Hver bruker får funksjoner og oversikt tilpasset sin rolle.</p>
+    <div class="roles-grid">
+      <div class="role-card">
+        <div class="role-avatar">D</div>
+        <div class="role-title">For dansere</div>
+        <div class="role-desc">Finn trenere, book privattimer og få bedre oversikt over treningen og utviklingen din.</div>
+        <ul class="role-features">
+          <li>Bla gjennom tilgjengelige trenere og danseformer</li>
+          <li>Book privattimer med få trykk</li>
+          <li>Se kommende og gjennomførte timer</li>
+          <li>Avbestill timer direkte i appen</li>
+          <li>Logg freestyle- og slow-poeng</li>
+          <li>Følg fremgangen din mot neste nivå – fra Rekrutt til Elite</li>
+          <li>Sett personlige mål for sesongen</li>
+          <li>Logg og samle konkurranseresultater</li>
+          <li>Se nedtelling til neste konkurranse</li>
+          <li>Motta varsler når en trener booker en time på dine vegne</li>
+        </ul>
+        <p class="role-tagline">Mindre tid på å holde oversikt. Mer tid til å trene, utvikle deg og nå målene dine.</p>
+      </div>
+      <div class="role-card">
+        <div class="role-avatar">F</div>
+        <div class="role-title">For foreldre</div>
+        <div class="role-desc">Følg opp barnets dansehverdag uten å måtte lete gjennom dokumenter, meldinger og ulike systemer.</div>
+        <ul class="role-features">
+          <li>Book privattimer på vegne av barnet</li>
+          <li>Se kommende og gjennomførte timer</li>
+          <li>Ha oversikt over barnets bookinger på ett sted</li>
+          <li>Avbestill timer direkte i appen</li>
+          <li>Motta varsler når en trener booker en time på barnets vegne</li>
+        </ul>
+        <p class="role-tagline">En enklere måte å holde oversikt og følge opp dansehverdagen.</p>
+      </div>
+      <div class="role-card">
+        <div class="role-avatar">T</div>
+        <div class="role-title">For trenere</div>
+        <div class="role-desc">Bruk mindre tid på administrasjon og få bedre oversikt over tilgjengelighet, bookinger og danserne du følger opp.</div>
+        <ul class="role-features">
+          <li>Legg ut ledige tider for enkeltdager eller flere dager samtidig</li>
+          <li>Se kommende og gjennomførte bookinger i én samlet oversikt</li>
+          <li>Book timer direkte for dansere og koble timen til danserens profil</li>
+          <li>Søk opp dansere og se historikk og antall gjennomførte timer</li>
+          <li>Book dobbelttimer og koble timen til to danserprofiler</li>
+          <li>Avbestill timer direkte i appen</li>
+          <li>Logg konkurranseresultater</li>
+          <li>Motta varsler ved nye bookinger</li>
+        </ul>
+        <p class="role-tagline">Mindre tid på meldinger, dokumenter og koordinering. Bedre oversikt over danserne du trener.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- MER ENN BOOKING -->
+<section class="more-section">
+  <div style="max-width: 760px; margin: 0 auto;">
+    <p class="section-eyebrow">Visjonen</p>
+    <h2 class="section-heading">Mer enn en bookingapp</h2>
+    <div class="more-text">
+      <p>Danceitude startet med et behov for en enklere måte å booke privattimer på.</p>
+      <p>Men gjennom arbeidet med dansere, foreldre og trenere ble det tydelig at behovet var større. Dansehverdagen består av treninger, mål, nivåer, konkurranser, resultater og utvikling over tid. Mye av denne informasjonen er i dag spredt mellom dokumenter, meldinger, notater og ulike systemer.</p>
+      <p><strong>Danceitude samler dette på ett sted.</strong> Målet er å gjøre det enklere å organisere dansehverdagen, følge utvikling over tid og skape bedre samhandling mellom dansere, foreldre og trenere.</p>
+    </div>
+  </div>
+</section>
+
+<!-- DETTE ER BARE BEGYNNELSEN -->
+<section class="beginning-section">
+  <div class="beginning-inner">
+    <p class="section-eyebrow">Fremover</p>
+    <h2 class="section-heading">Dette er bare begynnelsen</h2>
+    <div class="beginning-text">
+      <p>Danceitude skal fortsette å utvikles sammen med dansemiljøet.</p>
+      <p>Tilbakemeldinger fra dansere, foreldre og trenere vil fortsatt være en viktig del av hvordan appen forbedres og hvilke funksjoner som utvikles videre.</p>
+    </div>
+    <blockquote class="beginning-highlight">For de beste løsningene blir ikke laget for brukerne. De blir laget sammen med dem.</blockquote>
+  </div>
+</section>
+
+<!-- CTA -->
+<section class="cta-section">
+  <div class="section-inner">
+    <div class="cta-card">
+      <div class="cta-logo">Danceitude</div>
+      <p class="cta-tagline">Utviklet sammen med dansemiljøet. Laget for hele dansehverdagen.</p>
+      <div class="store-buttons">
+        <a class="store-btn" href="https://apps.apple.com/app/danceitude/id6743320389">
+          <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.8-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M13 3.5c.73-.83 1.94-1.46 2.94-1.5.13 1.17-.34 2.35-1.04 3.19-.69.85-1.83 1.51-2.95 1.42-.15-1.15.41-2.35 1.05-3.11z"/></svg>
+          <span class="store-btn-text">
+            <span class="store-btn-sub">Last ned på</span>
+            <span class="store-btn-name">App Store</span>
+          </span>
+        </a>
+        <a class="store-btn" href="https://p-tbooking.vercel.app">
+          <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 17.93c-3.95-.49-7-3.85-7-7.93 0-.62.08-1.21.21-1.79L9 15v1c0 1.1.9 2 2 2v1.93zm6.9-2.54c-.26-.81-1-1.39-1.9-1.39h-1v-3c0-.55-.45-1-1-1H8v-2h2c.55 0 1-.45 1-1V7h2c1.1 0 2-.9 2-2v-.41c2.93 1.19 5 4.06 5 7.41 0 2.08-.8 3.97-2.1 5.39z"/></svg>
+          <span class="store-btn-text">
+            <span class="store-btn-sub">Åpne i</span>
+            <span class="store-btn-name">Nettleseren</span>
+          </span>
+        </a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-inner">
+    <div>
+      <div class="footer-logo">DANCEITUDE</div>
+      <div class="footer-tagline">Evolution Danseklubb · Sarpsborg</div>
+    </div>
+    <div class="footer-credit">
+      <p>Laget med <span class="footer-heart">♥</span> av <a href="https://www.linkedin.com/in/miemarielle/" target="_blank" rel="noopener">Mie Marielle Øverås Vitting</a></p>
+      <p>Denne er designet av dansere, for dansere ✦ <a href="https://miemarielle.design/" target="_blank" rel="noopener">miemarielle.design</a></p>
+    </div>
+  </div>
+</footer>

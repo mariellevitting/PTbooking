@@ -11,10 +11,11 @@ interface Props {
   points: number;
   level: number;
   needed: number;
-  onChange: (val: number) => void;
+  onChange?: (val: number) => void;
+  readOnly?: boolean;
 }
 
-export default function PoengNivaa({ label, points, level, needed, onChange }: Props) {
+export default function PoengNivaa({ label, points, level, needed, onChange, readOnly }: Props) {
   const shown = Math.min(points, needed);
   const pct = needed > 0 ? Math.round((shown / needed) * 100) : 0;
 
@@ -65,9 +66,11 @@ export default function PoengNivaa({ label, points, level, needed, onChange }: P
         </p>
       )}
 
-      <div className="flex justify-center">
-        <PointsStepper value={points} onChange={onChange} />
-      </div>
+      {!readOnly && onChange && (
+        <div className="flex justify-center">
+          <PointsStepper value={points} onChange={onChange} />
+        </div>
+      )}
     </div>
   );
 }
