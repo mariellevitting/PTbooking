@@ -14,6 +14,7 @@ interface Booking {
   dance_style: string;
   status: string;
   paid?: boolean;
+  receipt_reminders_sent?: number;
   booker_id?: string;
   linked_user_id?: string | null;
   booker?: { avatar_url?: string } | null;
@@ -32,11 +33,11 @@ interface CompletedSlot {
   id: string;
   start_at: string;
   end_at: string;
-  bookings?: { id: string; dancer_name: string; dance_style: string; status: string; paid?: boolean; booker_id?: string; linked_user_id?: string | null }[];
+  bookings?: { id: string; dancer_name: string; dance_style: string; status: string; paid?: boolean; receipt_reminders_sent?: number; booker_id?: string; linked_user_id?: string | null }[];
 }
 
-function KvitteringReminder({ booking, when, trainerName, trainerId }: { booking: { id: string; booker_id?: string; linked_user_id?: string | null }; when: string; trainerName: string; trainerId: string }) {
-  const [sent, setSent] = useState(false);
+function KvitteringReminder({ booking, when, trainerName, trainerId }: { booking: { id: string; receipt_reminders_sent?: number; booker_id?: string; linked_user_id?: string | null }; when: string; trainerName: string; trainerId: string }) {
+  const [count, setCount] = useState(booking.receipt_reminders_sent ?? 0);
   const [sending, setSending] = useState(false);
 
   // Ikke send til treneren selv (skjer når treneren booket for danseren)
@@ -44,17 +45,20 @@ function KvitteringReminder({ booking, when, trainerName, trainerId }: { booking
     .filter((x): x is string => !!x && x !== trainerId);
 
   async function send() {
-    if (sending || sent || ids.length === 0) return;
+    if (sending || ids.length === 0) return;
+    if (count === 0 && !confirm("Danseren/forelderen får et varsel om å sende bilde av kvitteringen. Sende nå?")) return;
     setSending(true);
     const message = `Husk å sende bilde av kvittering for privattimen ${when} til ${trainerName}.`;
-    await createClient().from("notifications").insert(ids.map(user_id => ({ user_id, message })));
+    const supabase = createClient();
+    await supabase.from("notifications").insert(ids.map(user_id => ({ user_id, message })));
     await fetch("/api/notify", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ userIds: ids, title: "Kvittering", message }),
     }).catch(() => {});
+    await supabase.from("bookings").update({ receipt_reminders_sent: count + 1 }).eq("id", booking.id);
+    setCount(c => c + 1);
     setSending(false);
-    setSent(true);
   }
 
   if (ids.length === 0) return null;
@@ -62,10 +66,10 @@ function KvitteringReminder({ booking, when, trainerName, trainerId }: { booking
   return (
     <button
       onClick={send}
-      disabled={sending || sent}
+      disabled={sending}
       className="text-xs text-[#9b59c4] dark:text-[#E2A9F1] hover:underline disabled:opacity-50 disabled:no-underline"
     >
-      {sent ? "Påminnelse sendt ✓" : sending ? "Sender…" : "Purr på kvittering"}
+      {sending ? "Sender…" : count === 0 ? "Purr på kvittering" : `Purr på kvittering igjen (${count})`}
     </button>
   );
 }

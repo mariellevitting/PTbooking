@@ -21,7 +21,7 @@ export default async function TrainerDashboard() {
 
   const { data: slots } = await supabase
     .from("availability_slots")
-    .select("*, bookings(id, dancer_name, dance_style, booker_id, linked_user_id, status, paid, booker:profiles!bookings_booker_id_fkey(avatar_url), linked_profile:profiles!bookings_linked_user_id_fkey(avatar_url))")
+    .select("*, bookings(id, dancer_name, dance_style, booker_id, linked_user_id, status, paid, receipt_reminders_sent, booker:profiles!bookings_booker_id_fkey(avatar_url), linked_profile:profiles!bookings_linked_user_id_fkey(avatar_url))")
     .eq("trainer_id", user.id)
     .gte("start_at", new Date().toISOString())
     .order("start_at");
@@ -29,7 +29,7 @@ export default async function TrainerDashboard() {
   const [{ data: completedSlots }, { data: dancerProfiles }] = await Promise.all([
     supabase
       .from("availability_slots")
-      .select("*, bookings(id, dancer_name, dance_style, status, paid, booker_id, linked_user_id)")
+      .select("*, bookings(id, dancer_name, dance_style, status, paid, receipt_reminders_sent, booker_id, linked_user_id)")
       .eq("trainer_id", user.id)
       .lt("end_at", new Date().toISOString())
       .order("start_at", { ascending: false }),
