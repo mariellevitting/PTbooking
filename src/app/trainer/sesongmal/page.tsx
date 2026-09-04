@@ -43,30 +43,36 @@ export default async function TrainerSesongmalPage() {
       : Promise.resolve({ data: [] }),
   ]);
 
-  const profiles = (dancerProfiles ?? []).map((p: any) => ({
-    id: p.id,
-    name: p.name,
-    avatar_url: p.avatar_url,
-    season_goals: p.goals_visible_to_trainer === false ? null : p.season_goals,
-    role: p.role as string,
-    points_freestyle: p.points_freestyle ?? 0,
-    points_slow: p.points_slow ?? 0,
-    level_freestyle: p.level_freestyle ?? 0,
-    level_slow: p.level_slow ?? 0,
-  }));
+  const hasGoals = (g: string | null) => (g ?? "").split("\n").some(l => l.trim() !== "");
 
-  const children = (allChildren ?? []).map((c: any) => ({
-    id: c.id,
-    name: c.name,
-    avatar_url: parentMap[c.parent_id]?.avatar_url ?? null,
-    season_goals: c.season_goals,
-    role: "child" as const,
-    parentName: parentMap[c.parent_id]?.name ?? null,
-    points_freestyle: c.points_freestyle ?? 0,
-    points_slow: c.points_slow ?? 0,
-    level_freestyle: c.level_freestyle ?? 0,
-    level_slow: c.level_slow ?? 0,
-  }));
+  const profiles = (dancerProfiles ?? [])
+    .map((p: any) => ({
+      id: p.id,
+      name: p.name,
+      avatar_url: p.avatar_url,
+      season_goals: p.goals_visible_to_trainer === false ? null : p.season_goals,
+      role: p.role as string,
+      points_freestyle: p.points_freestyle ?? 0,
+      points_slow: p.points_slow ?? 0,
+      level_freestyle: p.level_freestyle ?? 0,
+      level_slow: p.level_slow ?? 0,
+    }))
+    .filter((p) => hasGoals(p.season_goals));
+
+  const children = (allChildren ?? [])
+    .map((c: any) => ({
+      id: c.id,
+      name: c.name,
+      avatar_url: parentMap[c.parent_id]?.avatar_url ?? null,
+      season_goals: c.season_goals,
+      role: "child" as const,
+      parentName: parentMap[c.parent_id]?.name ?? null,
+      points_freestyle: c.points_freestyle ?? 0,
+      points_slow: c.points_slow ?? 0,
+      level_freestyle: c.level_freestyle ?? 0,
+      level_slow: c.level_slow ?? 0,
+    }))
+    .filter((c) => hasGoals(c.season_goals));
 
   return (
     <main className="bg-gray-50 dark:bg-gray-950 min-h-screen p-6">
@@ -76,7 +82,7 @@ export default async function TrainerSesongmalPage() {
 
         {profiles.length === 0 && children.length === 0 ? (
           <div className="bg-white dark:bg-gray-900 rounded-xl border dark:border-gray-700 p-5 text-center text-gray-400 dark:text-gray-500">
-            <p className="font-medium">Ingen dansere i klubben ennå</p>
+            <p className="font-medium">Ingen har delt sesongmål ennå</p>
           </div>
         ) : (
           <SesongmalSearch profiles={profiles} children={children} />
