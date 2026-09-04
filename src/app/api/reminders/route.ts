@@ -78,11 +78,14 @@ export async function GET(request: Request) {
     }
   }
 
-  // Unngå duplikater hvis ruten kjøres flere ganger samme dag
+  // Unngå duplikater hvis ruten kjøres flere ganger samme dag.
+  // Kun de siste 18 timene – ellers matcher gårsdagens identiske påminnelse
+  // (samme tid + navn) og dagens blir hoppet over.
+  const dedupSince = new Date(Date.now() - 18 * 60 * 60 * 1000).toISOString();
   const { data: existing } = await supabase
     .from("notifications")
     .select("user_id, message")
-    .gte("created_at", windowStart.toISOString())
+    .gte("created_at", dedupSince)
     .ilike("message", "Husk privattime i dag%");
   const seen = new Set((existing ?? []).map(n => `${n.user_id}|${n.message}`));
   const fresh = notifications.filter(n => !seen.has(`${n.user_id}|${n.message}`));
