@@ -1,5 +1,6 @@
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
+import { greeting } from "@/lib/greeting";
 import NMCountdown from "@/components/NMCountdown";
 import TrainerDashboardTabs from "./TrainerDashboardTabs";
 
@@ -44,7 +45,7 @@ export default async function TrainerDashboard() {
   return (
     <main className="bg-gray-50 dark:bg-gray-950 p-6">
       <div className="max-w-lg mx-auto">
-        <h1 className="text-2xl font-bold mb-1">Hei, {profile.name.split(" ")[0]}! 👋</h1>
+        <h1 className="text-2xl font-bold mb-1">{greeting()}, {profile.name.split(" ")[0]}! 👋</h1>
         <p className="text-gray-500 dark:text-gray-400 mb-6 text-sm">{(profile.clubs as any)?.name ? `${(profile.clubs as any).name} – ` : ""}Trener</p>
         <NMCountdown href="/trainer/konkurranser" clubId={(profile as any).club_id ?? null} />
         <TrainerDashboardTabs

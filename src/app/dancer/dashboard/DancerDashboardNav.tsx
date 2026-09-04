@@ -19,6 +19,7 @@ import PoengNivaa from "@/components/PoengNivaa";
 import type { ClubConfig } from "@/lib/club";
 import { createClient } from "@/lib/supabase/client";
 import { formatDate, formatTime, formatDateKey } from "@/lib/dateUtils";
+import { greeting } from "@/lib/greeting";
 
 const LEVELS = ["Rekrutt", "Litt øvet", "Mester", "Champ", "Elite"];
 
@@ -284,7 +285,7 @@ export default function DancerDashboardNav(props: Props) {
 
 
       {active === "timer" && (
-        <h1 className="text-2xl font-bold">Hei, {props.userName.split(" ")[0]}! 👋</h1>
+        <h1 className="text-2xl font-bold">{greeting()}, {props.userName.split(" ")[0]}! 👋</h1>
       )}
 
       {/* Mine timer */}
