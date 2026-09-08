@@ -52,9 +52,11 @@ export default function OneSignalWebInit() {
         const {
           data: { user },
         } = await supabase.auth.getUser();
-        if (user) {
-          await OneSignal.login(user.id);
-        }
+
+        // Kun innloggede brukere kobles og spørres — ikke tilfeldige besøkende på forsiden.
+        if (!user) return;
+
+        await OneSignal.login(user.id);
 
         // Be om tillatelse hvis brukeren ikke har svart ennå.
         // OneSignal begrenser selv hvor ofte dette vises.
