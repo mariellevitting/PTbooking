@@ -27,46 +27,48 @@ export default function OneSignalWebInit() {
       "PushManager" in window;
     if (!supported) return;
 
-    // Unngå dobbel-lasting ved client-navigasjon
+    // Unngå dobbel-init ved client-navigasjon
     if (document.getElementById("onesignal-sdk")) return;
 
-    const script = document.createElement("script");
-    script.id = "onesignal-sdk";
-    script.src = "https://cdn.onesignal.com/sdks/web/v16/OneSignalSDK.page.js";
-    script.defer = true;
-    document.head.appendChild(script);
+    async function start() {
+      // Init OneSignal KUN for innloggede brukere. Da trigger heller ikke
+      // OneSignals egen "vis prompt på alle sider"-regel på forsiden.
+      const supabase = createClient();
+      const {
+        data: { user },
+      } = await supabase.auth.getUser();
+      if (!user) return;
 
-    window.OneSignalDeferred = window.OneSignalDeferred || [];
-    window.OneSignalDeferred.push(async (OneSignal: any) => {
-      try {
-        await OneSignal.init({
-          appId: ONESIGNAL_APP_ID,
-          serviceWorkerPath: "/OneSignalSDKWorker.js",
-          serviceWorkerParam: { scope: "/" },
-          allowLocalhostAsSecureOrigin: true,
-        });
+      const script = document.createElement("script");
+      script.id = "onesignal-sdk";
+      script.src = "https://cdn.onesignal.com/sdks/web/v16/OneSignalSDK.page.js";
+      script.defer = true;
+      document.head.appendChild(script);
 
-        // Koble Supabase bruker-ID til OneSignal (samme external_id som native),
-        // slik at /api/notify treffer både web og mobil.
-        const supabase = createClient();
-        const {
-          data: { user },
-        } = await supabase.auth.getUser();
+      window.OneSignalDeferred = window.OneSignalDeferred || [];
+      window.OneSignalDeferred.push(async (OneSignal: any) => {
+        try {
+          await OneSignal.init({
+            appId: ONESIGNAL_APP_ID,
+            serviceWorkerPath: "/OneSignalSDKWorker.js",
+            serviceWorkerParam: { scope: "/" },
+            allowLocalhostAsSecureOrigin: true,
+          });
 
-        // Kun innloggede brukere kobles og spørres — ikke tilfeldige besøkende på forsiden.
-        if (!user) return;
+          // Samme external_id som native, slik at /api/notify treffer web + mobil.
+          await OneSignal.login(user.id);
 
-        await OneSignal.login(user.id);
-
-        // Be om tillatelse hvis brukeren ikke har svart ennå.
-        // OneSignal begrenser selv hvor ofte dette vises.
-        if (typeof Notification !== "undefined" && Notification.permission === "default") {
-          await OneSignal.Slidedown.promptPush();
+          // Be om tillatelse hvis brukeren ikke har svart ennå.
+          if (typeof Notification !== "undefined" && Notification.permission === "default") {
+            await OneSignal.Slidedown.promptPush();
+          }
+        } catch {
+          // Ikke støttet / blokkert — ignorer
         }
-      } catch {
-        // Ikke støttet / blokkert — ignorer
-      }
-    });
+      });
+    }
+
+    start();
   }, []);
 
   return null;
