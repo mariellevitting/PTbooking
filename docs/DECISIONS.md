@@ -50,7 +50,7 @@ Utsettes til v2:
 - **Backend / database**: Supabase (Postgres + Auth + Storage) (2026-06-05)
 - **Auth**: Supabase Auth (2026-06-05)
 - **Hosting**: Vercel (gratis hobby-tier) (2026-06-05)
-- **Form-faktor**: Nettside (responsiv). PWA / native app kan komme senere. (2026-06-05)
+- **Form-faktor**: Nettside (responsiv) + native iOS-app via Capacitor. Nettsiden er også en installerbar PWA (`src/app/manifest.ts`, ikoner i `public/icons/`) slik at Android-brukere kan legge den på hjemskjermen. (2026-09-08)
 
 ## Betaling
 
@@ -88,6 +88,12 @@ Utsettes til v2:
 ### RLS-policyer i Supabase
 - Trenere kan avbestille egne bookinger: policy "Trainers can cancel bookings on their slots" er lagt til manuelt i Supabase SQL Editor (se `supabase/trainer_cancel_policy.sql`).
 - Notifications: INSERT er åpen (WITH CHECK true), SELECT og UPDATE kun for eier.
+
+### Push-varsler (OneSignal)
+- iOS: native via `@onesignal/capacitor-plugin` (`src/components/OneSignalInit.tsx`).
+- Web (særlig Android Chrome): OneSignal web-SDK v16 lastes i `src/components/OneSignalWebInit.tsx`. Hopper over hvis `window.Capacitor` finnes. Service worker: `public/OneSignalSDKWorker.js`.
+- Begge kobler `OneSignal.login(user.id)` slik at samme `external_id` treffer alle kanaler. `/api/notify*`-rutene sender med `include_aliases.external_id` + `target_channel: "push"` – ingen backend-endring trengs for web.
+- Krever at "Web"-plattform er lagt til i OneSignal-appen (site URL = https://app.danceitude.no).
 
 ### Varsler (in-app)
 - Tabellen `notifications` brukes for alle varsler.

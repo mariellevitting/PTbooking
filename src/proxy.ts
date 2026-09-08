@@ -33,7 +33,7 @@ export async function proxy(request: NextRequest) {
   const pathname = request.nextUrl.pathname;
   const isPublic = ["/login", "/register", "/glemt-passord", "/nytt-passord", "/", "/om", "/support", "/privacy", "/auth"].some(
     (route) => pathname === route || pathname.startsWith(route + "/")
-  );
+  ) || pathname === "/manifest.webmanifest" || pathname === "/OneSignalSDKWorker.js" || pathname === "/OneSignalSDKUpdaterWorker.js" || pathname.startsWith("/icons/");
 
   const isCapacitor = request.cookies.get("capacitor")?.value === "1";
 
