@@ -83,12 +83,14 @@ export default async function OmPage() {
                   "Book privattimer med få trykk",
                   "Se kommende og gjennomførte timer",
                   "Avbestill timer direkte i appen",
+                  "Få push-varsel på mobilen – påminnelse på morgenen når du har privattime",
+                  "Se om en time er betalt, og få beskjed om å sende kvittering",
                   "Logg freestyle- og slow-poeng",
                   "Følg fremgangen din mot neste nivå – fra Rekrutt til Elite",
                   "Sett personlige mål for sesongen",
                   "Logg og samle konkurranseresultater",
                   "Se nedtelling til neste konkurranse",
-                  "Motta varsler når en trener booker en time på dine vegne",
+                  "Motta varsel når en trener booker en time på dine vegne",
                 ].map(f => (
                   <li key={f} className="flex items-start gap-2 text-gray-700 dark:text-gray-300 text-sm">
                     <span className="text-[#E2A9F1] mt-0.5">•</span>{f}
@@ -111,7 +113,10 @@ export default async function OmPage() {
                   "Se kommende og gjennomførte timer",
                   "Ha oversikt over barnets bookinger på ett sted",
                   "Avbestill timer direkte i appen",
-                  "Motta varsler når en trener booker en time på barnets vegne",
+                  "Få push-varsel på mobilen – påminnelse på morgenen når barnet har privattime",
+                  "Se betalingsstatus på hver time – betalt eller ikke betalt",
+                  "Få beskjed når treneren ber om kvittering",
+                  "Motta varsel når en trener booker en time på barnets vegne",
                 ].map(f => (
                   <li key={f} className="flex items-start gap-2 text-gray-700 dark:text-gray-300 text-sm">
                     <span className="text-[#E2A9F1] mt-0.5">•</span>{f}
@@ -133,11 +138,14 @@ export default async function OmPage() {
                   "Legg ut ledige tider for enkeltdager eller flere dager samtidig",
                   "Se kommende og gjennomførte bookinger i én samlet oversikt",
                   "Book timer direkte for dansere og koble timen til danserens profil",
-                  "Søk opp dansere og se historikk og antall gjennomførte timer",
                   "Book dobbelttimer og koble timen til to danserprofiler",
+                  "Søk opp dansere og se full historikk over privattimer – antall gjennomførte og betalte",
+                  "Purr på kvittering med ett trykk – danseren/forelderen får varsel om å sende bilde av kvitteringen",
+                  "Marker timer som betalt og se hvem som mangler betaling",
                   "Avbestill timer direkte i appen",
                   "Logg konkurranseresultater",
-                  "Motta varsler ved nye bookinger",
+                  "Få push-varsel på mobilen ved nye bookinger og avbestillinger",
+                  "Automatisk påminnelse på morgenen når du har privattime",
                 ].map(f => (
                   <li key={f} className="flex items-start gap-2 text-gray-700 dark:text-gray-300 text-sm">
                     <span className="text-[#E2A9F1] mt-0.5">•</span>{f}
