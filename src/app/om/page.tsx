@@ -143,7 +143,7 @@ export default async function OmPage() {
                   "Purr på kvittering med ett trykk – danseren/forelderen får varsel om å sende bilde av kvitteringen",
                   "Marker timer som betalt og se hvem som mangler betaling",
                   "Avbestill timer direkte i appen",
-                  "Logg konkurranseresultater",
+                  "Se kommende konkurranser med nedtelling",
                   "Få push-varsel på mobilen ved nye bookinger og avbestillinger",
                   "Automatisk påminnelse på morgenen når du har privattime",
                 ].map(f => (
