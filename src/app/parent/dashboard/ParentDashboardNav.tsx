@@ -267,7 +267,6 @@ export default function ParentDashboardNav({ userName, avatarUrl, notifications,
             )}
             <div className="min-w-0">
               <p className="text-sm font-semibold text-gray-800 dark:text-gray-100 truncate">{userName.split(" ")[0]}</p>
-              <p className="text-xs text-gray-400 dark:text-gray-500">Forelder</p>
             </div>
           </Link>
           <div className="flex items-center gap-3">
