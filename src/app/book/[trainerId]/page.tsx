@@ -1,5 +1,6 @@
 import { redirect } from "next/navigation";
 import Link from "next/link";
+import { getTranslations } from "next-intl/server";
 import { createClient } from "@/lib/supabase/server";
 import BookingForm from "./BookingForm";
 import { ArrowLeft, Phone } from "lucide-react";
@@ -8,6 +9,8 @@ import { getClubById, danceStylesFor, defaultPriceFor } from "@/lib/club";
 
 export default async function TrainerBookPage({ params }: { params: Promise<{ trainerId: string }> }) {
   const { trainerId } = await params;
+  const t = await getTranslations("book");
+  const ta = await getTranslations("auth");
   const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) redirect("/login");
@@ -70,7 +73,7 @@ export default async function TrainerBookPage({ params }: { params: Promise<{ tr
             </div>
             <div>
               <h1 className="text-xl font-bold">{trainer.name}</h1>
-              <p className="text-gray-400 dark:text-gray-500 text-sm">Trener{(trainer.clubs as any)?.name ? ` – ${(trainer.clubs as any).name}` : ""}</p>
+              <p className="text-gray-400 dark:text-gray-500 text-sm">{ta("roles.trainer.label")}{(trainer.clubs as any)?.name ? ` – ${(trainer.clubs as any).name}` : ""}</p>
             </div>
           </div>
 
@@ -100,8 +103,8 @@ export default async function TrainerBookPage({ params }: { params: Promise<{ tr
 
         {!slots || slots.length === 0 ? (
           <div className="bg-white dark:bg-gray-900 rounded-xl border dark:border-gray-700 p-6 text-center text-gray-400 dark:text-gray-500">
-            <p className="font-medium mb-1">Ingen ledige tider</p>
-            <p className="text-sm">Treneren har ikke lagt ut ledige tider ennå</p>
+            <p className="font-medium mb-1">{t("noOpenSlots")}</p>
+            <p className="text-sm">{t("noOpenSlotsHint")}</p>
           </div>
         ) : (
           <BookingForm

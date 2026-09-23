@@ -2,12 +2,15 @@
 
 import { useState, useEffect, useRef } from "react";
 import { useRouter } from "next/navigation";
+import { useTranslations, useLocale } from "next-intl";
 import { createClient } from "@/lib/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Search, X } from "lucide-react";
 import { styleColor } from "@/lib/danceStyleColors";
+import { formatDate, formatTime } from "@/lib/dateUtils";
+import type { Locale } from "@/i18n/locale";
 
 const isDoubleStyle = (style: string) => style.toLowerCase().includes("dobbel");
 
@@ -53,6 +56,9 @@ interface Props {
 }
 
 export default function BookingForm({ slots, trainerName, bookerId, bookerName, bookerRole, danceStyles, children, price, priceDouble, paymentLabel, clubId }: Props) {
+  const t = useTranslations("bookingForm");
+  const tc = useTranslations("common");
+  const locale = useLocale() as Locale;
   const router = useRouter();
   const isParent = bookerRole === "parent";
   const isDouble = isDoubleStyle;
@@ -133,6 +139,7 @@ export default function BookingForm({ slots, trainerName, bookerId, bookerName, 
       setPartnerQuery("");
       setPartnerResults([]);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [configIndex]);
 
   function getMonday(date: Date) {
@@ -173,7 +180,7 @@ export default function BookingForm({ slots, trainerName, bookerId, bookerName, 
   });
   const weekGrouped: Record<string, Slot[]> = {};
   for (const slot of weekSlots) {
-    const date = new Date(slot.start_at).toLocaleDateString("nb-NO", { weekday: "long", day: "numeric", month: "long" });
+    const date = formatDate(new Date(slot.start_at), locale, { weekday: "long", day: "numeric", month: "long" });
     if (!weekGrouped[date]) weekGrouped[date] = [];
     weekGrouped[date].push(slot);
   }
@@ -229,9 +236,9 @@ export default function BookingForm({ slots, trainerName, bookerId, bookerName, 
     const takenSlot = currentSlots?.find(s => s.is_booked);
     if (takenSlot) {
       const start = new Date(takenSlot.start_at);
-      const label = start.toLocaleDateString("nb-NO", { weekday: "long", day: "numeric", month: "long" }) +
-        " kl. " + start.toLocaleTimeString("nb-NO", { hour: "2-digit", minute: "2-digit" });
-      setError(`Timen ${label} ble booket av noen andre mens du valgte. Gå tilbake og velg en annen tid.`);
+      const label = formatDate(start, locale, { weekday: "long", day: "numeric", month: "long" }) +
+        " " + formatTime(start, locale);
+      setError(t("slotTakenError", { when: label }));
       setLoading(false);
       return;
     }
@@ -249,18 +256,20 @@ export default function BookingForm({ slots, trainerName, bookerId, bookerName, 
       });
 
       if (bookError) {
-        setError("Noe gikk galt, prøv igjen");
+        setError(t("genericError"));
         setLoading(false);
         return;
       }
 
       const start = new Date(sb.slot.start_at);
-      const tidspunkt = start.toLocaleDateString("nb-NO", { weekday: "long", day: "numeric", month: "long" }) +
-        " kl. " + start.toLocaleTimeString("nb-NO", { hour: "2-digit", minute: "2-digit" });
+      // TODO(i18n): rendres i BOOKERENS språk, ikke mottakerens (trener/partner).
+      // Se tilsvarende TODO i TrainerDashboardTabs.tsx.
+      const tidspunkt = formatDate(start, locale, { weekday: "long", day: "numeric", month: "long" }) +
+        " " + formatTime(start, locale);
 
       const { data: slotData } = await supabase.from("availability_slots").select("trainer_id").eq("id", sb.slot.id).single();
       if (slotData) {
-        const notifMessage = `${dancerName} har booket time i ${sb.danceStyle} – ${tidspunkt}`;
+        const notifMessage = t("notifyTrainerBooked", { dancerName, style: sb.danceStyle, when: tidspunkt });
         await supabase.from("notifications").insert({
           user_id: slotData.trainer_id,
           message: notifMessage,
@@ -276,7 +285,7 @@ export default function BookingForm({ slots, trainerName, bookerId, bookerName, 
       if (sb.linkedUserId) {
         await supabase.from("notifications").insert({
           user_id: sb.linkedUserId,
-          message: `${sb.dancer1} har booket en dobbel privattime med deg i ${sb.danceStyle} – ${tidspunkt}`,
+          message: t("notifyPartnerBooked", { name: sb.dancer1, style: sb.danceStyle, when: tidspunkt }),
         });
       }
     }
@@ -301,7 +310,7 @@ export default function BookingForm({ slots, trainerName, bookerId, bookerName, 
           >
             {availableMonths.map(({ year, month }) => (
               <option key={`${year}-${month}`} value={`${year}-${month}`}>
-                {new Date(year, month, 1).toLocaleDateString("nb-NO", { month: "long", year: "numeric" })}
+                {formatDate(new Date(year, month, 1), locale, { month: "long", year: "numeric" })}
               </option>
             ))}
           </select>
@@ -309,14 +318,14 @@ export default function BookingForm({ slots, trainerName, bookerId, bookerName, 
 
         <div className="flex items-center justify-between">
           <button type="button" onClick={() => { const p = new Date(weekStart); p.setDate(p.getDate() - 7); setWeekStart(p); }} disabled={!canGoPrev} className={`text-2xl px-2 ${canGoPrev ? "text-gray-600 dark:text-gray-400 hover:text-[#E2A9F1]" : "text-gray-200 dark:text-gray-700"}`}>‹</button>
-          <span className="font-semibold text-gray-700 dark:text-gray-300">Uke {getWeekNumber(weekStart)}</span>
+          <span className="font-semibold text-gray-700 dark:text-gray-300">{tc("booking.week", { week: getWeekNumber(weekStart) })}</span>
           <button type="button" onClick={() => { const n = new Date(weekStart); n.setDate(n.getDate() + 7); setWeekStart(n); }} className="text-2xl px-2 text-gray-600 dark:text-gray-400 hover:text-[#E2A9F1]">›</button>
         </div>
 
         {Object.keys(weekGrouped).length === 0 ? (
           <div className="bg-white dark:bg-gray-900 rounded-xl border dark:border-gray-700 p-6 text-center text-gray-400 dark:text-gray-500">
-            <p className="font-medium">Treneren har ikke lagt ut ledige privattimer ennå</p>
-            <p className="text-sm mt-1">Prøv en annen uke</p>
+            <p className="font-medium">{t("noSlotsPosted")}</p>
+            <p className="text-sm mt-1">{t("tryAnotherWeek")}</p>
           </div>
         ) : (
           Object.entries(weekGrouped).map(([date, daySlots]) => (
@@ -324,7 +333,7 @@ export default function BookingForm({ slots, trainerName, bookerId, bookerName, 
               <p className="text-sm font-semibold text-gray-700 dark:text-gray-300 border-b dark:border-gray-700 pb-1 mb-2">{date.charAt(0).toUpperCase() + date.slice(1)}</p>
               <div className="grid grid-cols-3 gap-2">
                 {daySlots.map((slot) => {
-                  const time = new Date(slot.start_at).toLocaleTimeString("nb-NO", { hour: "2-digit", minute: "2-digit" });
+                  const time = formatTime(new Date(slot.start_at), locale);
                   const isSelected = selectedSlots.some(s => s.id === slot.id);
                   return (
                     <button
@@ -357,11 +366,11 @@ export default function BookingForm({ slots, trainerName, bookerId, bookerName, 
         )}
 
         {selectedSlots.length > 0 && (
-          <p className="text-sm text-[#E2A9F1] text-center">{selectedSlots.length} time{selectedSlots.length !== 1 ? "r" : ""} valgt</p>
+          <p className="text-sm text-[#E2A9F1] text-center">{t("slotsSelected", { count: selectedSlots.length })}</p>
         )}
 
         <Button className="w-full bg-[#3A3A3A] hover:bg-[#2a2a2a] dark:bg-[#c87de0] dark:hover:bg-[#b56fd0] dark:text-white" disabled={selectedSlots.length === 0} onClick={startConfigure}>
-          Gå videre
+          {t("continue")}
         </Button>
       </div>
     );
@@ -372,7 +381,7 @@ export default function BookingForm({ slots, trainerName, bookerId, bookerName, 
     const current = slotBookings[configIndex];
     const start = new Date(current.slot.start_at);
     const end = new Date(current.slot.end_at);
-    const dayLabel = start.toLocaleDateString("nb-NO", { weekday: "long", day: "numeric", month: "long" });
+    const dayLabel = formatDate(start, locale, { weekday: "long", day: "numeric", month: "long" });
     const needsTwo = isDouble(current.danceStyle);
     const canNext = current.danceStyle && current.dancer1 && (!needsTwo || current.dancer2);
 
@@ -380,21 +389,21 @@ export default function BookingForm({ slots, trainerName, bookerId, bookerName, 
       <Card>
         <CardHeader>
           <CardTitle className="text-lg">
-            Time {configIndex + 1} av {slotBookings.length}
+            {t("stepOfSteps", { current: configIndex + 1, total: slotBookings.length })}
           </CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">
           <div className="bg-gray-50 dark:bg-gray-800 rounded-xl px-4 py-3">
-            <p className="text-xs text-gray-400 dark:text-gray-500 mb-1">Tid</p>
+            <p className="text-xs text-gray-400 dark:text-gray-500 mb-1">{t("timeLabel")}</p>
             <p className="font-semibold">{dayLabel.charAt(0).toUpperCase() + dayLabel.slice(1)}</p>
             <p className="text-sm text-gray-500 dark:text-gray-400">
-              {start.toLocaleTimeString("nb-NO", { hour: "2-digit", minute: "2-digit" })}–{end.toLocaleTimeString("nb-NO", { hour: "2-digit", minute: "2-digit" })}
+              {formatTime(start, locale)}–{formatTime(end, locale)}
             </p>
-            <p className="text-xs text-gray-400 dark:text-gray-500 mt-0.5">Trener: {trainerName}</p>
+            <p className="text-xs text-gray-400 dark:text-gray-500 mt-0.5">{tc("booking.trainerLabel", { name: trainerName })}</p>
           </div>
 
           <div className="space-y-2">
-            <label className="text-sm font-medium">Dansestil</label>
+            <label className="text-sm font-medium">{t("danceStyle")}</label>
             <div className="grid grid-cols-2 gap-2">
               {danceStyles.map((style) => {
                 const isSelected = current.danceStyle === style;
@@ -425,20 +434,20 @@ export default function BookingForm({ slots, trainerName, bookerId, bookerName, 
 
           {isParent && (
             <div className="space-y-2">
-              <label className="text-sm font-medium">{needsTwo ? "Danser 1 – navn" : "Danserens navn"}</label>
+              <label className="text-sm font-medium">{needsTwo ? t("dancer1LabelDouble") : t("dancerNameLabel")}</label>
               {childrenList.length > 1 ? (
                 <select value={current.dancer1} onChange={(e) => updateCurrent("dancer1", e.target.value)} className="w-full border dark:border-gray-700 rounded-lg px-3 py-2 text-sm bg-white dark:bg-gray-900 dark:text-gray-300">
-                  <option value="">Velg danser</option>
+                  <option value="">{t("selectDancer")}</option>
                   {childrenList.map((c) => <option key={c.id} value={c.name}>{c.name}</option>)}
                 </select>
               ) : (
-                <Input value={current.dancer1} onChange={(e) => updateCurrent("dancer1", e.target.value)} placeholder="Navn på danseren" />
+                <Input value={current.dancer1} onChange={(e) => updateCurrent("dancer1", e.target.value)} placeholder={t("dancerNamePlaceholder")} />
               )}
-              {!addingChild && <button type="button" onClick={() => setAddingChild(true)} className="text-xs text-[#E2A9F1] hover:underline">+ Legg til barn</button>}
+              {!addingChild && <button type="button" onClick={() => setAddingChild(true)} className="text-xs text-[#E2A9F1] hover:underline">{t("addChild")}</button>}
               {addingChild && (
                 <div className="flex gap-2">
-                  <Input value={newChildName} onChange={(e) => setNewChildName(e.target.value)} placeholder="Navn på barn" className="text-sm" />
-                  <Button type="button" onClick={handleAddChild} disabled={savingChild} className="bg-[#3A3A3A] hover:bg-[#2a2a2a] dark:bg-[#c87de0] dark:hover:bg-[#b56fd0] dark:text-white text-sm px-3">{savingChild ? "..." : "Legg til"}</Button>
+                  <Input value={newChildName} onChange={(e) => setNewChildName(e.target.value)} placeholder={t("childNamePlaceholder")} className="text-sm" />
+                  <Button type="button" onClick={handleAddChild} disabled={savingChild} className="bg-[#3A3A3A] hover:bg-[#2a2a2a] dark:bg-[#c87de0] dark:hover:bg-[#b56fd0] dark:text-white text-sm px-3">{savingChild ? "..." : t("add")}</Button>
                 </div>
               )}
             </div>
@@ -446,13 +455,13 @@ export default function BookingForm({ slots, trainerName, bookerId, bookerName, 
 
           {needsTwo && (
             <div className="space-y-2">
-              <label className="text-sm font-medium">{isParent ? "Danser 2 – navn" : "Navn på partner"}</label>
+              <label className="text-sm font-medium">{isParent ? t("dancer2LabelDouble") : t("partnerNameLabel")}</label>
 
               {linkedPartner ? (
                 <div className="flex items-center justify-between bg-[#f5eeff] dark:bg-[#E2A9F1]/10 border border-[#E2A9F1]/40 rounded-lg px-3 py-2.5">
                   <div>
                     <p className="text-sm font-semibold text-purple-800">{linkedPartner.name}</p>
-                    <p className="text-xs text-[#E2A9F1]">Koblet til profil · får varsel</p>
+                    <p className="text-xs text-[#E2A9F1]">{t("linkedToProfile")}</p>
                   </div>
                   <button type="button" onClick={clearPartner} className="text-[#E2A9F1] hover:text-[#c87de0] ml-2">
                     <X size={16} />
@@ -469,7 +478,7 @@ export default function BookingForm({ slots, trainerName, bookerId, bookerName, 
                       setLinkedPartner(null);
                       updateCurrent("linkedUserId", null);
                     }}
-                    placeholder="Skriv navn..."
+                    placeholder={t("typeNamePlaceholder")}
                     className="w-full border dark:border-gray-700 rounded-lg px-3 py-2 text-sm bg-white dark:bg-gray-900"
                     required
                   />
@@ -483,7 +492,7 @@ export default function BookingForm({ slots, trainerName, bookerId, bookerName, 
                           className="w-full text-left px-4 py-2.5 hover:bg-[#f5eeff] dark:bg-[#E2A9F1]/10 dark:hover:bg-purple-950/30 flex items-center justify-between border-t dark:border-gray-700 first:border-t-0"
                         >
                           <span className="text-sm font-medium text-gray-800 dark:text-gray-100">{u.name}</span>
-                          <span className="text-xs text-[#E2A9F1]">Koble til profil</span>
+                          <span className="text-xs text-[#E2A9F1]">{t("connectToProfile")}</span>
                         </button>
                       ))}
                     </div>
@@ -494,10 +503,10 @@ export default function BookingForm({ slots, trainerName, bookerId, bookerName, 
           )}
 
           <Button className="w-full bg-[#3A3A3A] hover:bg-[#2a2a2a] dark:bg-[#c87de0] dark:hover:bg-[#b56fd0] dark:text-white" disabled={!canNext} onClick={nextConfig}>
-            {configIndex < slotBookings.length - 1 ? "Neste time →" : "Se oppsummering"}
+            {configIndex < slotBookings.length - 1 ? t("nextTime") : t("seeSummary")}
           </Button>
           <button type="button" onClick={() => configIndex === 0 ? setStep("pick") : setConfigIndex(configIndex - 1)} className="w-full text-sm text-gray-400 dark:text-gray-500 hover:text-gray-600 dark:hover:text-gray-300 py-2">
-            Gå tilbake
+            {t("goBack")}
           </button>
         </CardContent>
       </Card>
@@ -508,25 +517,25 @@ export default function BookingForm({ slots, trainerName, bookerId, bookerName, 
   return (
     <Card>
       <CardHeader>
-        <CardTitle className="text-lg">Bekreft booking</CardTitle>
+        <CardTitle className="text-lg">{t("confirmBooking")}</CardTitle>
       </CardHeader>
       <CardContent className="space-y-4">
         <div className="space-y-2">
           {slotBookings.map((sb, i) => {
             const start = new Date(sb.slot.start_at);
             const end = new Date(sb.slot.end_at);
-            const dayLabel = start.toLocaleDateString("nb-NO", { weekday: "long", day: "numeric", month: "long" });
+            const dayLabel = formatDate(start, locale, { weekday: "long", day: "numeric", month: "long" });
             const dancerName = isDouble(sb.danceStyle) ? `${sb.dancer1} & ${sb.dancer2}` : sb.dancer1;
             return (
               <div key={i} className="bg-gray-50 dark:bg-gray-800 rounded-xl px-4 py-3 border-l-4 border-l-[#E2A9F1]">
                 <p className="font-semibold text-sm">{dayLabel.charAt(0).toUpperCase() + dayLabel.slice(1)}</p>
                 <p className="text-sm text-gray-500 dark:text-gray-400">
-                  {start.toLocaleTimeString("nb-NO", { hour: "2-digit", minute: "2-digit" })}–{end.toLocaleTimeString("nb-NO", { hour: "2-digit", minute: "2-digit" })}
+                  {formatTime(start, locale)}–{formatTime(end, locale)}
                 </p>
                 <p className="text-sm text-[#E2A9F1]">{sb.danceStyle} · {dancerName}</p>
-                <p className="text-xs text-gray-400 dark:text-gray-500 mt-0.5">Trener: {trainerName}</p>
+                <p className="text-xs text-gray-400 dark:text-gray-500 mt-0.5">{tc("booking.trainerLabel", { name: trainerName })}</p>
                 {sb.linkedUserId && (
-                  <p className="text-xs text-green-600 mt-0.5">✓ Koblet til {sb.dancer2}s profil</p>
+                  <p className="text-xs text-green-600 mt-0.5">{t("connectedToProfile", { name: sb.dancer2 })}</p>
                 )}
               </div>
             );
@@ -535,23 +544,29 @@ export default function BookingForm({ slots, trainerName, bookerId, bookerName, 
 
         <div className="bg-blue-50 border border-blue-200 rounded-xl px-4 py-3 space-y-2">
           <div className="flex justify-between items-center">
-            <p className="text-sm font-semibold text-blue-800">Betaling</p>
+            <p className="text-sm font-semibold text-blue-800">{t("payment")}</p>
             <p className="text-sm font-bold text-blue-800">
               {uniformPrice
-                ? <>{slotBookings.length} × {priceFor(slotBookings[0]?.danceStyle ?? "")} kr = <span className="text-base">{totalPrice} kr</span></>
+                ? t("paymentSummary", { count: slotBookings.length, price: priceFor(slotBookings[0]?.danceStyle ?? ""), total: totalPrice })
                 : <span className="text-base">{totalPrice} kr</span>}
             </p>
           </div>
-          <p className="text-sm text-blue-700">Betaling skjer som før i <strong>{paymentLabel || "Spond"}</strong>. Husk å send kvittering til <strong>{trainerName}</strong> etter betaling.</p>
+          <p className="text-sm text-blue-700">
+            {t.rich("paymentInstructions", {
+              label: paymentLabel || "Spond",
+              trainerName,
+              b: (chunks) => <strong>{chunks}</strong>,
+            })}
+          </p>
         </div>
 
         {error && <p className="text-sm text-red-500">{error}</p>}
 
         <Button className="w-full bg-[#3A3A3A] hover:bg-[#2a2a2a] dark:bg-[#c87de0] dark:hover:bg-[#b56fd0] dark:text-white" onClick={handleBook} disabled={loading}>
-          {loading ? "Booker..." : `Bekreft ${slotBookings.length} booking${slotBookings.length !== 1 ? "er" : ""}`}
+          {loading ? t("booking") : t("confirmCount", { count: slotBookings.length })}
         </Button>
         <button type="button" onClick={() => { setConfigIndex(slotBookings.length - 1); setStep("configure"); }} className="w-full text-sm text-gray-400 dark:text-gray-500 hover:text-gray-600 dark:hover:text-gray-300 py-2">
-          Gå tilbake
+          {t("goBack")}
         </button>
       </CardContent>
     </Card>

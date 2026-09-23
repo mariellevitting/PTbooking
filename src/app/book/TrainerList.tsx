@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { ChevronRight, Pin } from "lucide-react";
 import { useTransition } from "react";
+import { useTranslations } from "next-intl";
 import { togglePin } from "./actions";
 
 type Trainer = {
@@ -17,6 +18,7 @@ type Trainer = {
 };
 
 function TrainerCard({ trainer }: { trainer: Trainer }) {
+  const t = useTranslations("book");
   const [pending, startTransition] = useTransition();
 
   return (
@@ -25,7 +27,7 @@ function TrainerCard({ trainer }: { trainer: Trainer }) {
         onClick={() => startTransition(() => togglePin(trainer.id, trainer.isPinned))}
         disabled={pending}
         className="shrink-0 p-1 rounded-full hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
-        title={trainer.isPinned ? "Fjern pin" : "Fest trener"}
+        title={trainer.isPinned ? t("removePin") : t("pinTrainer")}
       >
         <Pin
           size={16}
@@ -46,8 +48,8 @@ function TrainerCard({ trainer }: { trainer: Trainer }) {
         </div>
         <div className="flex items-center gap-2 shrink-0 text-right">
           <div>
-            <p className="text-sm font-semibold text-[#E2A9F1]">{trainer.priceDouble && trainer.priceDouble !== trainer.price ? `fra ${trainer.price} kr` : `${trainer.price} kr`}</p>
-            <p className="text-xs text-gray-400">{trainer.availableSlots > 0 ? `${trainer.availableSlots} ledige` : "Ingen ledige"}</p>
+            <p className="text-sm font-semibold text-[#E2A9F1]">{trainer.priceDouble && trainer.priceDouble !== trainer.price ? t("fromPrice", { price: trainer.price }) : t("price", { price: trainer.price })}</p>
+            <p className="text-xs text-gray-400">{trainer.availableSlots > 0 ? t("slotsAvailable", { count: trainer.availableSlots }) : t("noSlotsAvailable")}</p>
           </div>
           <ChevronRight size={18} className="text-gray-300 dark:text-gray-600" />
         </div>
@@ -57,25 +59,26 @@ function TrainerCard({ trainer }: { trainer: Trainer }) {
 }
 
 export default function TrainerList({ trainers }: { trainers: Trainer[] }) {
-  const pinned = trainers.filter(t => t.isPinned);
-  const rest = trainers.filter(t => !t.isPinned);
+  const t = useTranslations("book");
+  const pinned = trainers.filter(tr => tr.isPinned);
+  const rest = trainers.filter(tr => !tr.isPinned);
 
   return (
     <div className="space-y-6">
       {pinned.length > 0 && (
         <div>
-          <p className="text-xs font-semibold text-gray-400 dark:text-gray-500 uppercase tracking-wider mb-3">Festede trenere</p>
+          <p className="text-xs font-semibold text-gray-400 dark:text-gray-500 uppercase tracking-wider mb-3">{t("pinnedTrainers")}</p>
           <div className="space-y-3">
-            {pinned.map(t => <TrainerCard key={t.id} trainer={t} />)}
+            {pinned.map(tr => <TrainerCard key={tr.id} trainer={tr} />)}
           </div>
         </div>
       )}
       <div>
         {pinned.length > 0 && (
-          <p className="text-xs font-semibold text-gray-400 dark:text-gray-500 uppercase tracking-wider mb-3">Alle trenere</p>
+          <p className="text-xs font-semibold text-gray-400 dark:text-gray-500 uppercase tracking-wider mb-3">{t("allTrainers")}</p>
         )}
         <div className="space-y-3">
-          {rest.map(t => <TrainerCard key={t.id} trainer={t} />)}
+          {rest.map(tr => <TrainerCard key={tr.id} trainer={tr} />)}
         </div>
       </div>
     </div>
