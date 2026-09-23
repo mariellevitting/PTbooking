@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
-import { Check, ChevronLeft, ChevronRight, Target, Clock, Calendar, TrendingUp, History, UserPlus } from "lucide-react";
+import { Check, ChevronLeft, ChevronRight, Target, Clock, Calendar, History, UserPlus } from "lucide-react";
 import { createClient } from "@/lib/supabase/client";
 import { useRouter } from "next/navigation";
 import { formatTime } from "@/lib/dateUtils";
@@ -201,14 +201,6 @@ export default function TrainerWebDashboard({ slots, completedSlots, trainerName
               <p className="text-xs text-gray-400">timer totalt</p>
             </div>
           </div>
-          {changePercent !== null && (
-            <div className="flex items-center gap-1 mt-2">
-              <TrendingUp size={12} className={changePercent >= 0 ? "text-green-500" : "text-red-400"} />
-              <p className={`text-xs font-medium ${changePercent >= 0 ? "text-green-500" : "text-red-400"}`}>
-                {changePercent >= 0 ? "+" : ""}{changePercent}% fra forrige uke
-              </p>
-            </div>
-          )}
         </div>
 
         {/* Betalingsstatus */}
