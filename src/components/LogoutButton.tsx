@@ -2,10 +2,12 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { useTranslations } from "next-intl";
 import { createClient } from "@/lib/supabase/client";
 import { LogOut } from "lucide-react";
 
 export default function LogoutButton() {
+  const t = useTranslations("common");
   const router = useRouter();
   const [open, setOpen] = useState(false);
 
@@ -23,7 +25,7 @@ export default function LogoutButton() {
         className="flex items-center gap-2 text-sm text-gray-400 dark:text-gray-500 hover:text-gray-600"
       >
         <LogOut size={16} />
-        Logg ut
+        {t("logout.button")}
       </button>
 
       {open && (
@@ -32,20 +34,20 @@ export default function LogoutButton() {
           <div className="absolute inset-0 bg-black/40" onClick={() => setOpen(false)} />
           {/* Boks */}
           <div className="relative bg-white dark:bg-gray-900 rounded-2xl shadow-xl p-6 mx-6 w-full max-w-sm">
-            <h2 className="text-lg font-bold text-gray-800 dark:text-white mb-2">Logg ut</h2>
-            <p className="text-sm text-gray-500 dark:text-gray-400 mb-6">Er du sikker på at du vil logge ut?</p>
+            <h2 className="text-lg font-bold text-gray-800 dark:text-white mb-2">{t("logout.confirmTitle")}</h2>
+            <p className="text-sm text-gray-500 dark:text-gray-400 mb-6">{t("logout.confirmBody")}</p>
             <div className="flex gap-3">
               <button
                 onClick={() => setOpen(false)}
                 className="flex-1 border border-gray-200 dark:border-gray-700 rounded-xl py-2.5 text-sm font-medium text-gray-600 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors"
               >
-                Avbryt
+                {t("cancel")}
               </button>
               <button
                 onClick={handleLogout}
                 className="flex-1 bg-red-500 hover:bg-red-600 text-white rounded-xl py-2.5 text-sm font-medium transition-colors"
               >
-                Logg ut
+                {t("logout.button")}
               </button>
             </div>
           </div>

@@ -3,11 +3,13 @@
 import { Heart } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { useTranslations } from "next-intl";
 
 // Kredit-footeren vises kun på «Om Danceitude», ikke inne i selve appen.
 const FOOTER_PATHS = ["/om"];
 
 export default function Footer() {
+  const t = useTranslations("common.footer");
   const pathname = usePathname();
   if (!FOOTER_PATHS.includes(pathname)) return null;
 
@@ -15,7 +17,7 @@ export default function Footer() {
     <footer className="border-t dark:border-gray-700 bg-white dark:bg-gray-900 py-6 px-4 mt-auto">
       <div className="max-w-lg mx-auto flex flex-col items-center gap-2 text-center">
         <p className="text-sm text-gray-500 dark:text-gray-400 flex items-center gap-1.5">
-          Laget med <Heart size={14} className="text-[#E2A9F1] fill-[#E2A9F1]" /> av{" "}
+          {t("madeBy")} <Heart size={14} className="text-[#E2A9F1] fill-[#E2A9F1]" /> {t("by")}{" "}
           <Link
             href="https://www.linkedin.com/in/miemarielle/"
             target="_blank"
@@ -31,7 +33,7 @@ export default function Footer() {
           rel="noopener noreferrer"
           className="text-xs text-gray-400 dark:text-gray-500 hover:text-[#E2A9F1] transition-colors"
         >
-          Denne er designet av dansere, for dansere ✦ miemarielle.design
+          {t("tagline")} ✦ miemarielle.design
         </Link>
       </div>
     </footer>

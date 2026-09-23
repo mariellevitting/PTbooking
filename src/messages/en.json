@@ -5,6 +5,36 @@
     "en": "English",
     "saved": "Language updated"
   },
+  "common": {
+    "cancel": "Cancel",
+    "yes": "Yes",
+    "loading": "Loading...",
+    "save": "Save",
+    "saving": "Saving...",
+    "delete": "Delete",
+    "deleting": "Deleting...",
+    "edit": "Edit",
+    "close": "Close",
+    "theme": {
+      "toggle": "Toggle theme"
+    },
+    "logout": {
+      "button": "Log out",
+      "confirmTitle": "Log out",
+      "confirmBody": "Are you sure you want to log out?"
+    },
+    "deleteAccount": {
+      "button": "Delete account",
+      "confirmTitle": "Are you sure?",
+      "confirmBody": "This permanently deletes your account. All bookings and data will be deleted and cannot be recovered.",
+      "confirmButton": "Yes, delete my account"
+    },
+    "footer": {
+      "madeBy": "Made with",
+      "by": "by",
+      "tagline": "Designed by dancers, for dancers"
+    }
+  },
   "auth": {
     "roles": {
       "dancer": { "label": "Dancer", "description": "I book lessons for myself" },

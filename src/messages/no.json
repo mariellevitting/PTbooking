@@ -5,6 +5,36 @@
     "en": "English",
     "saved": "Språk oppdatert"
   },
+  "common": {
+    "cancel": "Avbryt",
+    "yes": "Ja",
+    "loading": "Laster...",
+    "save": "Lagre",
+    "saving": "Lagrer...",
+    "delete": "Slett",
+    "deleting": "Sletter...",
+    "edit": "Rediger",
+    "close": "Lukk",
+    "theme": {
+      "toggle": "Bytt tema"
+    },
+    "logout": {
+      "button": "Logg ut",
+      "confirmTitle": "Logg ut",
+      "confirmBody": "Er du sikker på at du vil logge ut?"
+    },
+    "deleteAccount": {
+      "button": "Slett konto",
+      "confirmTitle": "Er du sikker?",
+      "confirmBody": "Dette sletter kontoen din permanent. Alle bookinger og data vil bli slettet og kan ikke gjenopprettes.",
+      "confirmButton": "Ja, slett kontoen min"
+    },
+    "footer": {
+      "madeBy": "Laget med",
+      "by": "av",
+      "tagline": "Denne er designet av dansere, for dansere"
+    }
+  },
   "auth": {
     "roles": {
       "dancer": { "label": "Danser", "description": "Jeg booker timer for meg selv" },

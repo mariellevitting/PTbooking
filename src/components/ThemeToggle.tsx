@@ -1,9 +1,11 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { useTranslations } from "next-intl";
 import { Moon, Sun } from "lucide-react";
 
 export default function ThemeToggle() {
+  const t = useTranslations("common");
   const [dark, setDark] = useState(false);
 
   useEffect(() => {
@@ -30,7 +32,7 @@ export default function ThemeToggle() {
     <button
       onClick={toggle}
       className="p-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors text-gray-600 dark:text-gray-300"
-      aria-label="Bytt tema"
+      aria-label={t("theme.toggle")}
     >
       {dark ? <Sun size={20} /> : <Moon size={20} />}
     </button>

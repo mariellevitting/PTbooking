@@ -2,10 +2,12 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { useTranslations } from "next-intl";
 import { createClient } from "@/lib/supabase/client";
 import { Trash2 } from "lucide-react";
 
 export default function DeleteAccountSection({ userId }: { userId: string }) {
+  const t = useTranslations("common");
   const router = useRouter();
   const [confirm, setConfirm] = useState(false);
   const [deleting, setDeleting] = useState(false);
@@ -27,13 +29,13 @@ export default function DeleteAccountSection({ userId }: { userId: string }) {
           onClick={() => setConfirm(true)}
           className="flex items-center gap-2 text-sm text-red-400 hover:text-red-500 transition-colors"
         >
-          <Trash2 size={14} /> Slett konto
+          <Trash2 size={14} /> {t("deleteAccount.button")}
         </button>
       ) : (
         <div className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-xl p-4 space-y-3">
-          <p className="text-sm font-semibold text-red-700 dark:text-red-400">Er du sikker?</p>
+          <p className="text-sm font-semibold text-red-700 dark:text-red-400">{t("deleteAccount.confirmTitle")}</p>
           <p className="text-xs text-red-600 dark:text-red-400">
-            Dette sletter kontoen din permanent. Alle bookinger og data vil bli slettet og kan ikke gjenopprettes.
+            {t("deleteAccount.confirmBody")}
           </p>
           <div className="flex gap-2">
             <button
@@ -42,14 +44,14 @@ export default function DeleteAccountSection({ userId }: { userId: string }) {
               disabled={deleting}
               className="flex-1 bg-red-500 hover:bg-red-600 text-white text-sm font-semibold py-2 rounded-lg transition-colors disabled:opacity-50"
             >
-              {deleting ? "Sletter..." : "Ja, slett kontoen min"}
+              {deleting ? t("deleting") : t("deleteAccount.confirmButton")}
             </button>
             <button
               type="button"
               onClick={() => setConfirm(false)}
               className="flex-1 bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 text-sm font-semibold py-2 rounded-lg transition-colors"
             >
-              Avbryt
+              {t("cancel")}
             </button>
           </div>
         </div>
