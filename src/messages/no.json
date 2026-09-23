@@ -4,5 +4,67 @@
     "no": "Norsk",
     "en": "English",
     "saved": "Språk oppdatert"
+  },
+  "auth": {
+    "roles": {
+      "dancer": { "label": "Danser", "description": "Jeg booker timer for meg selv" },
+      "parent": { "label": "Forelder", "description": "Jeg booker timer for mitt barn" },
+      "trainer": { "label": "Trener", "description": "Jeg tilbyr privattimer" }
+    },
+    "tabs": { "login": "Logg inn", "register": "Registrer" },
+    "login": {
+      "heading": "Logg inn",
+      "welcomeBack": "Velkommen tilbake!",
+      "email": "E-post",
+      "emailPlaceholder": "din@epost.no",
+      "password": "Passord",
+      "passwordPlaceholder": "••••••••",
+      "forgotPassword": "Glemt passordet?",
+      "submit": "Logg inn",
+      "submitting": "Logger inn...",
+      "connectionError": "Kunne ikke koble til. Sjekk internettforbindelsen og prøv igjen.",
+      "wrongCredentials": "Feil e-post eller passord",
+      "noAccount": "Har du ikke konto?",
+      "registerLink": "Registrer deg"
+    },
+    "register": {
+      "whoAreYou": "Hvem er du?",
+      "changeRole": "← Endre rolle",
+      "firstName": "Fornavn",
+      "lastName": "Etternavn",
+      "email": "E-post",
+      "emailPlaceholder": "din@epost.no",
+      "password": "Passord",
+      "passwordPlaceholder": "Minst 6 tegn",
+      "dancers": "Danser(e)",
+      "dancerPlaceholder": "Danser {n}",
+      "addDancer": "+ Legg til danser",
+      "trainerCode": "Trenerkode",
+      "trainerCodePlaceholder": "Kode fra klubben",
+      "trainerCodeHint": "Kun trenere med kode kan registrere seg.",
+      "clubCode": "Klubbkode",
+      "clubCodePlaceholder": "Kode fra klubben din",
+      "dancerCodeHint": "Kun dansere med klubbkode kan registrere seg.",
+      "parentCodeHint": "Kun foreldre med klubbkode kan registrere seg.",
+      "submit": "Lag konto",
+      "submitting": "Oppretter konto..."
+    },
+    "hero": {
+      "tagline": "Av dansere, for dansere",
+      "subtitle": "Book din privattime enkelt og raskt"
+    },
+    "footer": {
+      "about": "Om Danceitude",
+      "help": "Hjelp"
+    },
+    "registerPage": {
+      "heading": "Lag konto",
+      "subheading": "Kom i gang på under ett minutt",
+      "haveAccount": "Har du allerede konto?",
+      "loginLink": "Logg inn",
+      "club": "Klubb",
+      "selectClub": "Velg klubb",
+      "clubCodeHint": "Du får denne koden fra klubben din."
+    }
   }
 }

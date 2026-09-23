@@ -3,16 +3,11 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
+import { useTranslations } from "next-intl";
 import { registerUser } from "@/app/actions/register";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import type { UserRole } from "@/types";
-
-const roles: { value: UserRole; label: string; description: string }[] = [
-  { value: "dancer", label: "Danser", description: "Jeg booker timer for meg selv" },
-  { value: "parent", label: "Forelder", description: "Jeg booker timer for mitt barn" },
-  { value: "trainer", label: "Trener", description: "Jeg tilbyr privattimer" },
-];
 
 interface Props {
   prefilledCode?: string;
@@ -22,6 +17,12 @@ interface Props {
 
 export default function RegisterForm({ prefilledCode, clubName, clubs = [] }: Props) {
   const router = useRouter();
+  const t = useTranslations("auth");
+  const roles: { value: UserRole; label: string; description: string }[] = [
+    { value: "dancer", label: t("roles.dancer.label"), description: t("roles.dancer.description") },
+    { value: "parent", label: t("roles.parent.label"), description: t("roles.parent.description") },
+    { value: "trainer", label: t("roles.trainer.label"), description: t("roles.trainer.description") },
+  ];
   const [step, setStep] = useState<"role" | "details">("role");
   const [role, setRole] = useState<UserRole | null>(null);
   const [firstName, setFirstName] = useState("");
@@ -58,7 +59,7 @@ export default function RegisterForm({ prefilledCode, clubName, clubs = [] }: Pr
     <>
       {step === "role" && (
         <div className="space-y-3">
-          <p className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-3">Hvem er du?</p>
+          <p className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-3">{t("register.whoAreYou")}</p>
           {roles.map(r => (
             <button key={r.value} onClick={() => { setRole(r.value); setStep("details"); }}
               className="w-full text-left border dark:border-gray-700 rounded-xl p-4 bg-white dark:bg-gray-900 hover:border-[#E2A9F1] hover:bg-[#f5eeff] dark:bg-[#E2A9F1]/10 transition-colors">
@@ -67,8 +68,8 @@ export default function RegisterForm({ prefilledCode, clubName, clubs = [] }: Pr
             </button>
           ))}
           <p className="text-center text-sm text-gray-500 dark:text-gray-400 mt-4">
-            Har du allerede konto?{" "}
-            <Link href="/login" className="text-[#E2A9F1] hover:underline font-medium">Logg inn</Link>
+            {t("registerPage.haveAccount")}{" "}
+            <Link href="/login" className="text-[#E2A9F1] hover:underline font-medium">{t("registerPage.loginLink")}</Link>
           </p>
         </div>
       )}
@@ -80,34 +81,34 @@ export default function RegisterForm({ prefilledCode, clubName, clubs = [] }: Pr
               {roles.find(r => r.value === role)?.label}
             </span>
             <button type="button" onClick={() => setStep("role")} className="text-sm text-[#E2A9F1] hover:underline">
-              ← Endre rolle
+              {t("register.changeRole")}
             </button>
           </div>
           <div className="flex gap-2">
             <div className="space-y-1.5 flex-1">
-              <label className="text-sm font-medium">Fornavn</label>
+              <label className="text-sm font-medium">{t("register.firstName")}</label>
               <Input value={firstName} onChange={e => setFirstName(e.target.value)} required />
             </div>
             <div className="space-y-1.5 flex-1">
-              <label className="text-sm font-medium">Etternavn</label>
+              <label className="text-sm font-medium">{t("register.lastName")}</label>
               <Input value={lastName} onChange={e => setLastName(e.target.value)} required />
             </div>
           </div>
           <div className="space-y-1.5">
-            <label className="text-sm font-medium">E-post</label>
-            <Input type="email" value={email} onChange={e => setEmail(e.target.value)} placeholder="din@epost.no" required />
+            <label className="text-sm font-medium">{t("register.email")}</label>
+            <Input type="email" value={email} onChange={e => setEmail(e.target.value)} placeholder={t("register.emailPlaceholder")} required />
           </div>
           <div className="space-y-1.5">
-            <label className="text-sm font-medium">Passord</label>
-            <Input type="password" value={password} onChange={e => setPassword(e.target.value)} placeholder="Minst 6 tegn" minLength={6} required />
+            <label className="text-sm font-medium">{t("register.password")}</label>
+            <Input type="password" value={password} onChange={e => setPassword(e.target.value)} placeholder={t("register.passwordPlaceholder")} minLength={6} required />
           </div>
           {role === "parent" && (
             <div className="space-y-2">
-              <label className="text-sm font-medium">Danser(e)</label>
+              <label className="text-sm font-medium">{t("register.dancers")}</label>
               {dancerNames.map((n, i) => (
                 <div key={i} className="flex gap-2">
                   <Input value={n} onChange={e => { const u = [...dancerNames]; u[i] = e.target.value; setDancerNames(u); }}
-                    placeholder={`Danser ${i + 1}`} required={i === 0} />
+                    placeholder={t("register.dancerPlaceholder", { n: i + 1 })} required={i === 0} />
                   {dancerNames.length > 1 && (
                     <button type="button" onClick={() => setDancerNames(dancerNames.filter((_, j) => j !== i))}
                       className="text-red-400 hover:text-red-600 px-2">✕</button>
@@ -115,19 +116,19 @@ export default function RegisterForm({ prefilledCode, clubName, clubs = [] }: Pr
                 </div>
               ))}
               <button type="button" onClick={() => setDancerNames([...dancerNames, ""])}
-                className="text-sm text-[#E2A9F1] hover:underline">+ Legg til danser</button>
+                className="text-sm text-[#E2A9F1] hover:underline">{t("register.addDancer")}</button>
             </div>
           )}
           {clubs.length > 0 && (
             <div className="space-y-1.5">
-              <label className="text-sm font-medium">Klubb</label>
+              <label className="text-sm font-medium">{t("registerPage.club")}</label>
               <select
                 value={selectedClub}
                 onChange={e => setSelectedClub(e.target.value)}
                 required
                 className="w-full border dark:border-gray-700 rounded-lg px-3 py-2 text-sm bg-white dark:bg-gray-900 text-gray-900 dark:text-white"
               >
-                <option value="">Velg klubb</option>
+                <option value="">{t("registerPage.selectClub")}</option>
                 {clubs.map(c => (
                   <option key={c.id} value={c.id}>{c.name}</option>
                 ))}
@@ -135,14 +136,14 @@ export default function RegisterForm({ prefilledCode, clubName, clubs = [] }: Pr
             </div>
           )}
           <div className="space-y-1.5">
-            <label className="text-sm font-medium">Klubbkode</label>
+            <label className="text-sm font-medium">{t("register.clubCode")}</label>
             <Input type="text" value={trainerCode} onChange={e => setTrainerCode(e.target.value.toUpperCase())}
-              placeholder="Kode fra klubben din" required />
-            <p className="text-xs text-gray-400 dark:text-gray-500">Du får denne koden fra klubben din.</p>
+              placeholder={t("register.clubCodePlaceholder")} required />
+            <p className="text-xs text-gray-400 dark:text-gray-500">{t("registerPage.clubCodeHint")}</p>
           </div>
           {error && <p className="text-sm text-red-500">{error}</p>}
           <Button type="submit" className="w-full bg-[#3A3A3A] hover:bg-[#2a2a2a] dark:bg-[#c87de0] dark:hover:bg-[#b56fd0] dark:text-white h-11 text-base" disabled={loading}>
-            {loading ? "Oppretter konto..." : "Lag konto"}
+            {loading ? t("register.submitting") : t("register.submit")}
           </Button>
         </form>
       )}
@@ -156,10 +157,10 @@ export default function RegisterForm({ prefilledCode, clubName, clubs = [] }: Pr
       <div className="hidden md:flex md:w-1/2 relative min-h-screen" style={{ backgroundImage: "url('/login-bg.png')", backgroundSize: "cover", backgroundPosition: "center" }}>
         <div className="absolute inset-0 bg-black/20" />
         <div className="relative z-10 flex flex-col justify-end p-10 text-white">
-          <p className="text-white/90 text-lg italic mb-3">✦ Av dansere, for dansere</p>
+          <p className="text-white/90 text-lg italic mb-3">✦ {t("hero.tagline")}</p>
           <h1 className="text-5xl font-bold mb-1">Danceitude</h1>
           {displayName && <p className="text-white/70 text-lg mb-2">{displayName}</p>}
-          <p className="text-white/80 text-lg">Book din privattime enkelt og raskt</p>
+          <p className="text-white/80 text-lg">{t("hero.subtitle")}</p>
         </div>
       </div>
 
@@ -167,12 +168,12 @@ export default function RegisterForm({ prefilledCode, clubName, clubs = [] }: Pr
       <div className="md:hidden relative min-h-screen flex items-end" style={{ backgroundImage: "url('/login-bg.png')", backgroundSize: "cover", backgroundPosition: "center top" }}>
         <div className="absolute inset-0 bg-black/20" />
         <div className="relative z-10 w-full px-4 pb-4 pt-16">
-          <p className="text-white/90 text-sm italic mb-1 px-2">✦ Av dansere, for dansere</p>
+          <p className="text-white/90 text-sm italic mb-1 px-2">✦ {t("hero.tagline")}</p>
           <h1 className="text-3xl font-bold text-white mb-4 px-2">Danceitude</h1>
           <div className="bg-white dark:bg-gray-900 rounded-2xl p-6 shadow-xl">
             <div className="flex bg-gray-100 dark:bg-gray-800 rounded-xl p-1 mb-6">
-              <Link href="/login" className="flex-1 text-center py-2 rounded-lg text-sm font-medium text-gray-500 dark:text-gray-400">Logg inn</Link>
-              <span className="flex-1 text-center py-2 rounded-lg bg-white dark:bg-gray-900 text-sm font-semibold text-gray-900 dark:text-white shadow-sm">Registrer</span>
+              <Link href="/login" className="flex-1 text-center py-2 rounded-lg text-sm font-medium text-gray-500 dark:text-gray-400">{t("tabs.login")}</Link>
+              <span className="flex-1 text-center py-2 rounded-lg bg-white dark:bg-gray-900 text-sm font-semibold text-gray-900 dark:text-white shadow-sm">{t("tabs.register")}</span>
             </div>
             {formContent}
           </div>
@@ -183,8 +184,8 @@ export default function RegisterForm({ prefilledCode, clubName, clubs = [] }: Pr
       <div className="hidden md:flex flex-1 items-center justify-center bg-gray-50 dark:bg-gray-950 p-8">
         <div className="w-full max-w-sm">
           <div className="mb-8">
-            <h2 className="text-3xl font-bold text-gray-900 dark:text-white">Lag konto</h2>
-            <p className="text-gray-500 dark:text-gray-400 mt-1 text-sm">Kom i gang på under ett minutt</p>
+            <h2 className="text-3xl font-bold text-gray-900 dark:text-white">{t("registerPage.heading")}</h2>
+            <p className="text-gray-500 dark:text-gray-400 mt-1 text-sm">{t("registerPage.subheading")}</p>
           </div>
           {formContent}
         </div>

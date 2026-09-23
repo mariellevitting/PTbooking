@@ -4,5 +4,67 @@
     "no": "Norsk",
     "en": "English",
     "saved": "Language updated"
+  },
+  "auth": {
+    "roles": {
+      "dancer": { "label": "Dancer", "description": "I book lessons for myself" },
+      "parent": { "label": "Parent", "description": "I book lessons for my child" },
+      "trainer": { "label": "Trainer", "description": "I offer private lessons" }
+    },
+    "tabs": { "login": "Log in", "register": "Sign up" },
+    "login": {
+      "heading": "Log in",
+      "welcomeBack": "Welcome back!",
+      "email": "Email",
+      "emailPlaceholder": "you@email.com",
+      "password": "Password",
+      "passwordPlaceholder": "••••••••",
+      "forgotPassword": "Forgot your password?",
+      "submit": "Log in",
+      "submitting": "Logging in...",
+      "connectionError": "Couldn't connect. Check your internet connection and try again.",
+      "wrongCredentials": "Wrong email or password",
+      "noAccount": "Don't have an account?",
+      "registerLink": "Sign up"
+    },
+    "register": {
+      "whoAreYou": "Who are you?",
+      "changeRole": "← Change role",
+      "firstName": "First name",
+      "lastName": "Last name",
+      "email": "Email",
+      "emailPlaceholder": "you@email.com",
+      "password": "Password",
+      "passwordPlaceholder": "At least 6 characters",
+      "dancers": "Dancer(s)",
+      "dancerPlaceholder": "Dancer {n}",
+      "addDancer": "+ Add dancer",
+      "trainerCode": "Trainer code",
+      "trainerCodePlaceholder": "Code from your club",
+      "trainerCodeHint": "Only trainers with a code can register.",
+      "clubCode": "Club code",
+      "clubCodePlaceholder": "Code from your club",
+      "dancerCodeHint": "Only dancers with a club code can register.",
+      "parentCodeHint": "Only parents with a club code can register.",
+      "submit": "Create account",
+      "submitting": "Creating account..."
+    },
+    "hero": {
+      "tagline": "By dancers, for dancers",
+      "subtitle": "Book your private lesson quickly and easily"
+    },
+    "footer": {
+      "about": "About Danceitude",
+      "help": "Help"
+    },
+    "registerPage": {
+      "heading": "Create account",
+      "subheading": "Get started in under a minute",
+      "haveAccount": "Already have an account?",
+      "loginLink": "Log in",
+      "club": "Club",
+      "selectClub": "Select club",
+      "clubCodeHint": "You'll get this code from your club."
+    }
   }
 }
