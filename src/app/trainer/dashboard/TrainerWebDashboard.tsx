@@ -171,7 +171,7 @@ export default function TrainerWebDashboard({ slots, completedSlots, trainerName
   return (
     <div className="space-y-5">
       {/* Hero */}
-      <div className="relative h-52 rounded-2xl overflow-hidden">
+      <div className="relative h-44 rounded-2xl overflow-hidden">
         <img src="/login-bg.png" alt="" className="absolute inset-0 w-full h-full object-cover object-top" />
         <div className="absolute inset-0 bg-gradient-to-r from-black/65 via-black/35 to-transparent" />
         <div className="relative z-10 p-7 h-full flex flex-col justify-end">
@@ -180,63 +180,10 @@ export default function TrainerWebDashboard({ slots, completedSlots, trainerName
         </div>
       </div>
 
-      {/* Rad 1: Stats */}
-      <div className="grid grid-cols-3 gap-4">
-        {/* 7-dagers */}
-        <div className="bg-white dark:bg-gray-900 rounded-2xl border dark:border-gray-800 p-5">
-          <p className="text-xs font-semibold text-gray-400 dark:text-gray-500 uppercase tracking-wide mb-3">Siste 7 dager</p>
-          <div className="flex gap-5">
-            <div>
-              <div className="flex items-center gap-1.5 mb-0.5">
-                <Calendar size={13} className="text-[#9b59c4]" />
-                <p className="text-2xl font-bold text-gray-800 dark:text-gray-100">{last7.length}</p>
-              </div>
-              <p className="text-xs text-gray-400">timer hatt</p>
-            </div>
-            <div>
-              <div className="flex items-center gap-1.5 mb-0.5">
-                <Clock size={13} className="text-[#9b59c4]" />
-                <p className="text-2xl font-bold text-gray-800 dark:text-gray-100">{last7Hours}</p>
-              </div>
-              <p className="text-xs text-gray-400">timer totalt</p>
-            </div>
-          </div>
-        </div>
+      {/* Rad 1: Kalender | Dag-visning (viktigst) */}
+      <div className="grid grid-cols-[300px_1fr] gap-4">
 
-        {/* Betalingsstatus */}
-        <div className="bg-white dark:bg-gray-900 rounded-2xl border dark:border-gray-800 p-5">
-          <p className="text-xs font-semibold text-gray-400 dark:text-gray-500 uppercase tracking-wide mb-3">Betalingsstatus</p>
-          <div className="flex items-end justify-between mb-2">
-            <p className="text-2xl font-bold text-gray-800 dark:text-gray-100">{paidCount}<span className="text-base font-normal text-gray-400">/{totalCompleted}</span></p>
-            <p className="text-xs text-gray-400 mb-1">betalt</p>
-          </div>
-          <div className="w-full bg-gray-100 dark:bg-gray-800 rounded-full h-2">
-            <div className="bg-green-400 h-2 rounded-full transition-all" style={{ width: totalCompleted > 0 ? `${(paidCount / totalCompleted) * 100}%` : "0%" }} />
-          </div>
-          {totalCompleted - paidCount > 0 && (
-            <p className="text-xs text-amber-500 mt-2">{totalCompleted - paidCount} mangler betaling</p>
-          )}
-        </div>
-
-        {/* Sesongmål */}
-        <Link href="/trainer/sesongmal" className="bg-white dark:bg-gray-900 rounded-2xl border dark:border-gray-800 p-5 hover:border-[#E2A9F1] transition-colors group flex flex-col justify-between">
-          <p className="text-xs font-semibold text-gray-400 dark:text-gray-500 uppercase tracking-wide mb-3">Sesongmål</p>
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-full bg-[#edd5f9] dark:bg-[#E2A9F1]/15 flex items-center justify-center">
-                <Target size={18} className="text-[#9b59c4] dark:text-[#E2A9F1]" />
-              </div>
-              <p className="text-sm text-gray-500 dark:text-gray-400">Se danserenes mål og fremgang</p>
-            </div>
-            <ChevronRight size={16} className="text-gray-300 group-hover:text-[#E2A9F1] transition-colors flex-shrink-0" />
-          </div>
-        </Link>
-      </div>
-
-      {/* Rad 2: Kalender | Dag-visning | Aktivitet */}
-      <div className="grid grid-cols-[300px_1fr_260px] gap-4">
-
-        {/* Venstre: Kalender + hurtighandlinger */}
+        {/* Venstre: Kalender */}
         <div className="space-y-4">
           <div className="bg-white dark:bg-gray-900 rounded-2xl border dark:border-gray-800 p-5">
             <div className="flex items-center justify-between mb-4">
@@ -354,37 +301,89 @@ export default function TrainerWebDashboard({ slots, completedSlots, trainerName
           )}
         </div>
 
-        {/* Høyre: Nylige aktiviteter + ledige tider */}
-        <div className="space-y-4">
-          <div className="bg-white dark:bg-gray-900 rounded-2xl border dark:border-gray-800 p-5">
-            <div className="flex items-center justify-between mb-4">
-              <p className="text-xs font-semibold text-gray-400 dark:text-gray-500 uppercase tracking-wide">Nylige aktiviteter</p>
-            </div>
-            {recentActivity.length === 0 ? (
-              <p className="text-xs text-gray-400 text-center py-4">Ingen aktivitet ennå</p>
-            ) : (
-              <div className="space-y-3">
-                {recentActivity.map((a, i) => (
-                  <div key={i} className="flex items-center gap-3">
-                    <div className="w-8 h-8 rounded-full bg-[#edd5f9] dark:bg-[#E2A9F1]/15 flex items-center justify-center text-[#9b59c4] dark:text-[#E2A9F1] text-xs font-bold flex-shrink-0">
-                      {a.name.charAt(0)}
-                    </div>
-                    <div className="flex-1 min-w-0">
-                      <p className="text-sm font-medium text-gray-700 dark:text-gray-200 truncate">{a.name}</p>
-                      <p className="text-xs text-gray-400">{a.paid ? "Betaling mottatt" : "Time gjennomført"}</p>
-                    </div>
-                    <p className="text-xs text-gray-400 flex-shrink-0">{mounted ? timeAgo(a.date) : ""}</p>
-                  </div>
-                ))}
-              </div>
-            )}
-          </div>
+      </div>
 
-          <div className="bg-[#edd5f9] dark:bg-[#E2A9F1]/10 rounded-2xl p-5">
-            <p className="text-xs font-semibold text-[#9b59c4] dark:text-[#E2A9F1] uppercase tracking-wide mb-1">Ledige tider</p>
-            <p className="text-4xl font-bold text-[#9b59c4] dark:text-[#E2A9F1]">{freeCount}</p>
-            <p className="text-xs text-[#9b59c4]/70 dark:text-[#E2A9F1]/70 mt-1">tilgjengelige fremover</p>
+      {/* Rad 2: Stats */}
+      <div className="grid grid-cols-3 gap-4">
+        {/* Siste 7 dager */}
+        <div className="bg-white dark:bg-gray-900 rounded-2xl border dark:border-gray-800 p-5">
+          <p className="text-xs font-semibold text-gray-400 dark:text-gray-500 uppercase tracking-wide mb-3">Siste 7 dager</p>
+          <div className="flex gap-5">
+            <div>
+              <div className="flex items-center gap-1.5 mb-0.5">
+                <Calendar size={13} className="text-[#9b59c4]" />
+                <p className="text-2xl font-bold text-gray-800 dark:text-gray-100">{last7.length}</p>
+              </div>
+              <p className="text-xs text-gray-400">timer hatt</p>
+            </div>
+            <div>
+              <div className="flex items-center gap-1.5 mb-0.5">
+                <Clock size={13} className="text-[#9b59c4]" />
+                <p className="text-2xl font-bold text-gray-800 dark:text-gray-100">{last7Hours}</p>
+              </div>
+              <p className="text-xs text-gray-400">timer totalt</p>
+            </div>
           </div>
+        </div>
+
+        {/* Betalingsstatus */}
+        <div className="bg-white dark:bg-gray-900 rounded-2xl border dark:border-gray-800 p-5">
+          <p className="text-xs font-semibold text-gray-400 dark:text-gray-500 uppercase tracking-wide mb-3">Betalingsstatus</p>
+          <div className="flex items-end justify-between mb-2">
+            <p className="text-2xl font-bold text-gray-800 dark:text-gray-100">{paidCount}<span className="text-base font-normal text-gray-400">/{totalCompleted}</span></p>
+            <p className="text-xs text-gray-400 mb-1">betalt</p>
+          </div>
+          <div className="w-full bg-gray-100 dark:bg-gray-800 rounded-full h-2">
+            <div className="bg-green-400 h-2 rounded-full transition-all" style={{ width: totalCompleted > 0 ? `${(paidCount / totalCompleted) * 100}%` : "0%" }} />
+          </div>
+          {totalCompleted - paidCount > 0 && (
+            <p className="text-xs text-amber-500 mt-2">{totalCompleted - paidCount} mangler betaling</p>
+          )}
+        </div>
+
+        {/* Sesongmål */}
+        <Link href="/trainer/sesongmal" className="bg-white dark:bg-gray-900 rounded-2xl border dark:border-gray-800 p-5 hover:border-[#E2A9F1] transition-colors group flex flex-col justify-between">
+          <p className="text-xs font-semibold text-gray-400 dark:text-gray-500 uppercase tracking-wide mb-3">Sesongmål</p>
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-3">
+              <div className="w-10 h-10 rounded-full bg-[#edd5f9] dark:bg-[#E2A9F1]/15 flex items-center justify-center">
+                <Target size={18} className="text-[#9b59c4] dark:text-[#E2A9F1]" />
+              </div>
+              <p className="text-sm text-gray-500 dark:text-gray-400">Se danserenes mål og fremgang</p>
+            </div>
+            <ChevronRight size={16} className="text-gray-300 group-hover:text-[#E2A9F1] transition-colors flex-shrink-0" />
+          </div>
+        </Link>
+      </div>
+
+      {/* Rad 3: Nylige aktiviteter + Ledige tider */}
+      <div className="grid grid-cols-[1fr_200px] gap-4">
+        <div className="bg-white dark:bg-gray-900 rounded-2xl border dark:border-gray-800 p-5">
+          <p className="text-xs font-semibold text-gray-400 dark:text-gray-500 uppercase tracking-wide mb-4">Nylige aktiviteter</p>
+          {recentActivity.length === 0 ? (
+            <p className="text-xs text-gray-400 text-center py-4">Ingen aktivitet ennå</p>
+          ) : (
+            <div className="space-y-3">
+              {recentActivity.map((a, i) => (
+                <div key={i} className="flex items-center gap-3">
+                  <div className="w-8 h-8 rounded-full bg-[#edd5f9] dark:bg-[#E2A9F1]/15 flex items-center justify-center text-[#9b59c4] dark:text-[#E2A9F1] text-xs font-bold flex-shrink-0">
+                    {a.name.charAt(0)}
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <p className="text-sm font-medium text-gray-700 dark:text-gray-200 truncate">{a.name}</p>
+                    <p className="text-xs text-gray-400">{a.paid ? "Betaling mottatt" : "Time gjennomført"}</p>
+                  </div>
+                  <p className="text-xs text-gray-400 flex-shrink-0">{mounted ? timeAgo(a.date) : ""}</p>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+
+        <div className="bg-[#edd5f9] dark:bg-[#E2A9F1]/10 rounded-2xl p-5 flex flex-col justify-center">
+          <p className="text-xs font-semibold text-[#9b59c4] dark:text-[#E2A9F1] uppercase tracking-wide mb-1">Ledige tider</p>
+          <p className="text-4xl font-bold text-[#9b59c4] dark:text-[#E2A9F1]">{freeCount}</p>
+          <p className="text-xs text-[#9b59c4]/70 dark:text-[#E2A9F1]/70 mt-1">tilgjengelige fremover</p>
         </div>
       </div>
     </div>
