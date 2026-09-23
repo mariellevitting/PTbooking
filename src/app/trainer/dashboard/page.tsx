@@ -47,10 +47,14 @@ export default async function TrainerDashboard() {
 
   return (
     <main className="bg-gray-50 dark:bg-gray-950 min-h-screen">
-      {/* Mobil: felles header + tabs */}
-      <div className="lg:hidden p-6 max-w-lg mx-auto">
+      {/* NMCountdown – rendres kun én gang, vises bare på mobil */}
+      <div className="lg:hidden px-6 pt-6 max-w-lg mx-auto">
         <h1 className="text-2xl font-bold mb-6">{greetingText}, {profile.name.split(" ")[0]}! 👋</h1>
         <NMCountdown href="/trainer/konkurranser" clubId={clubId} />
+      </div>
+
+      {/* Mobil tabs */}
+      <div className="lg:hidden px-6 pb-6 max-w-lg mx-auto">
         <TrainerDashboardTabs
           slots={(slots ?? []) as any}
           completedSlots={(completedSlots ?? []) as any}
@@ -62,7 +66,6 @@ export default async function TrainerDashboard() {
 
       {/* Web */}
       <div className="hidden lg:block max-w-5xl mx-auto px-8 py-8">
-        <NMCountdown href="/trainer/konkurranser" clubId={clubId} />
         <TrainerWebDashboard
           slots={(slots ?? []) as any}
           completedSlots={(completedSlots ?? []) as any}

@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useId, useState } from "react";
 import Link from "next/link";
 import { createClient } from "@/lib/supabase/client";
 
@@ -58,6 +58,7 @@ interface Props {
 }
 
 export default function NMCountdown({ href, clubId }: Props) {
+  const instanceId = useId();
   const [tick, setTick] = useState(0);
   const [count, setCount] = useState<number | null>(null);
 
@@ -87,7 +88,7 @@ export default function NMCountdown({ href, clubId }: Props) {
     fetchCount();
 
     const channel = supabase
-      .channel(`competition_participations_count_${competitionName.replace(/\s/g, "_")}`)
+      .channel(`nm_count_${instanceId}_${competitionName}`.replace(/\s/g, "_"))
       .on("postgres_changes", { event: "*", schema: "public", table: "competition_participations" }, () => setTimeout(fetchCount, 300))
       .subscribe();
 
