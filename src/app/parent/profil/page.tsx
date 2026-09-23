@@ -4,6 +4,7 @@ import Link from "next/link";
 import { ArrowLeft } from "lucide-react";
 import UserProfileForm from "@/components/UserProfileForm";
 import ChildrenForm from "./ChildrenForm";
+import LanguageSwitcher from "@/components/LanguageSwitcher";
 
 export default async function ParentProfilPage() {
   const supabase = await createClient();
@@ -40,6 +41,7 @@ export default async function ParentProfilPage() {
             notifyNewSlots={profile.notify_new_slots ?? true}
           />
           <ChildrenForm parentId={user.id} children={(children ?? []).map(c => ({ id: c.id, name: c.name }))} />
+          <LanguageSwitcher userId={user.id} current={(profile as any).language ?? null} />
         </div>
       </div>
     </main>

@@ -3,6 +3,7 @@ import { createClient } from "@/lib/supabase/server";
 import Link from "next/link";
 import { ArrowLeft } from "lucide-react";
 import DancerProfileClient from "./DancerProfileClient";
+import LanguageSwitcher from "@/components/LanguageSwitcher";
 
 export default async function DancerProfilPage() {
   const supabase = await createClient();
@@ -31,6 +32,9 @@ export default async function DancerProfilPage() {
           avatarUrl={profile.avatar_url ?? null}
           notifyNewSlots={profile.notify_new_slots ?? true}
         />
+        <div className="mt-4">
+          <LanguageSwitcher userId={user.id} current={(profile as any).language ?? null} />
+        </div>
       </div>
     </main>
   );

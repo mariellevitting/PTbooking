@@ -1,6 +1,7 @@
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import ProfilForm from "./ProfilForm";
+import LanguageSwitcher from "@/components/LanguageSwitcher";
 import Link from "next/link";
 import { ArrowLeft, Users } from "lucide-react";
 import { getClubById, danceStylesFor } from "@/lib/club";
@@ -58,6 +59,10 @@ export default async function TrainerProfilPage() {
           styleOptions={danceStylesFor(club)}
           avatarUrl={profile.avatar_url ?? null}
         />
+
+        <div className="mt-4">
+          <LanguageSwitcher userId={user.id} current={(profile as any).language ?? null} />
+        </div>
 
         {isAdmin && allUsers && (
           <>

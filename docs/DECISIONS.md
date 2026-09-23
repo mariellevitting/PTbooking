@@ -51,6 +51,18 @@ Utsettes til v2:
 - **Auth**: Supabase Auth (2026-06-05)
 - **Hosting**: Vercel (gratis hobby-tier) (2026-06-05)
 - **Form-faktor**: Nettside (responsiv) + native iOS-app via Capacitor. Nettsiden er også en installerbar PWA (`src/app/manifest.ts`, ikoner i `public/icons/`) slik at Android-brukere kan legge den på hjemskjermen. (2026-09-08)
+- **i18n / flerspråklighet**: `next-intl`, uten URL-basert ruting (språk hentes fra cookie/DB, ikke `/en/...`-prefiks – nødvendig fordi Capacitor-appen laster en fast URL). Se eget avsnitt "Flerspråklighet" under. (2026-09-23)
+
+### Flerspråklighet (norsk/engelsk, `next-intl`)
+- **Oversettelsesfiler**: `src/messages/no.json` + `src/messages/en.json`, navnerom per seksjon (`booking`, `profile`, `push`, ...). Nye språk (svensk/dansk) = ny fil + én linje i `LOCALES`-lista, ingen ombygging av komponenter.
+- **Lagring av språkvalg**: `profiles.language` ('no'|'en'|null) + `profiles.language_source` ('auto'|'manual'|null). `null` = ikke registrert ennå → enhetens/nettleserens språk brukes. `language_source='manual'` overstyrer alltid auto-deteksjon, også ved innlogging på ny enhet.
+- **Deteksjon**: `src/proxy.ts` leser `Accept-Language`-header og setter `NEXT_LOCALE`-cookie hvis den mangler (kjøres på hver request, ren lesing – ingen DB-skriving i proxy). Er brukeren innlogget og har en lagret `profiles.language`, synkroniseres cookien til den verdien på hver request (DB er alltid fasit på tvers av enheter).
+- **Førstegangsregistrering i DB**: `src/components/LocaleSync.tsx` (klientkomponent i root layout, samme mønster som `OneSignalWebInit`) skriver `language`/`language_source='auto'` til `profiles` første gang en innlogget bruker har `language IS NULL`. Selvbegrensende – kjører aldri igjen etter det.
+- **Manuelt valg**: språkvelger under Min profil (`LanguageSwitcher.tsx`) → oppdaterer `profiles.language` + `language_source='manual'`, setter cookie, og laster siden på nytt (enkleste robuste måte å bytte språk på uten ruting).
+- **Push-varsler / servergenerert tekst**: `/api/notify*` og `/api/reminders` slår opp `language` per mottaker og genererer tekst med `createTranslator({locale, messages})` – ALDRI trenerens/avsenderens språk. Dynamiske verdier (navn, klokkeslett) settes inn som ICU-variabler, ikke sammensatt streng.
+- **Datoer**: `Intl`/next-intls `useFormatter()` – ingen hardkodede måned/ukedag-arrays. Tidssone forblir `Europe/Oslo` uansett språk (språk og tidssone/valuta/land er bevisst holdt separate – ikke koblet sammen).
+- **Oversettes IKKE**: klubb-/trener-/brukerskrevet innhold (`clubs.info_text`, `payment_label`, feedback-meldinger, navn), konkurransenavn/egennavn (NM, FDJ, DOTY).
+- **Nivånavn** (kun visningsnavn, ikke lagret verdi – nivå er fortsatt `int` i databasen): Rekrutt→Beginner, Litt øvet→Starter, Mester→Inter, Champ→Champ, Elite→Champ Prem.
 
 ## Betaling
 

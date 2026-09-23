@@ -1,10 +1,14 @@
 import type { Metadata } from "next";
 import { Poppins } from "next/font/google";
+import { NextIntlClientProvider } from "next-intl";
+import { getLocale, getMessages } from "next-intl/server";
 import "./globals.css";
 import Footer from "@/components/Footer";
 import CapacitorSessionRestore from "@/components/CapacitorSessionRestore";
 import OneSignalInit from "@/components/OneSignalInit";
 import OneSignalWebInit from "@/components/OneSignalWebInit";
+import LocaleSync from "@/components/LocaleSync";
+import { htmlLang, isLocale } from "@/i18n/locale";
 
 const poppins = Poppins({
   subsets: ["latin"],
@@ -35,19 +39,25 @@ export const viewport = {
   themeColor: "#3A3A3A",
 };
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const locale = await getLocale();
+  const messages = await getMessages();
+
   return (
-    <html lang="nb" className={`${poppins.variable} h-full antialiased`} style={{ background: "#3A3A3A" }}>
+    <html lang={isLocale(locale) ? htmlLang(locale) : "nb"} className={`${poppins.variable} h-full antialiased`} style={{ background: "#3A3A3A" }}>
       <body className="min-h-full flex flex-col font-[family-name:var(--font-poppins)] bg-[#3A3A3A]">
-        <CapacitorSessionRestore />
-        <OneSignalInit />
-        <OneSignalWebInit />
-        {children}
-        <Footer />
+        <NextIntlClientProvider locale={locale} messages={messages}>
+          <CapacitorSessionRestore />
+          <OneSignalInit />
+          <OneSignalWebInit />
+          <LocaleSync />
+          {children}
+          <Footer />
+        </NextIntlClientProvider>
       </body>
     </html>
   );
