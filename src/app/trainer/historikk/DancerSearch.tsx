@@ -3,8 +3,10 @@
 import { useState, useMemo } from "react";
 import { Search, ChevronRight } from "lucide-react";
 import Link from "next/link";
+import { useTranslations, useLocale } from "next-intl";
 import { Input } from "@/components/ui/input";
 import { formatDate, formatTime } from "@/lib/dateUtils";
+import type { Locale } from "@/i18n/locale";
 
 interface Slot {
   id: string;
@@ -19,6 +21,9 @@ interface Profile {
 }
 
 export default function DancerSearch({ slots, profiles }: { slots: Slot[]; profiles: Profile[] }) {
+  const t = useTranslations("trainer.dancerSearch");
+  const tc = useTranslations("common");
+  const locale = useLocale() as Locale;
   const [query, setQuery] = useState("");
 
   const allDancers = useMemo(() => {
@@ -55,13 +60,13 @@ export default function DancerSearch({ slots, profiles }: { slots: Slot[]; profi
   return (
     <div className="mb-8">
       <div className="bg-white dark:bg-gray-900 rounded-xl border dark:border-gray-700 p-4 space-y-3">
-        <p className="text-sm font-semibold text-gray-700 dark:text-gray-300">Søk etter danser</p>
+        <p className="text-sm font-semibold text-gray-700 dark:text-gray-300">{t("label")}</p>
         <div className="relative">
           <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 dark:text-gray-500" />
           <Input
             value={query}
             onChange={e => setQuery(e.target.value)}
-            placeholder="Skriv navn på danser..."
+            placeholder={t("placeholder")}
             className="pl-9"
           />
         </div>
@@ -80,39 +85,39 @@ export default function DancerSearch({ slots, profiles }: { slots: Slot[]; profi
         {showResults && (
           <div className="pt-1">
             {matches.length === 0 ? (
-              <p className="text-sm text-gray-400 dark:text-gray-500">Ingen treff på «{query.trim()}»</p>
+              <p className="text-sm text-gray-400 dark:text-gray-500">{t("noMatches", { query: query.trim() })}</p>
             ) : (
               <>
                 <div className="flex items-center justify-between mb-1">
                   <p className="text-sm font-semibold text-gray-800 dark:text-gray-100">
-                    {matches.length} {matches.length === 1 ? "privattime" : "privattimer"} med {matchedDancerName}
+                    {t("lessonsWith", { count: matches.length, name: matchedDancerName })}
                   </p>
                   {matchedProfile && (
                     <Link href={`/trainer/danser/${matchedProfile.id}`}
                       className="flex items-center gap-1 text-xs text-[#E2A9F1] hover:underline">
-                      Se profil <ChevronRight size={13} />
+                      {t("seeProfile")} <ChevronRight size={13} />
                     </Link>
                   )}
                 </div>
                 {(() => {
                   const paidCount = matches.filter(s => s.bookings?.some(b => b.status === "confirmed" && b.paid)).length;
-                  return <p className="text-xs text-gray-400 dark:text-gray-500 mb-3">{paidCount} av {matches.length} betalt</p>;
+                  return <p className="text-xs text-gray-400 dark:text-gray-500 mb-3">{t("paidOfTotal", { paid: paidCount, total: matches.length })}</p>;
                 })()}
                 <div className="space-y-2">
                   {matches.map(slot => {
                     const booking = slot.bookings?.find(b => b.status === "confirmed");
                     const start = new Date(slot.start_at);
                     const end = new Date(slot.end_at);
-                    const dayLabel = formatDate(start, { weekday: "long", day: "numeric", month: "long", year: "numeric" });
+                    const dayLabel = formatDate(start, locale, { weekday: "long", day: "numeric", month: "long", year: "numeric" });
                     return (
                       <div key={slot.id} className="flex justify-between items-center gap-2 text-sm border-t dark:border-gray-700 pt-2">
                         <div>
                           <p className="text-gray-700 dark:text-gray-300 capitalize">{dayLabel}</p>
-                          <p className="text-gray-400 dark:text-gray-500">{formatTime(start)}–{formatTime(end)} · {booking?.dance_style}</p>
+                          <p className="text-gray-400 dark:text-gray-500">{formatTime(start, locale)}–{formatTime(end, locale)} · {booking?.dance_style}</p>
                         </div>
                         {booking?.paid
-                          ? <span className="text-xs text-green-700 dark:text-green-300 shrink-0">Betalt ✓</span>
-                          : <span className="text-xs text-amber-700 dark:text-amber-400 shrink-0">Ikke betalt</span>}
+                          ? <span className="text-xs text-green-700 dark:text-green-300 shrink-0">{tc("booking.paid")}</span>
+                          : <span className="text-xs text-amber-700 dark:text-amber-400 shrink-0">{tc("booking.unpaid")}</span>}
                       </div>
                     );
                   })}

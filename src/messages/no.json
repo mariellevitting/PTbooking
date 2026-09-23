@@ -233,6 +233,26 @@
       "noSlotsThisDay": "Ingen tider lagt ut denne dagen",
       "confirmReminder": "Sende purring på kvittering?",
       "reminderAgain": "Purr igjen ({count})"
+    },
+    "dancerProfile": {
+      "completedWithYou": "{count, plural, one {# gjennomført time med deg} other {# gjennomførte timer med deg}}",
+      "seasonGoals": "Sesongmål",
+      "goalsHidden": "Danseren har valgt å ikke dele sesongmål med trenere",
+      "noGoalsYet": "Ingen mål satt ennå",
+      "goalReached": "Mål nådd",
+      "completedLessons": "Gjennomførte timer"
+    },
+    "historikk": {
+      "heading": "Gjennomførte privattimer",
+      "total": "{count} totalt"
+    },
+    "dancerSearch": {
+      "label": "Søk etter danser",
+      "placeholder": "Skriv navn på danser...",
+      "noMatches": "Ingen treff på «{query}»",
+      "lessonsWith": "{count, plural, one {# privattime} other {# privattimer}} med {name}",
+      "seeProfile": "Se profil",
+      "paidOfTotal": "{paid} av {total} betalt"
     }
   }
 }

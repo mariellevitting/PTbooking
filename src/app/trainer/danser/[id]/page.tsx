@@ -1,14 +1,19 @@
 import { redirect } from "next/navigation";
 import Link from "next/link";
+import { getTranslations, getLocale } from "next-intl/server";
 import { createClient } from "@/lib/supabase/server";
 import { ArrowLeft } from "lucide-react";
 import { formatDate, formatTime } from "@/lib/dateUtils";
+import { isLocale, type Locale } from "@/i18n/locale";
 
 function isDone(goal: string) { return goal.startsWith("[x] "); }
 function goalText(goal: string) { return isDone(goal) ? goal.slice(4) : goal; }
 
 export default async function TrainerDancerProfilePage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
+  const t = await getTranslations("trainer.dancerProfile");
+  const rawLocale = await getLocale();
+  const locale: Locale = isLocale(rawLocale) ? rawLocale : "no";
   const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) redirect("/login");
@@ -58,17 +63,17 @@ export default async function TrainerDancerProfilePage({ params }: { params: Pro
           </div>
           <div>
             <h1 className="text-2xl font-bold text-gray-900 dark:text-white">{dancer.name}</h1>
-            <p className="text-sm text-gray-500 dark:text-gray-400">{dancerSlots.length} gjennomførte timer med deg</p>
+            <p className="text-sm text-gray-500 dark:text-gray-400">{t("completedWithYou", { count: dancerSlots.length })}</p>
           </div>
         </div>
 
         {/* Sesongmål */}
         <div className="bg-white dark:bg-gray-900 rounded-2xl border dark:border-gray-700 p-5 mb-6">
-          <h2 className="text-base font-semibold text-gray-900 dark:text-white mb-3">Sesongmål</h2>
+          <h2 className="text-base font-semibold text-gray-900 dark:text-white mb-3">{t("seasonGoals")}</h2>
           {dancer.goals_visible_to_trainer === false ? (
-            <p className="text-sm text-gray-400 dark:text-gray-500">Danseren har valgt å ikke dele sesongmål med trenere</p>
+            <p className="text-sm text-gray-400 dark:text-gray-500">{t("goalsHidden")}</p>
           ) : goals.length === 0 ? (
-            <p className="text-sm text-gray-400 dark:text-gray-500">Ingen mål satt ennå</p>
+            <p className="text-sm text-gray-400 dark:text-gray-500">{t("noGoalsYet")}</p>
           ) : (
             <ul className="space-y-2">
               {goals.map((goal: string, i: number) => {
@@ -79,7 +84,7 @@ export default async function TrainerDancerProfilePage({ params }: { params: Pro
                       <span className="text-[#c87de0] mt-0.5">•</span>
                       {goalText(goal)}
                     </span>
-                    {done && <span className="text-xs text-green-600 dark:text-green-400 font-medium whitespace-nowrap">Mål nådd</span>}
+                    {done && <span className="text-xs text-green-600 dark:text-green-400 font-medium whitespace-nowrap">{t("goalReached")}</span>}
                   </li>
                 );
               })}
@@ -90,7 +95,7 @@ export default async function TrainerDancerProfilePage({ params }: { params: Pro
         {/* Timer */}
         {dancerSlots.length > 0 && (
           <div className="bg-white dark:bg-gray-900 rounded-2xl border dark:border-gray-700 p-5">
-            <h2 className="text-base font-semibold text-gray-900 dark:text-white mb-3">Gjennomførte timer</h2>
+            <h2 className="text-base font-semibold text-gray-900 dark:text-white mb-3">{t("completedLessons")}</h2>
             <div className="space-y-2">
               {dancerSlots.map(slot => {
                 const booking = (slot.bookings as any[])?.find(b => b.status === "confirmed");
@@ -99,8 +104,8 @@ export default async function TrainerDancerProfilePage({ params }: { params: Pro
                 return (
                   <div key={slot.id} className="flex justify-between items-center text-sm border-t dark:border-gray-700 pt-2">
                     <div>
-                      <p className="text-gray-700 dark:text-gray-300 capitalize">{formatDate(start, { weekday: "long", day: "numeric", month: "long", year: "numeric" })}</p>
-                      <p className="text-gray-400 dark:text-gray-500">{formatTime(start)}–{formatTime(end)} · {booking?.dance_style}</p>
+                      <p className="text-gray-700 dark:text-gray-300 capitalize">{formatDate(start, locale, { weekday: "long", day: "numeric", month: "long", year: "numeric" })}</p>
+                      <p className="text-gray-400 dark:text-gray-500">{formatTime(start, locale)}–{formatTime(end, locale)} · {booking?.dance_style}</p>
                     </div>
                   </div>
                 );

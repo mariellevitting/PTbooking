@@ -233,6 +233,26 @@
       "noSlotsThisDay": "No times posted this day",
       "confirmReminder": "Send a receipt reminder?",
       "reminderAgain": "Nudge again ({count})"
+    },
+    "dancerProfile": {
+      "completedWithYou": "{count, plural, one {# completed lesson with you} other {# completed lessons with you}}",
+      "seasonGoals": "Season goals",
+      "goalsHidden": "The dancer has chosen not to share season goals with trainers",
+      "noGoalsYet": "No goals set yet",
+      "goalReached": "Goal reached",
+      "completedLessons": "Completed lessons"
+    },
+    "historikk": {
+      "heading": "Completed private lessons",
+      "total": "{count} total"
+    },
+    "dancerSearch": {
+      "label": "Search for a dancer",
+      "placeholder": "Type a dancer's name...",
+      "noMatches": "No matches for «{query}»",
+      "lessonsWith": "{count, plural, one {# lesson} other {# lessons}} with {name}",
+      "seeProfile": "See profile",
+      "paidOfTotal": "{paid} of {total} paid"
     }
   }
 }

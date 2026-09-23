@@ -1,11 +1,17 @@
 import { redirect } from "next/navigation";
 import Link from "next/link";
+import { getTranslations, getLocale } from "next-intl/server";
 import { createClient } from "@/lib/supabase/server";
 import { ArrowLeft } from "lucide-react";
 import { formatDate, formatTime } from "@/lib/dateUtils";
+import { isLocale, type Locale } from "@/i18n/locale";
 import DancerSearch from "./DancerSearch";
 
 export default async function TrainerHistorikkPage() {
+  const t = await getTranslations("trainer.historikk");
+  const tc = await getTranslations("common");
+  const rawLocale = await getLocale();
+  const locale: Locale = isLocale(rawLocale) ? rawLocale : "no";
   const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) redirect("/login");
@@ -40,7 +46,7 @@ export default async function TrainerHistorikkPage() {
   const monthGroups: Record<string, typeof completed> = {};
   for (const slot of completed) {
     const d = new Date(slot.start_at);
-    const key = formatDate(d, { month: "long", year: "numeric" });
+    const key = formatDate(d, locale, { month: "long", year: "numeric" });
     if (!monthGroups[key]) monthGroups[key] = [];
     monthGroups[key].push(slot);
   }
@@ -63,15 +69,15 @@ export default async function TrainerHistorikkPage() {
         />
 
         <div className="flex items-baseline gap-2 mb-6">
-          <h1 className="text-2xl font-bold">Gjennomførte privattimer</h1>
+          <h1 className="text-2xl font-bold">{t("heading")}</h1>
           {completed.length > 0 && (
-            <span className="text-sm text-[#E2A9F1]">{completed.length} totalt</span>
+            <span className="text-sm text-[#E2A9F1]">{t("total", { count: completed.length })}</span>
           )}
         </div>
 
         {completed.length === 0 ? (
           <div className="bg-white dark:bg-gray-900 rounded-xl border dark:border-gray-700 p-6 text-center text-gray-400 dark:text-gray-500">
-            <p className="font-medium">Ingen gjennomførte timer ennå</p>
+            <p className="font-medium">{tc("booking.noCompleted")}</p>
           </div>
         ) : (
           <div className="space-y-6">
@@ -83,7 +89,7 @@ export default async function TrainerHistorikkPage() {
                     const start = new Date(slot.start_at);
                     const end = new Date(slot.end_at);
                     const booking = slot.bookings?.find((b: any) => b.status === "confirmed");
-                    const dayLabel = formatDate(start, { weekday: "long", day: "numeric", month: "long" });
+                    const dayLabel = formatDate(start, locale, { weekday: "long", day: "numeric", month: "long" });
                     return (
                       <div key={slot.id} className="bg-white dark:bg-gray-900 rounded-xl border dark:border-gray-700 p-4">
                         <div className="flex justify-between items-start">
@@ -92,7 +98,7 @@ export default async function TrainerHistorikkPage() {
                               {dayLabel.charAt(0).toUpperCase() + dayLabel.slice(1)}
                             </p>
                             <p className="text-sm text-gray-400 dark:text-gray-500">
-                              {formatTime(start)}–{formatTime(end)}
+                              {formatTime(start, locale)}–{formatTime(end, locale)}
                             </p>
                             {booking && (
                               <p className="text-sm text-[#E2A9F1] mt-0.5">
@@ -101,10 +107,10 @@ export default async function TrainerHistorikkPage() {
                             )}
                           </div>
                           <div className="flex flex-col items-end gap-1 shrink-0">
-                            <span className="text-xs bg-gray-100 dark:bg-gray-800 text-gray-500 dark:text-gray-400 px-2 py-1 rounded-full">Fullført</span>
+                            <span className="text-xs bg-gray-100 dark:bg-gray-800 text-gray-500 dark:text-gray-400 px-2 py-1 rounded-full">{tc("booking.completed")}</span>
                             {booking && ((booking as any).paid
-                              ? <span className="text-xs bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-300 px-2 py-1 rounded-full">Betalt ✓</span>
-                              : <span className="text-xs bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-300 px-2 py-1 rounded-full">Ikke betalt</span>)}
+                              ? <span className="text-xs bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-300 px-2 py-1 rounded-full">{tc("booking.paid")}</span>
+                              : <span className="text-xs bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-300 px-2 py-1 rounded-full">{tc("booking.unpaid")}</span>)}
                           </div>
                         </div>
                       </div>
