@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import { Check, ChevronLeft, ChevronRight, Target, Clock, Calendar, TrendingUp, History, UserPlus } from "lucide-react";
 import { createClient } from "@/lib/supabase/client";
@@ -120,28 +120,33 @@ function KvitteringReminder({ booking, when, trainerName, trainerId }: { booking
 const DAY_LABELS = ["Man", "Tir", "Ons", "Tor", "Fre", "Lør", "Søn"];
 
 export default function TrainerWebDashboard({ slots, completedSlots, trainerName, trainerId, freeCount, greetingText }: Props) {
+  const [mounted, setMounted] = useState(false);
+  useEffect(() => setMounted(true), []);
+
   const today = new Date();
   today.setHours(0, 0, 0, 0);
 
-  const [viewDate, setViewDate] = useState(new Date(today.getFullYear(), today.getMonth(), 1));
-  const [selectedDate, setSelectedDate] = useState<string>(dk(today));
+  const [viewDate, setViewDate] = useState(() => new Date(today.getFullYear(), today.getMonth(), 1));
+  const [selectedDate, setSelectedDate] = useState<string>(() => dk(today));
 
   const slotDates = new Set(slots.map(s => dk(new Date(s.start_at))));
 
-  // 7-dagers statistikk
-  const sevenDaysAgo = new Date(Date.now() - 7 * 86400000);
-  const fourteenDaysAgo = new Date(Date.now() - 14 * 86400000);
+  // 7-dagers statistikk (stabile verdier — ikke avhengig av Date.now() i render)
   const confirmedCompleted = completedSlots.filter(s => s.bookings?.some(b => b.status === "confirmed"));
-  const last7 = confirmedCompleted.filter(s => new Date(s.end_at) >= sevenDaysAgo);
-  const prev7 = confirmedCompleted.filter(s => { const e = new Date(s.end_at); return e >= fourteenDaysAgo && e < sevenDaysAgo; });
+  const nowTs = today.getTime(); // midnatt i dag, stabil mellom server/klient
+  const sevenDaysAgoTs = nowTs - 7 * 86400000;
+  const fourteenDaysAgoTs = nowTs - 14 * 86400000;
+  const last7 = confirmedCompleted.filter(s => new Date(s.end_at).getTime() >= sevenDaysAgoTs);
+  const prev7 = confirmedCompleted.filter(s => { const t = new Date(s.end_at).getTime(); return t >= fourteenDaysAgoTs && t < sevenDaysAgoTs; });
   const last7Hours = +(last7.length * 0.5).toFixed(1);
   const changePercent = prev7.length === 0 ? null : Math.round(((last7.length - prev7.length) / prev7.length) * 100);
 
-  // Nylige aktiviteter (siste 5 gjennomførte)
+  // Nylige aktiviteter (siste 5 gjennomførte) — null-safe
   const recentActivity = confirmedCompleted.slice(0, 5).map(s => {
-    const b = s.bookings!.find(b => b.status === "confirmed")!;
-    return { name: b.dancer_name, paid: !!b.paid, date: new Date(s.end_at), avatarUrl: null as string | null };
-  });
+    const b = s.bookings?.find(b => b.status === "confirmed");
+    if (!b) return null;
+    return { name: b.dancer_name, paid: !!b.paid, date: new Date(s.end_at) };
+  }).filter((x): x is { name: string; paid: boolean; date: Date } => x !== null);
 
   // Kalender
   const year = viewDate.getFullYear();
@@ -338,7 +343,7 @@ export default function TrainerWebDashboard({ slots, completedSlots, trainerName
                             <div className="flex flex-wrap items-center gap-2">
                               <PaidToggle bookingId={booking.id} initialPaid={!!booking.paid} />
                               {!booking.paid && <KvitteringReminder booking={booking} when={`${dayFull} kl ${formatTime(start)}`} trainerName={trainerName} trainerId={trainerId} />}
-                              {end > new Date() && <Link href={`/trainer/avbestill/${booking.id}`} prefetch={false} className="text-xs text-red-400 hover:text-red-600">Avbestill</Link>}
+                              {mounted && end > new Date() && <Link href={`/trainer/avbestill/${booking.id}`} prefetch={false} className="text-xs text-red-400 hover:text-red-600">Avbestill</Link>}
                             </div>
                           </div>
                         ) : (
@@ -376,7 +381,7 @@ export default function TrainerWebDashboard({ slots, completedSlots, trainerName
                       <p className="text-sm font-medium text-gray-700 dark:text-gray-200 truncate">{a.name}</p>
                       <p className="text-xs text-gray-400">{a.paid ? "Betaling mottatt" : "Time gjennomført"}</p>
                     </div>
-                    <p className="text-xs text-gray-400 flex-shrink-0">{timeAgo(a.date)}</p>
+                    <p className="text-xs text-gray-400 flex-shrink-0">{mounted ? timeAgo(a.date) : ""}</p>
                   </div>
                 ))}
               </div>
