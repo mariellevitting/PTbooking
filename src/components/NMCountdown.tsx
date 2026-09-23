@@ -87,7 +87,7 @@ export default function NMCountdown({ href, clubId }: Props) {
     fetchCount();
 
     const channel = supabase
-      .channel("competition_participations_count")
+      .channel(`competition_participations_count_${competitionName.replace(/\s/g, "_")}`)
       .on("postgres_changes", { event: "*", schema: "public", table: "competition_participations" }, () => setTimeout(fetchCount, 300))
       .subscribe();
 
