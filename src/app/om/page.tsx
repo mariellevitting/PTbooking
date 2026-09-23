@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { getTranslations } from "next-intl/server";
 import { createClient } from "@/lib/supabase/server";
 
 export const metadata = {
@@ -7,6 +8,7 @@ export const metadata = {
 };
 
 export default async function OmPage() {
+  const t = await getTranslations("om");
   const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
 
@@ -17,6 +19,9 @@ export default async function OmPage() {
     else if (profile?.role === "parent") backHref = "/parent/dashboard";
     else if (profile?.role === "dancer") backHref = "/dancer/dashboard";
   }
+
+  const roles = ["dancer", "parent", "trainer"] as const;
+  const roleInitial: Record<(typeof roles)[number], string> = { dancer: "D", parent: "F", trainer: "T" };
 
   return (
     <div className="min-h-screen bg-white dark:bg-gray-950">
@@ -30,15 +35,15 @@ export default async function OmPage() {
             </Link>
             {!user && (
               <Link href="/login" className="bg-[#E2A9F1] text-[#3A3A3A] font-semibold text-sm px-5 py-2 rounded-xl hover:bg-[#d494e8] transition-colors">
-                Bli med nå!
+                {t("backCta")}
               </Link>
             )}
           </div>
-          <p className="text-[#e8c4f5] text-sm font-semibold uppercase tracking-widest mb-3">Danceitude</p>
+          <p className="text-[#e8c4f5] text-sm font-semibold uppercase tracking-widest mb-3">{t("eyebrow")}</p>
           <h1 className="text-3xl md:text-5xl font-bold leading-tight mb-4">
-            Danceitude ble laget fordi dansemiljøet fortjener bedre verktøy
+            {t("heroTitle")}
           </h1>
-          <p className="text-[#f0d8fa] text-lg italic">Av dansere, for dansere</p>
+          <p className="text-[#f0d8fa] text-lg italic">{t("heroTagline")}</p>
         </div>
       </div>
 
@@ -46,142 +51,75 @@ export default async function OmPage() {
 
         {/* Intro */}
         <section className="space-y-4 text-gray-700 dark:text-gray-300 text-lg leading-relaxed">
-          <p>Danceitude startet med et problem jeg selv kjente godt.</p>
-          <p>Som danser i Evolution Danseklubb i Sarpsborg opplevde jeg hvor tungvint det kunne være å booke privattimer. Ledige timer ble delt i et Google Docs-dokument. Dansere og foreldre måtte finne et ledig tidspunkt, skrive seg inn og holde oversikt over bookingen selv.</p>
-          <p>Det fungerte. Men det kunne fungere mye bedre.</p>
-          <p>Jeg har en mastergrad med spesialisering i interaksjonsdesign, og jobber til daglig som Digital Marketing Manager og designer i SkyeTec, samt som Interaction Specialist i MyTalent. Jeg brenner for å utvikle digitale løsninger som tar utgangspunkt i menneskene som faktisk skal bruke dem.</p>
-          <p>Derfor ønsket jeg ikke bare å lage en ny bookingløsning. Jeg ønsket å finne ut hva dansere, foreldre og trenere faktisk trenger.</p>
+          <p>{t("intro.p1")}</p>
+          <p>{t("intro.p2")}</p>
+          <p>{t("intro.p3")}</p>
+          <p>{t("intro.p4")}</p>
+          <p>{t("intro.p5")}</p>
         </section>
 
         {/* Utviklet sammen */}
         <section>
-          <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-4">Utviklet sammen med dansemiljøet</h2>
+          <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-4">{t("developedTogether.heading")}</h2>
           <div className="space-y-4 text-gray-700 dark:text-gray-300 text-lg leading-relaxed">
-            <p>Danceitude startet som en del av masterarbeidet mitt og ble utviklet gjennom en brukersentrert designprosess.</p>
-            <p>Gjennom workshops med dansere, foreldre og trenere kartla vi utfordringene med dagens løsning. Deltakerne fikk dele erfaringer, diskutere behov og selv skissere hvordan de ønsket at en bedre løsning skulle fungere.</p>
-            <p>Ideene ble deretter utviklet til prototyper, testet med brukere og forbedret basert på tilbakemeldingene vi fikk.</p>
-            <p className="font-medium text-gray-900 dark:text-white">Danceitude er derfor ikke bygget på antakelser om hva dansemiljøet trenger. Den er utviklet sammen med menneskene som kjenner hverdagen best.</p>
+            <p>{t("developedTogether.p1")}</p>
+            <p>{t("developedTogether.p2")}</p>
+            <p>{t("developedTogether.p3")}</p>
+            <p className="font-medium text-gray-900 dark:text-white">{t("developedTogether.conclusion")}</p>
           </div>
         </section>
 
         {/* Tre roller */}
         <section>
-          <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-2">Én app. Tre roller. En enklere dansehverdag.</h2>
-          <p className="text-gray-500 dark:text-gray-400 text-lg mb-8">Danceitude samler booking, trening, utvikling og konkurranser på ett sted. Hver bruker får funksjoner og oversikt tilpasset sin rolle.</p>
+          <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-2">{t("threeRoles.heading")}</h2>
+          <p className="text-gray-500 dark:text-gray-400 text-lg mb-8">{t("threeRoles.subheading")}</p>
 
           <div className="space-y-6">
-            {/* Danser */}
-            <div className="border border-gray-200 dark:border-gray-700 rounded-2xl p-6">
-              <div className="flex items-center gap-3 mb-3">
-                <div className="w-10 h-10 rounded-full bg-[#edd5f9] dark:bg-[#E2A9F1]/15 dark:bg-purple-900 flex items-center justify-center text-[#E2A9F1] dark:text-[#E2A9F1] font-bold">D</div>
-                <h3 className="text-xl font-bold text-gray-900 dark:text-white">For dansere</h3>
+            {roles.map(role => (
+              <div key={role} className="border border-gray-200 dark:border-gray-700 rounded-2xl p-6">
+                <div className="flex items-center gap-3 mb-3">
+                  <div className="w-10 h-10 rounded-full bg-[#edd5f9] dark:bg-[#E2A9F1]/15 dark:bg-purple-900 flex items-center justify-center text-[#E2A9F1] dark:text-[#E2A9F1] font-bold">{roleInitial[role]}</div>
+                  <h3 className="text-xl font-bold text-gray-900 dark:text-white">{t(`threeRoles.${role}.title`)}</h3>
+                </div>
+                <p className="text-gray-600 dark:text-gray-400 mb-4">{t(`threeRoles.${role}.intro`)}</p>
+                <ul className="space-y-2">
+                  {(t.raw(`threeRoles.${role}.features`) as string[]).map(f => (
+                    <li key={f} className="flex items-start gap-2 text-gray-700 dark:text-gray-300 text-sm">
+                      <span className="text-[#E2A9F1] mt-0.5">•</span>{f}
+                    </li>
+                  ))}
+                </ul>
+                <p className="text-sm text-gray-500 dark:text-gray-400 mt-4 italic">{t(`threeRoles.${role}.footer`)}</p>
               </div>
-              <p className="text-gray-600 dark:text-gray-400 mb-4">Finn trenere, book privattimer og få bedre oversikt over treningen og utviklingen din.</p>
-              <ul className="space-y-2">
-                {[
-                  "Bla gjennom tilgjengelige trenere og danseformer",
-                  "Book privattimer med få trykk",
-                  "Se kommende og gjennomførte timer",
-                  "Avbestill timer direkte i appen",
-                  "Få push-varsel på mobilen – påminnelse på morgenen når du har privattime",
-                  "Se om en time er betalt, og få beskjed om å sende kvittering",
-                  "Logg freestyle- og slow-poeng",
-                  "Følg fremgangen din mot neste nivå – fra Rekrutt til Elite",
-                  "Sett personlige mål for sesongen",
-                  "Logg og samle konkurranseresultater",
-                  "Se nedtelling til neste konkurranse",
-                  "Motta varsel når en trener booker en time på dine vegne",
-                ].map(f => (
-                  <li key={f} className="flex items-start gap-2 text-gray-700 dark:text-gray-300 text-sm">
-                    <span className="text-[#E2A9F1] mt-0.5">•</span>{f}
-                  </li>
-                ))}
-              </ul>
-              <p className="text-sm text-gray-500 dark:text-gray-400 mt-4 italic">Mindre tid på å holde oversikt. Mer tid til å trene, utvikle deg og nå målene dine.</p>
-            </div>
-
-            {/* Forelder */}
-            <div className="border border-gray-200 dark:border-gray-700 rounded-2xl p-6">
-              <div className="flex items-center gap-3 mb-3">
-                <div className="w-10 h-10 rounded-full bg-[#edd5f9] dark:bg-[#E2A9F1]/15 dark:bg-purple-900 flex items-center justify-center text-[#E2A9F1] dark:text-[#E2A9F1] font-bold">F</div>
-                <h3 className="text-xl font-bold text-gray-900 dark:text-white">For foreldre</h3>
-              </div>
-              <p className="text-gray-600 dark:text-gray-400 mb-4">Følg opp barnets dansehverdag uten å måtte lete gjennom dokumenter, meldinger og ulike systemer.</p>
-              <ul className="space-y-2">
-                {[
-                  "Book privattimer på vegne av barnet",
-                  "Se kommende og gjennomførte timer",
-                  "Ha oversikt over barnets bookinger på ett sted",
-                  "Avbestill timer direkte i appen",
-                  "Få push-varsel på mobilen – påminnelse på morgenen når barnet har privattime",
-                  "Se betalingsstatus på hver time – betalt eller ikke betalt",
-                  "Få beskjed når treneren ber om kvittering",
-                  "Motta varsel når en trener booker en time på barnets vegne",
-                ].map(f => (
-                  <li key={f} className="flex items-start gap-2 text-gray-700 dark:text-gray-300 text-sm">
-                    <span className="text-[#E2A9F1] mt-0.5">•</span>{f}
-                  </li>
-                ))}
-              </ul>
-              <p className="text-sm text-gray-500 dark:text-gray-400 mt-4 italic">En enklere måte å holde oversikt og følge opp dansehverdagen.</p>
-            </div>
-
-            {/* Trener */}
-            <div className="border border-gray-200 dark:border-gray-700 rounded-2xl p-6">
-              <div className="flex items-center gap-3 mb-3">
-                <div className="w-10 h-10 rounded-full bg-[#edd5f9] dark:bg-[#E2A9F1]/15 dark:bg-purple-900 flex items-center justify-center text-[#E2A9F1] dark:text-[#E2A9F1] font-bold">T</div>
-                <h3 className="text-xl font-bold text-gray-900 dark:text-white">For trenere</h3>
-              </div>
-              <p className="text-gray-600 dark:text-gray-400 mb-4">Bruk mindre tid på administrasjon og få bedre oversikt over tilgjengelighet, bookinger og danserne du følger opp.</p>
-              <ul className="space-y-2">
-                {[
-                  "Legg ut ledige tider for enkeltdager eller flere dager samtidig",
-                  "Se kommende og gjennomførte bookinger i én samlet oversikt",
-                  "Book timer direkte for dansere og koble timen til danserens profil",
-                  "Book dobbelttimer og koble timen til to danserprofiler",
-                  "Søk opp dansere og se full historikk over privattimer – antall gjennomførte og betalte",
-                  "Purr på kvittering med ett trykk – danseren/forelderen får varsel om å sende bilde av kvitteringen",
-                  "Marker timer som betalt og se hvem som mangler betaling",
-                  "Avbestill timer direkte i appen",
-                  "Se kommende konkurranser med nedtelling",
-                  "Få push-varsel på mobilen ved nye bookinger og avbestillinger",
-                  "Automatisk påminnelse på morgenen når du har privattime",
-                ].map(f => (
-                  <li key={f} className="flex items-start gap-2 text-gray-700 dark:text-gray-300 text-sm">
-                    <span className="text-[#E2A9F1] mt-0.5">•</span>{f}
-                  </li>
-                ))}
-              </ul>
-              <p className="text-sm text-gray-500 dark:text-gray-400 mt-4 italic">Mindre tid på meldinger, dokumenter og koordinering. Bedre oversikt over danserne du trener.</p>
-            </div>
+            ))}
           </div>
         </section>
 
         {/* Mer enn booking */}
         <section>
-          <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-4">Mer enn en bookingapp</h2>
+          <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-4">{t("moreThanBooking.heading")}</h2>
           <div className="space-y-4 text-gray-700 dark:text-gray-300 text-lg leading-relaxed">
-            <p>Danceitude startet med et behov for en enklere måte å booke privattimer på.</p>
-            <p>Men gjennom arbeidet med dansere, foreldre og trenere ble det tydelig at behovet var større. Dansehverdagen består av treninger, mål, nivåer, konkurranser, resultater og utvikling over tid. Mye av denne informasjonen er i dag spredt mellom dokumenter, meldinger, notater og ulike systemer.</p>
-            <p>Danceitude samler dette på ett sted. Målet er å gjøre det enklere å organisere dansehverdagen, følge utvikling over tid og skape bedre samhandling mellom dansere, foreldre og trenere.</p>
+            <p>{t("moreThanBooking.p1")}</p>
+            <p>{t("moreThanBooking.p2")}</p>
+            <p>{t("moreThanBooking.p3")}</p>
           </div>
         </section>
 
         {/* Avslutning */}
         <section className="border-t border-gray-200 dark:border-gray-700 pt-12">
-          <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-4">Dette er bare begynnelsen</h2>
+          <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-4">{t("beginning.heading")}</h2>
           <div className="space-y-4 text-gray-700 dark:text-gray-300 text-lg leading-relaxed">
-            <p>Danceitude skal fortsette å utvikles sammen med dansemiljøet.</p>
-            <p>Tilbakemeldinger fra dansere, foreldre og trenere vil fortsatt være en viktig del av hvordan appen forbedres og hvilke funksjoner som utvikles videre.</p>
-            <p className="font-medium text-gray-900 dark:text-white">For de beste løsningene blir ikke laget for brukerne. De blir laget sammen med dem.</p>
+            <p>{t("beginning.p1")}</p>
+            <p>{t("beginning.p2")}</p>
+            <p className="font-medium text-gray-900 dark:text-white">{t("beginning.quote")}</p>
           </div>
 
           <div className="mt-12 bg-[#f5eeff] dark:bg-[#E2A9F1]/10 dark:bg-purple-950 rounded-2xl p-8 text-center">
             <p className="text-2xl font-bold text-[#c87de0] dark:text-[#E2A9F1] mb-1">Danceitude</p>
-            <p className="text-[#E2A9F1] dark:text-[#E2A9F1] italic mb-6">Utviklet sammen med dansemiljøet. Laget for hele dansehverdagen.</p>
+            <p className="text-[#E2A9F1] dark:text-[#E2A9F1] italic mb-6">{t("footerCard.tagline")}</p>
             {!user && (
               <Link href="/login" className="inline-block bg-[#3A3A3A] hover:bg-[#2a2a2a] dark:bg-[#c87de0] dark:hover:bg-[#b56fd0] dark:text-white text-[#E2A9F1] font-semibold px-8 py-3 rounded-xl transition-colors">
-                Kom i gang
+                {t("footerCard.cta")}
               </Link>
             )}
           </div>

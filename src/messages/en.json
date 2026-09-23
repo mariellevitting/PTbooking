@@ -254,5 +254,139 @@
       "seeProfile": "See profile",
       "paidOfTotal": "{paid} of {total} paid"
     }
+  },
+  "om": {
+    "backCta": "Join now!",
+    "eyebrow": "Danceitude",
+    "heroTitle": "Danceitude was built because the dance community deserves better tools",
+    "heroTagline": "By dancers, for dancers",
+    "intro": {
+      "p1": "Danceitude started with a problem I knew all too well myself.",
+      "p2": "As a dancer at Evolution Danseklubb in Sarpsborg, I experienced how clunky booking private lessons could be. Open time slots were shared in a Google Docs document. Dancers and parents had to find an open slot, write themselves in, and keep track of the booking themselves.",
+      "p3": "It worked. But it could work so much better.",
+      "p4": "I hold a master's degree specializing in interaction design, and work as a Digital Marketing Manager and designer at SkyeTec, as well as an Interaction Specialist at MyTalent. I'm passionate about building digital solutions grounded in the people who will actually use them.",
+      "p5": "So I didn't just want to build another booking tool. I wanted to find out what dancers, parents and trainers actually need."
+    },
+    "developedTogether": {
+      "heading": "Developed together with the dance community",
+      "p1": "Danceitude started as part of my master's thesis and was developed through a user-centered design process.",
+      "p2": "Through workshops with dancers, parents and trainers, we mapped out the challenges with the current way of doing things. Participants shared their experiences, discussed their needs, and sketched out how they wanted a better solution to work.",
+      "p3": "The ideas were then developed into prototypes, tested with real users, and refined based on the feedback we got.",
+      "conclusion": "Danceitude isn't built on assumptions about what the dance community needs. It's built together with the people who know the everyday reality best."
+    },
+    "threeRoles": {
+      "heading": "One app. Three roles. A simpler dance routine.",
+      "subheading": "Danceitude brings booking, training, development and competitions together in one place. Every user gets the features and overview suited to their role.",
+      "dancer": {
+        "title": "For dancers",
+        "intro": "Find trainers, book private lessons, and get a better overview of your training and progress.",
+        "features": [
+          "Browse available trainers and dance styles",
+          "Book private lessons in a few taps",
+          "See upcoming and completed lessons",
+          "Cancel lessons directly in the app",
+          "Get a push notification – a morning reminder when you have a private lesson",
+          "See whether a lesson is paid, and get a nudge to send the receipt",
+          "Log freestyle and slow points",
+          "Track your progress toward the next level – from Beginner to Champ Prem",
+          "Set personal goals for the season",
+          "Log and collect competition results",
+          "See the countdown to the next competition",
+          "Get notified when a trainer books a lesson on your behalf"
+        ],
+        "footer": "Less time keeping track. More time training, developing, and reaching your goals."
+      },
+      "parent": {
+        "title": "For parents",
+        "intro": "Keep up with your child's dance routine without digging through documents, messages and different systems.",
+        "features": [
+          "Book private lessons on your child's behalf",
+          "See upcoming and completed lessons",
+          "Keep track of your child's bookings in one place",
+          "Cancel lessons directly in the app",
+          "Get a push notification – a morning reminder when your child has a private lesson",
+          "See the payment status of every lesson – paid or not",
+          "Get notified when the trainer asks for a receipt",
+          "Get notified when a trainer books a lesson on your child's behalf"
+        ],
+        "footer": "An easier way to keep track of and follow up on the dance routine."
+      },
+      "trainer": {
+        "title": "For trainers",
+        "intro": "Spend less time on admin and get a better overview of availability, bookings, and the dancers you coach.",
+        "features": [
+          "Post open times for single days or several days at once",
+          "See upcoming and completed bookings in one combined overview",
+          "Book lessons directly for dancers and link the lesson to their profile",
+          "Book double lessons and link them to two dancer profiles",
+          "Look up a dancer and see their full private-lesson history – how many completed and paid",
+          "Nudge about a receipt with one tap – the dancer/parent gets a notification to send a photo of it",
+          "Mark lessons as paid and see who's missing payment",
+          "Cancel lessons directly in the app",
+          "See upcoming competitions with a countdown",
+          "Get a push notification for new bookings and cancellations",
+          "Automatic morning reminder when you have a private lesson"
+        ],
+        "footer": "Less time on messages, documents and coordination. A better overview of the dancers you coach."
+      }
+    },
+    "moreThanBooking": {
+      "heading": "More than a booking app",
+      "p1": "Danceitude started with a need for an easier way to book private lessons.",
+      "p2": "But through the work with dancers, parents and trainers, it became clear the need was bigger. A dancer's routine consists of training, goals, levels, competitions, results and development over time. Today, much of this information is scattered across documents, messages, notes and different systems.",
+      "p3": "Danceitude brings it all together in one place. The goal is to make it easier to organize the dance routine, track progress over time, and create better collaboration between dancers, parents and trainers."
+    },
+    "beginning": {
+      "heading": "This is just the beginning",
+      "p1": "Danceitude will keep being developed together with the dance community.",
+      "p2": "Feedback from dancers, parents and trainers will continue to be an important part of how the app improves and which features get built next.",
+      "quote": "The best solutions aren't built for the users. They're built together with them."
+    },
+    "footerCard": {
+      "tagline": "Developed together with the dance community. Built for the whole dance routine.",
+      "cta": "Get started"
+    }
+  },
+  "support": {
+    "heading": "Support",
+    "subheading": "Need help with Danceitude? Here are answers to common questions.",
+    "faqHeading": "Frequently asked questions",
+    "faq": [
+      { "q": "How do I book a private lesson?", "a": "Go to \"Book lesson\" from the dashboard, choose a trainer, date and time, and confirm the booking." },
+      { "q": "How do I cancel a lesson?", "a": "Go to \"My lessons\" and tap the lesson you want to cancel. You'll find the cancel button there." },
+      { "q": "I forgot my password – what do I do?", "a": "Go to the login page and tap \"Forgot your password?\". You'll receive an email with a link to reset it." },
+      { "q": "How do I delete my account?", "a": "Go to the Profile page and scroll to the bottom. You'll find the \"Delete account\" button there. Account deletion is permanent and can't be undone." },
+      { "q": "I'm a trainer – how do I post open times?", "a": "Go to \"Add availability\" in the menu, choose a date and the times you're available, and tap \"Post times\"." }
+    ],
+    "contactHeading": "Contact us",
+    "contactBody": "Can't find the answer you're looking for? Get in touch by email:",
+    "aboutHeading": "About the app",
+    "aboutBody": "Danceitude is a booking app for private lessons at dance clubs. The app was built by Mie Marielle Øverås Vitting as part of a master's thesis in interaction design."
+  },
+  "privacy": {
+    "heading": "Privacy policy",
+    "lastUpdated": "Last updated: August 2026",
+    "about": { "heading": "About the app", "body": "Danceitude is a booking app for private lessons at dance clubs. The app is built and operated by Mie Marielle Øverås Vitting." },
+    "dataCollected": {
+      "heading": "What data do we collect?",
+      "items": [
+        "Name and email address (upon registration)",
+        "Role (dancer, parent or trainer)",
+        "Booking history and lesson appointments",
+        "Training results and goals (if you enter them yourself)",
+        "Competition results (if you enter them yourself)"
+      ]
+    },
+    "dataUse": {
+      "heading": "How is the data used?",
+      "items": [
+        "To show and manage bookings",
+        "To send notifications about upcoming lessons",
+        "To show trainers and dancers relevant information"
+      ]
+    },
+    "sharing": { "heading": "Data sharing", "body": "We don't share personal data with third parties. Data is stored securely with Supabase." },
+    "rights": { "heading": "Your rights", "body": "You can at any time request access to, correction of, or deletion of your personal data by contacting us at <email>miemarielle@live.no</email>." },
+    "contact": { "heading": "Contact", "name": "Mie Marielle Øverås Vitting", "emailLabel": "Email:" }
   }
 }

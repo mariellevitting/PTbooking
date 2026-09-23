@@ -254,5 +254,139 @@
       "seeProfile": "Se profil",
       "paidOfTotal": "{paid} av {total} betalt"
     }
+  },
+  "om": {
+    "backCta": "Bli med nå!",
+    "eyebrow": "Danceitude",
+    "heroTitle": "Danceitude ble laget fordi dansemiljøet fortjener bedre verktøy",
+    "heroTagline": "Av dansere, for dansere",
+    "intro": {
+      "p1": "Danceitude startet med et problem jeg selv kjente godt.",
+      "p2": "Som danser i Evolution Danseklubb i Sarpsborg opplevde jeg hvor tungvint det kunne være å booke privattimer. Ledige timer ble delt i et Google Docs-dokument. Dansere og foreldre måtte finne et ledig tidspunkt, skrive seg inn og holde oversikt over bookingen selv.",
+      "p3": "Det fungerte. Men det kunne fungere mye bedre.",
+      "p4": "Jeg har en mastergrad med spesialisering i interaksjonsdesign, og jobber til daglig som Digital Marketing Manager og designer i SkyeTec, samt som Interaction Specialist i MyTalent. Jeg brenner for å utvikle digitale løsninger som tar utgangspunkt i menneskene som faktisk skal bruke dem.",
+      "p5": "Derfor ønsket jeg ikke bare å lage en ny bookingløsning. Jeg ønsket å finne ut hva dansere, foreldre og trenere faktisk trenger."
+    },
+    "developedTogether": {
+      "heading": "Utviklet sammen med dansemiljøet",
+      "p1": "Danceitude startet som en del av masterarbeidet mitt og ble utviklet gjennom en brukersentrert designprosess.",
+      "p2": "Gjennom workshops med dansere, foreldre og trenere kartla vi utfordringene med dagens løsning. Deltakerne fikk dele erfaringer, diskutere behov og selv skissere hvordan de ønsket at en bedre løsning skulle fungere.",
+      "p3": "Ideene ble deretter utviklet til prototyper, testet med brukere og forbedret basert på tilbakemeldingene vi fikk.",
+      "conclusion": "Danceitude er derfor ikke bygget på antakelser om hva dansemiljøet trenger. Den er utviklet sammen med menneskene som kjenner hverdagen best."
+    },
+    "threeRoles": {
+      "heading": "Én app. Tre roller. En enklere dansehverdag.",
+      "subheading": "Danceitude samler booking, trening, utvikling og konkurranser på ett sted. Hver bruker får funksjoner og oversikt tilpasset sin rolle.",
+      "dancer": {
+        "title": "For dansere",
+        "intro": "Finn trenere, book privattimer og få bedre oversikt over treningen og utviklingen din.",
+        "features": [
+          "Bla gjennom tilgjengelige trenere og danseformer",
+          "Book privattimer med få trykk",
+          "Se kommende og gjennomførte timer",
+          "Avbestill timer direkte i appen",
+          "Få push-varsel på mobilen – påminnelse på morgenen når du har privattime",
+          "Se om en time er betalt, og få beskjed om å sende kvittering",
+          "Logg freestyle- og slow-poeng",
+          "Følg fremgangen din mot neste nivå – fra Rekrutt til Elite",
+          "Sett personlige mål for sesongen",
+          "Logg og samle konkurranseresultater",
+          "Se nedtelling til neste konkurranse",
+          "Motta varsel når en trener booker en time på dine vegne"
+        ],
+        "footer": "Mindre tid på å holde oversikt. Mer tid til å trene, utvikle deg og nå målene dine."
+      },
+      "parent": {
+        "title": "For foreldre",
+        "intro": "Følg opp barnets dansehverdag uten å måtte lete gjennom dokumenter, meldinger og ulike systemer.",
+        "features": [
+          "Book privattimer på vegne av barnet",
+          "Se kommende og gjennomførte timer",
+          "Ha oversikt over barnets bookinger på ett sted",
+          "Avbestill timer direkte i appen",
+          "Få push-varsel på mobilen – påminnelse på morgenen når barnet har privattime",
+          "Se betalingsstatus på hver time – betalt eller ikke betalt",
+          "Få beskjed når treneren ber om kvittering",
+          "Motta varsel når en trener booker en time på barnets vegne"
+        ],
+        "footer": "En enklere måte å holde oversikt og følge opp dansehverdagen."
+      },
+      "trainer": {
+        "title": "For trenere",
+        "intro": "Bruk mindre tid på administrasjon og få bedre oversikt over tilgjengelighet, bookinger og danserne du følger opp.",
+        "features": [
+          "Legg ut ledige tider for enkeltdager eller flere dager samtidig",
+          "Se kommende og gjennomførte bookinger i én samlet oversikt",
+          "Book timer direkte for dansere og koble timen til danserens profil",
+          "Book dobbelttimer og koble timen til to danserprofiler",
+          "Søk opp dansere og se full historikk over privattimer – antall gjennomførte og betalte",
+          "Purr på kvittering med ett trykk – danseren/forelderen får varsel om å sende bilde av kvitteringen",
+          "Marker timer som betalt og se hvem som mangler betaling",
+          "Avbestill timer direkte i appen",
+          "Se kommende konkurranser med nedtelling",
+          "Få push-varsel på mobilen ved nye bookinger og avbestillinger",
+          "Automatisk påminnelse på morgenen når du har privattime"
+        ],
+        "footer": "Mindre tid på meldinger, dokumenter og koordinering. Bedre oversikt over danserne du trener."
+      }
+    },
+    "moreThanBooking": {
+      "heading": "Mer enn en bookingapp",
+      "p1": "Danceitude startet med et behov for en enklere måte å booke privattimer på.",
+      "p2": "Men gjennom arbeidet med dansere, foreldre og trenere ble det tydelig at behovet var større. Dansehverdagen består av treninger, mål, nivåer, konkurranser, resultater og utvikling over tid. Mye av denne informasjonen er i dag spredt mellom dokumenter, meldinger, notater og ulike systemer.",
+      "p3": "Danceitude samler dette på ett sted. Målet er å gjøre det enklere å organisere dansehverdagen, følge utvikling over tid og skape bedre samhandling mellom dansere, foreldre og trenere."
+    },
+    "beginning": {
+      "heading": "Dette er bare begynnelsen",
+      "p1": "Danceitude skal fortsette å utvikles sammen med dansemiljøet.",
+      "p2": "Tilbakemeldinger fra dansere, foreldre og trenere vil fortsatt være en viktig del av hvordan appen forbedres og hvilke funksjoner som utvikles videre.",
+      "quote": "For de beste løsningene blir ikke laget for brukerne. De blir laget sammen med dem."
+    },
+    "footerCard": {
+      "tagline": "Utviklet sammen med dansemiljøet. Laget for hele dansehverdagen.",
+      "cta": "Kom i gang"
+    }
+  },
+  "support": {
+    "heading": "Support",
+    "subheading": "Trenger du hjelp med Danceitude? Her finner du svar på vanlige spørsmål.",
+    "faqHeading": "Vanlige spørsmål",
+    "faq": [
+      { "q": "Hvordan booker jeg en privattime?", "a": "Gå til «Book time» fra dashbordet, velg trener, dato og tidspunkt, og bekreft bookingen." },
+      { "q": "Hvordan avbestiller jeg en time?", "a": "Gå til «Mine timer» og trykk på timen du vil avbestille. Du finner avbestillingsknappen der." },
+      { "q": "Jeg har glemt passordet mitt – hva gjør jeg?", "a": "Gå til innloggingssiden og trykk «Glemt passordet?». Du vil motta en e-post med en lenke for å tilbakestille passordet." },
+      { "q": "Hvordan sletter jeg kontoen min?", "a": "Gå til Profil-siden og scroll ned til bunnen. Der finner du «Slett konto»-knappen. Kontoslettingen er permanent og kan ikke angres." },
+      { "q": "Jeg er trener – hvordan legger jeg ut ledige tider?", "a": "Gå til «Legg ut tid» i menyen, velg dato og de tidspunktene du er tilgjengelig, og trykk «Legg ut timer»." }
+    ],
+    "contactHeading": "Kontakt oss",
+    "contactBody": "Finner du ikke svaret du leter etter? Ta kontakt med oss på e-post:",
+    "aboutHeading": "Om appen",
+    "aboutBody": "Danceitude er en bookingapp for privattimer for danseklubber. Appen er utviklet av Mie Marielle Øverås Vitting som en del av masterarbeid i interaksjonsdesign."
+  },
+  "privacy": {
+    "heading": "Personvernerklæring",
+    "lastUpdated": "Sist oppdatert: august 2026",
+    "about": { "heading": "Om appen", "body": "Danceitude er en bookingapp for privattimer for danseklubber. Appen er utviklet og driftes av Mie Marielle Øverås Vitting." },
+    "dataCollected": {
+      "heading": "Hvilke data samler vi inn?",
+      "items": [
+        "Navn og e-postadresse (ved registrering)",
+        "Rolle (danser, forelder eller trener)",
+        "Bookinghistorikk og timeavtaler",
+        "Treningsresultater og mål (hvis du legger dem inn selv)",
+        "Konkurranseresultater (hvis du legger dem inn selv)"
+      ]
+    },
+    "dataUse": {
+      "heading": "Hvordan brukes dataene?",
+      "items": [
+        "For å vise og administrere bookinger",
+        "For å sende varsler om kommende timer",
+        "For å vise trenere og dansere relevant informasjon"
+      ]
+    },
+    "sharing": { "heading": "Deling av data", "body": "Vi deler ikke personopplysninger med tredjeparter. Data lagres sikkert hos Supabase." },
+    "rights": { "heading": "Dine rettigheter", "body": "Du kan når som helst be om innsyn i, retting av eller sletting av dine personopplysninger ved å kontakte oss på <email>miemarielle@live.no</email>." },
+    "contact": { "heading": "Kontakt", "name": "Mie Marielle Øverås Vitting", "emailLabel": "E-post:" }
   }
 }
