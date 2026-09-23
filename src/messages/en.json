@@ -52,6 +52,7 @@
       "confirmed": "Confirmed",
       "completed": "Completed",
       "paid": "Paid ✓",
+      "paidLabel": "Paid",
       "unpaid": "Not paid",
       "trainerLabel": "Trainer: {name}",
       "cancel": "Cancel",
@@ -196,6 +197,42 @@
     "saveError": "Error: {message}"
   },
   "trainer": {
-    "postAvailability": "+ Add availability"
+    "postAvailability": "+ Add availability",
+    "completedTab": "Completed",
+    "noSlotsPosted": "No times posted",
+    "noSlotsHint": "Post open times so dancers can book you",
+    "occupied": "Booked",
+    "free": "Free",
+    "deleteSlot": "Delete",
+    "receiptReminder": {
+      "confirmSend": "The dancer/parent gets a notification to send a photo of the receipt. Send now?",
+      "sending": "Sending…",
+      "send": "Nudge about receipt",
+      "sendAgain": "Nudge about receipt again ({count})",
+      "notificationTitle": "Receipt",
+      "notificationMessage": "Remember to send a photo of the receipt for the private lesson {when} to {trainerName}.",
+      "atTime": "{day} at {time}"
+    },
+    "markPaid": "Mark paid",
+    "saveFailed": "Couldn't save",
+    "all": "All ({count})",
+    "missingPayment": "Missing payment ({count})",
+    "allPaid": "Everything is paid 🎉",
+    "unpaidCount": "{count, plural, one {# lesson missing payment} other {# lessons missing payment}}",
+    "completedTotal": "{count, plural, one {# completed private lesson total} other {# completed private lessons total}}",
+    "web": {
+      "freeSlots": "Open times",
+      "lessonsHad": "Lessons held",
+      "paymentStatus": "Payment status",
+      "paidCount": "{count} paid",
+      "missingPaymentCount": "{count} missing payment",
+      "seasonGoals": "Season goals",
+      "seeSeasonGoals": "See the dancers' goals",
+      "selectDate": "Select a date",
+      "loadingSlots": "Loading…",
+      "noSlotsThisDay": "No times posted this day",
+      "confirmReminder": "Send a receipt reminder?",
+      "reminderAgain": "Nudge again ({count})"
+    }
   }
 }

@@ -3,10 +3,12 @@
 import { useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import { useTranslations, useLocale } from "next-intl";
 import { Check } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { createClient } from "@/lib/supabase/client";
 import { formatDate, formatTime, formatDateKey } from "@/lib/dateUtils";
+import type { Locale } from "@/i18n/locale";
 
 interface Booking {
   id: string;
@@ -37,6 +39,7 @@ interface CompletedSlot {
 }
 
 function KvitteringReminder({ booking, when, trainerName, trainerId }: { booking: { id: string; receipt_reminders_sent?: number; booker_id?: string; linked_user_id?: string | null }; when: string; trainerName: string; trainerId: string }) {
+  const t = useTranslations("trainer.receiptReminder");
   const [count, setCount] = useState(booking.receipt_reminders_sent ?? 0);
   const [sending, setSending] = useState(false);
 
@@ -46,15 +49,19 @@ function KvitteringReminder({ booking, when, trainerName, trainerId }: { booking
 
   async function send() {
     if (sending || ids.length === 0) return;
-    if (count === 0 && !confirm("Danseren/forelderen får et varsel om å sende bilde av kvitteringen. Sende nå?")) return;
+    if (count === 0 && !confirm(t("confirmSend"))) return;
     setSending(true);
-    const message = `Husk å sende bilde av kvittering for privattimen ${when} til ${trainerName}.`;
+    // TODO(i18n): rendres i AVSENDERENS (trenerens) språk, ikke mottakerens.
+    // Riktig løsning krever at /api/notify slår opp profiles.language per
+    // mottaker og rendrer server-side (se docs/DECISIONS.md "Flerspråklighet").
+    // Midlertidig forbedring, ikke ferdig i tråd med kravet om mottaker-språk.
+    const message = t("notificationMessage", { when, trainerName });
     const supabase = createClient();
     await supabase.from("notifications").insert(ids.map(user_id => ({ user_id, message })));
     await fetch("/api/notify", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ userIds: ids, title: "Kvittering", message }),
+      body: JSON.stringify({ userIds: ids, title: t("notificationTitle"), message }),
     }).catch(() => {});
     await supabase.from("bookings").update({ receipt_reminders_sent: count + 1 }).eq("id", booking.id);
     setCount(c => c + 1);
@@ -69,12 +76,14 @@ function KvitteringReminder({ booking, when, trainerName, trainerId }: { booking
       disabled={sending}
       className="text-xs text-[#9b59c4] dark:text-[#E2A9F1] hover:underline disabled:opacity-50 disabled:no-underline"
     >
-      {sending ? "Sender…" : count === 0 ? "Purr på kvittering" : `Purr på kvittering igjen (${count})`}
+      {sending ? t("sending") : count === 0 ? t("send") : t("sendAgain", { count })}
     </button>
   );
 }
 
 function PaidToggle({ bookingId, initialPaid }: { bookingId: string; initialPaid: boolean }) {
+  const t = useTranslations("trainer");
+  const tc = useTranslations("common");
   const router = useRouter();
   const [paid, setPaid] = useState(initialPaid);
   const [saving, setSaving] = useState(false);
@@ -112,9 +121,9 @@ function PaidToggle({ bookingId, initialPaid }: { bookingId: string; initialPaid
             : "bg-gray-100 text-gray-500 dark:bg-gray-800 dark:text-gray-400 hover:bg-gray-200 dark:hover:bg-gray-700"
         }`}
       >
-        {paid ? <><Check size={12} strokeWidth={3} /> Betalt</> : "Marker betalt"}
+        {paid ? <><Check size={12} strokeWidth={3} /> {tc("booking.paidLabel")}</> : t("markPaid")}
       </button>
-      {failed && <span className="text-xs text-red-500">Kunne ikke lagre</span>}
+      {failed && <span className="text-xs text-red-500">{t("saveFailed")}</span>}
     </span>
   );
 }
@@ -136,6 +145,9 @@ function getWeekNumber(date: Date) {
 }
 
 export default function TrainerDashboardTabs({ slots, completedSlots, trainerName, trainerId }: Props) {
+  const t = useTranslations("trainer");
+  const tc = useTranslations("common");
+  const locale = useLocale() as Locale;
   const [tab, setTab] = useState<"upcoming" | "completed">("upcoming");
   const [onlyUnpaid, setOnlyUnpaid] = useState(false);
 
@@ -151,13 +163,13 @@ export default function TrainerDashboardTabs({ slots, completedSlots, trainerNam
     <div>
       {/* Tabs */}
       <div className="flex gap-1 bg-gray-100 dark:bg-gray-800 rounded-xl p-1 mb-3">
-        <button onClick={() => setTab("upcoming")} className={`flex-1 px-2 py-1.5 rounded-lg text-sm font-medium transition-colors ${tab === "upcoming" ? "bg-white dark:bg-gray-900 text-[#c87de0] shadow-sm" : "text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300"}`}>Kommende</button>
-        <button onClick={() => setTab("completed")} className={`flex-1 px-2 py-1.5 rounded-lg text-sm font-medium transition-colors ${tab === "completed" ? "bg-white dark:bg-gray-900 text-[#c87de0] shadow-sm" : "text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300"}`}>Fullførte</button>
+        <button onClick={() => setTab("upcoming")} className={`flex-1 px-2 py-1.5 rounded-lg text-sm font-medium transition-colors ${tab === "upcoming" ? "bg-white dark:bg-gray-900 text-[#c87de0] shadow-sm" : "text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300"}`}>{tc("booking.upcoming")}</button>
+        <button onClick={() => setTab("completed")} className={`flex-1 px-2 py-1.5 rounded-lg text-sm font-medium transition-colors ${tab === "completed" ? "bg-white dark:bg-gray-900 text-[#c87de0] shadow-sm" : "text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300"}`}>{t("completedTab")}</button>
       </div>
 
       {/* Legg ut tid-knapp */}
       {<Link href="/trainer/availability" className="block mb-4">
-        <Button className="w-full bg-[#3A3A3A] hover:bg-[#2a2a2a] dark:bg-[#c87de0] dark:hover:bg-[#b56fd0] dark:text-white">+ Legg ut tid</Button>
+        <Button className="w-full bg-[#3A3A3A] hover:bg-[#2a2a2a] dark:bg-[#c87de0] dark:hover:bg-[#b56fd0] dark:text-white">{t("postAvailability")}</Button>
       </Link>}
 
       {/* Kommende timer */}
@@ -165,8 +177,8 @@ export default function TrainerDashboardTabs({ slots, completedSlots, trainerNam
         if (!slots || slots.length === 0) {
           return (
             <div className="bg-white dark:bg-gray-900 rounded-xl border dark:border-gray-700 p-5 text-center text-gray-400 dark:text-gray-500">
-              <p className="font-medium">Ingen tider lagt ut</p>
-              <p className="text-sm mt-1">Legg ut ledige tider så dansere kan booke deg</p>
+              <p className="font-medium">{t("noSlotsPosted")}</p>
+              <p className="text-sm mt-1">{t("noSlotsHint")}</p>
             </div>
           );
         }
@@ -188,11 +200,11 @@ export default function TrainerDashboardTabs({ slots, completedSlots, trainerNam
           <div className="space-y-6">
             {Object.entries(weekGroups).map(([week, dateKeys]) => (
               <div key={week}>
-                <p className="text-xs font-semibold text-gray-400 dark:text-gray-500 uppercase tracking-wider mb-3">Uke {week}</p>
+                <p className="text-xs font-semibold text-gray-400 dark:text-gray-500 uppercase tracking-wider mb-3">{tc("booking.week", { week })}</p>
                 <div className="space-y-4">
                   {dateKeys.sort().map((dateKey) => {
                     const daySlots = grouped[dateKey];
-                    const dayLabel = formatDate(new Date(dateKey), { weekday: "long", day: "numeric", month: "long" });
+                    const dayLabel = formatDate(new Date(dateKey), locale, { weekday: "long", day: "numeric", month: "long" });
                     return (
                       <div key={dateKey}>
                         <p className="text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2 border-b dark:border-gray-700 pb-1">
@@ -206,7 +218,7 @@ export default function TrainerDashboardTabs({ slots, completedSlots, trainerNam
                             return (
                               <div key={slot.id} className={`rounded-xl border p-4 flex justify-between items-center ${booking ? "bg-white dark:bg-gray-900 border-l-4 border-l-[#E2A9F1]" : "bg-gray-50 dark:bg-gray-950 border-dashed border-gray-200 dark:border-gray-700"}`}>
                                 <div>
-                                  <p className="text-sm text-gray-500 dark:text-gray-400">{formatTime(start)}–{formatTime(end)}</p>
+                                  <p className="text-sm text-gray-500 dark:text-gray-400">{formatTime(start, locale)}–{formatTime(end, locale)}</p>
                                   {booking && (
                                     <>
                                       <div className="flex items-center gap-2 mt-1">
@@ -222,21 +234,21 @@ export default function TrainerDashboardTabs({ slots, completedSlots, trainerNam
                                       <div className="flex flex-wrap items-center gap-x-3 gap-y-1 mt-1.5">
                                         <PaidToggle bookingId={booking.id} initialPaid={!!booking.paid} />
                                         {!booking.paid && (
-                                          <KvitteringReminder booking={booking} when={`${dayLabel} kl ${formatTime(start)}`} trainerName={trainerName} trainerId={trainerId} />
+                                          <KvitteringReminder booking={booking} when={t("receiptReminder.atTime", { day: dayLabel, time: formatTime(start, locale) })} trainerName={trainerName} trainerId={trainerId} />
                                         )}
                                         {end > new Date() && (
-                                          <Link href={`/trainer/avbestill/${booking.id}`} prefetch={false} className="text-xs text-red-400 hover:text-red-600">Avbestill</Link>
+                                          <Link href={`/trainer/avbestill/${booking.id}`} prefetch={false} className="text-xs text-red-400 hover:text-red-600">{tc("booking.cancel")}</Link>
                                         )}
                                       </div>
                                     </>
                                   )}
                                 </div>
                                 {booking ? (
-                                  <span className="text-xs bg-[#edd5f9] dark:bg-[#E2A9F1]/15 text-[#c87de0] px-2 py-1 rounded-full whitespace-nowrap">Opptatt</span>
+                                  <span className="text-xs bg-[#edd5f9] dark:bg-[#E2A9F1]/15 text-[#c87de0] px-2 py-1 rounded-full whitespace-nowrap">{t("occupied")}</span>
                                 ) : (
                                   <div className="flex flex-col items-end gap-1">
-                                    <span className="text-xs bg-green-100 text-green-600 px-2 py-1 rounded-full">Ledig</span>
-                                    <Link href={`/trainer/slett-slot/${slot.id}`} prefetch={false} className="text-xs text-red-400 hover:text-red-600">Slett</Link>
+                                    <span className="text-xs bg-green-100 text-green-600 px-2 py-1 rounded-full">{t("free")}</span>
+                                    <Link href={`/trainer/slett-slot/${slot.id}`} prefetch={false} className="text-xs text-red-400 hover:text-red-600">{t("deleteSlot")}</Link>
                                   </div>
                                 )}
                               </div>
@@ -263,13 +275,13 @@ export default function TrainerDashboardTabs({ slots, completedSlots, trainerNam
                   onClick={() => setOnlyUnpaid(false)}
                   className={`flex-1 px-2 py-1.5 rounded-lg text-sm font-medium transition-colors ${!onlyUnpaid ? "bg-white dark:bg-gray-900 text-[#c87de0] shadow-sm" : "text-gray-500 dark:text-gray-400"}`}
                 >
-                  Alle ({completedAll.length})
+                  {t("all", { count: completedAll.length })}
                 </button>
                 <button
                   onClick={() => setOnlyUnpaid(true)}
                   className={`flex-1 px-2 py-1.5 rounded-lg text-sm font-medium transition-colors ${onlyUnpaid ? "bg-white dark:bg-gray-900 text-amber-700 dark:text-amber-300 shadow-sm" : "text-gray-500 dark:text-gray-400"}`}
                 >
-                  Mangler betaling ({unpaidCount})
+                  {t("missingPayment", { count: unpaidCount })}
                 </button>
               </div>
             )}
@@ -277,7 +289,7 @@ export default function TrainerDashboardTabs({ slots, completedSlots, trainerNam
         if (completed.length === 0) {
           return (
             <div className="bg-white dark:bg-gray-900 rounded-xl border dark:border-gray-700 p-5 text-center text-gray-400 dark:text-gray-500">
-              <p className="font-medium">{onlyUnpaid ? "Alt er betalt 🎉" : "Ingen gjennomførte timer ennå"}</p>
+              <p className="font-medium">{onlyUnpaid ? t("allPaid") : tc("booking.noCompleted")}</p>
             </div>
           );
         }
@@ -285,7 +297,7 @@ export default function TrainerDashboardTabs({ slots, completedSlots, trainerNam
         const monthGroups: Record<string, typeof completed> = {};
         for (const slot of completed) {
           const d = new Date(slot.start_at);
-          const key = formatDate(d, { month: "long", year: "numeric" });
+          const key = formatDate(d, locale, { month: "long", year: "numeric" });
           if (!monthGroups[key]) monthGroups[key] = [];
           monthGroups[key].push(slot);
         }
@@ -294,8 +306,8 @@ export default function TrainerDashboardTabs({ slots, completedSlots, trainerNam
           <div className="space-y-6">
             <p className="text-xs text-[#E2A9F1]">
               {onlyUnpaid
-                ? `${completed.length} time${completed.length === 1 ? "" : "r"} mangler betaling`
-                : `${completed.length} gjennomførte privattimer totalt`}
+                ? t("unpaidCount", { count: completed.length })
+                : t("completedTotal", { count: completed.length })}
             </p>
             {Object.entries(monthGroups).map(([month, monthSlots]) => (
               <div key={month}>
@@ -305,24 +317,24 @@ export default function TrainerDashboardTabs({ slots, completedSlots, trainerNam
                     const start = new Date(slot.start_at);
                     const end = new Date(slot.end_at);
                     const booking = slot.bookings?.find(b => b.status === "confirmed");
-                    const dayLabel = formatDate(start, { weekday: "long", day: "numeric", month: "long" });
+                    const dayLabel = formatDate(start, locale, { weekday: "long", day: "numeric", month: "long" });
                     return (
                       <div key={slot.id} className="bg-white dark:bg-gray-900 rounded-xl border dark:border-gray-700 p-4 opacity-80">
                         <div className="flex justify-between items-start">
                           <div>
                             <p className="text-sm font-semibold text-gray-600 dark:text-gray-400">{dayLabel.charAt(0).toUpperCase() + dayLabel.slice(1)}</p>
-                            <p className="text-sm text-gray-400 dark:text-gray-500">{formatTime(start)}–{formatTime(end)}</p>
+                            <p className="text-sm text-gray-400 dark:text-gray-500">{formatTime(start, locale)}–{formatTime(end, locale)}</p>
                             {booking && <p className="text-sm text-[#E2A9F1] mt-0.5">{booking.dancer_name} · {booking.dance_style}</p>}
                             {booking && (
                               <div className="mt-1.5 flex flex-wrap items-center gap-x-3 gap-y-1">
                                 <PaidToggle bookingId={booking.id} initialPaid={!!(booking as any).paid} />
                                 {!(booking as any).paid && (
-                                  <KvitteringReminder booking={booking as any} when={`${dayLabel} kl ${formatTime(start)}`} trainerName={trainerName} trainerId={trainerId} />
+                                  <KvitteringReminder booking={booking as any} when={t("receiptReminder.atTime", { day: dayLabel, time: formatTime(start, locale) })} trainerName={trainerName} trainerId={trainerId} />
                                 )}
                               </div>
                             )}
                           </div>
-                          <span className="text-xs bg-gray-100 dark:bg-gray-800 text-gray-500 dark:text-gray-400 px-2 py-1 rounded-full">Fullført</span>
+                          <span className="text-xs bg-gray-100 dark:bg-gray-800 text-gray-500 dark:text-gray-400 px-2 py-1 rounded-full">{tc("booking.completed")}</span>
                         </div>
                       </div>
                     );

@@ -2,10 +2,12 @@
 
 import { useState } from "react";
 import Link from "next/link";
+import { useTranslations, useLocale } from "next-intl";
 import { Check, ChevronLeft, ChevronRight, Target } from "lucide-react";
 import { createClient } from "@/lib/supabase/client";
 import { useRouter } from "next/navigation";
-import { formatTime } from "@/lib/dateUtils";
+import { formatTime, formatDate, formatWeekday } from "@/lib/dateUtils";
+import type { Locale } from "@/i18n/locale";
 
 interface Booking {
   id: string;
@@ -48,6 +50,8 @@ function dateKey(date: Date) {
 }
 
 function PaidToggle({ bookingId, initialPaid }: { bookingId: string; initialPaid: boolean }) {
+  const t = useTranslations("trainer");
+  const tc = useTranslations("common");
   const router = useRouter();
   const [paid, setPaid] = useState(initialPaid);
   const [saving, setSaving] = useState(false);
@@ -78,12 +82,13 @@ function PaidToggle({ bookingId, initialPaid }: { bookingId: string; initialPaid
           : "bg-gray-100 text-gray-500 dark:bg-gray-800 dark:text-gray-400 hover:bg-gray-200"
       }`}
     >
-      {paid ? <><Check size={12} strokeWidth={3} /> Betalt</> : "Marker betalt"}
+      {paid ? <><Check size={12} strokeWidth={3} /> {tc("booking.paidLabel")}</> : t("markPaid")}
     </button>
   );
 }
 
 function KvitteringReminder({ booking, when, trainerName, trainerId }: { booking: { id: string; receipt_reminders_sent?: number; booker_id?: string; linked_user_id?: string | null }; when: string; trainerName: string; trainerId: string }) {
+  const t = useTranslations("trainer");
   const [count, setCount] = useState(booking.receipt_reminders_sent ?? 0);
   const [sending, setSending] = useState(false);
   const ids = [...new Set([booking.booker_id, booking.linked_user_id])].filter((x): x is string => !!x && x !== trainerId);
@@ -91,12 +96,14 @@ function KvitteringReminder({ booking, when, trainerName, trainerId }: { booking
 
   async function send() {
     if (sending) return;
-    if (count === 0 && !confirm("Sende purring på kvittering?")) return;
+    if (count === 0 && !confirm(t("web.confirmReminder"))) return;
     setSending(true);
-    const message = `Husk å sende bilde av kvittering for privattimen ${when} til ${trainerName}.`;
+    // TODO(i18n): se tilsvarende TODO i TrainerDashboardTabs.tsx - rendres i
+    // avsenderens språk inntil /api/notify slår opp mottakerens.
+    const message = t("receiptReminder.notificationMessage", { when, trainerName });
     const supabase = createClient();
     await supabase.from("notifications").insert(ids.map(user_id => ({ user_id, message })));
-    await fetch("/api/notify", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ userIds: ids, title: "Kvittering", message }) }).catch(() => {});
+    await fetch("/api/notify", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ userIds: ids, title: t("receiptReminder.notificationTitle"), message }) }).catch(() => {});
     await supabase.from("bookings").update({ receipt_reminders_sent: count + 1 }).eq("id", booking.id);
     setCount(c => c + 1);
     setSending(false);
@@ -104,12 +111,15 @@ function KvitteringReminder({ booking, when, trainerName, trainerId }: { booking
 
   return (
     <button onClick={send} disabled={sending} className="text-xs text-[#9b59c4] dark:text-[#E2A9F1] hover:underline disabled:opacity-50">
-      {sending ? "Sender…" : count === 0 ? "Purr på kvittering" : `Purr igjen (${count})`}
+      {sending ? t("receiptReminder.sending") : count === 0 ? t("receiptReminder.send") : t("web.reminderAgain", { count })}
     </button>
   );
 }
 
 export default function TrainerWebDashboard({ slots, completedSlots, trainerName, trainerId, freeCount }: Props) {
+  const t = useTranslations("trainer");
+  const tc = useTranslations("common");
+  const locale = useLocale() as Locale;
   const today = new Date();
   today.setHours(0, 0, 0, 0);
 
@@ -136,14 +146,16 @@ export default function TrainerWebDashboard({ slots, completedSlots, trainerName
   function prevMonth() { setViewDate(new Date(year, month - 1, 1)); }
   function nextMonth() { setViewDate(new Date(year, month + 1, 1)); }
 
-  const monthName = firstDay.toLocaleDateString("nb-NO", { month: "long", year: "numeric" });
+  const monthName = formatDate(firstDay, locale, { month: "long", year: "numeric" });
 
   // Slots for valgt dato
   const selectedSlots = slots.filter(s => dateKey(new Date(s.start_at)) === selectedDate).sort((a, b) => a.start_at.localeCompare(b.start_at));
   const selectedDateObj = selectedDate ? new Date(selectedDate + "T12:00:00") : null;
-  const selectedLabel = selectedDateObj ? selectedDateObj.toLocaleDateString("nb-NO", { weekday: "long", day: "numeric", month: "long" }) : "";
+  const selectedLabel = selectedDateObj ? formatDate(selectedDateObj, locale, { weekday: "long", day: "numeric", month: "long" }) : "";
 
-  const DAY_LABELS = ["Man", "Tir", "Ons", "Tor", "Fre", "Lør", "Søn"];
+  // Ukedager for kalender-hodet, mandag først – lokalisert (ikke hardkodet norsk).
+  // 1. jan 2024 var en mandag.
+  const DAY_LABELS = Array.from({ length: 7 }, (_, i) => formatWeekday(new Date(2024, 0, 1 + i), locale, "short"));
 
   return (
     <div className="grid grid-cols-1 lg:grid-cols-[340px_1fr] gap-6">
@@ -202,11 +214,11 @@ export default function TrainerWebDashboard({ slots, completedSlots, trainerName
         {/* Statskort */}
         <div className="grid grid-cols-2 gap-3">
           <div className="bg-[#edd5f9] dark:bg-[#E2A9F1]/10 rounded-2xl p-4">
-            <p className="text-xs text-[#9b59c4] dark:text-[#E2A9F1] font-medium mb-1">Ledige tider</p>
+            <p className="text-xs text-[#9b59c4] dark:text-[#E2A9F1] font-medium mb-1">{t("web.freeSlots")}</p>
             <p className="text-3xl font-bold text-[#9b59c4] dark:text-[#E2A9F1]">{freeCount}</p>
           </div>
           <div className="bg-gray-100 dark:bg-gray-800 rounded-2xl p-4">
-            <p className="text-xs text-gray-500 dark:text-gray-400 font-medium mb-1">Privattimer hatt</p>
+            <p className="text-xs text-gray-500 dark:text-gray-400 font-medium mb-1">{t("web.lessonsHad")}</p>
             <p className="text-3xl font-bold text-gray-700 dark:text-gray-200">{totalCompleted}</p>
           </div>
         </div>
@@ -214,7 +226,7 @@ export default function TrainerWebDashboard({ slots, completedSlots, trainerName
         {/* Betalt-kort med progressbar */}
         <div className="bg-white dark:bg-gray-900 rounded-2xl border dark:border-gray-800 p-4">
           <div className="flex justify-between items-baseline mb-2">
-            <p className="text-sm font-medium text-gray-700 dark:text-gray-200">Betalingsstatus</p>
+            <p className="text-sm font-medium text-gray-700 dark:text-gray-200">{t("web.paymentStatus")}</p>
             <p className="text-xs text-gray-400">{paidCount}/{totalCompleted}</p>
           </div>
           <div className="w-full bg-gray-100 dark:bg-gray-800 rounded-full h-2.5 mb-2">
@@ -224,8 +236,8 @@ export default function TrainerWebDashboard({ slots, completedSlots, trainerName
             />
           </div>
           <div className="flex justify-between text-xs text-gray-400">
-            <span className="text-green-600 dark:text-green-400">{paidCount} betalt</span>
-            {unpaidCount > 0 && <span className="text-amber-500">{unpaidCount} mangler betaling</span>}
+            <span className="text-green-600 dark:text-green-400">{t("web.paidCount", { count: paidCount })}</span>
+            {unpaidCount > 0 && <span className="text-amber-500">{t("web.missingPaymentCount", { count: unpaidCount })}</span>}
           </div>
         </div>
 
@@ -237,8 +249,8 @@ export default function TrainerWebDashboard({ slots, completedSlots, trainerName
                 <Target size={16} className="text-[#9b59c4] dark:text-[#E2A9F1]" />
               </div>
               <div>
-                <p className="text-sm font-semibold text-gray-700 dark:text-gray-200">Sesongmål</p>
-                <p className="text-xs text-gray-400">Se danserenes mål</p>
+                <p className="text-sm font-semibold text-gray-700 dark:text-gray-200">{t("web.seasonGoals")}</p>
+                <p className="text-xs text-gray-400">{t("web.seeSeasonGoals")}</p>
               </div>
             </div>
             <ChevronRight size={16} className="text-gray-300 group-hover:text-[#E2A9F1] transition-colors" />
@@ -250,17 +262,17 @@ export default function TrainerWebDashboard({ slots, completedSlots, trainerName
       <div>
         <div className="flex items-center justify-between mb-4">
           <h2 className="text-base font-semibold text-gray-700 dark:text-gray-200 capitalize">
-            {selectedLabel || "Velg en dato"}
+            {selectedLabel || t("web.selectDate")}
           </h2>
           <Link href="/trainer/availability" className="text-sm font-medium text-[#9b59c4] dark:text-[#E2A9F1] hover:underline">
-            + Legg ut tid
+            {t("postAvailability")}
           </Link>
         </div>
 
         {selectedSlots.length === 0 ? (
           <div className="bg-white dark:bg-gray-900 rounded-2xl border dark:border-gray-800 p-8 text-center">
             <p className="text-gray-400 dark:text-gray-500 text-sm">
-              {slotDates.has(selectedDate) ? "Laster…" : "Ingen tider lagt ut denne dagen"}
+              {slotDates.has(selectedDate) ? t("web.loadingSlots") : t("web.noSlotsThisDay")}
             </p>
           </div>
         ) : (
@@ -269,7 +281,7 @@ export default function TrainerWebDashboard({ slots, completedSlots, trainerName
               const start = new Date(slot.start_at);
               const end = new Date(slot.end_at);
               const booking = slot.bookings?.find(b => b.status === "confirmed");
-              const dayLabelFull = selectedDateObj ? selectedDateObj.toLocaleDateString("nb-NO", { weekday: "long", day: "numeric", month: "long" }) : "";
+              const dayLabelFull = selectedDateObj ? formatDate(selectedDateObj, locale, { weekday: "long", day: "numeric", month: "long" }) : "";
 
               return (
                 <div key={slot.id} className={`bg-white dark:bg-gray-900 rounded-2xl border p-4 transition-colors ${
@@ -277,7 +289,7 @@ export default function TrainerWebDashboard({ slots, completedSlots, trainerName
                 }`}>
                   <div className="flex justify-between items-start">
                     <div className="flex-1">
-                      <p className="text-sm font-semibold text-gray-600 dark:text-gray-300">{formatTime(start)}–{formatTime(end)}</p>
+                      <p className="text-sm font-semibold text-gray-600 dark:text-gray-300">{formatTime(start, locale)}–{formatTime(end, locale)}</p>
                       {booking ? (
                         <div className="mt-2 space-y-2">
                           <div className="flex items-center gap-2">
@@ -293,22 +305,22 @@ export default function TrainerWebDashboard({ slots, completedSlots, trainerName
                           <div className="flex flex-wrap items-center gap-x-3 gap-y-1">
                             <PaidToggle bookingId={booking.id} initialPaid={!!booking.paid} />
                             {!booking.paid && (
-                              <KvitteringReminder booking={booking} when={`${dayLabelFull} kl ${formatTime(start)}`} trainerName={trainerName} trainerId={trainerId} />
+                              <KvitteringReminder booking={booking} when={t("receiptReminder.atTime", { day: dayLabelFull, time: formatTime(start, locale) })} trainerName={trainerName} trainerId={trainerId} />
                             )}
                             {end > new Date() && (
-                              <Link href={`/trainer/avbestill/${booking.id}`} prefetch={false} className="text-xs text-red-400 hover:text-red-600">Avbestill</Link>
+                              <Link href={`/trainer/avbestill/${booking.id}`} prefetch={false} className="text-xs text-red-400 hover:text-red-600">{tc("booking.cancel")}</Link>
                             )}
                           </div>
                         </div>
                       ) : (
                         <div className="flex items-center gap-3 mt-2">
-                          <span className="text-xs bg-green-100 text-green-600 dark:bg-green-900/20 dark:text-green-400 px-2 py-0.5 rounded-full">Ledig</span>
-                          <Link href={`/trainer/slett-slot/${slot.id}`} prefetch={false} className="text-xs text-red-400 hover:text-red-600">Slett</Link>
+                          <span className="text-xs bg-green-100 text-green-600 dark:bg-green-900/20 dark:text-green-400 px-2 py-0.5 rounded-full">{t("free")}</span>
+                          <Link href={`/trainer/slett-slot/${slot.id}`} prefetch={false} className="text-xs text-red-400 hover:text-red-600">{t("deleteSlot")}</Link>
                         </div>
                       )}
                     </div>
                     {booking && (
-                      <span className="text-xs bg-[#edd5f9] dark:bg-[#E2A9F1]/15 text-[#9b59c4] dark:text-[#E2A9F1] px-2.5 py-1 rounded-full ml-3 whitespace-nowrap">Opptatt</span>
+                      <span className="text-xs bg-[#edd5f9] dark:bg-[#E2A9F1]/15 text-[#9b59c4] dark:text-[#E2A9F1] px-2.5 py-1 rounded-full ml-3 whitespace-nowrap">{t("occupied")}</span>
                     )}
                   </div>
                 </div>

@@ -52,6 +52,7 @@
       "confirmed": "Bekreftet",
       "completed": "Fullført",
       "paid": "Betalt ✓",
+      "paidLabel": "Betalt",
       "unpaid": "Ikke betalt",
       "trainerLabel": "Trener: {name}",
       "cancel": "Avbestill",
@@ -196,6 +197,42 @@
     "saveError": "Feil: {message}"
   },
   "trainer": {
-    "postAvailability": "+ Legg ut tid"
+    "postAvailability": "+ Legg ut tid",
+    "completedTab": "Fullførte",
+    "noSlotsPosted": "Ingen tider lagt ut",
+    "noSlotsHint": "Legg ut ledige tider så dansere kan booke deg",
+    "occupied": "Opptatt",
+    "free": "Ledig",
+    "deleteSlot": "Slett",
+    "receiptReminder": {
+      "confirmSend": "Danseren/forelderen får et varsel om å sende bilde av kvitteringen. Sende nå?",
+      "sending": "Sender…",
+      "send": "Purr på kvittering",
+      "sendAgain": "Purr på kvittering igjen ({count})",
+      "notificationTitle": "Kvittering",
+      "notificationMessage": "Husk å sende bilde av kvittering for privattimen {when} til {trainerName}.",
+      "atTime": "{day} kl {time}"
+    },
+    "markPaid": "Marker betalt",
+    "saveFailed": "Kunne ikke lagre",
+    "all": "Alle ({count})",
+    "missingPayment": "Mangler betaling ({count})",
+    "allPaid": "Alt er betalt 🎉",
+    "unpaidCount": "{count, plural, one {# time mangler betaling} other {# timer mangler betaling}}",
+    "completedTotal": "{count, plural, one {# gjennomført privattime totalt} other {# gjennomførte privattimer totalt}}",
+    "web": {
+      "freeSlots": "Ledige tider",
+      "lessonsHad": "Privattimer hatt",
+      "paymentStatus": "Betalingsstatus",
+      "paidCount": "{count} betalt",
+      "missingPaymentCount": "{count} mangler betaling",
+      "seasonGoals": "Sesongmål",
+      "seeSeasonGoals": "Se danserenes mål",
+      "selectDate": "Velg en dato",
+      "loadingSlots": "Laster…",
+      "noSlotsThisDay": "Ingen tider lagt ut denne dagen",
+      "confirmReminder": "Sende purring på kvittering?",
+      "reminderAgain": "Purr igjen ({count})"
+    }
   }
 }
