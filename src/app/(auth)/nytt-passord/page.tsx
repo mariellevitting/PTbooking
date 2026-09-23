@@ -3,12 +3,14 @@
 import { useState, useEffect, useRef, Suspense } from "react";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
+import { useTranslations } from "next-intl";
 import { createAuthClient } from "@/lib/supabase/authClient";
 import type { SupabaseClient } from "@supabase/supabase-js";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 
 function NyttPassordForm() {
+  const t = useTranslations("auth");
   const searchParams = useSearchParams();
   const clientRef = useRef<SupabaseClient | null>(null);
   const [password, setPassword] = useState("");
@@ -39,11 +41,11 @@ function NyttPassordForm() {
           type: (type as "recovery") || "recovery",
           token_hash: tokenHash,
         });
-        if (error) setError("Lenken er ugyldig eller utløpt. Be om en ny tilbakestillingslenke.");
+        if (error) setError(t("newPassword.invalidLink"));
       } else if (code) {
         // Eldre PKCE-lenke – funker bare i samme nettleser som ba om lenka
         const { error } = await supabase.auth.exchangeCodeForSession(code);
-        if (error) setError("Lenken virker ikke i denne nettleseren. Åpne den i samme nettleser du ba om tilbakestilling fra, eller be om en ny lenke.");
+        if (error) setError(t("newPassword.wrongBrowser"));
       }
       // Gi implicit-hash / onAuthStateChange et øyeblikk før vi konkluderer
       setTimeout(async () => {
@@ -54,16 +56,17 @@ function NyttPassordForm() {
     })();
 
     return () => subscription.unsubscribe();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [searchParams]);
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     if (password !== confirm) {
-      setError("Passordene stemmer ikke overens");
+      setError(t("newPassword.mismatch"));
       return;
     }
     if (password.length < 6) {
-      setError("Passordet må være minst 6 tegn");
+      setError(t("newPassword.tooShort"));
       return;
     }
     setLoading(true);
@@ -74,8 +77,9 @@ function NyttPassordForm() {
 
     if (error) {
       if (error.message.toLowerCase().includes("same password") || error.message.toLowerCase().includes("different")) {
-        setError("Du kan ikke bruke det samme passordet som før. Velg et nytt passord.");
+        setError(t("newPassword.samePassword"));
       } else {
+        // Direkte fra Supabase – ikke oversatt (se docs/DECISIONS.md om risikosoner).
         setError(error.message);
       }
       setLoading(false);
@@ -92,15 +96,15 @@ function NyttPassordForm() {
       <div className="hidden md:flex md:w-1/2 relative bg-[#3A3A3A]">
         <div className="absolute inset-0 bg-gradient-to-br from-purple-500 to-purple-800" />
         <div className="relative z-10 flex flex-col justify-end p-10 text-white">
-          <p className="text-white/90 text-lg italic mb-3">✦ Av dansere, for dansere</p>
+          <p className="text-white/90 text-lg italic mb-3">✦ {t("hero.tagline")}</p>
           <h1 className="text-4xl font-bold mb-2">Danceitude</h1>
-          <p className="text-white/80 text-lg">Book din privattime enkelt og raskt</p>
+          <p className="text-white/80 text-lg">{t("hero.subtitle")}</p>
         </div>
       </div>
 
       <div className="md:hidden h-48 relative bg-gradient-to-br from-purple-500 to-purple-800">
         <div className="absolute inset-0 flex flex-col justify-end p-6">
-          <p className="text-white/90 text-sm italic mb-1">✦ Av dansere, for dansere</p>
+          <p className="text-white/90 text-sm italic mb-1">✦ {t("hero.tagline")}</p>
           <h1 className="text-2xl font-bold text-white">Danceitude</h1>
         </div>
       </div>
@@ -108,41 +112,41 @@ function NyttPassordForm() {
       <div className="flex flex-1 items-center justify-center bg-gray-50 dark:bg-gray-950 p-8">
         <div className="w-full max-w-sm">
           <div className="mb-8">
-            <h2 className="text-3xl font-bold text-gray-900 dark:text-white">Nytt passord</h2>
-            <p className="text-gray-500 dark:text-gray-400 mt-1 text-sm">Velg et nytt passord for kontoen din.</p>
+            <h2 className="text-3xl font-bold text-gray-900 dark:text-white">{t("newPassword.heading")}</h2>
+            <p className="text-gray-500 dark:text-gray-400 mt-1 text-sm">{t("newPassword.subheading")}</p>
           </div>
 
           {done ? (
             <div className="space-y-4">
-              <p className="text-sm text-green-600 dark:text-green-400">Passordet er endret! 🎉</p>
+              <p className="text-sm text-green-600 dark:text-green-400">{t("newPassword.success")}</p>
               <Link href="/login" className="inline-block w-full">
-                <Button className="w-full bg-[#3A3A3A] hover:bg-[#2a2a2a] dark:bg-[#c87de0] dark:hover:bg-[#b56fd0] dark:text-white h-11 text-base">Logg inn med nytt passord</Button>
+                <Button className="w-full bg-[#3A3A3A] hover:bg-[#2a2a2a] dark:bg-[#c87de0] dark:hover:bg-[#b56fd0] dark:text-white h-11 text-base">{t("newPassword.loginWithNew")}</Button>
               </Link>
             </div>
           ) : verifying ? (
-            <p className="text-sm text-gray-500 dark:text-gray-400">Verifiserer lenken…</p>
+            <p className="text-sm text-gray-500 dark:text-gray-400">{t("newPassword.verifying")}</p>
           ) : !sessionReady ? (
             <div className="space-y-4">
               <p className="text-sm text-red-500">
-                {error || "Lenken er ugyldig eller utløpt."}
+                {error || t("newPassword.expiredLink")}
               </p>
               <a href="/glemt-passord" className="inline-block text-sm text-[#E2A9F1] hover:underline font-medium">
-                Be om en ny tilbakestillingslenke →
+                {t("newPassword.requestNewLink")}
               </a>
             </div>
           ) : (
             <form onSubmit={handleSubmit} className="space-y-4">
               <div className="space-y-1.5">
-                <label className="text-sm font-medium text-gray-700 dark:text-gray-300">Nytt passord</label>
+                <label className="text-sm font-medium text-gray-700 dark:text-gray-300">{t("newPassword.password")}</label>
                 <Input type="password" value={password} onChange={(e) => setPassword(e.target.value)} placeholder="••••••••" required />
               </div>
               <div className="space-y-1.5">
-                <label className="text-sm font-medium text-gray-700 dark:text-gray-300">Bekreft passord</label>
+                <label className="text-sm font-medium text-gray-700 dark:text-gray-300">{t("newPassword.confirmPassword")}</label>
                 <Input type="password" value={confirm} onChange={(e) => setConfirm(e.target.value)} placeholder="••••••••" required />
               </div>
               {error && <p className="text-sm text-red-500">{error}</p>}
               <Button type="submit" className="w-full bg-[#3A3A3A] hover:bg-[#2a2a2a] dark:bg-[#c87de0] dark:hover:bg-[#b56fd0] dark:text-white h-11 text-base" disabled={loading}>
-                {loading ? "Lagrer..." : "Sett nytt passord"}
+                {loading ? t("newPassword.submitting") : t("newPassword.submit")}
               </Button>
             </form>
           )}

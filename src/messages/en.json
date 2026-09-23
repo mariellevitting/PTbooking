@@ -65,6 +65,37 @@
       "club": "Club",
       "selectClub": "Select club",
       "clubCodeHint": "You'll get this code from your club."
+    },
+    "forgotPassword": {
+      "heading": "Forgot your password?",
+      "subheading": "Enter your email and we'll send you a link.",
+      "email": "Email",
+      "emailPlaceholder": "you@email.com",
+      "submit": "Send reset link",
+      "submitting": "Sending...",
+      "genericError": "Something went wrong, please try again",
+      "backToLogin": "Back to login",
+      "sentHeading": "Check your email",
+      "sentBody": "We've sent a link to <b>{email}</b>. Click the link to set a new password.",
+      "spamHint": "Can't find the email? Check your spam folder. 🗑️"
+    },
+    "newPassword": {
+      "heading": "New password",
+      "subheading": "Choose a new password for your account.",
+      "invalidLink": "This link is invalid or has expired. Request a new reset link.",
+      "wrongBrowser": "This link doesn't work in this browser. Open it in the same browser you requested the reset from, or request a new link.",
+      "mismatch": "The passwords don't match",
+      "tooShort": "The password must be at least 6 characters",
+      "samePassword": "You can't reuse your old password. Choose a new one.",
+      "success": "Your password has been changed! 🎉",
+      "loginWithNew": "Log in with your new password",
+      "verifying": "Verifying the link…",
+      "expiredLink": "This link is invalid or has expired.",
+      "requestNewLink": "Request a new reset link →",
+      "password": "New password",
+      "confirmPassword": "Confirm password",
+      "submit": "Set new password",
+      "submitting": "Saving..."
     }
   }
 }

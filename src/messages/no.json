@@ -65,6 +65,37 @@
       "club": "Klubb",
       "selectClub": "Velg klubb",
       "clubCodeHint": "Du får denne koden fra klubben din."
+    },
+    "forgotPassword": {
+      "heading": "Glemt passord?",
+      "subheading": "Skriv inn e-posten din så sender vi en lenke.",
+      "email": "E-post",
+      "emailPlaceholder": "din@epost.no",
+      "submit": "Send tilbakestillingslenke",
+      "submitting": "Sender...",
+      "genericError": "Noe gikk galt, prøv igjen",
+      "backToLogin": "Tilbake til innlogging",
+      "sentHeading": "Sjekk e-posten din",
+      "sentBody": "Vi har sendt en lenke til <b>{email}</b>. Klikk på lenken for å sette nytt passord.",
+      "spamHint": "Finner du ikke e-posten? Sjekk søppelpost/spam-mappen. 🗑️"
+    },
+    "newPassword": {
+      "heading": "Nytt passord",
+      "subheading": "Velg et nytt passord for kontoen din.",
+      "invalidLink": "Lenken er ugyldig eller utløpt. Be om en ny tilbakestillingslenke.",
+      "wrongBrowser": "Lenken virker ikke i denne nettleseren. Åpne den i samme nettleser du ba om tilbakestilling fra, eller be om en ny lenke.",
+      "mismatch": "Passordene stemmer ikke overens",
+      "tooShort": "Passordet må være minst 6 tegn",
+      "samePassword": "Du kan ikke bruke det samme passordet som før. Velg et nytt passord.",
+      "success": "Passordet er endret! 🎉",
+      "loginWithNew": "Logg inn med nytt passord",
+      "verifying": "Verifiserer lenken…",
+      "expiredLink": "Lenken er ugyldig eller utløpt.",
+      "requestNewLink": "Be om en ny tilbakestillingslenke →",
+      "password": "Nytt passord",
+      "confirmPassword": "Bekreft passord",
+      "submit": "Sett nytt passord",
+      "submitting": "Lagrer..."
     }
   }
 }
