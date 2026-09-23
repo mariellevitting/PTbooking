@@ -41,12 +41,27 @@ export default async function TrainerDashboard() {
 
   const freeCount = (slots ?? []).filter(s => !s.bookings?.some((b: any) => b.status === "confirmed")).length;
 
+  const clubId = (profile as any).club_id ?? null;
+
   return (
     <main className="bg-gray-50 dark:bg-gray-950 min-h-screen page-safe-top">
+      {/* Felles header */}
+      <div className="p-6 lg:max-w-5xl lg:mx-auto lg:px-8 lg:pt-8 lg:pb-0">
+        <div className="flex items-center justify-between lg:mb-4">
+          <h1 className="text-2xl font-bold text-gray-900 dark:text-white mb-6 lg:mb-0">
+            {greeting()}, {profile.name.split(" ")[0]}! 👋
+          </h1>
+          <Link href="/trainer/availability" className="hidden lg:block">
+            <Button className="bg-[#3A3A3A] hover:bg-[#2a2a2a] dark:bg-[#c87de0] dark:hover:bg-[#b56fd0] dark:text-white">
+              + Legg ut tid
+            </Button>
+          </Link>
+        </div>
+        <NMCountdown href="/trainer/konkurranser" clubId={clubId} />
+      </div>
+
       {/* Mobil */}
-      <div className="lg:hidden p-6 max-w-lg mx-auto">
-        <h1 className="text-2xl font-bold mb-6">{greeting()}, {profile.name.split(" ")[0]}! 👋</h1>
-        <NMCountdown href="/trainer/konkurranser" clubId={(profile as any).club_id ?? null} />
+      <div className="lg:hidden px-6 pb-6 max-w-lg mx-auto">
         <TrainerDashboardTabs
           slots={(slots ?? []) as any}
           completedSlots={(completedSlots ?? []) as any}
@@ -57,16 +72,7 @@ export default async function TrainerDashboard() {
       </div>
 
       {/* Web */}
-      <div className="hidden lg:block max-w-5xl mx-auto px-8 py-8">
-        <div className="flex items-center justify-between mb-8">
-          <h1 className="text-2xl font-bold text-gray-900 dark:text-white">{greeting()}, {profile.name.split(" ")[0]}! 👋</h1>
-          <Link href="/trainer/availability">
-            <Button className="bg-[#3A3A3A] hover:bg-[#2a2a2a] dark:bg-[#c87de0] dark:hover:bg-[#b56fd0] dark:text-white">
-              + Legg ut tid
-            </Button>
-          </Link>
-        </div>
-        <NMCountdown href="/trainer/konkurranser" clubId={(profile as any).club_id ?? null} />
+      <div className="hidden lg:block max-w-5xl mx-auto px-8 pb-8">
         <TrainerWebDashboard
           slots={(slots ?? []) as any}
           completedSlots={(completedSlots ?? []) as any}
