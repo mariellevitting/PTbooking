@@ -1,8 +1,10 @@
 "use client";
 
 import { useState, useRef, useEffect } from "react";
+import { useTranslations, useLocale } from "next-intl";
 import { createClient } from "@/lib/supabase/client";
 import { Bell, Trash2 } from "lucide-react";
+import type { Locale } from "@/i18n/locale";
 
 interface Notification {
   id: string;
@@ -16,6 +18,8 @@ interface Props {
 }
 
 export default function NotificationBell({ notifications: initial }: Props) {
+  const t = useTranslations("common.notifications");
+  const locale = useLocale() as Locale;
   const [open, setOpen] = useState(false);
   const [notifications, setNotifications] = useState(initial);
   const [clearing, setClearing] = useState(false);
@@ -100,20 +104,20 @@ export default function NotificationBell({ notifications: initial }: Props) {
           style={{ top: dropdownPos.top, left: dropdownPos.left }}
         >
           <div className="px-4 py-3 border-b flex items-center justify-between">
-            <p className="font-semibold text-sm">Varsler</p>
+            <p className="font-semibold text-sm">{t("title")}</p>
             {notifications.length > 0 && (
               <button
                 onClick={handleClear}
                 disabled={clearing}
                 className="flex items-center gap-1 text-xs text-gray-400 dark:text-gray-500 hover:text-red-400 transition-colors"
               >
-                <Trash2 size={13} /> Tøm
+                <Trash2 size={13} /> {t("clear")}
               </button>
             )}
           </div>
           {notifications.length === 0 ? (
             <div className="px-4 py-6 text-center text-gray-400 dark:text-gray-500 text-sm">
-              Ingen varsler
+              {t("empty")}
             </div>
           ) : (
             <div className="max-h-96 overflow-y-auto divide-y">
@@ -125,7 +129,7 @@ export default function NotificationBell({ notifications: initial }: Props) {
                   <div className="flex-1 min-w-0">
                     <p className="text-sm text-gray-800 dark:text-gray-100">{n.message}</p>
                     <p className="text-xs text-gray-400 dark:text-gray-500 mt-0.5">
-                      {new Date(n.created_at).toLocaleDateString("nb-NO", { day: "numeric", month: "short" })} · {new Date(n.created_at).toLocaleTimeString("nb-NO", { hour: "2-digit", minute: "2-digit" })}
+                      {new Date(n.created_at).toLocaleDateString(locale === "no" ? "nb-NO" : "en-GB", { day: "numeric", month: "short" })} · {new Date(n.created_at).toLocaleTimeString(locale === "no" ? "nb-NO" : "en-GB", { hour: "2-digit", minute: "2-digit" })}
                     </p>
                   </div>
                   {!n.read && (

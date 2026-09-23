@@ -3,6 +3,7 @@
 import { useState, useEffect, useRef } from "react";
 import { createClient } from "@/lib/supabase/client";
 import Link from "next/link";
+import { useTranslations, useLocale } from "next-intl";
 import { Menu, X, Calendar, Trophy, Medal, Star, Info, UserCircle, User, Target } from "lucide-react";
 import GoalsList from "@/components/GoalsList";
 import { Button } from "@/components/ui/button";
@@ -14,34 +15,18 @@ import NMCountdown from "@/components/NMCountdown";
 import CompetitionList from "@/components/CompetitionList";
 import PrivattimeInfo from "@/components/PrivattimeInfo";
 import type { ClubConfig } from "@/lib/club";
+import type { Locale } from "@/i18n/locale";
 import ChildDancerCard from "@/app/parent/profil/ChildDancerCard";
 import CompetitionResultsCard from "@/components/CompetitionResultsCard";
 import { formatDate, formatTime, formatDateKey } from "@/lib/dateUtils";
-import { greeting } from "@/lib/greeting";
-
-
-const COMPETITIONS = [
-  { short: "NM 2026", date: new Date("2026-06-13"), dateLabel: "13–14. juni", location: "Sofiemyrhallen, Sofienmyr" },
-  { short: "FDJ 6", date: new Date("2026-08-22"), dateLabel: "22. august", location: "Gausdal Arena, Lillehammer" },
-  { short: "FDJ 7", date: new Date("2026-09-19"), dateLabel: "19. september", location: null },
-  { short: "FDJ 8", date: new Date("2026-10-17"), dateLabel: "17. oktober", location: "Fjellhamar Arena, Lørenskog" },
-  { short: "DOTY / FDJ 9", date: new Date("2026-11-21"), dateLabel: "21. november", location: null },
-];
-
-const sections = [
-  { id: "timer", label: "Mine privattimer", icon: <Calendar size={15} /> },
-  { id: "maal", label: "Sesongmål", icon: <Target size={15} /> },
-  { id: "nivaer", label: "Poeng og nivå", icon: <Trophy size={15} /> },
-  { id: "resultater", label: "Resultater", icon: <Medal size={15} /> },
-  { id: "konkurranser", label: "Konkurranser", icon: <Star size={15} /> },
-  { id: "om", label: "Om privattimer", icon: <Info size={15} /> },
-];
+import { greetingKey } from "@/lib/greeting";
 
 type Child = { id: string; name: string; season_goals: string | null; points_freestyle: number | null; points_slow: number | null; level_freestyle: number | null; level_slow: number | null };
 
 type Result = { id: string; competition_name: string; placement_freestyle: string | null; placement_slow: string | null; notes: string | null };
 
 function ParentResultsSection({ parentId, children }: { parentId: string; children: Child[] }) {
+  const t = useTranslations("parent");
   const [selectedId, setSelectedId] = useState(children[0]?.id ?? "");
   const [results, setResults] = useState<Result[]>([]);
 
@@ -59,7 +44,7 @@ function ParentResultsSection({ parentId, children }: { parentId: string; childr
 
   return (
     <div className="space-y-4">
-      <h2 className="font-semibold text-lg">Konkurranseresultater</h2>
+      <h2 className="font-semibold text-lg">{t("competitionResults")}</h2>
       {children.length > 1 && (
         <div className="flex gap-2 flex-wrap">
           {children.map(c => (
@@ -77,6 +62,8 @@ function ParentResultsSection({ parentId, children }: { parentId: string; childr
 }
 
 function ParentGoalsSection({ children }: { children: Child[] }) {
+  const t = useTranslations("parent");
+  const tc = useTranslations("common");
   const [selectedId, setSelectedId] = useState(children[0]?.id ?? "");
   const goalsCache = useRef<Record<string, string>>({});
   const [goals, setGoals] = useState("");
@@ -148,7 +135,7 @@ function ParentGoalsSection({ children }: { children: Child[] }) {
       const supabase = createClient();
       const { error } = await supabase.from("children").update({ season_goals: goals }).eq("id", currentId);
       setSaving(false);
-      if (error) { setSaveError("Feil: " + error.message); }
+      if (error) { setSaveError(t("saveError", { message: error.message })); }
       else { setSaved(true); setSaveError(null); isDirty.current = false; }
     }, 600);
     return () => clearTimeout(timer);
@@ -156,7 +143,7 @@ function ParentGoalsSection({ children }: { children: Child[] }) {
 
   return (
     <div className="space-y-4">
-      <h2 className="font-semibold text-lg">Sesongmål</h2>
+      <h2 className="font-semibold text-lg">{t("nav.seasonGoals")}</h2>
       {children.length > 1 && (
         <div className="flex gap-2 flex-wrap">
           {children.map(c => (
@@ -169,12 +156,12 @@ function ParentGoalsSection({ children }: { children: Child[] }) {
       )}
       {children.length === 1 && <p className="text-sm font-medium text-gray-700 dark:text-gray-300">{children[0].name}</p>}
       <div className="bg-white dark:bg-gray-900 rounded-2xl border dark:border-gray-700 p-5 space-y-3">
-        <p className="text-xs text-gray-400 dark:text-gray-500 mb-3">F.eks. triks, mål for konkurranser, hva danseren vil jobbe med. Huk av når du har klart målet ditt.</p>
-        {loading ? <p className="text-sm text-gray-400">Laster...</p> : <GoalsList value={goals} onChange={g => setGoals(g)} />}
+        <p className="text-xs text-gray-400 dark:text-gray-500 mb-3">{t("seasonGoalsHint")}</p>
+        {loading ? <p className="text-sm text-gray-400">{tc("loading")}</p> : <GoalsList value={goals} onChange={g => setGoals(g)} />}
       </div>
       {(saving || saved || saveError) && (
         <p className={`text-xs text-center ${saveError ? "text-red-500" : "text-gray-400 dark:text-gray-500"}`}>
-          {saving ? "Lagrer..." : saveError ? saveError : "✓ Lagret"}
+          {saving ? tc("saving") : saveError ? saveError : t("saved")}
         </p>
       )}
     </div>
@@ -187,10 +174,6 @@ function getWeekNumber(date: Date) {
   d.setUTCDate(d.getUTCDate() + 4 - dayNum);
   const yearStart = new Date(Date.UTC(d.getUTCFullYear(), 0, 1));
   return Math.ceil(((d.getTime() - yearStart.getTime()) / 86400000 + 1) / 7);
-}
-
-function daysUntil(date: Date) {
-  return Math.ceil((date.getTime() - new Date().getTime()) / (1000 * 60 * 60 * 24));
 }
 
 interface Booking {
@@ -216,7 +199,29 @@ interface Props {
   club?: ClubConfig | null;
 }
 
+const sectionIds = ["timer", "maal", "nivaer", "resultater", "konkurranser", "om"] as const;
+
 export default function ParentDashboardNav({ userName, avatarUrl, notifications, upcomingBookings, completedBookings, parentId, children, trainers = [], club = null }: Props) {
+  const t = useTranslations("parent");
+  const tc = useTranslations("common");
+  const locale = useLocale() as Locale;
+  const navLabels: Record<(typeof sectionIds)[number], string> = {
+    timer: t("nav.myLessons"),
+    maal: t("nav.seasonGoals"),
+    nivaer: t("nav.pointsAndLevel"),
+    resultater: t("nav.results"),
+    konkurranser: t("nav.competitions"),
+    om: t("nav.aboutLessons"),
+  };
+  const navIcons: Record<(typeof sectionIds)[number], React.ReactNode> = {
+    timer: <Calendar size={15} />,
+    maal: <Target size={15} />,
+    nivaer: <Trophy size={15} />,
+    resultater: <Medal size={15} />,
+    konkurranser: <Star size={15} />,
+    om: <Info size={15} />,
+  };
+  const sections = sectionIds.map(id => ({ id, label: navLabels[id], icon: navIcons[id] }));
   const [active, setActive] = useState("timer");
   // parentId brukes som userId for feedback
   const [bookingTab, setBookingTab] = useState<"kommende" | "gjennomforte">("kommende");
@@ -251,8 +256,6 @@ export default function ParentDashboardNav({ userName, avatarUrl, notifications,
     weekGroups[week].push(dateKey);
   }
 
-  const upcomingComps = COMPETITIONS.filter(c => daysUntil(c.date) > 0);
-
   const Sidebar = () => (
     <>
       <div className="p-4 border-b border-gray-100 dark:border-gray-800">
@@ -286,12 +289,12 @@ export default function ParentDashboardNav({ userName, avatarUrl, notifications,
         <Link href="/parent/profil"
           className="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-colors text-left text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800">
           <span className="text-gray-400 dark:text-gray-500"><User size={15} /></span>
-          Profil
+          {tc("profile")}
         </Link>
       </nav>
       <div className="p-3 border-t border-gray-100 dark:border-gray-800 space-y-1">
         <Link href="/om" className="flex items-center gap-2 px-3 py-2 rounded-xl text-sm text-gray-400 dark:text-gray-500 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors">
-          Om Danceitude
+          {tc("aboutDanceitude")}
         </Link>
         <LogoutButton />
       </div>
@@ -314,7 +317,7 @@ export default function ParentDashboardNav({ userName, avatarUrl, notifications,
           </div>
           <Link href="/parent/profil" className="hover:opacity-80 transition-opacity">
             {avatarUrl
-              ? <img src={avatarUrl} alt="Profil" className="w-8 h-8 rounded-full object-cover border-2 border-[#E2A9F1]" />
+              ? <img src={avatarUrl} alt={tc("profile")} className="w-8 h-8 rounded-full object-cover border-2 border-[#E2A9F1]" />
               : <UserCircle size={28} className="text-[#E2A9F1]" />}
           </Link>
         </div>
@@ -338,12 +341,12 @@ export default function ParentDashboardNav({ userName, avatarUrl, notifications,
             <Link href="/parent/profil" onClick={() => setMenuOpen(false)} className="px-6 pb-6 flex items-center gap-4 border-b hover:bg-gray-50 dark:hover:bg-gray-950 transition-colors">
               <div className="w-14 h-14 rounded-full bg-[#edd5f9] dark:bg-[#E2A9F1]/15 flex items-center justify-center overflow-hidden shrink-0">
                 {avatarUrl
-                  ? <img src={avatarUrl} alt="Profil" className="w-full h-full object-cover" />
+                  ? <img src={avatarUrl} alt={tc("profile")} className="w-full h-full object-cover" />
                   : <span className="text-2xl font-bold text-[#E2A9F1]">{userName.charAt(0)}</span>}
               </div>
               <div>
                 <p className="font-bold text-gray-800 dark:text-gray-100">{userName}</p>
-                <p className="text-xs text-[#E2A9F1]">Se profil →</p>
+                <p className="text-xs text-[#E2A9F1]">{tc("seeProfile")}</p>
               </div>
             </Link>
             <div className="flex-1 py-4 overflow-y-auto">
@@ -357,7 +360,7 @@ export default function ParentDashboardNav({ userName, avatarUrl, notifications,
             </div>
             <div className="border-t dark:border-gray-700 px-6 py-4 space-y-3 text-sm text-gray-400 dark:text-gray-500">
               <Link href="/om" onClick={() => setMenuOpen(false)} className="flex items-center gap-2 hover:text-gray-600">
-                Om Danceitude
+                {tc("aboutDanceitude")}
               </Link>
               <LogoutButton />
             </div>
@@ -370,7 +373,7 @@ export default function ParentDashboardNav({ userName, avatarUrl, notifications,
         <div className="max-w-lg mx-auto px-4 pb-6 pt-[calc(3.5rem+env(safe-area-inset-top))] md:py-6 space-y-4">
 
           {active === "timer" && (
-            <h1 className="text-2xl font-bold">{greeting()}, {userName.split(" ")[0]}! 👋</h1>
+            <h1 className="text-2xl font-bold">{tc(`greeting.${greetingKey()}`)}, {userName.split(" ")[0]}! 👋</h1>
           )}
 
           {/* Mine privattimer */}
@@ -378,9 +381,9 @@ export default function ParentDashboardNav({ userName, avatarUrl, notifications,
             <div>
               <NMCountdown clubId={club?.id ?? null} />
               <div className="flex justify-between items-center mb-3 mt-4">
-                <h2 className="font-semibold text-lg">Mine privattimer</h2>
+                <h2 className="font-semibold text-lg">{t("myLessonsHeading")}</h2>
                 <Link href="/book">
-                  <Button className="bg-[#3A3A3A] hover:bg-[#2a2a2a] dark:bg-[#c87de0] dark:hover:bg-[#b56fd0] dark:text-white text-sm">+ Book time</Button>
+                  <Button className="bg-[#3A3A3A] hover:bg-[#2a2a2a] dark:bg-[#c87de0] dark:hover:bg-[#b56fd0] dark:text-white text-sm">{tc("booking.bookShort")}</Button>
                 </Link>
               </div>
 
@@ -388,30 +391,30 @@ export default function ParentDashboardNav({ userName, avatarUrl, notifications,
               <div className="flex gap-1 bg-gray-100 dark:bg-gray-800 rounded-xl p-1 mb-4">
                 <button onClick={() => setBookingTab("kommende")}
                   className={`flex-1 px-3 py-1.5 rounded-lg text-sm font-medium transition-colors ${bookingTab === "kommende" ? "bg-white dark:bg-gray-900 text-[#c87de0] shadow-sm" : "text-gray-500 dark:text-gray-400"}`}>
-                  Kommende
+                  {tc("booking.upcoming")}
                 </button>
                 <button onClick={() => setBookingTab("gjennomforte")}
                   className={`flex-1 px-3 py-1.5 rounded-lg text-sm font-medium transition-colors ${bookingTab === "gjennomforte" ? "bg-white dark:bg-gray-900 text-[#c87de0] shadow-sm" : "text-gray-500 dark:text-gray-400"}`}>
-                  Gjennomførte
+                  {tc("booking.completedTab")}
                 </button>
               </div>
 
               {bookingTab === "kommende" && (
                 upcomingBookings.length === 0 ? (
                   <div className="bg-white dark:bg-gray-900 rounded-xl border dark:border-gray-700 p-6 text-center text-gray-400 dark:text-gray-500">
-                    <p className="text-lg font-medium mb-2">Ingen kommende timer</p>
-                    <p className="text-sm mb-4">Book privattime for ditt barn</p>
-                    <Link href="/book"><Button className="bg-[#3A3A3A] hover:bg-[#2a2a2a] dark:bg-[#c87de0] dark:hover:bg-[#b56fd0] dark:text-white">Book privattime</Button></Link>
+                    <p className="text-lg font-medium mb-2">{tc("booking.noUpcoming")}</p>
+                    <p className="text-sm mb-4">{t("bookForChild")}</p>
+                    <Link href="/book"><Button className="bg-[#3A3A3A] hover:bg-[#2a2a2a] dark:bg-[#c87de0] dark:hover:bg-[#b56fd0] dark:text-white">{tc("booking.bookLesson")}</Button></Link>
                   </div>
                 ) : (
                   <div className="space-y-6">
                     {Object.entries(weekGroups).map(([week, dateKeys]) => (
                       <div key={week}>
-                        <p className="text-xs font-semibold text-gray-400 dark:text-gray-500 uppercase tracking-wider mb-3">Uke {week}</p>
+                        <p className="text-xs font-semibold text-gray-400 dark:text-gray-500 uppercase tracking-wider mb-3">{tc("booking.week", { week })}</p>
                         <div className="space-y-4">
                           {dateKeys.sort().map(dateKey => {
                             const dayBookings = grouped[dateKey];
-                            const dayLabel = formatDate(new Date(dateKey), { weekday: "long", day: "numeric", month: "long" });
+                            const dayLabel = formatDate(new Date(dateKey), locale, { weekday: "long", day: "numeric", month: "long" });
                             return (
                               <div key={dateKey}>
                                 <p className="text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2 border-b dark:border-gray-700 pb-1">{dayLabel.charAt(0).toUpperCase() + dayLabel.slice(1)}</p>
@@ -424,21 +427,21 @@ export default function ParentDashboardNav({ userName, avatarUrl, notifications,
                                       <div key={booking.id} className="bg-white dark:bg-gray-900 rounded-xl border dark:border-gray-700 border-l-4 border-l-[#E2A9F1] px-4 py-3">
                                         <div className="flex justify-between items-start">
                                           <div>
-                                            <p className="text-sm font-semibold text-gray-700 dark:text-gray-300">{formatTime(start)}–{formatTime(end)}</p>
+                                            <p className="text-sm font-semibold text-gray-700 dark:text-gray-300">{formatTime(start, locale)}–{formatTime(end, locale)}</p>
                                             <p className="text-sm font-medium text-[#E2A9F1]">{booking.dancer_name} · {booking.dance_style}</p>
                                             {(booking.availability_slots as any)?.profiles?.name && (
-                                              <p className="text-xs font-medium text-gray-500 dark:text-gray-400">Trener: {(booking.availability_slots as any).profiles.name}</p>
+                                              <p className="text-xs font-medium text-gray-500 dark:text-gray-400">{tc("booking.trainerLabel", { name: (booking.availability_slots as any).profiles.name })}</p>
                                             )}
                                           </div>
                                           <div className="flex items-center gap-3">
-                                            {(booking as any).paid && <span className="text-xs bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-300 px-2 py-1 rounded-full">Betalt ✓</span>}
-                                            <span className="text-xs bg-green-100 text-green-600 px-2 py-1 rounded-full">Bekreftet</span>
+                                            {(booking as any).paid && <span className="text-xs bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-300 px-2 py-1 rounded-full">{tc("booking.paid")}</span>}
+                                            <span className="text-xs bg-green-100 text-green-600 px-2 py-1 rounded-full">{tc("booking.confirmed")}</span>
                                             <Link href={`/booking/avbestill/${booking.id}`} prefetch={false}>
-                                              <button className="text-xs text-red-400 hover:text-red-600">Avbestill</button>
+                                              <button className="text-xs text-red-400 hover:text-red-600">{tc("booking.cancel")}</button>
                                             </Link>
                                           </div>
                                         </div>
-                                        {hoursUntil < 24 && <p className="text-xs text-red-400 mt-1">Under 24t – gebyr ved avbestilling</p>}
+                                        {hoursUntil < 24 && <p className="text-xs text-red-400 mt-1">{tc("booking.lateCancelWarning")}</p>}
                                       </div>
                                     );
                                   })}
@@ -455,29 +458,29 @@ export default function ParentDashboardNav({ userName, avatarUrl, notifications,
 
               {bookingTab === "gjennomforte" && (
                 completedBookings.length === 0 ? (
-                  <div className="bg-white dark:bg-gray-900 rounded-xl border dark:border-gray-700 p-6 text-center text-gray-400 dark:text-gray-500 text-sm">Ingen gjennomførte timer ennå</div>
+                  <div className="bg-white dark:bg-gray-900 rounded-xl border dark:border-gray-700 p-6 text-center text-gray-400 dark:text-gray-500 text-sm">{tc("booking.noCompleted")}</div>
                 ) : (
                   <div className="space-y-2">
                     {completedBookings.map(booking => {
                       const start = new Date(booking.availability_slots.start_at);
                       const end = new Date(booking.availability_slots.end_at);
-                      const dayLabel = formatDate(start, { weekday: "long", day: "numeric", month: "long" });
+                      const dayLabel = formatDate(start, locale, { weekday: "long", day: "numeric", month: "long" });
                       return (
                         <div key={booking.id} className="bg-white dark:bg-gray-900 rounded-xl border dark:border-gray-700 p-4 opacity-60">
                           <div className="flex justify-between items-start">
                             <div>
                               <p className="text-sm font-semibold text-gray-500 dark:text-gray-400">{dayLabel.charAt(0).toUpperCase() + dayLabel.slice(1)}</p>
-                              <p className="text-sm text-gray-400 dark:text-gray-500">{formatTime(start)}–{formatTime(end)}</p>
+                              <p className="text-sm text-gray-400 dark:text-gray-500">{formatTime(start, locale)}–{formatTime(end, locale)}</p>
                               <p className="text-sm text-gray-400 dark:text-gray-500 mt-1">{booking.dancer_name} · {booking.dance_style}</p>
                               {(booking.availability_slots as any)?.profiles?.name && (
-                                <p className="text-xs text-gray-400 dark:text-gray-500 mt-0.5">Trener: {(booking.availability_slots as any).profiles.name}</p>
+                                <p className="text-xs text-gray-400 dark:text-gray-500 mt-0.5">{tc("booking.trainerLabel", { name: (booking.availability_slots as any).profiles.name })}</p>
                               )}
                             </div>
                             <div className="flex flex-col items-end gap-1 shrink-0">
-                              <span className="text-xs bg-gray-100 dark:bg-gray-800 text-gray-500 dark:text-gray-400 px-2 py-1 rounded-full">Fullført</span>
+                              <span className="text-xs bg-gray-100 dark:bg-gray-800 text-gray-500 dark:text-gray-400 px-2 py-1 rounded-full">{tc("booking.completed")}</span>
                               {(booking as any).paid
-                                ? <span className="text-xs bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-300 px-2 py-1 rounded-full">Betalt ✓</span>
-                                : <span className="text-xs bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-300 px-2 py-1 rounded-full">Ikke betalt</span>}
+                                ? <span className="text-xs bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-300 px-2 py-1 rounded-full">{tc("booking.paid")}</span>
+                                : <span className="text-xs bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-300 px-2 py-1 rounded-full">{tc("booking.unpaid")}</span>}
                             </div>
                           </div>
                         </div>
@@ -493,10 +496,10 @@ export default function ParentDashboardNav({ userName, avatarUrl, notifications,
           {active === "maal" && (
             children.length === 0 ? (
               <div className="space-y-4">
-                <h2 className="font-semibold text-lg">Sesongmål</h2>
+                <h2 className="font-semibold text-lg">{t("nav.seasonGoals")}</h2>
                 <div className="bg-white dark:bg-gray-900 rounded-xl border dark:border-gray-700 p-6 text-center text-gray-400 dark:text-gray-500 text-sm">
-                  <p className="mb-1">Ingen barn lagt til ennå</p>
-                  <Link href="/parent/profil"><span className="text-[#E2A9F1] text-sm underline">Legg til barn i profilen →</span></Link>
+                  <p className="mb-1">{t("noChildren")}</p>
+                  <Link href="/parent/profil"><span className="text-[#E2A9F1] text-sm underline">{t("addChildInProfile")}</span></Link>
                 </div>
               </div>
             ) : (
@@ -508,10 +511,10 @@ export default function ParentDashboardNav({ userName, avatarUrl, notifications,
           {active === "nivaer" && (
             children.length === 0 ? (
               <div className="space-y-4">
-                <h2 className="font-semibold text-lg">Poeng og nivå</h2>
+                <h2 className="font-semibold text-lg">{t("nav.pointsAndLevel")}</h2>
                 <div className="bg-white dark:bg-gray-900 rounded-xl border dark:border-gray-700 p-6 text-center text-gray-400 dark:text-gray-500 text-sm">
-                  <p className="mb-1">Ingen barn lagt til ennå</p>
-                  <Link href="/parent/profil"><span className="text-[#E2A9F1] text-sm underline">Legg til barn i profilen →</span></Link>
+                  <p className="mb-1">{t("noChildren")}</p>
+                  <Link href="/parent/profil"><span className="text-[#E2A9F1] text-sm underline">{t("addChildInProfile")}</span></Link>
                 </div>
               </div>
             ) : (
@@ -523,10 +526,10 @@ export default function ParentDashboardNav({ userName, avatarUrl, notifications,
           {active === "resultater" && (
             children.length === 0 ? (
               <div className="space-y-4">
-                <h2 className="font-semibold text-lg">Resultater</h2>
+                <h2 className="font-semibold text-lg">{t("nav.results")}</h2>
                 <div className="bg-white dark:bg-gray-900 rounded-xl border dark:border-gray-700 p-6 text-center text-gray-400 dark:text-gray-500 text-sm">
-                  <p className="mb-1">Ingen barn lagt til ennå</p>
-                  <Link href="/parent/profil"><span className="text-[#E2A9F1] text-sm underline">Legg til barn i profilen →</span></Link>
+                  <p className="mb-1">{t("noChildren")}</p>
+                  <Link href="/parent/profil"><span className="text-[#E2A9F1] text-sm underline">{t("addChildInProfile")}</span></Link>
                 </div>
               </div>
             ) : (
@@ -537,7 +540,7 @@ export default function ParentDashboardNav({ userName, avatarUrl, notifications,
           {/* Konkurranser */}
           {active === "konkurranser" && (
             <div className="space-y-3">
-              <h2 className="font-semibold text-lg mb-1">Kommende konkurranser</h2>
+              <h2 className="font-semibold text-lg mb-1">{t("upcomingCompetitions")}</h2>
               <CompetitionList userId={parentId} showCountdown clubId={club?.id ?? null} />
             </div>
           )}
@@ -547,18 +550,18 @@ export default function ParentDashboardNav({ userName, avatarUrl, notifications,
             <div className="space-y-4">
               <PrivattimeInfo club={club} />
               <div className="bg-white dark:bg-gray-900 rounded-2xl border dark:border-gray-700 p-5">
-                <h3 className="font-semibold text-lg mb-4">Våre trenere</h3>
+                <h3 className="font-semibold text-lg mb-4">{t("ourTrainers")}</h3>
                 <div className="space-y-1">
-                  {trainers.map(t => (
-                    <div key={t.name} className="flex items-start gap-3 py-3 border-b dark:border-gray-700 last:border-0">
+                  {trainers.map(tr => (
+                    <div key={tr.name} className="flex items-start gap-3 py-3 border-b dark:border-gray-700 last:border-0">
                       <div className="w-9 h-9 rounded-full bg-[#edd5f9] dark:bg-[#E2A9F1]/15 flex items-center justify-center text-[#E2A9F1] font-bold shrink-0 text-sm overflow-hidden">
-                        {t.avatarUrl
-                          ? <img src={t.avatarUrl} alt={t.name} className="w-full h-full object-cover" />
-                          : t.name.charAt(0)}
+                        {tr.avatarUrl
+                          ? <img src={tr.avatarUrl} alt={tr.name} className="w-full h-full object-cover" />
+                          : tr.name.charAt(0)}
                       </div>
                       <div>
-                        <p className="font-medium text-sm">{t.name}</p>
-                        <p className="text-xs text-gray-400 dark:text-gray-500 mt-0.5">{t.styles.join(" · ")}</p>
+                        <p className="font-medium text-sm">{tr.name}</p>
+                        <p className="text-xs text-gray-400 dark:text-gray-500 mt-0.5">{tr.styles.join(" · ")}</p>
                       </div>
                     </div>
                   ))}

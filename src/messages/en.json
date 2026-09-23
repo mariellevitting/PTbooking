@@ -33,6 +33,37 @@
       "madeBy": "Made with",
       "by": "by",
       "tagline": "Designed by dancers, for dancers"
+    },
+    "notifications": {
+      "title": "Notifications",
+      "clear": "Clear",
+      "empty": "No notifications"
+    },
+    "greeting": {
+      "morning": "Good morning",
+      "midday": "Good morning",
+      "afternoon": "Good afternoon",
+      "evening": "Good evening"
+    },
+    "aboutDanceitude": "About Danceitude",
+    "profile": "Profile",
+    "seeProfile": "See profile →",
+    "booking": {
+      "confirmed": "Confirmed",
+      "completed": "Completed",
+      "paid": "Paid ✓",
+      "unpaid": "Not paid",
+      "trainerLabel": "Trainer: {name}",
+      "cancel": "Cancel",
+      "lateCancelWarning": "Under 24h – cancellation fee applies",
+      "week": "Week {week}",
+      "upcoming": "Upcoming",
+      "completedTab": "Completed",
+      "noUpcoming": "No upcoming lessons",
+      "findTrainerHint": "Find a trainer and book your first private lesson",
+      "bookLesson": "Book private lesson",
+      "noCompleted": "No completed lessons yet",
+      "bookShort": "+ Book lesson"
     }
   },
   "auth": {
@@ -127,5 +158,44 @@
       "submit": "Set new password",
       "submitting": "Saving..."
     }
+  },
+  "dancer": {
+    "nav": {
+      "myLessons": "My lessons",
+      "mySeasonGoals": "My season goals",
+      "pointsAndLevels": "Points and levels",
+      "results": "Results",
+      "competitions": "Competitions",
+      "aboutLessons": "About private lessons"
+    },
+    "myLessonsHeading": "My private lessons",
+    "seasonGoalsHint": "E.g. tricks you want to learn, competition goals, what you want to work on this season. Check off once you've reached your goal.",
+    "showGoalsToTrainers": "Show season goals to trainers",
+    "ourTrainers": "Our trainers",
+    "saved": "✓ Saved",
+    "saveError": "Error: {message}"
+  },
+  "parent": {
+    "nav": {
+      "myLessons": "My private lessons",
+      "seasonGoals": "Season goals",
+      "pointsAndLevel": "Points and level",
+      "results": "Results",
+      "competitions": "Competitions",
+      "aboutLessons": "About private lessons"
+    },
+    "myLessonsHeading": "My private lessons",
+    "bookForChild": "Book a private lesson for your child",
+    "noChildren": "No children added yet",
+    "addChildInProfile": "Add a child in your profile →",
+    "competitionResults": "Competition results",
+    "seasonGoalsHint": "E.g. tricks, competition goals, what the dancer wants to work on. Check off once the goal is reached.",
+    "upcomingCompetitions": "Upcoming competitions",
+    "ourTrainers": "Our trainers",
+    "saved": "✓ Saved",
+    "saveError": "Error: {message}"
+  },
+  "trainer": {
+    "postAvailability": "+ Add availability"
   }
 }

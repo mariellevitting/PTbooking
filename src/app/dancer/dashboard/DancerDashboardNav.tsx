@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useRef } from "react";
 import Link from "next/link";
+import { useTranslations, useLocale } from "next-intl";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Menu, X, Calendar, Target, Trophy, Medal, Star, Info, UserCircle, User } from "lucide-react";
@@ -17,11 +18,10 @@ import PrivattimeInfo from "@/components/PrivattimeInfo";
 import PoengForklaring from "@/components/PoengForklaring";
 import PoengNivaa from "@/components/PoengNivaa";
 import type { ClubConfig } from "@/lib/club";
+import type { Locale } from "@/i18n/locale";
 import { createClient } from "@/lib/supabase/client";
 import { formatDate, formatTime, formatDateKey } from "@/lib/dateUtils";
-import { greeting } from "@/lib/greeting";
-
-const LEVELS = ["Rekrutt", "Litt øvet", "Mester", "Champ", "Elite"];
+import { greetingKey } from "@/lib/greeting";
 
 function getNeeded(level: number, isFreestyle: boolean) {
   if (level === 0) return 8;
@@ -69,17 +69,18 @@ const COMPETITIONS = [
   { name: "Dancer of the Year / FDJ 9", short: "DOTY / FDJ 9", date: new Date("2026-11-21"), dateLabel: "21. november", location: null },
 ];
 
-const sections = [
-  { id: "timer", label: "Mine timer", icon: <Calendar size={15} /> },
-  { id: "maal", label: "Mine sesongmål", icon: <Target size={15} /> },
-  { id: "nivaer", label: "Poeng og nivåer", icon: <Trophy size={15} /> },
-  { id: "resultater", label: "Resultater", icon: <Medal size={15} /> },
-  { id: "konkurranser", label: "Konkurranser", icon: <Star size={15} /> },
-  { id: "om", label: "Om privattimer", icon: <Info size={15} /> },
-];
-
-
 export default function DancerDashboardNav(props: Props) {
+  const t = useTranslations("dancer");
+  const tc = useTranslations("common");
+  const locale = useLocale() as Locale;
+  const sections = [
+    { id: "timer", label: t("nav.myLessons"), icon: <Calendar size={15} /> },
+    { id: "maal", label: t("nav.mySeasonGoals"), icon: <Target size={15} /> },
+    { id: "nivaer", label: t("nav.pointsAndLevels"), icon: <Trophy size={15} /> },
+    { id: "resultater", label: t("nav.results"), icon: <Medal size={15} /> },
+    { id: "konkurranser", label: t("nav.competitions"), icon: <Star size={15} /> },
+    { id: "om", label: t("nav.aboutLessons"), icon: <Info size={15} /> },
+  ];
   const [active, setActive] = useState("timer");
   const [menuOpen, setMenuOpen] = useState(false);
   const [bookingTab, setBookingTab] = useState<"kommende" | "gjennomforte">("kommende");
@@ -141,7 +142,7 @@ export default function DancerDashboardNav(props: Props) {
         goals_visible_to_trainer: visibleToTrainer,
       }).eq("id", props.userId);
       setSaving(false);
-      if (error) { setSaveError("Feil: " + error.message); }
+      if (error) { setSaveError(t("saveError", { message: error.message })); }
       else { setSaved(true); setSaveError(null); }
     }, 600);
     return () => clearTimeout(timer);
@@ -219,12 +220,12 @@ export default function DancerDashboardNav(props: Props) {
           <Link href="/dancer/profil"
             className="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-colors text-left text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800">
             <span className="text-gray-400 dark:text-gray-500"><User size={15} /></span>
-            Profil
+            {tc("profile")}
           </Link>
         </nav>
         <div className="p-3 border-t border-gray-100 dark:border-gray-800 space-y-1">
           <Link href="/om" className="flex items-center gap-2 px-3 py-2 rounded-xl text-sm text-gray-400 dark:text-gray-500 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors">
-            Om Danceitude
+            {tc("aboutDanceitude")}
           </Link>
           <LogoutButton />
         </div>
@@ -256,7 +257,7 @@ export default function DancerDashboardNav(props: Props) {
                 </div>
                 <div>
                   <p className="font-bold text-gray-800 dark:text-gray-100">{props.userName}</p>
-                  <p className="text-xs text-[#E2A9F1]">Se profil →</p>
+                  <p className="text-xs text-[#E2A9F1]">{tc("seeProfile")}</p>
                 </div>
               </Link>
               {/* Menyvalg */}
@@ -272,7 +273,7 @@ export default function DancerDashboardNav(props: Props) {
               {/* Logg ut – nederst */}
               <div className="border-t dark:border-gray-700 px-6 py-4 space-y-3">
                 <Link href="/om" onClick={() => setMenuOpen(false)} className="flex items-center gap-2 text-sm text-gray-400 dark:text-gray-500 hover:text-gray-600">
-                  Om Danceitude
+                  {tc("aboutDanceitude")}
                 </Link>
                 <div className="text-gray-400 dark:text-gray-500 text-sm">
                   <LogoutButton />
@@ -284,7 +285,7 @@ export default function DancerDashboardNav(props: Props) {
 
 
       {active === "timer" && (
-        <h1 className="text-2xl font-bold">{greeting()}, {props.userName.split(" ")[0]}! 👋</h1>
+        <h1 className="text-2xl font-bold">{tc(`greeting.${greetingKey()}`)}, {props.userName.split(" ")[0]}! 👋</h1>
       )}
 
       {/* Mine timer */}
@@ -292,39 +293,39 @@ export default function DancerDashboardNav(props: Props) {
         <div>
           <NMCountdown clubId={props.club?.id ?? null} />
           <div className="flex justify-between items-center mb-3 mt-4">
-            <h2 className="font-semibold text-lg">Mine privattimer</h2>
+            <h2 className="font-semibold text-lg">{t("myLessonsHeading")}</h2>
             <Link href="/book" className="text-sm font-medium px-3 py-1.5 rounded-lg bg-[#3A3A3A] hover:bg-[#2a2a2a] dark:bg-[#c87de0] dark:hover:bg-[#b56fd0] text-white transition-colors">
-              + Book time
+              {tc("booking.bookShort")}
             </Link>
           </div>
 
           <div className="flex gap-1 bg-gray-100 dark:bg-gray-800 rounded-xl p-1 mb-4">
             <button onClick={() => setBookingTab("kommende")}
               className={`flex-1 px-3 py-1.5 rounded-lg text-sm font-medium transition-colors ${bookingTab === "kommende" ? "bg-white dark:bg-gray-900 text-[#c87de0] shadow-sm" : "text-gray-500 dark:text-gray-400"}`}>
-              Kommende
+              {tc("booking.upcoming")}
             </button>
             <button onClick={() => setBookingTab("gjennomforte")}
               className={`flex-1 px-3 py-1.5 rounded-lg text-sm font-medium transition-colors ${bookingTab === "gjennomforte" ? "bg-white dark:bg-gray-900 text-[#c87de0] shadow-sm" : "text-gray-500 dark:text-gray-400"}`}>
-              Gjennomførte
+              {tc("booking.completedTab")}
             </button>
           </div>
 
           {bookingTab === "kommende" && (
             props.upcomingBookings.length === 0 ? (
               <div className="bg-white dark:bg-gray-900 rounded-xl border dark:border-gray-700 p-6 text-center text-gray-400 dark:text-gray-500">
-                <p className="text-lg font-medium mb-2">Ingen kommende timer</p>
-                <p className="text-sm mb-4">Finn en trener og book din første privattime</p>
-                <Link href="/book"><Button className="bg-[#3A3A3A] hover:bg-[#2a2a2a] dark:bg-[#c87de0] dark:hover:bg-[#b56fd0] dark:text-white">Book privattime</Button></Link>
+                <p className="text-lg font-medium mb-2">{tc("booking.noUpcoming")}</p>
+                <p className="text-sm mb-4">{tc("booking.findTrainerHint")}</p>
+                <Link href="/book"><Button className="bg-[#3A3A3A] hover:bg-[#2a2a2a] dark:bg-[#c87de0] dark:hover:bg-[#b56fd0] dark:text-white">{tc("booking.bookLesson")}</Button></Link>
               </div>
             ) : (
               <div className="space-y-6">
                 {Object.entries(weekGroups).map(([week, dateKeys]) => (
                   <div key={week}>
-                    <p className="text-xs font-semibold text-gray-400 dark:text-gray-500 uppercase tracking-wider mb-3">Uke {week}</p>
+                    <p className="text-xs font-semibold text-gray-400 dark:text-gray-500 uppercase tracking-wider mb-3">{tc("booking.week", { week })}</p>
                     <div className="space-y-4">
                       {(dateKeys as string[]).sort().map(dateKey => {
                         const dayBookings = grouped[dateKey];
-                        const dayLabel = formatDate(new Date(dateKey), { weekday: "long", day: "numeric", month: "long" });
+                        const dayLabel = formatDate(new Date(dateKey), locale, { weekday: "long", day: "numeric", month: "long" });
                         return (
                           <div key={dateKey}>
                             <p className="text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2 border-b dark:border-gray-700 pb-1">{dayLabel.charAt(0).toUpperCase() + dayLabel.slice(1)}</p>
@@ -337,21 +338,21 @@ export default function DancerDashboardNav(props: Props) {
                                   <div key={booking.id} className="bg-white dark:bg-gray-900 rounded-xl border dark:border-gray-700 border-l-4 border-l-[#E2A9F1] px-4 py-3">
                                     <div className="flex justify-between items-start">
                                       <div>
-                                        <p className="text-sm font-semibold text-gray-700 dark:text-gray-300">{formatTime(start)}–{formatTime(end)}</p>
+                                        <p className="text-sm font-semibold text-gray-700 dark:text-gray-300">{formatTime(start, locale)}–{formatTime(end, locale)}</p>
                                         <p className="text-sm font-medium text-[#E2A9F1]">{booking.dance_style}</p>
                                         {booking.availability_slots?.profiles?.name && (
-                                          <p className="text-xs text-gray-500 dark:text-gray-400">Trener: {booking.availability_slots.profiles.name}</p>
+                                          <p className="text-xs text-gray-500 dark:text-gray-400">{tc("booking.trainerLabel", { name: booking.availability_slots.profiles.name })}</p>
                                         )}
                                       </div>
                                       <div className="flex items-center gap-3">
-                                        {(booking as any).paid && <span className="text-xs bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-300 px-2 py-1 rounded-full">Betalt ✓</span>}
-                                        <span className="text-xs bg-green-100 text-green-600 px-2 py-1 rounded-full">Bekreftet</span>
+                                        {(booking as any).paid && <span className="text-xs bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-300 px-2 py-1 rounded-full">{tc("booking.paid")}</span>}
+                                        <span className="text-xs bg-green-100 text-green-600 px-2 py-1 rounded-full">{tc("booking.confirmed")}</span>
                                         <Link href={`/booking/avbestill/${booking.id}`} prefetch={false}>
-                                          <button className="text-xs text-red-400 hover:text-red-600">Avbestill</button>
+                                          <button className="text-xs text-red-400 hover:text-red-600">{tc("booking.cancel")}</button>
                                         </Link>
                                       </div>
                                     </div>
-                                    {hoursUntil < 24 && <p className="text-xs text-red-400 mt-1">Under 24t – gebyr ved avbestilling</p>}
+                                    {hoursUntil < 24 && <p className="text-xs text-red-400 mt-1">{tc("booking.lateCancelWarning")}</p>}
                                   </div>
                                 );
                               })}
@@ -368,29 +369,29 @@ export default function DancerDashboardNav(props: Props) {
 
           {bookingTab === "gjennomforte" && (
             props.completedBookings.length === 0 ? (
-              <div className="bg-white dark:bg-gray-900 rounded-xl border dark:border-gray-700 p-6 text-center text-gray-400 dark:text-gray-500 text-sm">Ingen gjennomførte timer ennå</div>
+              <div className="bg-white dark:bg-gray-900 rounded-xl border dark:border-gray-700 p-6 text-center text-gray-400 dark:text-gray-500 text-sm">{tc("booking.noCompleted")}</div>
             ) : (
               <div className="space-y-2">
                 {props.completedBookings.map((booking: Booking) => {
                   const start = new Date(booking.availability_slots.start_at);
                   const end = new Date(booking.availability_slots.end_at);
-                  const dayLabel = formatDate(start, { weekday: "long", day: "numeric", month: "long" });
+                  const dayLabel = formatDate(start, locale, { weekday: "long", day: "numeric", month: "long" });
                   return (
                     <div key={booking.id} className="bg-white dark:bg-gray-900 rounded-xl border dark:border-gray-700 p-4 opacity-60">
                       <div className="flex justify-between items-start">
                         <div>
                           <p className="text-sm font-semibold text-gray-500 dark:text-gray-400">{dayLabel.charAt(0).toUpperCase() + dayLabel.slice(1)}</p>
-                          <p className="text-sm text-gray-400 dark:text-gray-500">{formatTime(start)}–{formatTime(end)}</p>
+                          <p className="text-sm text-gray-400 dark:text-gray-500">{formatTime(start, locale)}–{formatTime(end, locale)}</p>
                           <p className="text-sm text-gray-400 dark:text-gray-500 mt-0.5">{booking.dance_style}</p>
                           {booking.availability_slots?.profiles?.name && (
-                            <p className="text-xs text-gray-400 dark:text-gray-500">Trener: {booking.availability_slots.profiles.name}</p>
+                            <p className="text-xs text-gray-400 dark:text-gray-500">{tc("booking.trainerLabel", { name: booking.availability_slots.profiles.name })}</p>
                           )}
                         </div>
                         <div className="flex flex-col items-end gap-1 shrink-0">
-                          <span className="text-xs bg-gray-100 dark:bg-gray-800 text-gray-500 dark:text-gray-400 px-2 py-1 rounded-full">Fullført</span>
+                          <span className="text-xs bg-gray-100 dark:bg-gray-800 text-gray-500 dark:text-gray-400 px-2 py-1 rounded-full">{tc("booking.completed")}</span>
                           {(booking as any).paid
-                            ? <span className="text-xs bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-300 px-2 py-1 rounded-full">Betalt ✓</span>
-                            : <span className="text-xs bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-300 px-2 py-1 rounded-full">Ikke betalt</span>}
+                            ? <span className="text-xs bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-300 px-2 py-1 rounded-full">{tc("booking.paid")}</span>
+                            : <span className="text-xs bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-300 px-2 py-1 rounded-full">{tc("booking.unpaid")}</span>}
                         </div>
                       </div>
                     </div>
@@ -407,11 +408,11 @@ export default function DancerDashboardNav(props: Props) {
         <Card>
           <CardHeader>
             <CardTitle className="text-base flex items-center gap-2">
-              <Target size={16} className="text-[#E2A9F1]" /> Mine sesongmål
+              <Target size={16} className="text-[#E2A9F1]" /> {t("nav.mySeasonGoals")}
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <p className="text-xs text-gray-400 dark:text-gray-500 mb-3">F.eks. triks du vil lære, mål for konkurranser, hva du vil jobbe med denne sesongen. Huk av når du har klart målet ditt.</p>
+            <p className="text-xs text-gray-400 dark:text-gray-500 mb-3">{t("seasonGoalsHint")}</p>
             <GoalsList value={goals} onChange={g => { setGoals(g); setSaved(false); }} />
             <label className="flex items-center gap-2 mt-4 cursor-pointer select-none">
               <input
@@ -420,7 +421,7 @@ export default function DancerDashboardNav(props: Props) {
                 onChange={e => { setVisibleToTrainer(e.target.checked); setSaved(false); }}
                 className="w-4 h-4 accent-[#c87de0] rounded"
               />
-              <span className="text-sm text-gray-600 dark:text-gray-400">Vis sesongmål for trenere</span>
+              <span className="text-sm text-gray-600 dark:text-gray-400">{t("showGoalsToTrainers")}</span>
             </label>
           </CardContent>
         </Card>
@@ -431,7 +432,7 @@ export default function DancerDashboardNav(props: Props) {
         <Card>
           <CardHeader>
             <CardTitle className="text-base flex items-center gap-2">
-              <Trophy size={16} className="text-[#E2A9F1]" /> Poeng og nivåer
+              <Trophy size={16} className="text-[#E2A9F1]" /> {t("nav.pointsAndLevels")}
             </CardTitle>
           </CardHeader>
           <CardContent className="space-y-6">
@@ -464,18 +465,18 @@ export default function DancerDashboardNav(props: Props) {
             <PrivattimeInfo club={props.club ?? null} />
 
             <div className="bg-white dark:bg-gray-900 rounded-2xl border dark:border-gray-700 p-5">
-              <h3 className="font-semibold text-lg mb-4">Våre trenere</h3>
+              <h3 className="font-semibold text-lg mb-4">{t("ourTrainers")}</h3>
               <div className="space-y-1">
-                {(props.trainers ?? []).map(t => (
-                  <div key={t.name} className="flex items-start gap-3 py-3 border-b dark:border-gray-700 last:border-0">
+                {(props.trainers ?? []).map(tr => (
+                  <div key={tr.name} className="flex items-start gap-3 py-3 border-b dark:border-gray-700 last:border-0">
                     <div className="w-9 h-9 rounded-full bg-[#edd5f9] dark:bg-[#E2A9F1]/15 flex items-center justify-center text-[#E2A9F1] font-bold shrink-0 text-sm overflow-hidden">
-                      {t.avatarUrl
-                        ? <img src={t.avatarUrl} alt={t.name} className="w-full h-full object-cover" />
-                        : t.name.charAt(0)}
+                      {tr.avatarUrl
+                        ? <img src={tr.avatarUrl} alt={tr.name} className="w-full h-full object-cover" />
+                        : tr.name.charAt(0)}
                     </div>
                     <div>
-                      <p className="font-medium text-sm">{t.name}</p>
-                      <p className="text-xs text-gray-400 dark:text-gray-500 mt-0.5">{t.styles.join(" · ")}</p>
+                      <p className="font-medium text-sm">{tr.name}</p>
+                      <p className="text-xs text-gray-400 dark:text-gray-500 mt-0.5">{tr.styles.join(" · ")}</p>
                     </div>
                   </div>
                 ))}
@@ -487,7 +488,7 @@ export default function DancerDashboardNav(props: Props) {
         {/* Auto-lagring status */}
         {(active === "maal" || active === "nivaer") && (saving || saved || saveError) && (
           <p className={`text-xs text-center pb-1 ${saveError ? "text-red-500" : "text-gray-400 dark:text-gray-500"}`}>
-            {saving ? "Lagrer..." : saveError ? saveError : "✓ Lagret"}
+            {saving ? tc("saving") : saveError ? saveError : t("saved")}
           </p>
         )}
       </div>

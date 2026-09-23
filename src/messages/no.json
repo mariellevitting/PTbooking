@@ -33,6 +33,37 @@
       "madeBy": "Laget med",
       "by": "av",
       "tagline": "Denne er designet av dansere, for dansere"
+    },
+    "notifications": {
+      "title": "Varsler",
+      "clear": "Tøm",
+      "empty": "Ingen varsler"
+    },
+    "greeting": {
+      "morning": "God morgen",
+      "midday": "God formiddag",
+      "afternoon": "God ettermiddag",
+      "evening": "God kveld"
+    },
+    "aboutDanceitude": "Om Danceitude",
+    "profile": "Profil",
+    "seeProfile": "Se profil →",
+    "booking": {
+      "confirmed": "Bekreftet",
+      "completed": "Fullført",
+      "paid": "Betalt ✓",
+      "unpaid": "Ikke betalt",
+      "trainerLabel": "Trener: {name}",
+      "cancel": "Avbestill",
+      "lateCancelWarning": "Under 24t – gebyr ved avbestilling",
+      "week": "Uke {week}",
+      "upcoming": "Kommende",
+      "completedTab": "Gjennomførte",
+      "noUpcoming": "Ingen kommende timer",
+      "findTrainerHint": "Finn en trener og book din første privattime",
+      "bookLesson": "Book privattime",
+      "noCompleted": "Ingen gjennomførte timer ennå",
+      "bookShort": "+ Book time"
     }
   },
   "auth": {
@@ -127,5 +158,44 @@
       "submit": "Sett nytt passord",
       "submitting": "Lagrer..."
     }
+  },
+  "dancer": {
+    "nav": {
+      "myLessons": "Mine timer",
+      "mySeasonGoals": "Mine sesongmål",
+      "pointsAndLevels": "Poeng og nivåer",
+      "results": "Resultater",
+      "competitions": "Konkurranser",
+      "aboutLessons": "Om privattimer"
+    },
+    "myLessonsHeading": "Mine privattimer",
+    "seasonGoalsHint": "F.eks. triks du vil lære, mål for konkurranser, hva du vil jobbe med denne sesongen. Huk av når du har klart målet ditt.",
+    "showGoalsToTrainers": "Vis sesongmål for trenere",
+    "ourTrainers": "Våre trenere",
+    "saved": "✓ Lagret",
+    "saveError": "Feil: {message}"
+  },
+  "parent": {
+    "nav": {
+      "myLessons": "Mine privattimer",
+      "seasonGoals": "Sesongmål",
+      "pointsAndLevel": "Poeng og nivå",
+      "results": "Resultater",
+      "competitions": "Konkurranser",
+      "aboutLessons": "Om privattimer"
+    },
+    "myLessonsHeading": "Mine privattimer",
+    "bookForChild": "Book privattime for ditt barn",
+    "noChildren": "Ingen barn lagt til ennå",
+    "addChildInProfile": "Legg til barn i profilen →",
+    "competitionResults": "Konkurranseresultater",
+    "seasonGoalsHint": "F.eks. triks, mål for konkurranser, hva danseren vil jobbe med. Huk av når du har klart målet ditt.",
+    "upcomingCompetitions": "Kommende konkurranser",
+    "ourTrainers": "Våre trenere",
+    "saved": "✓ Lagret",
+    "saveError": "Feil: {message}"
+  },
+  "trainer": {
+    "postAvailability": "+ Legg ut tid"
   }
 }

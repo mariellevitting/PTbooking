@@ -1,6 +1,7 @@
 import { redirect } from "next/navigation";
+import { getTranslations } from "next-intl/server";
 import { createClient } from "@/lib/supabase/server";
-import { greeting } from "@/lib/greeting";
+import { greetingKey } from "@/lib/greeting";
 import NMCountdown from "@/components/NMCountdown";
 import TrainerDashboardTabs from "./TrainerDashboardTabs";
 import TrainerWebDashboard from "./TrainerWebDashboard";
@@ -10,6 +11,8 @@ import { Button } from "@/components/ui/button";
 export const dynamic = "force-dynamic";
 
 export default async function TrainerDashboard() {
+  const tc = await getTranslations("common");
+  const t = await getTranslations("trainer");
   const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) redirect("/login");
@@ -49,11 +52,11 @@ export default async function TrainerDashboard() {
       <div className="p-6 lg:max-w-5xl lg:mx-auto lg:px-8 lg:pt-8 lg:pb-0">
         <div className="flex items-center justify-between lg:mb-4">
           <h1 className="text-2xl font-bold text-gray-900 dark:text-white mb-6 lg:mb-0">
-            {greeting()}, {profile.name.split(" ")[0]}! 👋
+            {tc(`greeting.${greetingKey()}`)}, {profile.name.split(" ")[0]}! 👋
           </h1>
           <Link href="/trainer/availability" className="hidden lg:block">
             <Button className="bg-[#3A3A3A] hover:bg-[#2a2a2a] dark:bg-[#c87de0] dark:hover:bg-[#b56fd0] dark:text-white">
-              + Legg ut tid
+              {t("postAvailability")}
             </Button>
           </Link>
         </div>
