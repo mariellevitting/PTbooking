@@ -1,9 +1,11 @@
 import { redirect } from "next/navigation";
+import { getTranslations } from "next-intl/server";
 import { createClient } from "@/lib/supabase/server";
 import TrainerCancelForm from "./TrainerCancelForm";
 
 export default async function TrainerAvbestillPage({ params }: { params: Promise<{ bookingId: string }> }) {
   const { bookingId } = await params;
+  const t = await getTranslations("cancelForm");
   const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) redirect("/login");
@@ -23,7 +25,7 @@ export default async function TrainerAvbestillPage({ params }: { params: Promise
   return (
     <main className="bg-gray-50 dark:bg-gray-950 p-6">
       <div className="max-w-lg mx-auto">
-        <h1 className="text-2xl font-bold mb-6">Avbestill time</h1>
+        <h1 className="text-2xl font-bold mb-6">{t("heading")}</h1>
         <TrainerCancelForm
           bookingId={bookingId}
           slotId={booking.slot_id}

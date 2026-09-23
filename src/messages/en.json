@@ -437,5 +437,29 @@
     "slotTakenError": "The lesson {when} was booked by someone else while you were choosing. Go back and pick a different time.",
     "notifyTrainerBooked": "{dancerName} booked a {style} lesson – {when}",
     "notifyPartnerBooked": "{name} booked a double private lesson with you in {style} – {when}"
+  },
+  "cancelForm": {
+    "heading": "Cancel lesson",
+    "lessonToCancel": "Lesson being cancelled",
+    "genericError": "Something went wrong, please try again",
+    "trainerNotified": "The trainer gets a notification that the lesson has been cancelled.",
+    "dancerNotified": "The dancer gets a notification that the lesson has been cancelled, and the time slot opens back up.",
+    "lateCancelTitle": "Late cancellation",
+    "lateCancelBody": "The lesson is in less than 24 hours. Cancelling this late means the full price still applies.",
+    "confirmLate": "I understand the full price still applies and I still want to cancel.",
+    "confirmNormal": "I confirm that I want to cancel this lesson.",
+    "cancelling": "Cancelling...",
+    "cancelButton": "Cancel lesson",
+    "goBack": "Go back",
+    "notifyTrainerCancelled": "{dancerName} cancelled the {style} lesson – {when}",
+    "notifyDancerCancelled": "The trainer cancelled your {style} lesson – {when}"
+  },
+  "kvittering": {
+    "heading": "Booked!",
+    "subheading": "The lesson is confirmed. The trainer gets notified.",
+    "reminderLabel": "Remember for the lesson",
+    "reminderBody": "Remember to come warmed up for the private lesson! Looking forward to seeing you 🌟",
+    "payment": "Payment",
+    "backToLessons": "Back to my lessons"
   }
 }

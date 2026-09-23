@@ -2,9 +2,11 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { useTranslations, useLocale } from "next-intl";
 import { createClient } from "@/lib/supabase/client";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent } from "@/components/ui/card";
+import { formatDate, formatTime } from "@/lib/dateUtils";
+import type { Locale } from "@/i18n/locale";
 
 interface Props {
   bookingId: string;
@@ -16,14 +18,16 @@ interface Props {
 }
 
 export default function TrainerCancelForm({ bookingId, slotId, bookerId, dancerName, danceStyle, startAt }: Props) {
+  const t = useTranslations("cancelForm");
+  const locale = useLocale() as Locale;
   const router = useRouter();
   const [confirmed, setConfirmed] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
 
   const start = new Date(startAt);
-  const tidspunkt = start.toLocaleDateString("nb-NO", { weekday: "long", day: "numeric", month: "long" }) +
-    " kl. " + start.toLocaleTimeString("nb-NO", { hour: "2-digit", minute: "2-digit" });
+  const tidspunkt = formatDate(start, locale, { weekday: "long", day: "numeric", month: "long" }) +
+    " " + formatTime(start, locale);
 
   async function handleCancel() {
     setLoading(true);
@@ -36,7 +40,7 @@ export default function TrainerCancelForm({ bookingId, slotId, bookerId, dancerN
       .eq("id", bookingId);
 
     if (cancelError) {
-      setError("Noe gikk galt, prøv igjen");
+      setError(t("genericError"));
       setLoading(false);
       return;
     }
@@ -46,7 +50,7 @@ export default function TrainerCancelForm({ bookingId, slotId, bookerId, dancerN
       .update({ is_booked: false })
       .eq("id", slotId);
 
-    const cancelMessage = `Treneren har avbestilt timen din i ${danceStyle} – ${tidspunkt}`;
+    const cancelMessage = t("notifyDancerCancelled", { style: danceStyle, when: tidspunkt });
     await supabase.from("notifications").insert({
       user_id: bookerId,
       message: cancelMessage,
@@ -66,14 +70,14 @@ export default function TrainerCancelForm({ bookingId, slotId, bookerId, dancerN
   return (
     <div className="space-y-4">
       <div className="bg-white dark:bg-gray-900 border dark:border-gray-700 rounded-xl px-4 py-3">
-        <p className="text-xs text-gray-400 dark:text-gray-500 mb-1">Time som avbestilles</p>
+        <p className="text-xs text-gray-400 dark:text-gray-500 mb-1">{t("lessonToCancel")}</p>
         <p className="font-semibold">{tidspunkt}</p>
         <p className="text-sm text-[#E2A9F1]">{dancerName} · {danceStyle}</p>
       </div>
 
       <div className="bg-amber-50 border border-amber-200 rounded-xl p-4">
         <p className="text-sm text-amber-700">
-          Danseren får varsel om at timen er avbestilt og tidsluken blir ledig igjen.
+          {t("dancerNotified")}
         </p>
       </div>
 
@@ -86,7 +90,7 @@ export default function TrainerCancelForm({ bookingId, slotId, bookerId, dancerN
             className="mt-0.5 accent-[#3A3A3A] w-4 h-4"
           />
           <span className="text-sm text-gray-700 dark:text-gray-300">
-            Jeg bekrefter at jeg ønsker å avbestille denne timen.
+            {t("confirmNormal")}
           </span>
         </label>
       </div>
@@ -98,7 +102,7 @@ export default function TrainerCancelForm({ bookingId, slotId, bookerId, dancerN
         onClick={handleCancel}
         disabled={!confirmed || loading}
       >
-        {loading ? "Avbestiller..." : "Avbestill time"}
+        {loading ? t("cancelling") : t("cancelButton")}
       </Button>
 
       <button
@@ -106,7 +110,7 @@ export default function TrainerCancelForm({ bookingId, slotId, bookerId, dancerN
         onClick={() => router.back()}
         className="w-full text-sm text-gray-400 dark:text-gray-500 hover:text-gray-600 py-2"
       >
-        Gå tilbake
+        {t("goBack")}
       </button>
     </div>
   );

@@ -437,5 +437,29 @@
     "slotTakenError": "Timen {when} ble booket av noen andre mens du valgte. Gå tilbake og velg en annen tid.",
     "notifyTrainerBooked": "{dancerName} har booket time i {style} – {when}",
     "notifyPartnerBooked": "{name} har booket en dobbel privattime med deg i {style} – {when}"
+  },
+  "cancelForm": {
+    "heading": "Avbestill time",
+    "lessonToCancel": "Time som avbestilles",
+    "genericError": "Noe gikk galt, prøv igjen",
+    "trainerNotified": "Treneren får varsel om at timen er avbestilt.",
+    "dancerNotified": "Danseren får varsel om at timen er avbestilt og tidsluken blir ledig igjen.",
+    "lateCancelTitle": "Sen avbestilling",
+    "lateCancelBody": "Timen er om mindre enn 24 timer. Ved avbestilling så sent må timen betales i sin helhet.",
+    "confirmLate": "Jeg forstår at timen må betales i sin helhet og ønsker likevel å avbestille.",
+    "confirmNormal": "Jeg bekrefter at jeg ønsker å avbestille denne timen.",
+    "cancelling": "Avbestiller...",
+    "cancelButton": "Avbestill time",
+    "goBack": "Gå tilbake",
+    "notifyTrainerCancelled": "{dancerName} har avbestilt timen i {style} – {when}",
+    "notifyDancerCancelled": "Treneren har avbestilt timen din i {style} – {when}"
+  },
+  "kvittering": {
+    "heading": "Booket!",
+    "subheading": "Timen er bekreftet. Treneren får beskjed.",
+    "reminderLabel": "Husk til timen",
+    "reminderBody": "Husk å komme oppvarmet til privattimen! Gleder meg til å se deg 🌟",
+    "payment": "Betaling",
+    "backToLessons": "Tilbake til mine timer"
   }
 }
