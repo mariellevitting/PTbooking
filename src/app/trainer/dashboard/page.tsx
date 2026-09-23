@@ -42,45 +42,39 @@ export default async function TrainerDashboard() {
   const freeCount = (slots ?? []).filter(s => !s.bookings?.some((b: any) => b.status === "confirmed")).length;
 
   return (
-    <>
+    <main className="bg-gray-50 dark:bg-gray-950 min-h-screen page-safe-top">
       {/* Mobil */}
-      <main className="lg:hidden bg-gray-50 dark:bg-gray-950 p-6 page-safe-top">
-        <div className="max-w-lg mx-auto">
-          <h1 className="text-2xl font-bold mb-6">{greeting()}, {profile.name.split(" ")[0]}! 👋</h1>
-          <NMCountdown href="/trainer/konkurranser" clubId={(profile as any).club_id ?? null} />
-          <TrainerDashboardTabs
-            slots={(slots ?? []) as any}
-            completedSlots={(completedSlots ?? []) as any}
-            dancerProfiles={[]}
-            trainerName={profile.name}
-            trainerId={user.id}
-          />
-        </div>
-      </main>
+      <div className="lg:hidden p-6 max-w-lg mx-auto">
+        <h1 className="text-2xl font-bold mb-6">{greeting()}, {profile.name.split(" ")[0]}! 👋</h1>
+        <NMCountdown href="/trainer/konkurranser" clubId={(profile as any).club_id ?? null} />
+        <TrainerDashboardTabs
+          slots={(slots ?? []) as any}
+          completedSlots={(completedSlots ?? []) as any}
+          dancerProfiles={[]}
+          trainerName={profile.name}
+          trainerId={user.id}
+        />
+      </div>
 
       {/* Web */}
-      <main className="hidden lg:block bg-gray-50 dark:bg-gray-950 min-h-screen">
-        <div className="max-w-5xl mx-auto px-8 py-8">
-          <div className="flex items-center justify-between mb-8">
-            <div>
-              <h1 className="text-2xl font-bold text-gray-900 dark:text-white">{greeting()}, {profile.name.split(" ")[0]}! 👋</h1>
-            </div>
-            <Link href="/trainer/availability">
-              <Button className="bg-[#3A3A3A] hover:bg-[#2a2a2a] dark:bg-[#c87de0] dark:hover:bg-[#b56fd0] dark:text-white">
-                + Legg ut tid
-              </Button>
-            </Link>
-          </div>
-          <NMCountdown href="/trainer/konkurranser" clubId={(profile as any).club_id ?? null} />
-          <TrainerWebDashboard
-            slots={(slots ?? []) as any}
-            completedSlots={(completedSlots ?? []) as any}
-            trainerName={profile.name}
-            trainerId={user.id}
-            freeCount={freeCount}
-          />
+      <div className="hidden lg:block max-w-5xl mx-auto px-8 py-8">
+        <div className="flex items-center justify-between mb-8">
+          <h1 className="text-2xl font-bold text-gray-900 dark:text-white">{greeting()}, {profile.name.split(" ")[0]}! 👋</h1>
+          <Link href="/trainer/availability">
+            <Button className="bg-[#3A3A3A] hover:bg-[#2a2a2a] dark:bg-[#c87de0] dark:hover:bg-[#b56fd0] dark:text-white">
+              + Legg ut tid
+            </Button>
+          </Link>
         </div>
-      </main>
-    </>
+        <NMCountdown href="/trainer/konkurranser" clubId={(profile as any).club_id ?? null} />
+        <TrainerWebDashboard
+          slots={(slots ?? []) as any}
+          completedSlots={(completedSlots ?? []) as any}
+          trainerName={profile.name}
+          trainerId={user.id}
+          freeCount={freeCount}
+        />
+      </div>
+    </main>
   );
 }
