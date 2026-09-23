@@ -461,5 +461,53 @@
     "reminderBody": "Husk å komme oppvarmet til privattimen! Gleder meg til å se deg 🌟",
     "payment": "Betaling",
     "backToLessons": "Tilbake til mine timer"
+  },
+  "privattimeInfo": {
+    "heading": "Bestille privattimer",
+    "durationAndPrice": "En privattime varer i <b>{duration} minutter</b>",
+    "andCostsLabel": " og koster ",
+    "payment": "Betaling",
+    "importantLabel": "VIKTIG!",
+    "contactHeading": "Kontakt",
+    "contactSubheading": "Spørsmål om timer, klubben eller appen?",
+    "defaultInfo": "Trenerne tilbyr privattimer – en fin mulighet til å jobbe med teknikk og utvikling med tett oppfølging."
+  },
+  "feedback": {
+    "button": "Gi tilbakemelding",
+    "heading": "Gi tilbakemelding",
+    "thanks": "Takk for tilbakemeldingen!",
+    "thanksSub": "Det hjelper oss å gjøre appen bedre.",
+    "prompt": "Hva fungerer bra? Hva kan bli bedre? Del gjerne alt – stort og smått.",
+    "placeholder": "Skriv din tilbakemelding her...",
+    "sending": "Sender...",
+    "send": "Send tilbakemelding"
+  },
+  "goals": {
+    "empty": "Ingen mål lagt til ennå",
+    "reached": "Mål nådd",
+    "addPlaceholder": "Legg til et mål..."
+  },
+  "nmCountdown": {
+    "nextCompetition": "Neste konkurranse",
+    "participantsCount": "{count} stk skal delta",
+    "daysLeft": "dager igjen"
+  },
+  "levels": {
+    "names": ["Rekrutt", "Litt øvet", "Mester", "Champ", "Elite"],
+    "topLevel": "Øverste nivå 🎉",
+    "rankingDecides": "Neste nivå avgjøres av ranking på stevner",
+    "pointsToNext": "{points} av {needed} poeng til {nextLevel}"
+  },
+  "poengForklaring": {
+    "toggle": "Hvordan fungerer poeng?",
+    "intro": "Poeng kommer fra plasseringer på konkurranser. Freestyle og slow teller hver for seg. Du fører inn poengene dine selv med + og − etter hver konkurranse.",
+    "levelsHeading": "Nivåer",
+    "levelStep": "{from} → {to}: <b>{points} poeng</b>",
+    "topLevelsRule": "{champ} og {elite}: avgjøres av <b>ranking</b>, ikke poeng",
+    "pointsPerPlacement": "Poeng per plassering i finale",
+    "place": "Plass",
+    "regularFinal": "Vanlig finale",
+    "directFinal": "Direkte finale",
+    "directFinalHint": "Direkte finale brukes når det er få deltakere, slik at alle går rett til finale."
   }
 }

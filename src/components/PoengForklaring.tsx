@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { useTranslations } from "next-intl";
 import { ChevronDown, HelpCircle } from "lucide-react";
 
 const FINALE = [
@@ -15,6 +16,9 @@ const FINALE = [
 ];
 
 export default function PoengForklaring() {
+  const t = useTranslations("poengForklaring");
+  const tl = useTranslations("levels");
+  const LEVELS = tl.raw("names") as string[];
   const [open, setOpen] = useState(false);
 
   return (
@@ -24,36 +28,35 @@ export default function PoengForklaring() {
         className="flex items-center gap-2 text-sm font-medium text-[#9b59c4] dark:text-[#E2A9F1]"
       >
         <HelpCircle size={15} />
-        Hvordan fungerer poeng?
+        {t("toggle")}
         <ChevronDown size={15} className={`transition-transform ${open ? "rotate-180" : ""}`} />
       </button>
 
       {open && (
         <div className="mt-3 space-y-4 text-sm text-gray-600 dark:text-gray-400">
           <p>
-            Poeng kommer fra plasseringer på konkurranser. Freestyle og slow teller hver for seg.
-            Du fører inn poengene dine selv med + og − etter hver konkurranse.
+            {t("intro")}
           </p>
 
           <div>
-            <p className="font-semibold text-gray-700 dark:text-gray-300 mb-1">Nivåer</p>
+            <p className="font-semibold text-gray-700 dark:text-gray-300 mb-1">{t("levelsHeading")}</p>
             <ul className="space-y-0.5">
-              <li>Rekrutt → Litt øvet: <strong>8 poeng</strong></li>
-              <li>Litt øvet → Mester: <strong>14 poeng</strong></li>
-              <li>Mester → Champ: <strong>28 poeng</strong></li>
-              <li>Champ og Elite: avgjøres av <strong>ranking</strong>, ikke poeng</li>
+              <li>{t.rich("levelStep", { from: LEVELS[0], to: LEVELS[1], points: 8, b: (c) => <strong>{c}</strong> })}</li>
+              <li>{t.rich("levelStep", { from: LEVELS[1], to: LEVELS[2], points: 14, b: (c) => <strong>{c}</strong> })}</li>
+              <li>{t.rich("levelStep", { from: LEVELS[2], to: LEVELS[3], points: 28, b: (c) => <strong>{c}</strong> })}</li>
+              <li>{t.rich("topLevelsRule", { champ: LEVELS[3], elite: LEVELS[4], b: (c) => <strong>{c}</strong> })}</li>
             </ul>
           </div>
 
           <div>
-            <p className="font-semibold text-gray-700 dark:text-gray-300 mb-1">Poeng per plassering i finale</p>
+            <p className="font-semibold text-gray-700 dark:text-gray-300 mb-1">{t("pointsPerPlacement")}</p>
             <div className="overflow-x-auto">
               <table className="w-full text-sm">
                 <thead>
                   <tr className="text-left text-xs text-gray-400 dark:text-gray-500">
-                    <th className="py-1 pr-4 font-medium">Plass</th>
-                    <th className="py-1 pr-4 font-medium">Vanlig finale</th>
-                    <th className="py-1 font-medium">Direkte finale</th>
+                    <th className="py-1 pr-4 font-medium">{t("place")}</th>
+                    <th className="py-1 pr-4 font-medium">{t("regularFinal")}</th>
+                    <th className="py-1 font-medium">{t("directFinal")}</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -68,7 +71,7 @@ export default function PoengForklaring() {
               </table>
             </div>
             <p className="text-xs text-gray-400 dark:text-gray-500 mt-2">
-              Direkte finale brukes når det er få deltakere, slik at alle går rett til finale.
+              {t("directFinalHint")}
             </p>
           </div>
         </div>

@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { useTranslations } from "next-intl";
 import { Plus, X } from "lucide-react";
 
 interface Props {
@@ -12,6 +13,7 @@ function isDone(goal: string) { return goal.startsWith("[x] "); }
 function goalText(goal: string) { return isDone(goal) ? goal.slice(4) : goal; }
 
 export default function GoalsList({ value, onChange }: Props) {
+  const t = useTranslations("goals");
   const goals = value ? value.split("\n").filter(g => g.trim() !== "") : [];
   const [newGoal, setNewGoal] = useState("");
 
@@ -44,7 +46,7 @@ export default function GoalsList({ value, onChange }: Props) {
   return (
     <div className="space-y-2">
       {goals.length === 0 && (
-        <p className="text-sm text-gray-400 dark:text-gray-500 py-1">Ingen mål lagt til ennå</p>
+        <p className="text-sm text-gray-400 dark:text-gray-500 py-1">{t("empty")}</p>
       )}
       {goals.map((goal, idx) => {
         const done = isDone(goal);
@@ -60,7 +62,7 @@ export default function GoalsList({ value, onChange }: Props) {
             <span className={`text-sm flex-1 ${done ? "line-through text-gray-400 dark:text-gray-500" : "text-gray-700 dark:text-gray-300"}`}>
               {goalText(goal)}
             </span>
-            {done && <span className="text-xs text-green-600 dark:text-green-400 font-medium whitespace-nowrap">Mål nådd</span>}
+            {done && <span className="text-xs text-green-600 dark:text-green-400 font-medium whitespace-nowrap">{t("reached")}</span>}
             <button type="button" onClick={() => removeGoal(idx)} className="text-gray-300 dark:text-gray-600 hover:text-red-400 transition-colors shrink-0 mt-0.5">
               <X size={14} />
             </button>
@@ -74,7 +76,7 @@ export default function GoalsList({ value, onChange }: Props) {
           onChange={e => setNewGoal(e.target.value)}
           onKeyDown={handleKeyDown}
           onBlur={handleBlur}
-          placeholder="Legg til et mål..."
+          placeholder={t("addPlaceholder")}
           className="flex-1 border dark:border-gray-700 bg-white dark:bg-gray-900 dark:text-white rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#E2A9F1]"
         />
         <button

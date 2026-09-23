@@ -1,31 +1,34 @@
+import { useTranslations } from "next-intl";
 import type { ClubConfig } from "@/lib/club";
 import { CLUB_DEFAULTS } from "@/lib/club";
 import { renderBold } from "@/lib/richText";
 
 /**
  * "Bestille privattimer"-kortet. Alt innhold kommer fra klubb-konfig
- * (clubs-tabellen). Brukes på danser- og forelder-dashboardet.
+ * (clubs-tabellen) og er BEVISST ikke oversatt (klubb-skrevet innhold,
+ * se docs/DECISIONS.md "Flerspråklighet"). Kun kortets egen UI-tekst
+ * (overskrifter, faste setninger) går gjennom i18n. Brukes på danser-
+ * og forelder-dashboardet.
  */
 export default function PrivattimeInfo({ club }: { club: ClubConfig | null }) {
+  const t = useTranslations("privattimeInfo");
   const duration = club?.lesson_duration_min ?? CLUB_DEFAULTS.lesson_duration_min;
   const priceText = club?.lesson_price_text?.trim();
-  const info =
-    club?.lesson_info?.trim() ||
-    "Trenerne tilbyr privattimer – en fin mulighet til å jobbe med teknikk og utvikling med tett oppfølging.";
+  const info = club?.lesson_info?.trim() || t("defaultInfo");
   const paymentInfo = club?.payment_info?.trim() || CLUB_DEFAULTS.payment_info;
   const receiptNote = club?.receipt_note?.trim();
 
   return (
     <div className="space-y-4">
       <div className="bg-white dark:bg-gray-900 rounded-2xl border dark:border-gray-700 p-5 space-y-4">
-        <h2 className="text-lg font-bold">Bestille privattimer</h2>
+        <h2 className="text-lg font-bold">{t("heading")}</h2>
         <p className="text-gray-600 dark:text-gray-400 text-sm leading-relaxed">{info}</p>
         <p className="text-gray-600 dark:text-gray-400 text-sm leading-relaxed">
-          En privattime varer i <strong>{duration} minutter</strong>
-          {priceText ? <> og koster {renderBold(priceText)}</> : null}.
+          {t.rich("durationAndPrice", { duration, b: (chunks) => <strong>{chunks}</strong> })}
+          {priceText ? <>{t("andCostsLabel")}{renderBold(priceText)}</> : null}.
         </p>
         <div className="bg-[#f5eeff] border border-[#E2A9F1]/40 rounded-xl p-4">
-          <p className="text-sm font-semibold text-[#9b59c4] mb-1">Betaling</p>
+          <p className="text-sm font-semibold text-[#9b59c4] mb-1">{t("payment")}</p>
           <p className="text-sm text-[#9b59c4]">
             <PaymentText
               info={paymentInfo}
@@ -36,7 +39,7 @@ export default function PrivattimeInfo({ club }: { club: ClubConfig | null }) {
         </div>
         {receiptNote && (
           <div className="bg-[#f5eeff] border border-[#E2A9F1]/40 rounded-xl p-4">
-            <p className="text-sm font-semibold text-[#9b59c4] mb-1">VIKTIG!</p>
+            <p className="text-sm font-semibold text-[#9b59c4] mb-1">{t("importantLabel")}</p>
             <p className="text-sm text-[#9b59c4]">{receiptNote}</p>
           </div>
         )}
@@ -44,8 +47,8 @@ export default function PrivattimeInfo({ club }: { club: ClubConfig | null }) {
 
       {(club?.contact_name?.trim() || club?.contact_info?.trim()) && (
         <div className="bg-white dark:bg-gray-900 rounded-2xl border dark:border-gray-700 p-5">
-          <h3 className="font-semibold text-lg mb-1">Kontakt</h3>
-          <p className="text-sm text-gray-500 dark:text-gray-400 mb-3">Spørsmål om timer, klubben eller appen?</p>
+          <h3 className="font-semibold text-lg mb-1">{t("contactHeading")}</h3>
+          <p className="text-sm text-gray-500 dark:text-gray-400 mb-3">{t("contactSubheading")}</p>
           {club?.contact_name?.trim() && (
             <p className="text-sm text-gray-800 dark:text-gray-100 font-medium">{club.contact_name.trim()}</p>
           )}

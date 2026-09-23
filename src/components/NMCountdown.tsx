@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
+import { useTranslations } from "next-intl";
 import { createClient } from "@/lib/supabase/client";
 
 const COMPETITIONS = [
@@ -58,6 +59,7 @@ interface Props {
 }
 
 export default function NMCountdown({ href, clubId }: Props) {
+  const t = useTranslations("nmCountdown");
   const [tick, setTick] = useState(0);
   const [count, setCount] = useState<number | null>(null);
 
@@ -100,16 +102,16 @@ export default function NMCountdown({ href, clubId }: Props) {
   const box = (
     <div className="bg-[#3A3A3A] rounded-xl px-4 py-3 flex items-center justify-between">
       <div>
-        <p className="text-xs text-[#e8c4f5] font-semibold uppercase tracking-wide">Neste konkurranse</p>
+        <p className="text-xs text-[#e8c4f5] font-semibold uppercase tracking-wide">{t("nextCompetition")}</p>
         <p className="text-sm font-bold text-white">{next.short}</p>
         <p className="text-xs text-[#e8c4f5]">{next.dateLabel}{next.location ? ` · ${next.location}` : ""}</p>
         {count !== null && count > 0 && (
-          <p className="text-xs text-[#e8c4f5] mt-1">{count} stk skal delta</p>
+          <p className="text-xs text-[#e8c4f5] mt-1">{t("participantsCount", { count })}</p>
         )}
       </div>
       <div className="text-right ml-4">
         <p className="text-3xl font-bold text-white">{timeLeft.days}</p>
-        <p className="text-xs text-[#e8c4f5]">dager igjen</p>
+        <p className="text-xs text-[#e8c4f5]">{t("daysLeft")}</p>
       </div>
     </div>
   );

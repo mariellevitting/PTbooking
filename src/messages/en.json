@@ -461,5 +461,53 @@
     "reminderBody": "Remember to come warmed up for the private lesson! Looking forward to seeing you 🌟",
     "payment": "Payment",
     "backToLessons": "Back to my lessons"
+  },
+  "privattimeInfo": {
+    "heading": "Booking private lessons",
+    "durationAndPrice": "A private lesson lasts <b>{duration} minutes</b>",
+    "andCostsLabel": " and costs ",
+    "payment": "Payment",
+    "importantLabel": "IMPORTANT!",
+    "contactHeading": "Contact",
+    "contactSubheading": "Questions about lessons, the club, or the app?",
+    "defaultInfo": "The trainers offer private lessons – a great chance to work on technique and development with close follow-up."
+  },
+  "feedback": {
+    "button": "Give feedback",
+    "heading": "Give feedback",
+    "thanks": "Thanks for the feedback!",
+    "thanksSub": "It helps us make the app better.",
+    "prompt": "What's working well? What could be better? Share anything – big or small.",
+    "placeholder": "Write your feedback here...",
+    "sending": "Sending...",
+    "send": "Send feedback"
+  },
+  "goals": {
+    "empty": "No goals added yet",
+    "reached": "Goal reached",
+    "addPlaceholder": "Add a goal..."
+  },
+  "nmCountdown": {
+    "nextCompetition": "Next competition",
+    "participantsCount": "{count} attending",
+    "daysLeft": "days left"
+  },
+  "levels": {
+    "names": ["Beginner", "Starter", "Inter", "Champ", "Champ Prem"],
+    "topLevel": "Top level 🎉",
+    "rankingDecides": "The next level is decided by ranking at competitions",
+    "pointsToNext": "{points} of {needed} points to {nextLevel}"
+  },
+  "poengForklaring": {
+    "toggle": "How do points work?",
+    "intro": "Points come from placements at competitions. Freestyle and slow count separately. You log your own points with + and − after each competition.",
+    "levelsHeading": "Levels",
+    "levelStep": "{from} → {to}: <b>{points} points</b>",
+    "topLevelsRule": "{champ} and {elite}: decided by <b>ranking</b>, not points",
+    "pointsPerPlacement": "Points per final placement",
+    "place": "Place",
+    "regularFinal": "Regular final",
+    "directFinal": "Direct final",
+    "directFinalHint": "A direct final is used when there are few participants, so everyone goes straight to the final."
   }
 }

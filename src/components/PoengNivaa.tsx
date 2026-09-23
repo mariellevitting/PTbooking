@@ -1,10 +1,9 @@
 "use client";
 
 import { Fragment } from "react";
+import { useTranslations } from "next-intl";
 import { Trophy } from "lucide-react";
 import PointsStepper from "./PointsStepper";
-
-const LEVELS = ["Rekrutt", "Litt øvet", "Mester", "Champ", "Elite"];
 
 interface Props {
   label: string;
@@ -16,6 +15,8 @@ interface Props {
 }
 
 export default function PoengNivaa({ label, points, level, needed, onChange, readOnly }: Props) {
+  const t = useTranslations("levels");
+  const LEVELS = t.raw("names") as string[];
   const shown = Math.min(points, needed);
   const pct = needed > 0 ? Math.round((shown / needed) * 100) : 0;
 
@@ -55,14 +56,14 @@ export default function PoengNivaa({ label, points, level, needed, onChange, rea
       </div>
 
       {level >= 4 ? (
-        <p className="text-center text-sm text-gray-500 dark:text-gray-400 mb-3">Øverste nivå 🎉</p>
+        <p className="text-center text-sm text-gray-500 dark:text-gray-400 mb-3">{t("topLevel")}</p>
       ) : level === 3 ? (
         <div className="flex items-center gap-2 text-sm text-gray-500 dark:text-gray-400 bg-yellow-50 dark:bg-yellow-900/10 border border-yellow-200 dark:border-yellow-700/30 rounded-lg px-3 py-2 mb-3">
-          <Trophy size={14} className="text-yellow-500 dark:text-yellow-600" /> Neste nivå avgjøres av ranking på stevner
+          <Trophy size={14} className="text-yellow-500 dark:text-yellow-600" /> {t("rankingDecides")}
         </div>
       ) : (
         <p className="text-center text-sm text-gray-500 dark:text-gray-400 mb-3">
-          {shown} av {needed} poeng til {LEVELS[level + 1]}
+          {t("pointsToNext", { points: shown, needed, nextLevel: LEVELS[level + 1] })}
         </p>
       )}
 
