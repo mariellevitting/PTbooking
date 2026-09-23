@@ -46,7 +46,7 @@ export default async function TrainerDashboard() {
   return (
     <main className="bg-gray-50 dark:bg-gray-950 min-h-screen">
       {/* Felles header */}
-      <div className="p-6 page-safe-top lg:max-w-5xl lg:mx-auto lg:px-8 lg:pt-8 lg:pb-0">
+      <div className="p-6 lg:max-w-5xl lg:mx-auto lg:px-8 lg:pt-8 lg:pb-0">
         <div className="flex items-center justify-between lg:mb-4">
           <h1 className="text-2xl font-bold text-gray-900 dark:text-white mb-6 lg:mb-0">
             {greeting()}, {profile.name.split(" ")[0]}! 👋
