@@ -3,6 +3,9 @@ import { createClient } from "@/lib/supabase/server";
 import { greeting } from "@/lib/greeting";
 import NMCountdown from "@/components/NMCountdown";
 import TrainerDashboardTabs from "./TrainerDashboardTabs";
+import TrainerWebDashboard from "./TrainerWebDashboard";
+import Link from "next/link";
+import { Button } from "@/components/ui/button";
 
 export const dynamic = "force-dynamic";
 
@@ -19,42 +22,65 @@ export default async function TrainerDashboard() {
 
   if (!profile || profile.role !== "trainer") redirect("/dashboard");
 
-  const { data: slots } = await supabase
-    .from("availability_slots")
-    .select("*, bookings(id, dancer_name, dance_style, booker_id, linked_user_id, status, paid, receipt_reminders_sent, booker:profiles!bookings_booker_id_fkey(avatar_url), linked_profile:profiles!bookings_linked_user_id_fkey(avatar_url))")
-    .eq("trainer_id", user.id)
-    .gte("start_at", new Date().toISOString())
-    .order("start_at");
+  const now = new Date().toISOString();
 
-  const [{ data: completedSlots }, { data: dancerProfiles }] = await Promise.all([
+  const [{ data: slots }, { data: completedSlots }] = await Promise.all([
+    supabase
+      .from("availability_slots")
+      .select("*, bookings(id, dancer_name, dance_style, booker_id, linked_user_id, status, paid, receipt_reminders_sent, booker:profiles!bookings_booker_id_fkey(avatar_url), linked_profile:profiles!bookings_linked_user_id_fkey(avatar_url))")
+      .eq("trainer_id", user.id)
+      .gte("start_at", now)
+      .order("start_at"),
     supabase
       .from("availability_slots")
       .select("*, bookings(id, dancer_name, dance_style, status, paid, receipt_reminders_sent, booker_id, linked_user_id)")
       .eq("trainer_id", user.id)
-      .lt("end_at", new Date().toISOString())
+      .lt("end_at", now)
       .order("start_at", { ascending: false }),
-    supabase
-      .from("profiles")
-      .select("id, name, avatar_url, season_goals, role, club_id")
-      .in("role", ["dancer", "parent"])
-      .eq("goals_visible_to_trainer", true)
-      .eq("club_id", (profile as any).club_id ?? "")
-      .order("name"),
   ]);
 
+  const freeCount = (slots ?? []).filter(s => !s.bookings?.some((b: any) => b.status === "confirmed")).length;
+
   return (
-    <main className="bg-gray-50 dark:bg-gray-950 p-6">
-      <div className="max-w-lg mx-auto">
-        <h1 className="text-2xl font-bold mb-6">{greeting()}, {profile.name.split(" ")[0]}! 👋</h1>
-        <NMCountdown href="/trainer/konkurranser" clubId={(profile as any).club_id ?? null} />
-        <TrainerDashboardTabs
-          slots={(slots ?? []) as any}
-          completedSlots={(completedSlots ?? []) as any}
-          dancerProfiles={(dancerProfiles ?? []) as any}
-          trainerName={profile.name}
-          trainerId={user.id}
-        />
-      </div>
-    </main>
+    <>
+      {/* Mobil */}
+      <main className="lg:hidden bg-gray-50 dark:bg-gray-950 p-6 page-safe-top">
+        <div className="max-w-lg mx-auto">
+          <h1 className="text-2xl font-bold mb-6">{greeting()}, {profile.name.split(" ")[0]}! 👋</h1>
+          <NMCountdown href="/trainer/konkurranser" clubId={(profile as any).club_id ?? null} />
+          <TrainerDashboardTabs
+            slots={(slots ?? []) as any}
+            completedSlots={(completedSlots ?? []) as any}
+            dancerProfiles={[]}
+            trainerName={profile.name}
+            trainerId={user.id}
+          />
+        </div>
+      </main>
+
+      {/* Web */}
+      <main className="hidden lg:block bg-gray-50 dark:bg-gray-950 min-h-screen">
+        <div className="max-w-5xl mx-auto px-8 py-8">
+          <div className="flex items-center justify-between mb-8">
+            <div>
+              <h1 className="text-2xl font-bold text-gray-900 dark:text-white">{greeting()}, {profile.name.split(" ")[0]}! 👋</h1>
+            </div>
+            <Link href="/trainer/availability">
+              <Button className="bg-[#3A3A3A] hover:bg-[#2a2a2a] dark:bg-[#c87de0] dark:hover:bg-[#b56fd0] dark:text-white">
+                + Legg ut tid
+              </Button>
+            </Link>
+          </div>
+          <NMCountdown href="/trainer/konkurranser" clubId={(profile as any).club_id ?? null} />
+          <TrainerWebDashboard
+            slots={(slots ?? []) as any}
+            completedSlots={(completedSlots ?? []) as any}
+            trainerName={profile.name}
+            trainerId={user.id}
+            freeCount={freeCount}
+          />
+        </div>
+      </main>
+    </>
   );
 }
