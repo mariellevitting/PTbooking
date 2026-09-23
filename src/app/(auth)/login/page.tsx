@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { useTranslations } from "next-intl";
 import { createClient } from "@/lib/supabase/client";
 import { registerUser } from "@/app/actions/register";
 import { Button } from "@/components/ui/button";
@@ -9,14 +10,14 @@ import { Input } from "@/components/ui/input";
 import { Eye, EyeOff } from "lucide-react";
 import type { UserRole } from "@/types";
 
-const roles: { value: UserRole; label: string; description: string }[] = [
-  { value: "dancer", label: "Danser", description: "Jeg booker timer for meg selv" },
-  { value: "parent", label: "Forelder", description: "Jeg booker timer for mitt barn" },
-  { value: "trainer", label: "Trener", description: "Jeg tilbyr privattimer" },
-];
-
 export default function LoginPage() {
   const router = useRouter();
+  const t = useTranslations("auth");
+  const roles: { value: UserRole; label: string; description: string }[] = [
+    { value: "dancer", label: t("roles.dancer.label"), description: t("roles.dancer.description") },
+    { value: "parent", label: t("roles.parent.label"), description: t("roles.parent.description") },
+    { value: "trainer", label: t("roles.trainer.label"), description: t("roles.trainer.description") },
+  ];
   const [tab, setTab] = useState<"login" | "register">("login");
 
 // Login state
@@ -51,11 +52,11 @@ export default function LoginPage() {
       timeout,
     ]);
     if ("timedOut" in result) {
-      setLoginError("Kunne ikke koble til. Sjekk internettforbindelsen og prøv igjen.");
+      setLoginError(t("login.connectionError"));
       setLoginLoading(false);
       return;
     }
-    if (result.error) { setLoginError("Feil e-post eller passord"); setLoginLoading(false); return; }
+    if (result.error) { setLoginError(t("login.wrongCredentials")); setLoginLoading(false); return; }
     router.push("/dashboard");
     router.refresh();
   }
@@ -76,8 +77,8 @@ export default function LoginPage() {
     router.refresh();
   }
 
-  function switchTab(t: "login" | "register") {
-    setTab(t);
+  function switchTab(tabName: "login" | "register") {
+    setTab(tabName);
     setLoginError("");
     setRegError("");
   }
@@ -86,11 +87,11 @@ export default function LoginPage() {
     <div className="flex bg-gray-100 dark:bg-gray-800 rounded-xl p-1 mb-6">
       <button onClick={() => switchTab("login")}
         className={`flex-1 text-center py-2 rounded-lg text-sm font-semibold transition-all ${tab === "login" ? "bg-white dark:bg-gray-900 text-gray-900 dark:text-white shadow-sm" : "text-gray-500 dark:text-gray-400"}`}>
-        Logg inn
+        {t("tabs.login")}
       </button>
       <button onClick={() => switchTab("register")}
         className={`flex-1 text-center py-2 rounded-lg text-sm font-semibold transition-all ${tab === "register" ? "bg-white dark:bg-gray-900 text-gray-900 dark:text-white shadow-sm" : "text-gray-500 dark:text-gray-400"}`}>
-        Registrer
+        {t("tabs.register")}
       </button>
     </div>
   );
@@ -98,16 +99,16 @@ export default function LoginPage() {
   const loginForm = (
     <form onSubmit={handleLogin} className="space-y-4">
       <div className="space-y-1.5">
-        <label className="text-sm font-medium text-gray-700 dark:text-gray-300">E-post</label>
-        <Input type="email" value={email} onChange={e => setEmail(e.target.value)} placeholder="din@epost.no" required />
+        <label className="text-sm font-medium text-gray-700 dark:text-gray-300">{t("login.email")}</label>
+        <Input type="email" value={email} onChange={e => setEmail(e.target.value)} placeholder={t("login.emailPlaceholder")} required />
       </div>
       <div className="space-y-1.5">
         <div className="flex justify-between items-center">
-          <label className="text-sm font-medium text-gray-700 dark:text-gray-300">Passord</label>
-          <a href="/glemt-passord" className="text-xs text-[#E2A9F1] hover:underline">Glemt passordet?</a>
+          <label className="text-sm font-medium text-gray-700 dark:text-gray-300">{t("login.password")}</label>
+          <a href="/glemt-passord" className="text-xs text-[#E2A9F1] hover:underline">{t("login.forgotPassword")}</a>
         </div>
         <div className="relative">
-          <Input type={showPassword ? "text" : "password"} value={password} onChange={e => setPassword(e.target.value)} placeholder="••••••••" required className="pr-10" />
+          <Input type={showPassword ? "text" : "password"} value={password} onChange={e => setPassword(e.target.value)} placeholder={t("login.passwordPlaceholder")} required className="pr-10" />
           <button type="button" onClick={() => setShowPassword(p => !p)} className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600">
             {showPassword ? <EyeOff size={16} /> : <Eye size={16} />}
           </button>
@@ -115,7 +116,7 @@ export default function LoginPage() {
       </div>
       {loginError && <p className="text-sm text-red-500">{loginError}</p>}
       <Button type="submit" className="w-full bg-[#3A3A3A] hover:bg-[#2a2a2a] dark:bg-[#c87de0] dark:hover:bg-[#b56fd0] dark:text-white h-11 text-base" disabled={loginLoading}>
-        {loginLoading ? "Logger inn..." : "Logg inn"}
+        {loginLoading ? t("login.submitting") : t("login.submit")}
       </Button>
     </form>
   );
@@ -124,7 +125,7 @@ export default function LoginPage() {
     <>
       {step === "role" && (
         <div className="space-y-3">
-          <p className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-3">Hvem er du?</p>
+          <p className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-3">{t("register.whoAreYou")}</p>
           {roles.map(r => (
             <button key={r.value} onClick={() => { setRole(r.value); setStep("details"); }}
               className="w-full text-left border dark:border-gray-700 rounded-xl p-4 bg-white dark:bg-gray-900 hover:border-[#E2A9F1] hover:bg-[#f5eeff] dark:bg-[#E2A9F1]/10 transition-colors">
@@ -136,32 +137,32 @@ export default function LoginPage() {
       )}
       {step === "details" && (
         <form onSubmit={handleRegister} className="space-y-4">
-          <button type="button" onClick={() => setStep("role")} className="text-sm text-[#E2A9F1] hover:underline">← Endre rolle</button>
+          <button type="button" onClick={() => setStep("role")} className="text-sm text-[#E2A9F1] hover:underline">{t("register.changeRole")}</button>
           <div className="flex gap-2">
             <div className="space-y-1.5 flex-1">
-              <label className="text-sm font-medium">Fornavn</label>
+              <label className="text-sm font-medium">{t("register.firstName")}</label>
               <Input value={firstName} onChange={e => setFirstName(e.target.value)} required />
             </div>
             <div className="space-y-1.5 flex-1">
-              <label className="text-sm font-medium">Etternavn</label>
+              <label className="text-sm font-medium">{t("register.lastName")}</label>
               <Input value={lastName} onChange={e => setLastName(e.target.value)} required />
             </div>
           </div>
           <div className="space-y-1.5">
-            <label className="text-sm font-medium">E-post</label>
-            <Input type="email" value={regEmail} onChange={e => setRegEmail(e.target.value)} placeholder="din@epost.no" required />
+            <label className="text-sm font-medium">{t("register.email")}</label>
+            <Input type="email" value={regEmail} onChange={e => setRegEmail(e.target.value)} placeholder={t("register.emailPlaceholder")} required />
           </div>
           <div className="space-y-1.5">
-            <label className="text-sm font-medium">Passord</label>
-            <Input type="password" value={regPassword} onChange={e => setRegPassword(e.target.value)} placeholder="Minst 6 tegn" minLength={6} required />
+            <label className="text-sm font-medium">{t("register.password")}</label>
+            <Input type="password" value={regPassword} onChange={e => setRegPassword(e.target.value)} placeholder={t("register.passwordPlaceholder")} minLength={6} required />
           </div>
           {role === "parent" && (
             <div className="space-y-2">
-              <label className="text-sm font-medium">Danser(e)</label>
+              <label className="text-sm font-medium">{t("register.dancers")}</label>
               {dancerNames.map((n, i) => (
                 <div key={i} className="flex gap-2">
                   <Input value={n} onChange={e => { const u = [...dancerNames]; u[i] = e.target.value; setDancerNames(u); }}
-                    placeholder={`Danser ${i + 1}`} required={i === 0} />
+                    placeholder={t("register.dancerPlaceholder", { n: i + 1 })} required={i === 0} />
                   {dancerNames.length > 1 && (
                     <button type="button" onClick={() => setDancerNames(dancerNames.filter((_, j) => j !== i))}
                       className="text-red-400 hover:text-red-600 px-2">✕</button>
@@ -169,33 +170,33 @@ export default function LoginPage() {
                 </div>
               ))}
               <button type="button" onClick={() => setDancerNames([...dancerNames, ""])}
-                className="text-sm text-[#E2A9F1] hover:underline">+ Legg til danser</button>
+                className="text-sm text-[#E2A9F1] hover:underline">{t("register.addDancer")}</button>
             </div>
           )}
           {role === "trainer" && (
             <div className="space-y-1.5">
-              <label className="text-sm font-medium">Trenerkode</label>
-              <Input type="text" value={trainerCode} onChange={e => setTrainerCode(e.target.value)} placeholder="Kode fra klubben" required />
-              <p className="text-xs text-gray-400 dark:text-gray-500">Kun trenere med kode kan registrere seg.</p>
+              <label className="text-sm font-medium">{t("register.trainerCode")}</label>
+              <Input type="text" value={trainerCode} onChange={e => setTrainerCode(e.target.value)} placeholder={t("register.trainerCodePlaceholder")} required />
+              <p className="text-xs text-gray-400 dark:text-gray-500">{t("register.trainerCodeHint")}</p>
             </div>
           )}
           {role === "dancer" && (
             <div className="space-y-1.5">
-              <label className="text-sm font-medium">Klubbkode</label>
-              <Input type="text" value={trainerCode} onChange={e => setTrainerCode(e.target.value)} placeholder="Kode fra klubben din" required />
-              <p className="text-xs text-gray-400 dark:text-gray-500">Kun dansere med klubbkode kan registrere seg.</p>
+              <label className="text-sm font-medium">{t("register.clubCode")}</label>
+              <Input type="text" value={trainerCode} onChange={e => setTrainerCode(e.target.value)} placeholder={t("register.clubCodePlaceholder")} required />
+              <p className="text-xs text-gray-400 dark:text-gray-500">{t("register.dancerCodeHint")}</p>
             </div>
           )}
           {role === "parent" && (
             <div className="space-y-1.5">
-              <label className="text-sm font-medium">Klubbkode</label>
-              <Input type="text" value={trainerCode} onChange={e => setTrainerCode(e.target.value)} placeholder="Kode fra klubben din" required />
-              <p className="text-xs text-gray-400 dark:text-gray-500">Kun foreldre med klubbkode kan registrere seg.</p>
+              <label className="text-sm font-medium">{t("register.clubCode")}</label>
+              <Input type="text" value={trainerCode} onChange={e => setTrainerCode(e.target.value)} placeholder={t("register.clubCodePlaceholder")} required />
+              <p className="text-xs text-gray-400 dark:text-gray-500">{t("register.parentCodeHint")}</p>
             </div>
           )}
           {regError && <p className="text-sm text-red-500">{regError}</p>}
           <Button type="submit" className="w-full bg-[#3A3A3A] hover:bg-[#2a2a2a] dark:bg-[#c87de0] dark:hover:bg-[#b56fd0] dark:text-white h-11 text-base" disabled={regLoading}>
-            {regLoading ? "Oppretter konto..." : "Lag konto"}
+            {regLoading ? t("register.submitting") : t("register.submit")}
           </Button>
         </form>
       )}
@@ -211,9 +212,9 @@ export default function LoginPage() {
         <div className="absolute inset-0 bg-black/15" />
         <div className="absolute inset-x-0 bottom-0 h-1/2 bg-gradient-to-t from-black/55 to-transparent" />
         <div className="relative z-10 flex flex-col justify-end p-10 text-white">
-          <p className="text-white/90 text-lg italic mb-3">✦ Av dansere, for dansere</p>
+          <p className="text-white/90 text-lg italic mb-3">✦ {t("hero.tagline")}</p>
           <h1 className="text-5xl font-bold mb-1">Danceitude</h1>
-          <p className="text-white/80 text-lg">Book din privattime enkelt og raskt</p>
+          <p className="text-white/80 text-lg">{t("hero.subtitle")}</p>
         </div>
       </div>
 
@@ -222,16 +223,16 @@ export default function LoginPage() {
         <div className="absolute inset-0 bg-cover" style={{ backgroundImage: "url('/login-bg.png')", backgroundPosition: "center top", filter: "brightness(1.4) contrast(1.03)" }} />
         <div className="absolute inset-0 bg-black/15" />
         <div className="relative z-10 w-full px-4 pb-4 pt-8">
-          <p className="text-white/90 text-sm italic mb-1 px-2">✦ Av dansere, for dansere</p>
+          <p className="text-white/90 text-sm italic mb-1 px-2">✦ {t("hero.tagline")}</p>
           <h1 className="text-3xl font-bold text-white mb-4 px-2">Danceitude</h1>
           <div className="bg-white dark:bg-gray-900 rounded-2xl p-6 shadow-xl">
             {tabs}
             {tab === "login" ? loginForm : registerForm}
           </div>
           <p className="text-center text-xs text-white/70 mt-4">
-            <a href="/om" className="hover:text-white underline">Om Danceitude</a>
+            <a href="/om" className="hover:text-white underline">{t("footer.about")}</a>
             <span className="mx-2">·</span>
-            <a href="/support" className="hover:text-white underline">Hjelp</a>
+            <a href="/support" className="hover:text-white underline">{t("footer.help")}</a>
           </p>
         </div>
       </div>
@@ -240,18 +241,18 @@ export default function LoginPage() {
       <div className="hidden md:flex flex-1 items-center justify-center bg-gray-50 dark:bg-gray-950 p-8">
         <div className="w-full max-w-sm">
           <div className="mb-8">
-            <h2 className="text-3xl font-bold text-gray-900 dark:text-white">Logg inn</h2>
-            <p className="text-gray-500 dark:text-gray-400 mt-1 text-sm">Velkommen tilbake!</p>
+            <h2 className="text-3xl font-bold text-gray-900 dark:text-white">{t("login.heading")}</h2>
+            <p className="text-gray-500 dark:text-gray-400 mt-1 text-sm">{t("login.welcomeBack")}</p>
           </div>
           {loginForm}
           <p className="text-center text-sm text-gray-500 dark:text-gray-400 mt-4">
-            Har du ikke konto?{" "}
-            <a href="/register" className="text-[#E2A9F1] hover:underline font-medium">Registrer deg</a>
+            {t("login.noAccount")}{" "}
+            <a href="/register" className="text-[#E2A9F1] hover:underline font-medium">{t("login.registerLink")}</a>
           </p>
           <p className="text-center text-xs text-gray-400 dark:text-gray-600 mt-3">
-            <a href="/om" className="hover:text-[#E2A9F1] hover:underline">Om Danceitude</a>
+            <a href="/om" className="hover:text-[#E2A9F1] hover:underline">{t("footer.about")}</a>
             <span className="mx-2">·</span>
-            <a href="/support" className="hover:text-[#E2A9F1] hover:underline">Hjelp</a>
+            <a href="/support" className="hover:text-[#E2A9F1] hover:underline">{t("footer.help")}</a>
           </p>
         </div>
       </div>
