@@ -126,8 +126,20 @@ export default function TrainerWebDashboard({ slots, completedSlots, trainerName
   const today = new Date();
   today.setHours(0, 0, 0, 0);
 
-  const [viewDate, setViewDate] = useState(() => new Date(today.getFullYear(), today.getMonth(), 1));
-  const [selectedDate, setSelectedDate] = useState<string>(() => dk(today));
+  // Vis dagen med neste bookede privattime automatisk, ikke bare "i dag" (som
+  // ofte er tom) — treneren skal slippe å klikke seg fram til riktig dag selv.
+  const initialSelectedDate = (() => {
+    const upcomingBooked = slots
+      .filter(s => s.is_booked && new Date(s.start_at) >= today)
+      .sort((a, b) => a.start_at.localeCompare(b.start_at));
+    return upcomingBooked[0] ? dk(new Date(upcomingBooked[0].start_at)) : dk(today);
+  })();
+
+  const [viewDate, setViewDate] = useState(() => {
+    const d = new Date(initialSelectedDate + "T12:00:00");
+    return new Date(d.getFullYear(), d.getMonth(), 1);
+  });
+  const [selectedDate, setSelectedDate] = useState<string>(() => initialSelectedDate);
 
   const slotDates = new Set(slots.map(s => dk(new Date(s.start_at))));
 
