@@ -754,5 +754,81 @@
     "addPlaceholder": "Legg til danser",
     "add": "Legg til",
     "added": "Danser lagt til!"
+  },
+  "admin": {
+    "roleLabel": {
+      "dancer": "Danser",
+      "parent": "Forelder",
+      "trainer": "Trener"
+    },
+    "timeAgo": {
+      "days": "{count, plural, one {# dag siden} other {# dager siden}}",
+      "hours": "{count, plural, one {# time siden} other {# timer siden}}",
+      "minutes": "{count} min siden"
+    },
+    "completed": "Gjennomført",
+    "notBooked": "Ikke booket",
+    "free": "Ledig",
+    "upcoming": "Kommende",
+    "noLessonsThisWeek": "Ingen timer denne uken",
+    "weekLabel": "{startDay}. {startMonth} – {endDay}. {endMonth}",
+    "heading": "Admin",
+    "subheading": "Kun synlig for trenere · {count} brukere totalt",
+    "clubs": {
+      "heading": "Klubber",
+      "cancel": "Avbryt",
+      "newClub": "+ Ny klubb",
+      "namePlaceholder": "Klubbnavn (f.eks. Victory Dance)",
+      "shortNamePlaceholder": "Kortnavn (valgfritt)",
+      "creating": "Oppretter…",
+      "create": "Opprett klubb",
+      "hint": "Registreringskodene (trener/danser/forelder), priser, betaling og dansestiler fyller du inn på «Rediger innstillinger» etterpå.",
+      "memberCount": "{count} medlemmer",
+      "editSettings": "Rediger innstillinger →",
+      "codesHeading": "Klubbkoder",
+      "codeTrainer": "Trener",
+      "codeDancer": "Danser",
+      "codeParent": "Forelder",
+      "noCodesHint": "Bruker env-variabler (Evolution)",
+      "unknownError": "Ukjent feil",
+      "createFailed": "Kunne ikke opprette"
+    },
+    "broadcast": {
+      "heading": "Send melding",
+      "subheading": "Varsel i appen + push til valgte brukere",
+      "allRoles": "Alle roller",
+      "trainers": "Trenere",
+      "dancers": "Dansere",
+      "parents": "Foreldre",
+      "allClubs": "Alle klubber",
+      "titlePlaceholder": "Tittel (valgfritt)",
+      "bodyPlaceholder": "Meldingstekst…",
+      "sending": "Sender…",
+      "send": "Send til {count}",
+      "confirmSend": "Sende melding til {count} bruker(e)?",
+      "sentInfo": "Sendt til {count} bruker(e)"
+    },
+    "trainerOverview": {
+      "heading": "Treneroversikt",
+      "stats": "{bookedCount} bookinger · {availableCount} ledige fremover"
+    },
+    "stats": {
+      "dancers": "Dansere",
+      "parents": "Foreldre",
+      "trainers": "Trenere"
+    },
+    "userList": {
+      "allUsers": "Alle brukere",
+      "close": "✕ Lukk",
+      "unknownClub": "Ukjent klubb",
+      "confirmDelete": "Slette «{name}» for godt? Bookinger, mål og resultater forsvinner også.",
+      "deleteUser": "Slett bruker",
+      "delete": "Slett",
+      "deleteFailed": "Kunne ikke slette: {error}"
+    },
+    "feedback": {
+      "heading": "Tilbakemeldinger",
+      "empty": "Ingen tilbakemeldinger ennå"
+    }
   }
 }

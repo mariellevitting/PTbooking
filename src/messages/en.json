@@ -754,5 +754,81 @@
     "addPlaceholder": "Add a dancer",
     "add": "Add",
     "added": "Dancer added!"
+  },
+  "admin": {
+    "roleLabel": {
+      "dancer": "Dancer",
+      "parent": "Parent",
+      "trainer": "Trainer"
+    },
+    "timeAgo": {
+      "days": "{count, plural, one {# day ago} other {# days ago}}",
+      "hours": "{count, plural, one {# hour ago} other {# hours ago}}",
+      "minutes": "{count} min ago"
+    },
+    "completed": "Completed",
+    "notBooked": "Not booked",
+    "free": "Free",
+    "upcoming": "Upcoming",
+    "noLessonsThisWeek": "No lessons this week",
+    "weekLabel": "{startDay} {startMonth} – {endDay} {endMonth}",
+    "heading": "Admin",
+    "subheading": "Only visible to trainers · {count} users total",
+    "clubs": {
+      "heading": "Clubs",
+      "cancel": "Cancel",
+      "newClub": "+ New club",
+      "namePlaceholder": "Club name (e.g. Victory Dance)",
+      "shortNamePlaceholder": "Short name (optional)",
+      "creating": "Creating…",
+      "create": "Create club",
+      "hint": "Registration codes (trainer/dancer/parent), prices, payment and dance styles are filled in under \"Edit settings\" afterwards.",
+      "memberCount": "{count} members",
+      "editSettings": "Edit settings →",
+      "codesHeading": "Club codes",
+      "codeTrainer": "Trainer",
+      "codeDancer": "Dancer",
+      "codeParent": "Parent",
+      "noCodesHint": "Uses env variables (Evolution)",
+      "unknownError": "Unknown error",
+      "createFailed": "Couldn't create"
+    },
+    "broadcast": {
+      "heading": "Send message",
+      "subheading": "In-app notification + push to selected users",
+      "allRoles": "All roles",
+      "trainers": "Trainers",
+      "dancers": "Dancers",
+      "parents": "Parents",
+      "allClubs": "All clubs",
+      "titlePlaceholder": "Title (optional)",
+      "bodyPlaceholder": "Message text…",
+      "sending": "Sending…",
+      "send": "Send to {count}",
+      "confirmSend": "Send message to {count} user(s)?",
+      "sentInfo": "Sent to {count} user(s)"
+    },
+    "trainerOverview": {
+      "heading": "Trainer overview",
+      "stats": "{bookedCount} bookings · {availableCount} upcoming free"
+    },
+    "stats": {
+      "dancers": "Dancers",
+      "parents": "Parents",
+      "trainers": "Trainers"
+    },
+    "userList": {
+      "allUsers": "All users",
+      "close": "✕ Close",
+      "unknownClub": "Unknown club",
+      "confirmDelete": "Permanently delete «{name}»? Bookings, goals and results will also be removed.",
+      "deleteUser": "Delete user",
+      "delete": "Delete",
+      "deleteFailed": "Couldn't delete: {error}"
+    },
+    "feedback": {
+      "heading": "Feedback",
+      "empty": "No feedback yet"
+    }
   }
 }
