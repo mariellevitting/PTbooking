@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { useTranslations } from "next-intl";
 import { useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
 import { Button } from "@/components/ui/button";
@@ -43,6 +44,7 @@ function Section({ title, children }: { title: string; children: React.ReactNode
 }
 
 export default function ClubSettingsForm({ club }: { club: Club }) {
+  const t = useTranslations("admin.clubSettings");
   const router = useRouter();
   const [form, setForm] = useState({
     name: club.name ?? "",
@@ -123,25 +125,25 @@ export default function ClubSettingsForm({ club }: { club: Club }) {
 
   return (
     <div className="space-y-5">
-      <Section title="Klubb">
+      <Section title={t("sectionClub")}>
         <div>
-          <Label>Navn</Label>
+          <Label>{t("name")}</Label>
           <Input value={form.name} onChange={e => set("name", e.target.value)} />
         </div>
         <div>
-          <Label hint="Kort navn som vises i appen">Kortnavn</Label>
+          <Label hint={t("shortNameHint")}>{t("shortName")}</Label>
           <Input value={form.short_name} onChange={e => set("short_name", e.target.value)} />
         </div>
         <div>
-          <Label>Sted</Label>
+          <Label>{t("city")}</Label>
           <Input value={form.city} onChange={e => set("city", e.target.value)} />
         </div>
         <div>
-          <Label hint="Vises på registreringssiden">Nettside</Label>
+          <Label hint={t("websiteHint")}>{t("website")}</Label>
           <Input value={form.website} onChange={e => set("website", e.target.value)} placeholder="https://" />
         </div>
         <div>
-          <Label hint="Ikke i bruk i appen ennå">Klubbfarge</Label>
+          <Label hint={t("clubColorHint")}>{t("clubColor")}</Label>
           <div className="flex items-center gap-2">
             <input
               type="color"
@@ -154,31 +156,31 @@ export default function ClubSettingsForm({ club }: { club: Club }) {
         </div>
       </Section>
 
-      <Section title="Registreringskoder">
+      <Section title={t("sectionCodes")}>
         <p className="text-xs text-gray-400 dark:text-gray-500 -mt-2">
-          Trener-, danser- og foreldrekoden er det medlemmene skriver inn ved registrering. Del dem kun internt i klubben.
+          {t("codesHint")}
         </p>
         <div>
-          <Label>Trenerkode</Label>
-          <Input value={form.trainer_code} onChange={e => set("trainer_code", e.target.value)} placeholder="F.eks. VICTORY-TRENER2026!" />
+          <Label>{t("trainerCode")}</Label>
+          <Input value={form.trainer_code} onChange={e => set("trainer_code", e.target.value)} placeholder={t("trainerCodePlaceholder")} />
         </div>
         <div>
-          <Label>Danserkode</Label>
-          <Input value={form.dancer_code} onChange={e => set("dancer_code", e.target.value)} placeholder="F.eks. VICTORY-DANSER2026!" />
+          <Label>{t("dancerCode")}</Label>
+          <Input value={form.dancer_code} onChange={e => set("dancer_code", e.target.value)} placeholder={t("dancerCodePlaceholder")} />
         </div>
         <div>
-          <Label>Foreldrekode</Label>
-          <Input value={form.parent_code} onChange={e => set("parent_code", e.target.value)} placeholder="F.eks. VICTORY-FORELDER2026!" />
+          <Label>{t("parentCode")}</Label>
+          <Input value={form.parent_code} onChange={e => set("parent_code", e.target.value)} placeholder={t("parentCodePlaceholder")} />
         </div>
         <div>
-          <Label hint="Bare for lenkeadressen /register/DENNE – ikke noe medlemmene skriver inn">Lenke-kode</Label>
+          <Label hint={t("inviteCodeHint")}>{t("inviteCode")}</Label>
           <Input value={form.invite_code} onChange={e => set("invite_code", e.target.value.toUpperCase())} />
         </div>
       </Section>
 
-      <Section title="Privattimer">
+      <Section title={t("sectionLessons")}>
         <div>
-          <Label hint="Introtekst i «Bestille privattimer»">Info-tekst</Label>
+          <Label hint={t("lessonInfoHint")}>{t("lessonInfo")}</Label>
           <textarea
             value={form.lesson_info}
             onChange={e => set("lesson_info", e.target.value)}
@@ -187,7 +189,7 @@ export default function ClubSettingsForm({ club }: { club: Club }) {
           />
         </div>
         <div>
-          <Label>Varighet (minutter)</Label>
+          <Label>{t("lessonDuration")}</Label>
           <Input
             type="number"
             value={form.lesson_duration_min}
@@ -195,11 +197,11 @@ export default function ClubSettingsForm({ club }: { club: Club }) {
           />
         </div>
         <div>
-          <Label hint="Tekst om pris. Skriv **tekst** for fet skrift.">Pris-tekst</Label>
+          <Label hint={t("lessonPriceTextHint")}>{t("lessonPriceText")}</Label>
           <Input value={form.lesson_price_text} onChange={e => set("lesson_price_text", e.target.value)} />
         </div>
         <div>
-          <Label hint="Brukes når en trener ikke har satt egen pris">Standardpris (kr)</Label>
+          <Label hint={t("defaultPriceHint")}>{t("defaultPrice")}</Label>
           <Input
             type="number"
             value={form.default_price}
@@ -208,14 +210,14 @@ export default function ClubSettingsForm({ club }: { club: Club }) {
         </div>
       </Section>
 
-      <Section title="Betaling">
+      <Section title={t("sectionPayment")}>
         <div>
-          <Label hint='Kort navn, f.eks. "Spond" eller "Vipps"'>Betalingsmåte</Label>
+          <Label hint={t("paymentLabelHint")}>{t("paymentLabel")}</Label>
           <Input value={form.payment_label} onChange={e => set("payment_label", e.target.value)} />
         </div>
         <div>
-          <Label hint="Vises til danser/forelder. **tekst** blir en lenke hvis lenke er satt under.">
-            Betalingstekst
+          <Label hint={t("paymentInfoHint")}>
+            {t("paymentInfo")}
           </Label>
           <textarea
             value={form.payment_info}
@@ -225,11 +227,11 @@ export default function ClubSettingsForm({ club }: { club: Club }) {
           />
         </div>
         <div>
-          <Label hint="Valgfri lenke (Spond o.l.)">Betalingslenke</Label>
+          <Label hint={t("paymentUrlHint")}>{t("paymentUrl")}</Label>
           <Input value={form.payment_url} onChange={e => set("payment_url", e.target.value)} placeholder="https://" />
         </div>
         <div>
-          <Label>«Husk kvittering»-tekst</Label>
+          <Label>{t("receiptNote")}</Label>
           <textarea
             value={form.receipt_note}
             onChange={e => set("receipt_note", e.target.value)}
@@ -239,20 +241,20 @@ export default function ClubSettingsForm({ club }: { club: Club }) {
         </div>
       </Section>
 
-      <Section title="Kontakt">
-        <p className="text-xs text-gray-400 dark:text-gray-500 -mt-2">Vises nederst i «Om privattimer»</p>
+      <Section title={t("sectionContact")}>
+        <p className="text-xs text-gray-400 dark:text-gray-500 -mt-2">{t("contactHint")}</p>
         <div>
-          <Label>Kontaktperson</Label>
+          <Label>{t("contactName")}</Label>
           <Input value={form.contact_name} onChange={e => set("contact_name", e.target.value)} />
         </div>
         <div>
-          <Label hint="E-post eller telefon">Kontaktinfo</Label>
+          <Label hint={t("contactInfoHint")}>{t("contactInfo")}</Label>
           <Input value={form.contact_info} onChange={e => set("contact_info", e.target.value)} />
         </div>
       </Section>
 
-      <Section title="Dansestiler">
-        <p className="text-xs text-gray-400 dark:text-gray-500 -mt-2">Hvilke stiler klubben tilbyr</p>
+      <Section title={t("sectionStyles")}>
+        <p className="text-xs text-gray-400 dark:text-gray-500 -mt-2">{t("stylesHint")}</p>
         <div className="flex flex-wrap gap-2">
           {styleOptions.map(s => {
             const on = styles.includes(s);
@@ -283,7 +285,7 @@ export default function ClubSettingsForm({ club }: { club: Club }) {
           disabled={saving}
           className="w-full h-11 bg-[#3A3A3A] hover:bg-[#2a2a2a] dark:bg-[#c87de0] dark:hover:bg-[#b56fd0] dark:text-white text-base shadow-lg"
         >
-          {saving ? "Lagrer..." : saved ? "✓ Lagret" : "Lagre endringer"}
+          {saving ? t("saving") : saved ? t("saved") : t("saveChanges")}
         </Button>
       </div>
     </div>
