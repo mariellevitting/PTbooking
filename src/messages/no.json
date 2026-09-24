@@ -509,5 +509,30 @@
     "regularFinal": "Vanlig finale",
     "directFinal": "Direkte finale",
     "directFinalHint": "Direkte finale brukes når det er få deltakere, slik at alle går rett til finale."
+  },
+  "trainerSidebar": {
+    "myLessons": "Mine timer",
+    "addAvailability": "Legg ut tid",
+    "bookForDancer": "Book for danser",
+    "history": "Historikk",
+    "seasonGoals": "Sesongmål",
+    "competitions": "Konkurranser",
+    "profile": "Profil",
+    "admin": "Admin"
+  },
+  "profileForm": {
+    "profilePicture": "Profilbilde",
+    "uploading": "Laster opp...",
+    "personalInfo": "Personlig informasjon",
+    "name": "Navn",
+    "phone": "Telefon",
+    "phoneDigitsHint": "8 siffer",
+    "notifications": "Varsler",
+    "newSlotsTitle": "Nye ledige tider",
+    "newSlotsBody": "Varsel når trenere legger ut tider",
+    "genericError": "Noe gikk galt",
+    "updated": "Profilen er oppdatert!",
+    "saving": "Lagrer...",
+    "saveProfile": "Lagre profil"
   }
 }

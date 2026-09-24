@@ -509,5 +509,30 @@
     "regularFinal": "Regular final",
     "directFinal": "Direct final",
     "directFinalHint": "A direct final is used when there are few participants, so everyone goes straight to the final."
+  },
+  "trainerSidebar": {
+    "myLessons": "My lessons",
+    "addAvailability": "Add availability",
+    "bookForDancer": "Book for dancer",
+    "history": "History",
+    "seasonGoals": "Season goals",
+    "competitions": "Competitions",
+    "profile": "Profile",
+    "admin": "Admin"
+  },
+  "profileForm": {
+    "profilePicture": "Profile picture",
+    "uploading": "Uploading...",
+    "personalInfo": "Personal information",
+    "name": "Name",
+    "phone": "Phone",
+    "phoneDigitsHint": "8 digits",
+    "notifications": "Notifications",
+    "newSlotsTitle": "New open times",
+    "newSlotsBody": "Get notified when trainers post new times",
+    "genericError": "Something went wrong",
+    "updated": "Profile updated!",
+    "saving": "Saving...",
+    "saveProfile": "Save profile"
   }
 }

@@ -2,23 +2,13 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { useTranslations } from "next-intl";
 import { Calendar, Clock, UserCircle, Trophy, History, PlusCircle, Menu, X, LayoutDashboard, Target } from "lucide-react";
 import { useState } from "react";
 import LogoutButton from "@/components/LogoutButton";
 import NotificationBell from "@/components/NotificationBell";
 import ThemeToggle from "@/components/ThemeToggle";
 import FeedbackButton from "@/components/FeedbackButton";
-
-const NAV = [
-  { href: "/trainer/dashboard", label: "Mine timer", icon: Calendar },
-  { href: "/trainer/availability", label: "Legg ut tid", icon: PlusCircle },
-  { href: "/trainer/book-for-dancer", label: "Book for danser", icon: Clock },
-  { href: "/trainer/historikk", label: "Historikk", icon: History },
-  { href: "/trainer/sesongmal", label: "Sesongmål", icon: Target },
-  { href: "/trainer/konkurranser", label: "Konkurranser", icon: Trophy },
-  { href: "/trainer/profil", label: "Profil", icon: UserCircle },
-  { href: "/admin", label: "Admin", icon: LayoutDashboard },
-];
 
 interface Props {
   name: string;
@@ -29,6 +19,19 @@ interface Props {
 }
 
 export default function TrainerSidebar({ name, userId, email, avatarUrl, notifications }: Props) {
+  const t = useTranslations("trainerSidebar");
+  const tc = useTranslations("common");
+  const ta = useTranslations("auth");
+  const NAV = [
+    { href: "/trainer/dashboard", label: t("myLessons"), icon: Calendar },
+    { href: "/trainer/availability", label: t("addAvailability"), icon: PlusCircle },
+    { href: "/trainer/book-for-dancer", label: t("bookForDancer"), icon: Clock },
+    { href: "/trainer/historikk", label: t("history"), icon: History },
+    { href: "/trainer/sesongmal", label: t("seasonGoals"), icon: Target },
+    { href: "/trainer/konkurranser", label: t("competitions"), icon: Trophy },
+    { href: "/trainer/profil", label: t("profile"), icon: UserCircle },
+    { href: "/admin", label: t("admin"), icon: LayoutDashboard },
+  ];
   const isAdmin = email === "miemarielle@live.no";
   const pathname = usePathname();
   const [menuOpen, setMenuOpen] = useState(false);
@@ -55,7 +58,7 @@ export default function TrainerSidebar({ name, userId, email, avatarUrl, notific
           </div>
           <Link href="/trainer/profil" className="hover:opacity-80 transition-opacity">
             {avatarUrl
-              ? <img src={avatarUrl} alt="Profil" className="w-8 h-8 rounded-full object-cover border-2 border-[#E2A9F1]" />
+              ? <img src={avatarUrl} alt={tc("profile")} className="w-8 h-8 rounded-full object-cover border-2 border-[#E2A9F1]" />
               : <div className="w-8 h-8 rounded-full bg-[#E2A9F1] flex items-center justify-center text-white font-bold text-sm">{firstName.charAt(0)}</div>
             }
           </Link>
@@ -76,12 +79,12 @@ export default function TrainerSidebar({ name, userId, email, avatarUrl, notific
             <Link href="/trainer/profil" onClick={() => setMenuOpen(false)} className="px-6 pb-6 flex items-center gap-4 border-b hover:bg-gray-50 dark:hover:bg-gray-950 transition-colors">
               <div className="w-14 h-14 rounded-full bg-[#edd5f9] dark:bg-[#E2A9F1]/15 flex items-center justify-center overflow-hidden shrink-0">
                 {avatarUrl
-                  ? <img src={avatarUrl} alt="Profil" className="w-full h-full object-cover" />
+                  ? <img src={avatarUrl} alt={tc("profile")} className="w-full h-full object-cover" />
                   : <span className="text-2xl font-bold text-[#E2A9F1]">{firstName.charAt(0)}</span>}
               </div>
               <div>
                 <p className="font-bold text-gray-800 dark:text-gray-100">{name}</p>
-                <p className="text-xs text-[#E2A9F1]">Se profil →</p>
+                <p className="text-xs text-[#E2A9F1]">{tc("seeProfile")}</p>
               </div>
             </Link>
             {/* Menyvalg */}
@@ -104,7 +107,7 @@ export default function TrainerSidebar({ name, userId, email, avatarUrl, notific
             {/* Logg ut */}
             <div className="border-t dark:border-gray-700 px-6 py-4 space-y-3 text-sm text-gray-400 dark:text-gray-500">
               <Link href="/om" onClick={() => setMenuOpen(false)} className="flex items-center gap-2 hover:text-gray-600">
-                Om Danceitude
+                {tc("aboutDanceitude")}
               </Link>
               <LogoutButton />
             </div>
@@ -126,7 +129,7 @@ export default function TrainerSidebar({ name, userId, email, avatarUrl, notific
               )}
               <div className="min-w-0">
                 <p className="text-sm font-semibold text-gray-800 dark:text-gray-100 truncate">{firstName}</p>
-                <p className="text-xs text-gray-400 dark:text-gray-500">Trener</p>
+                <p className="text-xs text-gray-400 dark:text-gray-500">{ta("roles.trainer.label")}</p>
               </div>
             </Link>
             <div className="flex items-center gap-3">
@@ -154,7 +157,7 @@ export default function TrainerSidebar({ name, userId, email, avatarUrl, notific
         </nav>
         <div className="p-3 border-t border-gray-100 dark:border-gray-800 space-y-1">
           <Link href="/om" className="flex items-center gap-2 px-3 py-2 rounded-xl text-sm text-gray-400 dark:text-gray-500 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors">
-            Om Danceitude
+            {tc("aboutDanceitude")}
           </Link>
           <LogoutButton />
         </div>
