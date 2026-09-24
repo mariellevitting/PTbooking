@@ -1,9 +1,11 @@
 import { redirect } from "next/navigation";
+import { getTranslations } from "next-intl/server";
 import { createClient } from "@/lib/supabase/server";
 import DeleteSlotForm from "./DeleteSlotForm";
 
 export default async function SlettSlotPage({ params }: { params: Promise<{ slotId: string }> }) {
   const { slotId } = await params;
+  const t = await getTranslations("trainer.deleteSlotPage");
   const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) redirect("/login");
@@ -21,7 +23,7 @@ export default async function SlettSlotPage({ params }: { params: Promise<{ slot
   return (
     <main className="bg-gray-50 dark:bg-gray-950 p-6">
       <div className="max-w-lg mx-auto">
-        <h1 className="text-2xl font-bold mb-6">Slett ledig tid</h1>
+        <h1 className="text-2xl font-bold mb-6">{t("heading")}</h1>
         <DeleteSlotForm slotId={slotId} startAt={slot.start_at} endAt={slot.end_at} />
       </div>
     </main>

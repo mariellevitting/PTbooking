@@ -329,6 +329,35 @@
       "notifyMessage": "Treneren har booket en privattime for deg i {style} – {time}",
       "unknownStyle": "ukjent stil",
       "atTime": "kl. {time}"
+    },
+    "konkurranser": {
+      "heading": "Kommende konkurranser"
+    },
+    "sesongmal": {
+      "heading": "Sesongmål",
+      "subheading": "Søk opp en danser for å se mål og poeng",
+      "empty": "Ingen har delt sesongmål ennå",
+      "searchPlaceholder": "Søk etter navn...",
+      "noResults": "Ingen treff på «{query}»",
+      "child": "Barn",
+      "childOf": "Barn · {parentName}",
+      "parent": "Forelder",
+      "dancer": "Danser",
+      "seasonGoals": "Sesongmål",
+      "noGoalsShared": "Ingen mål delt ennå",
+      "goalReached": "Mål nådd",
+      "freestyle": "Freestyle",
+      "slow": "Slow"
+    },
+    "deleteSlotPage": {
+      "heading": "Slett ledig tid",
+      "timeBeingDeleted": "Tid som slettes",
+      "warning": "Tidsluken fjernes og vil ikke lenger være synlig for dansere.",
+      "genericError": "Noe gikk galt, prøv igjen",
+      "deleting": "Sletter...",
+      "deleteTime": "Slett tid",
+      "goBack": "Gå tilbake",
+      "atTime": "kl. {time}"
     }
   },
   "om": {

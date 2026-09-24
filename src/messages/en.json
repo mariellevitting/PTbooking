@@ -329,6 +329,35 @@
       "notifyMessage": "The trainer has booked a lesson for you in {style} – {time}",
       "unknownStyle": "an unknown style",
       "atTime": "at {time}"
+    },
+    "konkurranser": {
+      "heading": "Upcoming competitions"
+    },
+    "sesongmal": {
+      "heading": "Season goals",
+      "subheading": "Search for a dancer to see goals and points",
+      "empty": "No one has shared season goals yet",
+      "searchPlaceholder": "Search by name...",
+      "noResults": "No matches for «{query}»",
+      "child": "Child",
+      "childOf": "Child · {parentName}",
+      "parent": "Parent",
+      "dancer": "Dancer",
+      "seasonGoals": "Season goals",
+      "noGoalsShared": "No goals shared yet",
+      "goalReached": "Goal reached",
+      "freestyle": "Freestyle",
+      "slow": "Slow"
+    },
+    "deleteSlotPage": {
+      "heading": "Delete available time",
+      "timeBeingDeleted": "Time being deleted",
+      "warning": "This slot will be removed and no longer visible to dancers.",
+      "genericError": "Something went wrong, try again",
+      "deleting": "Deleting...",
+      "deleteTime": "Delete time",
+      "goBack": "Go back",
+      "atTime": "at {time}"
     }
   },
   "om": {
