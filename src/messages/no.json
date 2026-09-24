@@ -566,5 +566,15 @@
       "title": "Sesongmål",
       "description": "Skriv inn hva du vil jobbe med denne sesongen – triks du vil lære, mål for konkurranser eller hva du vil oppnå."
     }
+  },
+  "competitionList": {
+    "noUpcoming": "Ingen kommende konkurranser",
+    "nextCompetition": "Neste konkurranse",
+    "daysLeft": "dager igjen",
+    "days": "dager",
+    "attendingCount": "{count} stk skal delta",
+    "unknownName": "Ukjent",
+    "attending": "Deltar",
+    "attend": "Delta"
   }
 }

@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import { useTranslations } from "next-intl";
 import { createClient } from "@/lib/supabase/client";
 import { Check, ChevronDown, ChevronUp } from "lucide-react";
 
@@ -26,6 +27,7 @@ interface Props {
 }
 
 export default function CompetitionList({ userId, showCountdown = false, isTrainer = false, clubId }: Props) {
+  const t = useTranslations("competitionList");
   const upcoming = COMPETITIONS.filter(c => daysUntil(c.date) > 0);
   const next = upcoming[0];
   const rest = upcoming.slice(1);
@@ -84,7 +86,7 @@ export default function CompetitionList({ userId, showCountdown = false, isTrain
     if (data) {
       setParticipants(prev => ({
         ...prev,
-        [name]: data.map((r: any) => r.profiles?.name ?? "Ukjent").filter(Boolean),
+        [name]: data.map((r: any) => r.profiles?.name ?? t("unknownName")).filter(Boolean),
       }));
     }
   }
@@ -116,25 +118,25 @@ export default function CompetitionList({ userId, showCountdown = false, isTrain
   }
 
   if (upcoming.length === 0) {
-    return <p className="text-sm text-gray-400 dark:text-gray-500 text-center py-6">Ingen kommende konkurranser</p>;
+    return <p className="text-sm text-gray-400 dark:text-gray-500 text-center py-6">{t("noUpcoming")}</p>;
   }
 
   return (
     <div className="space-y-3">
       {showCountdown && next && (
         <div className="bg-[#3A3A3A] rounded-2xl px-5 py-4">
-          <p className="text-xs text-[#e8c4f5] font-semibold uppercase tracking-wide mb-1">🏆 Neste konkurranse</p>
+          <p className="text-xs text-[#e8c4f5] font-semibold uppercase tracking-wide mb-1">🏆 {t("nextCompetition")}</p>
           <p className="text-lg font-bold text-white">{next.short}</p>
           <p className="text-sm text-[#e8c4f5] mt-0.5">{next.dateLabel}{next.location ? ` · ${next.location}` : ""}</p>
           <div className="mt-3 flex items-end justify-between">
             <div className="flex items-end gap-1">
               <p className="text-4xl font-bold text-white">{daysUntil(next.date)}</p>
-              <p className="text-sm text-[#e8c4f5] mb-1">dager igjen</p>
+              <p className="text-sm text-[#e8c4f5] mb-1">{t("daysLeft")}</p>
             </div>
             <div className="flex flex-col items-end gap-1.5">
               {(counts[next.name] ?? 0) > 0 && (
                 <button onClick={() => toggleExpanded(next.name)} className="flex items-center gap-1 text-xs text-[#e8c4f5] hover:text-white">
-                  {counts[next.name]} stk skal delta
+                  {t("attendingCount", { count: counts[next.name] })}
                   {expanded === next.name ? <ChevronUp size={12} /> : <ChevronDown size={12} />}
                 </button>
               )}
@@ -165,13 +167,13 @@ export default function CompetitionList({ userId, showCountdown = false, isTrain
               <div className="flex flex-col items-end gap-1 shrink-0">
                 {(counts[c.name] ?? 0) > 0 && (
                   <button onClick={() => toggleExpanded(c.name)} className="flex items-center gap-1 text-xs text-gray-400 dark:text-gray-500 hover:text-[#E2A9F1]">
-                    {counts[c.name]} stk skal delta
+                    {t("attendingCount", { count: counts[c.name] })}
                     {expanded === c.name ? <ChevronUp size={12} /> : <ChevronDown size={12} />}
                   </button>
                 )}
                 <div className="flex items-center gap-2">
                   <span className="text-xs font-bold text-[#E2A9F1] bg-[#f5eeff] dark:bg-[#E2A9F1]/10 px-2 py-1 rounded-full whitespace-nowrap">
-                    {days} dager
+                    {days} {t("days")}
                   </span>
                   <DeltaButton name={c.name} participating={participating} toggling={toggling} onToggle={toggle} />
                 </div>
@@ -198,6 +200,7 @@ function DeltaButton({ name, participating, toggling, onToggle, variant = "light
   onToggle: (name: string) => void;
   variant?: "light" | "dark";
 }) {
+  const t = useTranslations("competitionList");
   const isOn = participating.has(name);
   const isLoading = toggling === name;
 
@@ -213,7 +216,7 @@ function DeltaButton({ name, participating, toggling, onToggle, variant = "light
         }`}
       >
         {isOn && <Check size={12} strokeWidth={3} />}
-        {isLoading ? "..." : isOn ? "Deltar" : "Delta"}
+        {isLoading ? "..." : isOn ? t("attending") : t("attend")}
       </button>
     );
   }
@@ -229,7 +232,7 @@ function DeltaButton({ name, participating, toggling, onToggle, variant = "light
       }`}
     >
       {isOn && <Check size={12} strokeWidth={3} />}
-      {isLoading ? "..." : isOn ? "Deltar" : "Delta"}
+      {isLoading ? "..." : isOn ? t("attending") : t("attend")}
     </button>
   );
 }

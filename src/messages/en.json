@@ -566,5 +566,15 @@
       "title": "Season goals",
       "description": "Write down what you want to work on this season – tricks you want to learn, competition goals, or what you want to achieve."
     }
+  },
+  "competitionList": {
+    "noUpcoming": "No upcoming competitions",
+    "nextCompetition": "Next competition",
+    "daysLeft": "days left",
+    "days": "days",
+    "attendingCount": "{count} attending",
+    "unknownName": "Unknown",
+    "attending": "Attending",
+    "attend": "Attend"
   }
 }
