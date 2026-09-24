@@ -1,4 +1,5 @@
 import { redirect } from "next/navigation";
+import { getTranslations } from "next-intl/server";
 import { createClient } from "@/lib/supabase/server";
 import ProfilForm from "./ProfilForm";
 import LanguageSwitcher from "@/components/LanguageSwitcher";
@@ -6,13 +7,19 @@ import Link from "next/link";
 import { ArrowLeft, Users } from "lucide-react";
 import { getClubById, danceStylesFor } from "@/lib/club";
 
-const ROLE_LABEL: Record<string, string> = {
-  trainer: "Trener",
-  dancer: "Danser",
-  parent: "Forelder",
-};
-
 export default async function TrainerProfilPage() {
+  const t = await getTranslations("common");
+  const tp = await getTranslations("trainer.profilePage");
+  const roleLabel: Record<string, string> = {
+    trainer: tp("roleLabel.trainer"),
+    dancer: tp("roleLabel.dancer"),
+    parent: tp("roleLabel.parent"),
+  };
+  const roleLabelPlural: Record<string, string> = {
+    trainer: tp("roleLabelPlural.trainer"),
+    dancer: tp("roleLabelPlural.dancer"),
+    parent: tp("roleLabelPlural.parent"),
+  };
   const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) redirect("/login");
@@ -47,7 +54,7 @@ export default async function TrainerProfilPage() {
         <Link href="/trainer/dashboard" className="inline-flex items-center justify-center w-12 h-12 rounded-full bg-gray-100 dark:bg-gray-800 hover:bg-[#E2A9F1]/20 text-gray-700 dark:text-gray-200 mb-2 -ml-2">
           <ArrowLeft size={24} strokeWidth={2.5} />
         </Link>
-        <h1 className="text-2xl font-bold mb-6">Min profil</h1>
+        <h1 className="text-2xl font-bold mb-6">{t("myProfile")}</h1>
         <ProfilForm
           userId={user.id}
           name={profile.name}
@@ -70,7 +77,7 @@ export default async function TrainerProfilPage() {
             <div className="bg-white dark:bg-gray-900 rounded-2xl border dark:border-gray-700 p-5 mt-6">
               <h2 className="font-semibold text-base flex items-center gap-2 mb-4">
                 <Users size={16} className="text-[#E2A9F1]" />
-                Registrerte brukere ({allUsers.length})
+                {tp("registeredUsers", { count: allUsers.length })}
               </h2>
               <div className="grid grid-cols-3 gap-3 mb-5">
                 {(["trainer", "dancer", "parent"] as const).map((role) => (
@@ -78,7 +85,7 @@ export default async function TrainerProfilPage() {
                     <p className="text-2xl font-bold text-[#E2A9F1]">
                       {allUsers.filter(u => u.role === role).length}
                     </p>
-                    <p className="text-xs text-gray-500 dark:text-gray-400 mt-0.5">{ROLE_LABEL[role]}e{role === "trainer" ? "" : ""}</p>
+                    <p className="text-xs text-gray-500 dark:text-gray-400 mt-0.5">{roleLabelPlural[role]}</p>
                   </div>
                 ))}
               </div>
@@ -101,7 +108,7 @@ export default async function TrainerProfilPage() {
                       u.role === "dancer" ? "bg-blue-100 text-blue-600" :
                       "bg-green-100 text-green-600"
                     }`}>
-                      {ROLE_LABEL[u.role]}
+                      {roleLabel[u.role]}
                     </span>
                   </div>
                 ))}

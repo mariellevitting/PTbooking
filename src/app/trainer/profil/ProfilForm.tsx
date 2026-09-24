@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useRef } from "react";
+import { useTranslations } from "next-intl";
 import { useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
 import { Button } from "@/components/ui/button";
@@ -24,6 +25,8 @@ interface Props {
 const FALLBACK_STYLES = ["Slow", "Freestyle", "Jazz", "Moderne", "Freestyle dobbel", "Slow dobbel", "Akro", "Hiphop", "Show"];
 
 export default function ProfilForm({ userId, name, phone, bio, price, priceDouble, danceStyles, styleOptions, avatarUrl }: Props) {
+  const t = useTranslations("profileForm");
+  const tp = useTranslations("trainer.profilForm");
   const allStyles = styleOptions && styleOptions.length > 0 ? styleOptions : FALLBACK_STYLES;
   const router = useRouter();
   const [nameVal, setNameVal] = useState(name);
@@ -74,7 +77,7 @@ export default function ProfilForm({ userId, name, phone, bio, price, priceDoubl
   async function handleSave(e: React.FormEvent) {
     e.preventDefault();
     if (selected.size === 0) {
-      setError("Velg minst én dansestil");
+      setError(tp("selectAtLeastOneStyle"));
       return;
     }
     setSaving(true);
@@ -99,7 +102,7 @@ export default function ProfilForm({ userId, name, phone, bio, price, priceDoubl
       .eq("id", userId);
 
     if (profileError || trainerError) {
-      setError("Noe gikk galt, prøv igjen");
+      setError(tp("genericErrorRetry"));
     } else {
       setSuccess(true);
     }
@@ -114,7 +117,7 @@ export default function ProfilForm({ userId, name, phone, bio, price, priceDoubl
           <div className="relative">
             <div className="w-24 h-24 rounded-full bg-[#edd5f9] dark:bg-[#E2A9F1]/15 flex items-center justify-center overflow-hidden">
               {avatar ? (
-                <img src={avatar} alt="Profilbilde" className="w-full h-full object-cover" />
+                <img src={avatar} alt={t("profilePicture")} className="w-full h-full object-cover" />
               ) : (
                 <span className="text-3xl font-bold text-[#E2A9F1]">{nameVal.charAt(0)}</span>
               )}
@@ -125,24 +128,24 @@ export default function ProfilForm({ userId, name, phone, bio, price, priceDoubl
             </button>
           </div>
           <input ref={fileRef} type="file" accept="image/*" className="hidden" onChange={handleAvatarUpload} />
-          {uploading && <p className="text-xs text-gray-400 dark:text-gray-500">Laster opp...</p>}
+          {uploading && <p className="text-xs text-gray-400 dark:text-gray-500">{t("uploading")}</p>}
         </CardContent>
       </Card>
 
       <Card>
         <CardHeader>
           <CardTitle className="text-base flex items-center gap-2">
-            <User size={16} className="text-[#E2A9F1]" /> Personlig informasjon
+            <User size={16} className="text-[#E2A9F1]" /> {t("personalInfo")}
           </CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">
           <div className="space-y-1.5">
-            <label className="text-sm font-medium">Navn</label>
+            <label className="text-sm font-medium">{t("name")}</label>
             <Input value={nameVal} onChange={(e) => setNameVal(e.target.value)} required />
           </div>
           <div className="space-y-1.5">
             <label className="text-sm font-medium flex items-center gap-1.5">
-              <Phone size={14} className="text-gray-400 dark:text-gray-500" /> Telefon
+              <Phone size={14} className="text-gray-400 dark:text-gray-500" /> {t("phone")}
             </label>
             <Input
               value={phoneVal}
@@ -153,46 +156,46 @@ export default function ProfilForm({ userId, name, phone, bio, price, priceDoubl
                 if (digits.length <= maxDigits) setPhoneVal(raw);
               }}
               onKeyDown={(e) => { if (!/[0-9+\s]/.test(e.key) && !["Backspace", "Delete", "ArrowLeft", "ArrowRight", "Tab"].includes(e.key)) e.preventDefault(); }}
-              placeholder="8 siffer"
+              placeholder={t("phoneDigitsHint")}
               type="tel"
               inputMode="numeric"
             />
           </div>
           <div className="space-y-1.5">
             <label className="text-sm font-medium flex items-center gap-1.5">
-              <FileText size={14} className="text-gray-400 dark:text-gray-500" /> Bio (valgfritt)
+              <FileText size={14} className="text-gray-400 dark:text-gray-500" /> {tp("bio")}
             </label>
             <textarea
               value={bioVal}
               onChange={(e) => setBioVal(e.target.value)}
               rows={3}
-              placeholder="Kort beskrivelse av deg som trener..."
+              placeholder={tp("bioPlaceholder")}
               className="w-full border dark:border-gray-700 bg-white dark:bg-gray-900 text-gray-900 dark:text-white rounded-lg px-3 py-2 text-sm resize-none focus:outline-none focus:ring-2 focus:ring-[#E2A9F1]"
             />
           </div>
           <div className="space-y-1.5">
             <label className="text-sm font-medium flex items-center gap-1.5">
-              <Wallet size={14} className="text-gray-400 dark:text-gray-500" /> Timepris (kr)
+              <Wallet size={14} className="text-gray-400 dark:text-gray-500" /> {tp("priceLabel")}
             </label>
             <Input
               value={priceVal}
               onChange={(e) => setPriceVal(e.target.value.replace(/[^0-9]/g, ""))}
-              placeholder="F.eks. 150"
+              placeholder={tp("pricePlaceholder")}
               inputMode="numeric"
             />
-            <p className="text-xs text-gray-400 dark:text-gray-500">Prisen danseren ser når de booker en vanlig time hos deg.</p>
+            <p className="text-xs text-gray-400 dark:text-gray-500">{tp("priceHint")}</p>
           </div>
           <div className="space-y-1.5">
             <label className="text-sm font-medium flex items-center gap-1.5">
-              <Wallet size={14} className="text-gray-400 dark:text-gray-500" /> Timepris dobbel / par (kr)
+              <Wallet size={14} className="text-gray-400 dark:text-gray-500" /> {tp("priceDoubleLabel")}
             </label>
             <Input
               value={priceDoubleVal}
               onChange={(e) => setPriceDoubleVal(e.target.value.replace(/[^0-9]/g, ""))}
-              placeholder="F.eks. 200"
+              placeholder={tp("priceDoublePlaceholder")}
               inputMode="numeric"
             />
-            <p className="text-xs text-gray-400 dark:text-gray-500">La stå tom hvis du ikke tar dobbeltimer, eller hvis prisen er den samme.</p>
+            <p className="text-xs text-gray-400 dark:text-gray-500">{tp("priceDoubleHint")}</p>
           </div>
         </CardContent>
       </Card>
@@ -200,7 +203,7 @@ export default function ProfilForm({ userId, name, phone, bio, price, priceDoubl
       <Card>
         <CardHeader>
           <CardTitle className="text-base flex items-center gap-2">
-            <Music size={16} className="text-[#E2A9F1]" /> Dansestiler du tilbyr
+            <Music size={16} className="text-[#E2A9F1]" /> {tp("danceStylesHeading")}
           </CardTitle>
         </CardHeader>
         <CardContent>
@@ -229,7 +232,7 @@ export default function ProfilForm({ userId, name, phone, bio, price, priceDoubl
             })}
           </div>
           {selected.size > 0 && (
-            <p className="text-xs text-[#E2A9F1] mt-3">{selected.size} stil{selected.size !== 1 ? "er" : ""} valgt</p>
+            <p className="text-xs text-[#E2A9F1] mt-3">{tp("stylesSelected", { count: selected.size })}</p>
           )}
         </CardContent>
       </Card>
@@ -237,12 +240,12 @@ export default function ProfilForm({ userId, name, phone, bio, price, priceDoubl
       {error && <p className="text-sm text-red-500">{error}</p>}
       {success && (
         <div className="flex items-center gap-2 text-[#c87de0] text-sm bg-[#f5eeff] dark:bg-[#E2A9F1]/10 border border-[#E2A9F1]/40 rounded-xl p-3">
-          <Check size={16} /> Profilen er oppdatert!
+          <Check size={16} /> {t("updated")}
         </div>
       )}
 
       <Button type="submit" className="w-full bg-[#3A3A3A] hover:bg-[#2a2a2a] dark:bg-[#c87de0] dark:hover:bg-[#b56fd0] dark:text-white" disabled={saving || success}>
-        {saving ? "Lagrer..." : "Lagre profil"}
+        {saving ? t("saving") : t("saveProfile")}
       </Button>
       <DeleteAccountSection userId={userId} />
     </form>

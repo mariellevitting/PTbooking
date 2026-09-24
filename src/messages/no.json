@@ -65,15 +65,28 @@
       "bookLesson": "Book privattime",
       "noCompleted": "Ingen gjennomførte timer ennå",
       "bookShort": "+ Book time"
-    }
+    },
+    "myProfile": "Min profil"
   },
   "auth": {
     "roles": {
-      "dancer": { "label": "Danser", "description": "Jeg booker timer for meg selv" },
-      "parent": { "label": "Forelder", "description": "Jeg booker timer for mitt barn" },
-      "trainer": { "label": "Trener", "description": "Jeg tilbyr privattimer" }
+      "dancer": {
+        "label": "Danser",
+        "description": "Jeg booker timer for meg selv"
+      },
+      "parent": {
+        "label": "Forelder",
+        "description": "Jeg booker timer for mitt barn"
+      },
+      "trainer": {
+        "label": "Trener",
+        "description": "Jeg tilbyr privattimer"
+      }
     },
-    "tabs": { "login": "Logg inn", "register": "Registrer" },
+    "tabs": {
+      "login": "Logg inn",
+      "register": "Registrer"
+    },
     "login": {
       "heading": "Logg inn",
       "welcomeBack": "Velkommen tilbake!",
@@ -253,6 +266,33 @@
       "lessonsWith": "{count, plural, one {# privattime} other {# privattimer}} med {name}",
       "seeProfile": "Se profil",
       "paidOfTotal": "{paid} av {total} betalt"
+    },
+    "profilForm": {
+      "bio": "Bio (valgfritt)",
+      "bioPlaceholder": "Kort beskrivelse av deg som trener...",
+      "priceLabel": "Timepris (kr)",
+      "pricePlaceholder": "F.eks. 150",
+      "priceHint": "Prisen danseren ser når de booker en vanlig time hos deg.",
+      "priceDoubleLabel": "Timepris dobbel / par (kr)",
+      "priceDoublePlaceholder": "F.eks. 200",
+      "priceDoubleHint": "La stå tom hvis du ikke tar dobbeltimer, eller hvis prisen er den samme.",
+      "danceStylesHeading": "Dansestiler du tilbyr",
+      "selectAtLeastOneStyle": "Velg minst én dansestil",
+      "genericErrorRetry": "Noe gikk galt, prøv igjen",
+      "stylesSelected": "{count, plural, one {# stil valgt} other {# stiler valgt}}"
+    },
+    "profilePage": {
+      "roleLabel": {
+        "trainer": "Trener",
+        "dancer": "Danser",
+        "parent": "Forelder"
+      },
+      "registeredUsers": "Registrerte brukere ({count})",
+      "roleLabelPlural": {
+        "trainer": "Trenere",
+        "dancer": "Dansere",
+        "parent": "Foreldere"
+      }
     }
   },
   "om": {
@@ -352,11 +392,26 @@
     "subheading": "Trenger du hjelp med Danceitude? Her finner du svar på vanlige spørsmål.",
     "faqHeading": "Vanlige spørsmål",
     "faq": [
-      { "q": "Hvordan booker jeg en privattime?", "a": "Gå til «Book time» fra dashbordet, velg trener, dato og tidspunkt, og bekreft bookingen." },
-      { "q": "Hvordan avbestiller jeg en time?", "a": "Gå til «Mine timer» og trykk på timen du vil avbestille. Du finner avbestillingsknappen der." },
-      { "q": "Jeg har glemt passordet mitt – hva gjør jeg?", "a": "Gå til innloggingssiden og trykk «Glemt passordet?». Du vil motta en e-post med en lenke for å tilbakestille passordet." },
-      { "q": "Hvordan sletter jeg kontoen min?", "a": "Gå til Profil-siden og scroll ned til bunnen. Der finner du «Slett konto»-knappen. Kontoslettingen er permanent og kan ikke angres." },
-      { "q": "Jeg er trener – hvordan legger jeg ut ledige tider?", "a": "Gå til «Legg ut tid» i menyen, velg dato og de tidspunktene du er tilgjengelig, og trykk «Legg ut timer»." }
+      {
+        "q": "Hvordan booker jeg en privattime?",
+        "a": "Gå til «Book time» fra dashbordet, velg trener, dato og tidspunkt, og bekreft bookingen."
+      },
+      {
+        "q": "Hvordan avbestiller jeg en time?",
+        "a": "Gå til «Mine timer» og trykk på timen du vil avbestille. Du finner avbestillingsknappen der."
+      },
+      {
+        "q": "Jeg har glemt passordet mitt – hva gjør jeg?",
+        "a": "Gå til innloggingssiden og trykk «Glemt passordet?». Du vil motta en e-post med en lenke for å tilbakestille passordet."
+      },
+      {
+        "q": "Hvordan sletter jeg kontoen min?",
+        "a": "Gå til Profil-siden og scroll ned til bunnen. Der finner du «Slett konto»-knappen. Kontoslettingen er permanent og kan ikke angres."
+      },
+      {
+        "q": "Jeg er trener – hvordan legger jeg ut ledige tider?",
+        "a": "Gå til «Legg ut tid» i menyen, velg dato og de tidspunktene du er tilgjengelig, og trykk «Legg ut timer»."
+      }
     ],
     "contactHeading": "Kontakt oss",
     "contactBody": "Finner du ikke svaret du leter etter? Ta kontakt med oss på e-post:",
@@ -366,7 +421,10 @@
   "privacy": {
     "heading": "Personvernerklæring",
     "lastUpdated": "Sist oppdatert: august 2026",
-    "about": { "heading": "Om appen", "body": "Danceitude er en bookingapp for privattimer for danseklubber. Appen er utviklet og driftes av Mie Marielle Øverås Vitting." },
+    "about": {
+      "heading": "Om appen",
+      "body": "Danceitude er en bookingapp for privattimer for danseklubber. Appen er utviklet og driftes av Mie Marielle Øverås Vitting."
+    },
     "dataCollected": {
       "heading": "Hvilke data samler vi inn?",
       "items": [
@@ -385,9 +443,19 @@
         "For å vise trenere og dansere relevant informasjon"
       ]
     },
-    "sharing": { "heading": "Deling av data", "body": "Vi deler ikke personopplysninger med tredjeparter. Data lagres sikkert hos Supabase." },
-    "rights": { "heading": "Dine rettigheter", "body": "Du kan når som helst be om innsyn i, retting av eller sletting av dine personopplysninger ved å kontakte oss på <email>miemarielle@live.no</email>." },
-    "contact": { "heading": "Kontakt", "name": "Mie Marielle Øverås Vitting", "emailLabel": "E-post:" }
+    "sharing": {
+      "heading": "Deling av data",
+      "body": "Vi deler ikke personopplysninger med tredjeparter. Data lagres sikkert hos Supabase."
+    },
+    "rights": {
+      "heading": "Dine rettigheter",
+      "body": "Du kan når som helst be om innsyn i, retting av eller sletting av dine personopplysninger ved å kontakte oss på <email>miemarielle@live.no</email>."
+    },
+    "contact": {
+      "heading": "Kontakt",
+      "name": "Mie Marielle Øverås Vitting",
+      "emailLabel": "E-post:"
+    }
   },
   "book": {
     "chooseTrainer": "Velg trener",
@@ -493,7 +561,13 @@
     "daysLeft": "dager igjen"
   },
   "levels": {
-    "names": ["Rekrutt", "Litt øvet", "Mester", "Champ", "Elite"],
+    "names": [
+      "Rekrutt",
+      "Litt øvet",
+      "Mester",
+      "Champ",
+      "Elite"
+    ],
     "topLevel": "Øverste nivå 🎉",
     "rankingDecides": "Neste nivå avgjøres av ranking på stevner",
     "pointsToNext": "{points} av {needed} poeng til {nextLevel}"
@@ -576,5 +650,44 @@
     "unknownName": "Ukjent",
     "attending": "Deltar",
     "attend": "Delta"
+  },
+  "competitionResults": {
+    "heading": "Konkurranseresultater",
+    "add": "Legg til",
+    "competition": "Konkurranse",
+    "freestylePlacement": "Freestyle-plassering",
+    "slowPlacement": "Slow-plassering",
+    "placementPlaceholderF": "f.eks. 1, finalist",
+    "placementPlaceholderS": "f.eks. 2, semifinalist",
+    "saveResult": "Lagre resultat",
+    "saving": "Lagrer...",
+    "cancel": "Avbryt",
+    "saveFailed": "Kunne ikke lagre: {message}",
+    "resultSaved": "Resultat lagret!",
+    "empty": "Ingen resultater ennå. Trykk \"Legg til\" for å logge ditt første resultat!",
+    "freestyleLabel": "Freestyle:",
+    "slowLabel": "Slow:",
+    "place1": "🥇 1. plass",
+    "place2": "🥈 2. plass",
+    "place3": "🥉 3. plass"
+  },
+  "childDancerCard": {
+    "loading": "Laster...",
+    "myDancers": "Mine dansere",
+    "seasonGoals": "Sesongmål",
+    "seasonGoalsHint": "F.eks. triks, mål for konkurranser, hva danseren vil jobbe med",
+    "pointsAndLevels": "Poeng og nivåer",
+    "freestyle": "Freestyle",
+    "slow": "Slow",
+    "saved": "Lagret!",
+    "save": "Lagre",
+    "saving": "Lagrer..."
+  },
+  "childrenForm": {
+    "heading": "Registrerte dansere",
+    "empty": "Ingen dansere lagt til ennå",
+    "addPlaceholder": "Legg til danser",
+    "add": "Legg til",
+    "added": "Danser lagt til!"
   }
 }

@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { useTranslations } from "next-intl";
 import { createClient } from "@/lib/supabase/client";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -12,6 +13,7 @@ interface Child {
 }
 
 export default function ChildrenForm({ parentId, children: initial }: { parentId: string; children: Child[] }) {
+  const t = useTranslations("childrenForm");
   const [children, setChildren] = useState<Child[]>(initial);
   const [newName, setNewName] = useState("");
   const [saving, setSaving] = useState(false);
@@ -45,9 +47,9 @@ export default function ChildrenForm({ parentId, children: initial }: { parentId
   return (
     <div className="space-y-4">
       <div className="bg-white dark:bg-gray-900 rounded-2xl border dark:border-gray-700 p-5">
-        <h2 className="font-semibold text-base mb-4">Registrerte dansere</h2>
+        <h2 className="font-semibold text-base mb-4">{t("heading")}</h2>
         {children.length === 0 ? (
-          <p className="text-sm text-gray-400 dark:text-gray-500">Ingen dansere lagt til ennå</p>
+          <p className="text-sm text-gray-400 dark:text-gray-500">{t("empty")}</p>
         ) : (
           <div className="space-y-2">
             {children.map((c) => (
@@ -75,14 +77,14 @@ export default function ChildrenForm({ parentId, children: initial }: { parentId
         <Input
           value={newName}
           onChange={(e) => setNewName(e.target.value)}
-          placeholder="Legg til danser"
+          placeholder={t("addPlaceholder")}
           className="text-sm"
         />
         <Button type="submit" className="bg-[#3A3A3A] hover:bg-[#2a2a2a] dark:bg-[#c87de0] dark:hover:bg-[#b56fd0] dark:text-white shrink-0 text-sm px-3" disabled={saving}>
-          {saving ? "..." : "Legg til"}
+          {saving ? "..." : t("add")}
         </Button>
       </form>
-      {success && <p className="text-xs text-green-600 mt-1">Danser lagt til!</p>}
+      {success && <p className="text-xs text-green-600 mt-1">{t("added")}</p>}
     </div>
   );
 }

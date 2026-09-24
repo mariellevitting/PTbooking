@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useRef } from "react";
+import { useTranslations } from "next-intl";
 import { useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -18,6 +19,7 @@ interface Props {
 }
 
 export default function DancerProfileClient(props: Props) {
+  const t = useTranslations("profileForm");
   const router = useRouter();
   const [nameVal, setNameVal] = useState(props.name);
   const [phoneVal, setPhoneVal] = useState(() => {
@@ -64,7 +66,7 @@ export default function DancerProfileClient(props: Props) {
       phone: phoneVal,
       notify_new_slots: notifyNewSlots,
     }).eq("id", props.userId);
-    if (err) setError("Noe gikk galt");
+    if (err) setError(t("genericError"));
     else setSuccess(true);
     setSaving(false);
   }
@@ -77,7 +79,7 @@ export default function DancerProfileClient(props: Props) {
           <div className="relative">
             <div className="w-24 h-24 rounded-full bg-[#edd5f9] dark:bg-[#E2A9F1]/15 flex items-center justify-center overflow-hidden">
               {avatar
-                ? <img src={avatar} alt="Profilbilde" className="w-full h-full object-cover" />
+                ? <img src={avatar} alt={t("profilePicture")} className="w-full h-full object-cover" />
                 : <span className="text-3xl font-bold text-[#E2A9F1]">{nameVal.charAt(0)}</span>}
             </div>
             <button type="button" onClick={() => fileRef.current?.click()}
@@ -86,7 +88,7 @@ export default function DancerProfileClient(props: Props) {
             </button>
           </div>
           <input ref={fileRef} type="file" accept="image/*" className="hidden" onChange={handleAvatarUpload} />
-          {uploading && <p className="text-xs text-gray-400 dark:text-gray-500">Laster opp...</p>}
+          {uploading && <p className="text-xs text-gray-400 dark:text-gray-500">{t("uploading")}</p>}
         </CardContent>
       </Card>
 
@@ -94,17 +96,17 @@ export default function DancerProfileClient(props: Props) {
       <Card>
         <CardHeader>
           <CardTitle className="text-base flex items-center gap-2">
-            <User size={16} className="text-[#E2A9F1]" /> Personlig informasjon
+            <User size={16} className="text-[#E2A9F1]" /> {t("personalInfo")}
           </CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">
           <div className="space-y-1.5">
-            <label className="text-sm font-medium">Navn</label>
+            <label className="text-sm font-medium">{t("name")}</label>
             <Input value={nameVal} onChange={e => { setNameVal(e.target.value); setSuccess(false); }} required />
           </div>
           <div className="space-y-1.5">
             <label className="text-sm font-medium flex items-center gap-1.5">
-              <Phone size={14} className="text-gray-400 dark:text-gray-500" /> Telefon
+              <Phone size={14} className="text-gray-400 dark:text-gray-500" /> {t("phone")}
             </label>
             <Input
               value={phoneVal}
@@ -115,7 +117,7 @@ export default function DancerProfileClient(props: Props) {
                 if (digits.length <= maxDigits) { setPhoneVal(raw); setSuccess(false); }
               }}
               onKeyDown={e => { if (!/[0-9+\s]/.test(e.key) && !["Backspace","Delete","ArrowLeft","ArrowRight","Tab"].includes(e.key)) e.preventDefault(); }}
-              placeholder="8 siffer"
+              placeholder={t("phoneDigitsHint")}
               type="tel"
               inputMode="numeric"
             />
@@ -127,14 +129,14 @@ export default function DancerProfileClient(props: Props) {
       <Card>
         <CardHeader>
           <CardTitle className="text-base flex items-center gap-2">
-            <Bell size={16} className="text-[#E2A9F1]" /> Varsler
+            <Bell size={16} className="text-[#E2A9F1]" /> {t("notifications")}
           </CardTitle>
         </CardHeader>
         <CardContent>
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-sm font-medium text-gray-800 dark:text-gray-100">Nye ledige tider</p>
-              <p className="text-xs text-gray-500 dark:text-gray-400">Varsel når trenere legger ut tider</p>
+              <p className="text-sm font-medium text-gray-800 dark:text-gray-100">{t("newSlotsTitle")}</p>
+              <p className="text-xs text-gray-500 dark:text-gray-400">{t("newSlotsBody")}</p>
             </div>
             <button
               type="button"
@@ -154,11 +156,11 @@ export default function DancerProfileClient(props: Props) {
       {error && <p className="text-sm text-red-500">{error}</p>}
       {success && (
         <div className="flex items-center gap-2 text-[#c87de0] text-sm bg-[#f5eeff] dark:bg-[#E2A9F1]/10 border border-[#E2A9F1]/40 rounded-xl p-3">
-          <Check size={16} /> Profilen er oppdatert!
+          <Check size={16} /> {t("updated")}
         </div>
       )}
       <Button type="submit" className="w-full bg-[#3A3A3A] hover:bg-[#2a2a2a] dark:bg-[#c87de0] dark:hover:bg-[#b56fd0] dark:text-white" disabled={saving || success}>
-        {saving ? "Lagrer..." : "Lagre profil"}
+        {saving ? t("saving") : t("saveProfile")}
       </Button>
       <DeleteAccountSection userId={props.userId} />
     </form>

@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import { useTranslations } from "next-intl";
 import { createClient } from "@/lib/supabase/client";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Medal, Plus, Trash2, Check } from "lucide-react";
@@ -13,11 +14,11 @@ const COMPETITIONS = [
   { name: "Dancer of the Year / FDJ 9", short: "DOTY / FDJ 9" },
 ];
 
-function placementLabel(p: string | null) {
+function placementLabel(t: ReturnType<typeof useTranslations>, p: string | null) {
   if (!p) return null;
-  if (p === "1") return "🥇 1. plass";
-  if (p === "2") return "🥈 2. plass";
-  if (p === "3") return "🥉 3. plass";
+  if (p === "1") return t("place1");
+  if (p === "2") return t("place2");
+  if (p === "3") return t("place3");
   return p;
 }
 
@@ -43,6 +44,7 @@ interface Props {
 }
 
 export default function CompetitionResultsCard({ userId, initialResults, childId }: Props) {
+  const t = useTranslations("competitionResults");
   const [results, setResults] = useState<Result[]>(initialResults);
 
   useEffect(() => {
@@ -76,7 +78,7 @@ export default function CompetitionResultsCard({ userId, initialResults, childId
       .select()
       .single();
     if (error) {
-      setSaveError("Kunne ikke lagre: " + error.message);
+      setSaveError(t("saveFailed", { message: error.message }));
     } else if (data) {
       setResults(r => [data, ...r]);
       setPlacementF(""); setPlacementS(""); setNotes("");
@@ -98,10 +100,10 @@ export default function CompetitionResultsCard({ userId, initialResults, childId
       <CardHeader>
         <div className="flex items-center justify-between">
           <CardTitle className="text-base flex items-center gap-2">
-            <Medal size={16} className="text-[#E2A9F1]" /> Konkurranseresultater
+            <Medal size={16} className="text-[#E2A9F1]" /> {t("heading")}
           </CardTitle>
           <button onClick={() => setAdding(a => !a)} className="flex items-center gap-1 text-xs text-[#E2A9F1] hover:text-purple-800 font-medium">
-            <Plus size={14} /> Legg til
+            <Plus size={14} /> {t("add")}
           </button>
         </div>
       </CardHeader>
@@ -110,7 +112,7 @@ export default function CompetitionResultsCard({ userId, initialResults, childId
         {adding && (
           <div className="border border-[#E2A9F1]/40 rounded-xl p-4 space-y-3 bg-[#f5eeff] dark:bg-[#E2A9F1]/10">
             <div className="space-y-1">
-              <label className="text-xs font-medium text-gray-600 dark:text-gray-400">Konkurranse</label>
+              <label className="text-xs font-medium text-gray-600 dark:text-gray-400">{t("competition")}</label>
               <select value={comp} onChange={e => setComp(e.target.value)}
                 className="w-full border dark:border-gray-700 rounded-lg px-3 py-2 text-sm bg-white dark:bg-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-[#E2A9F1]">
                 {COMPETITIONS.map(c => <option key={c.name} value={c.name}>{c.short}</option>)}
@@ -118,25 +120,25 @@ export default function CompetitionResultsCard({ userId, initialResults, childId
             </div>
             <div className="grid grid-cols-2 gap-3">
               <div className="space-y-1">
-                <label className="text-xs font-medium text-gray-600 dark:text-gray-400">Freestyle-plassering</label>
+                <label className="text-xs font-medium text-gray-600 dark:text-gray-400">{t("freestylePlacement")}</label>
                 <input type="text" value={placementF} onChange={e => setPlacementF(e.target.value)}
-                  placeholder="f.eks. 1, finalist"
+                  placeholder={t("placementPlaceholderF")}
                   className="w-full border dark:border-gray-700 bg-white dark:bg-gray-900 dark:text-white rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#E2A9F1]" />
               </div>
               <div className="space-y-1">
-                <label className="text-xs font-medium text-gray-600 dark:text-gray-400">Slow-plassering</label>
+                <label className="text-xs font-medium text-gray-600 dark:text-gray-400">{t("slowPlacement")}</label>
                 <input type="text" value={placementS} onChange={e => setPlacementS(e.target.value)}
-                  placeholder="f.eks. 2, semifinalist"
+                  placeholder={t("placementPlaceholderS")}
                   className="w-full border dark:border-gray-700 bg-white dark:bg-gray-900 dark:text-white rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#E2A9F1]" />
               </div>
             </div>
             <div className="flex gap-2">
               <button onClick={handleAdd} disabled={saving || (!placementF && !placementS)}
                 className="flex-1 bg-[#3A3A3A] hover:bg-[#2a2a2a] dark:bg-[#c87de0] dark:hover:bg-[#b56fd0] dark:text-white disabled:opacity-50 text-white text-sm font-medium rounded-lg py-2">
-                {saving ? "Lagrer..." : "Lagre resultat"}
+                {saving ? t("saving") : t("saveResult")}
               </button>
               <button onClick={() => setAdding(false)} className="px-4 text-sm text-gray-500 dark:text-gray-400 hover:text-gray-700 border dark:border-gray-700 rounded-lg bg-white dark:bg-gray-900">
-                Avbryt
+                {t("cancel")}
               </button>
             </div>
             {saveError && (
@@ -147,12 +149,12 @@ export default function CompetitionResultsCard({ userId, initialResults, childId
 
         {success && (
           <div className="flex items-center gap-2 text-[#c87de0] text-sm bg-[#f5eeff] dark:bg-[#E2A9F1]/10 border border-[#E2A9F1]/40 rounded-xl p-3">
-            <Check size={16} /> Resultat lagret!
+            <Check size={16} /> {t("resultSaved")}
           </div>
         )}
 
         {results.length === 0 && !adding ? (
-          <p className="text-sm text-gray-400 dark:text-gray-500 text-center py-4">Ingen resultater ennå. Trykk "Legg til" for å logge ditt første resultat!</p>
+          <p className="text-sm text-gray-400 dark:text-gray-500 text-center py-4">{t("empty")}</p>
         ) : (
           <div className="space-y-2">
             {results.map(r => (
@@ -164,14 +166,14 @@ export default function CompetitionResultsCard({ userId, initialResults, childId
                   <div className="flex gap-3 flex-wrap">
                     {r.placement_freestyle && (
                       <span className="text-xs">
-                        <span className="text-gray-400 dark:text-gray-300">Freestyle: </span>
-                        <span className={`font-bold ${placementColor(r.placement_freestyle)}`}>{placementLabel(r.placement_freestyle)}</span>
+                        <span className="text-gray-400 dark:text-gray-300">{t("freestyleLabel")} </span>
+                        <span className={`font-bold ${placementColor(r.placement_freestyle)}`}>{placementLabel(t, r.placement_freestyle)}</span>
                       </span>
                     )}
                     {r.placement_slow && (
                       <span className="text-xs">
-                        <span className="text-gray-400 dark:text-gray-300">Slow: </span>
-                        <span className={`font-bold ${placementColor(r.placement_slow)}`}>{placementLabel(r.placement_slow)}</span>
+                        <span className="text-gray-400 dark:text-gray-300">{t("slowLabel")} </span>
+                        <span className={`font-bold ${placementColor(r.placement_slow)}`}>{placementLabel(t, r.placement_slow)}</span>
                       </span>
                     )}
                   </div>

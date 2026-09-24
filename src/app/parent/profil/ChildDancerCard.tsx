@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect, useRef } from "react";
+import { useTranslations } from "next-intl";
 import { createClient } from "@/lib/supabase/client";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -9,8 +10,6 @@ import PoengForklaring from "@/components/PoengForklaring";
 import PoengNivaa from "@/components/PoengNivaa";
 import CompetitionResultsCard from "@/components/CompetitionResultsCard";
 import GoalsList from "@/components/GoalsList";
-
-const LEVELS = ["Rekrutt", "Litt øvet", "Mester", "Champ", "Elite"];
 
 function getNeeded(level: number, isFreestyle: boolean) {
   if (level === 0) return 8;
@@ -23,6 +22,7 @@ type Result = { id: string; competition_name: string; placement_freestyle: strin
 type Child = { id: string; name: string; season_goals: string | null; points_freestyle: number | null; points_slow: number | null; level_freestyle: number | null; level_slow: number | null };
 
 export default function ChildDancerCard({ parentId, children, hideResults, hideGoals }: { parentId: string; children: Child[]; hideResults?: boolean; hideGoals?: boolean }) {
+  const t = useTranslations("childDancerCard");
   const [selectedId, setSelectedId] = useState(children[0]?.id ?? "");
 
   const stateCache = useRef<Record<string, { goals: string; freestyle: number; slow: number; levelF: number; levelS: number }>>({});
@@ -117,14 +117,14 @@ export default function ChildDancerCard({ parentId, children, hideResults, hideG
   }
 
   if (children.length === 0) return null;
-  if (loading) return <p className="text-sm text-gray-400 py-4">Laster...</p>;
+  if (loading) return <p className="text-sm text-gray-400 py-4">{t("loading")}</p>;
 
   const neededF = getNeeded(levelF, true);
   const neededS = getNeeded(levelS, false);
 
   return (
     <div className="space-y-4">
-      <h2 className="text-xl font-bold">Mine dansere</h2>
+      <h2 className="text-xl font-bold">{t("myDancers")}</h2>
 
       {children.length > 1 && (
         <div className="flex gap-2 flex-wrap">
@@ -142,11 +142,11 @@ export default function ChildDancerCard({ parentId, children, hideResults, hideG
         <Card>
           <CardHeader>
             <CardTitle className="text-base flex items-center gap-2">
-              <Target size={16} className="text-[#E2A9F1]" /> Sesongmål
+              <Target size={16} className="text-[#E2A9F1]" /> {t("seasonGoals")}
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <p className="text-xs text-gray-400 dark:text-gray-500 mb-3">F.eks. triks, mål for konkurranser, hva danseren vil jobbe med</p>
+            <p className="text-xs text-gray-400 dark:text-gray-500 mb-3">{t("seasonGoalsHint")}</p>
             <GoalsList value={goals} onChange={setGoals} />
           </CardContent>
         </Card>
@@ -155,13 +155,13 @@ export default function ChildDancerCard({ parentId, children, hideResults, hideG
       <Card>
         <CardHeader>
           <CardTitle className="text-base flex items-center gap-2">
-            <Trophy size={16} className="text-[#E2A9F1]" /> Poeng og nivåer
+            <Trophy size={16} className="text-[#E2A9F1]" /> {t("pointsAndLevels")}
           </CardTitle>
         </CardHeader>
         <CardContent className="space-y-6">
           {[
-            { label: "Freestyle", points: freestyle, level: levelF, needed: neededF, onChange: handleFreestyleChange },
-            { label: "Slow", points: slow, level: levelS, needed: neededS, onChange: handleSlowChange },
+            { label: t("freestyle"), points: freestyle, level: levelF, needed: neededF, onChange: handleFreestyleChange },
+            { label: t("slow"), points: slow, level: levelS, needed: neededS, onChange: handleSlowChange },
           ].map(({ label, points, level, needed, onChange }, idx) => (
             <div key={label} className={idx > 0 ? "border-t dark:border-gray-700 pt-6" : ""}>
               <PoengNivaa label={label} points={points} level={level} needed={needed} onChange={onChange} />
@@ -175,11 +175,11 @@ export default function ChildDancerCard({ parentId, children, hideResults, hideG
 
       {success && (
         <div className="flex items-center gap-2 text-[#c87de0] text-sm bg-[#f5eeff] dark:bg-[#E2A9F1]/10 border border-[#E2A9F1]/40 rounded-xl p-3">
-          <Check size={16} /> Lagret!
+          <Check size={16} /> {t("saved")}
         </div>
       )}
       <Button onClick={handleSave} className="w-full bg-[#3A3A3A] hover:bg-[#2a2a2a] dark:bg-[#c87de0] dark:hover:bg-[#b56fd0] dark:text-white" disabled={saving || success}>
-        {saving ? "Lagrer..." : "Lagre"}
+        {saving ? t("saving") : t("save")}
       </Button>
     </div>
   );

@@ -65,15 +65,28 @@
       "bookLesson": "Book private lesson",
       "noCompleted": "No completed lessons yet",
       "bookShort": "+ Book lesson"
-    }
+    },
+    "myProfile": "My profile"
   },
   "auth": {
     "roles": {
-      "dancer": { "label": "Dancer", "description": "I book lessons for myself" },
-      "parent": { "label": "Parent", "description": "I book lessons for my child" },
-      "trainer": { "label": "Trainer", "description": "I offer private lessons" }
+      "dancer": {
+        "label": "Dancer",
+        "description": "I book lessons for myself"
+      },
+      "parent": {
+        "label": "Parent",
+        "description": "I book lessons for my child"
+      },
+      "trainer": {
+        "label": "Trainer",
+        "description": "I offer private lessons"
+      }
     },
-    "tabs": { "login": "Log in", "register": "Sign up" },
+    "tabs": {
+      "login": "Log in",
+      "register": "Sign up"
+    },
     "login": {
       "heading": "Log in",
       "welcomeBack": "Welcome back!",
@@ -253,6 +266,33 @@
       "lessonsWith": "{count, plural, one {# lesson} other {# lessons}} with {name}",
       "seeProfile": "See profile",
       "paidOfTotal": "{paid} of {total} paid"
+    },
+    "profilForm": {
+      "bio": "Bio (optional)",
+      "bioPlaceholder": "Short description of you as a trainer...",
+      "priceLabel": "Hourly rate (kr)",
+      "pricePlaceholder": "E.g. 150",
+      "priceHint": "The price the dancer sees when booking a regular lesson with you.",
+      "priceDoubleLabel": "Hourly rate, double / pair (kr)",
+      "priceDoublePlaceholder": "E.g. 200",
+      "priceDoubleHint": "Leave blank if you don't offer double lessons, or if the price is the same.",
+      "danceStylesHeading": "Dance styles you offer",
+      "selectAtLeastOneStyle": "Select at least one dance style",
+      "genericErrorRetry": "Something went wrong, try again",
+      "stylesSelected": "{count, plural, one {# style selected} other {# styles selected}}"
+    },
+    "profilePage": {
+      "roleLabel": {
+        "trainer": "Trainer",
+        "dancer": "Dancer",
+        "parent": "Parent"
+      },
+      "registeredUsers": "Registered users ({count})",
+      "roleLabelPlural": {
+        "trainer": "Trainers",
+        "dancer": "Dancers",
+        "parent": "Parents"
+      }
     }
   },
   "om": {
@@ -352,11 +392,26 @@
     "subheading": "Need help with Danceitude? Here are answers to common questions.",
     "faqHeading": "Frequently asked questions",
     "faq": [
-      { "q": "How do I book a private lesson?", "a": "Go to \"Book lesson\" from the dashboard, choose a trainer, date and time, and confirm the booking." },
-      { "q": "How do I cancel a lesson?", "a": "Go to \"My lessons\" and tap the lesson you want to cancel. You'll find the cancel button there." },
-      { "q": "I forgot my password – what do I do?", "a": "Go to the login page and tap \"Forgot your password?\". You'll receive an email with a link to reset it." },
-      { "q": "How do I delete my account?", "a": "Go to the Profile page and scroll to the bottom. You'll find the \"Delete account\" button there. Account deletion is permanent and can't be undone." },
-      { "q": "I'm a trainer – how do I post open times?", "a": "Go to \"Add availability\" in the menu, choose a date and the times you're available, and tap \"Post times\"." }
+      {
+        "q": "How do I book a private lesson?",
+        "a": "Go to \"Book lesson\" from the dashboard, choose a trainer, date and time, and confirm the booking."
+      },
+      {
+        "q": "How do I cancel a lesson?",
+        "a": "Go to \"My lessons\" and tap the lesson you want to cancel. You'll find the cancel button there."
+      },
+      {
+        "q": "I forgot my password – what do I do?",
+        "a": "Go to the login page and tap \"Forgot your password?\". You'll receive an email with a link to reset it."
+      },
+      {
+        "q": "How do I delete my account?",
+        "a": "Go to the Profile page and scroll to the bottom. You'll find the \"Delete account\" button there. Account deletion is permanent and can't be undone."
+      },
+      {
+        "q": "I'm a trainer – how do I post open times?",
+        "a": "Go to \"Add availability\" in the menu, choose a date and the times you're available, and tap \"Post times\"."
+      }
     ],
     "contactHeading": "Contact us",
     "contactBody": "Can't find the answer you're looking for? Get in touch by email:",
@@ -366,7 +421,10 @@
   "privacy": {
     "heading": "Privacy policy",
     "lastUpdated": "Last updated: August 2026",
-    "about": { "heading": "About the app", "body": "Danceitude is a booking app for private lessons at dance clubs. The app is built and operated by Mie Marielle Øverås Vitting." },
+    "about": {
+      "heading": "About the app",
+      "body": "Danceitude is a booking app for private lessons at dance clubs. The app is built and operated by Mie Marielle Øverås Vitting."
+    },
     "dataCollected": {
       "heading": "What data do we collect?",
       "items": [
@@ -385,9 +443,19 @@
         "To show trainers and dancers relevant information"
       ]
     },
-    "sharing": { "heading": "Data sharing", "body": "We don't share personal data with third parties. Data is stored securely with Supabase." },
-    "rights": { "heading": "Your rights", "body": "You can at any time request access to, correction of, or deletion of your personal data by contacting us at <email>miemarielle@live.no</email>." },
-    "contact": { "heading": "Contact", "name": "Mie Marielle Øverås Vitting", "emailLabel": "Email:" }
+    "sharing": {
+      "heading": "Data sharing",
+      "body": "We don't share personal data with third parties. Data is stored securely with Supabase."
+    },
+    "rights": {
+      "heading": "Your rights",
+      "body": "You can at any time request access to, correction of, or deletion of your personal data by contacting us at <email>miemarielle@live.no</email>."
+    },
+    "contact": {
+      "heading": "Contact",
+      "name": "Mie Marielle Øverås Vitting",
+      "emailLabel": "Email:"
+    }
   },
   "book": {
     "chooseTrainer": "Choose a trainer",
@@ -493,7 +561,13 @@
     "daysLeft": "days left"
   },
   "levels": {
-    "names": ["Beginner", "Starter", "Inter", "Champ", "Champ Prem"],
+    "names": [
+      "Beginner",
+      "Starter",
+      "Inter",
+      "Champ",
+      "Champ Prem"
+    ],
     "topLevel": "Top level 🎉",
     "rankingDecides": "The next level is decided by ranking at competitions",
     "pointsToNext": "{points} of {needed} points to {nextLevel}"
@@ -576,5 +650,44 @@
     "unknownName": "Unknown",
     "attending": "Attending",
     "attend": "Attend"
+  },
+  "competitionResults": {
+    "heading": "Competition results",
+    "add": "Add",
+    "competition": "Competition",
+    "freestylePlacement": "Freestyle placement",
+    "slowPlacement": "Slow placement",
+    "placementPlaceholderF": "e.g. 1, finalist",
+    "placementPlaceholderS": "e.g. 2, semifinalist",
+    "saveResult": "Save result",
+    "saving": "Saving...",
+    "cancel": "Cancel",
+    "saveFailed": "Couldn't save: {message}",
+    "resultSaved": "Result saved!",
+    "empty": "No results yet. Tap \"Add\" to log your first result!",
+    "freestyleLabel": "Freestyle:",
+    "slowLabel": "Slow:",
+    "place1": "🥇 1st place",
+    "place2": "🥈 2nd place",
+    "place3": "🥉 3rd place"
+  },
+  "childDancerCard": {
+    "loading": "Loading...",
+    "myDancers": "My dancers",
+    "seasonGoals": "Season goals",
+    "seasonGoalsHint": "E.g. tricks, competition goals, what the dancer wants to work on",
+    "pointsAndLevels": "Points and levels",
+    "freestyle": "Freestyle",
+    "slow": "Slow",
+    "saved": "Saved!",
+    "save": "Save",
+    "saving": "Saving..."
+  },
+  "childrenForm": {
+    "heading": "Registered dancers",
+    "empty": "No dancers added yet",
+    "addPlaceholder": "Add a dancer",
+    "add": "Add",
+    "added": "Dancer added!"
   }
 }
