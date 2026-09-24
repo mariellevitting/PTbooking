@@ -534,5 +534,37 @@
     "updated": "Profilen er oppdatert!",
     "saving": "Lagrer...",
     "saveProfile": "Lagre profil"
+  },
+  "onboarding": {
+    "skip": "Hopp over",
+    "next": "Neste",
+    "getStarted": "Kom i gang!",
+    "welcome": {
+      "tagline": "Av dansere, for dansere",
+      "heading": "Velkommen til<br></br>Danceitude",
+      "subheading": "Din app for privattimer, fremgang og konkurranser",
+      "cta": "Kom i gang"
+    },
+    "booking": {
+      "title": "Book privattime – enkelt som aldri før",
+      "description": "Velg trener, tidspunkt og danseform på under ett minutt. Få bekreftelse med én gang – ingen venting, ingen ringing.",
+      "highlight": "Mye enklere enn noensinne"
+    },
+    "points": {
+      "title": "Poeng og nivå",
+      "description": "Hold styr på fremgangen din i freestyle og slow. Appen viser automatisk hvor du er på veien mot neste nivå.",
+      "hint": "Freestyle og slow – separat"
+    },
+    "competitions": {
+      "title": "Konkurranser",
+      "description": "Se nedtelling til neste konkurranse og loggfør dine plasseringer fra NM, FDJ og mer.",
+      "daysLeft": "dager igjen",
+      "logged": "Loggført",
+      "placement": "1. plass Freestyle"
+    },
+    "goals": {
+      "title": "Sesongmål",
+      "description": "Skriv inn hva du vil jobbe med denne sesongen – triks du vil lære, mål for konkurranser eller hva du vil oppnå."
+    }
   }
 }

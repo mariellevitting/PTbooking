@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import { useTranslations } from "next-intl";
 import { Calendar, Trophy, Target, Star, ChevronRight, X } from "lucide-react";
 
 const SLIDES = [
@@ -14,6 +15,8 @@ const SLIDES = [
 const STORAGE_KEY = "danceitude_onboarding_done";
 
 export default function OnboardingOverlay() {
+  const t = useTranslations("onboarding");
+  const tl = useTranslations("levels");
   const [visible, setVisible] = useState(false);
   const [slide, setSlide] = useState(0);
   const [direction, setDirection] = useState<"in" | "out">("in");
@@ -63,7 +66,7 @@ export default function OnboardingOverlay() {
           onClick={done}
           className="absolute top-4 right-4 z-10 flex items-center gap-1 text-sm text-gray-400 dark:text-gray-500 hover:text-gray-600 transition-colors"
         >
-          Hopp over <X size={16} />
+          {t("skip")} <X size={16} />
         </button>
       )}
 
@@ -80,32 +83,32 @@ export default function OnboardingOverlay() {
         {slide === 1 && <FeatureSlide
           icon={<Calendar size={40} className="text-[#E2A9F1]" />}
           emoji="📅"
-          title="Book privattime – enkelt som aldri før"
-          description="Velg trener, tidspunkt og danseform på under ett minutt. Få bekreftelse med én gang – ingen venting, ingen ringing."
+          title={t("booking.title")}
+          description={t("booking.description")}
           color="bg-[#f5eeff] dark:bg-[#E2A9F1]/10"
-          highlight="Mye enklere enn noensinne"
+          highlight={t("booking.highlight")}
         />}
         {slide === 2 && <FeatureSlide
           icon={<Trophy size={40} className="text-yellow-500" />}
           emoji="🏆"
-          title="Poeng og nivå"
-          description="Hold styr på fremgangen din i freestyle og slow. Appen viser automatisk hvor du er på veien mot neste nivå."
+          title={t("points.title")}
+          description={t("points.description")}
           color="bg-yellow-50"
-          levels={["Rekrutt", "Litt øvet", "Mester", "Champ", "Elite"]}
+          levels={tl.raw("names") as string[]}
         />}
         {slide === 3 && <FeatureSlide
           icon={<Star size={40} className="text-blue-500" />}
           emoji="⏳"
-          title="Konkurranser"
-          description="Se nedtelling til neste konkurranse og loggfør dine plasseringer fra NM, FDJ og mer."
+          title={t("competitions.title")}
+          description={t("competitions.description")}
           color="bg-blue-50"
           competition
         />}
         {slide === 4 && <FeatureSlide
           icon={<Target size={40} className="text-green-500" />}
           emoji="🎯"
-          title="Sesongmål"
-          description="Skriv inn hva du vil jobbe med denne sesongen – triks du vil lære, mål for konkurranser eller hva du vil oppnå."
+          title={t("goals.title")}
+          description={t("goals.description")}
           color="bg-green-50"
           last
           onDone={done}
@@ -119,7 +122,7 @@ export default function OnboardingOverlay() {
             onClick={next}
             className="w-full max-w-sm bg-[#3A3A3A] hover:bg-[#2a2a2a] dark:bg-[#c87de0] dark:hover:bg-[#b56fd0] dark:text-white text-[#E2A9F1] font-semibold py-3.5 rounded-2xl transition-colors flex items-center justify-center gap-2"
           >
-            {slide === SLIDES.length - 1 ? "Kom i gang!" : "Neste"}
+            {slide === SLIDES.length - 1 ? t("getStarted") : t("next")}
             {slide < SLIDES.length - 1 && <ChevronRight size={18} />}
           </button>
           {/* Prikker */}
@@ -159,6 +162,7 @@ export default function OnboardingOverlay() {
 }
 
 function WelcomeSlide({ onNext }: { onNext: () => void }) {
+  const t = useTranslations("onboarding.welcome");
   return (
     <div className="flex-1 flex flex-col items-center justify-center px-8 text-center bg-gradient-to-b from-purple-600 to-purple-800">
       {/* Logo/ikon */}
@@ -171,12 +175,12 @@ function WelcomeSlide({ onNext }: { onNext: () => void }) {
 
       {/* Tekst */}
       <div style={{ animation: "fadeUp 0.6s ease forwards", animationDelay: "0.2s", opacity: 0 }}>
-        <p className="text-[#e8c4f5] text-sm font-semibold uppercase tracking-widest mb-3">Av dansere, for dansere</p>
+        <p className="text-[#e8c4f5] text-sm font-semibold uppercase tracking-widest mb-3">{t("tagline")}</p>
         <h1 className="text-4xl font-bold text-white leading-tight mb-4">
-          Velkommen til<br />Danceitude
+          {t.rich("heading", { br: () => <br /> })}
         </h1>
         <p className="text-[#e8c4f5] text-base leading-relaxed max-w-xs mx-auto">
-          Din app for privattimer, fremgang og konkurranser
+          {t("subheading")}
         </p>
       </div>
 
@@ -188,7 +192,7 @@ function WelcomeSlide({ onNext }: { onNext: () => void }) {
           onClick={onNext}
           className="bg-white text-[#c87de0] font-bold px-10 py-4 rounded-2xl shadow-lg hover:bg-[#f5eeff] dark:bg-[#E2A9F1]/10 transition-colors flex items-center gap-2"
         >
-          Kom i gang <ChevronRight size={20} />
+          {t("cta")} <ChevronRight size={20} />
         </button>
       </div>
     </div>
@@ -209,6 +213,7 @@ interface FeatureSlideProps {
 }
 
 function FeatureSlide({ icon, emoji, title, description, color, highlight, levels, competition }: FeatureSlideProps) {
+  const t = useTranslations("onboarding");
   return (
     <div className="flex-1 flex flex-col items-center justify-center px-8 text-center">
       {/* Ikon-sirkel */}
@@ -254,7 +259,7 @@ function FeatureSlide({ icon, emoji, title, description, color, highlight, level
               {i === 4 ? "⭐ " : ""}{level}
             </span>
           ))}
-          <p className="w-full text-xs text-gray-400 dark:text-gray-500 mt-1">Freestyle og slow – separat</p>
+          <p className="w-full text-xs text-gray-400 dark:text-gray-500 mt-1">{t("points.hint")}</p>
         </div>
       )}
 
@@ -271,15 +276,15 @@ function FeatureSlide({ icon, emoji, title, description, color, highlight, level
             </div>
             <div className="text-right">
               <p className="text-2xl font-bold text-white">67</p>
-              <p className="text-xs text-[#e8c4f5]">dager igjen</p>
+              <p className="text-xs text-[#e8c4f5]">{t("competitions.daysLeft")}</p>
             </div>
           </div>
           <div className="bg-white dark:bg-gray-900 rounded-xl border dark:border-gray-700 px-4 py-2.5 flex items-center justify-between">
             <div className="text-left">
               <p className="text-xs font-semibold text-gray-700 dark:text-gray-300">🥇 NM 2025</p>
-              <p className="text-xs text-gray-400 dark:text-gray-500">1. plass Freestyle</p>
+              <p className="text-xs text-gray-400 dark:text-gray-500">{t("competitions.placement")}</p>
             </div>
-            <span className="text-xs bg-yellow-50 text-yellow-600 font-semibold px-2 py-1 rounded-full">Loggført</span>
+            <span className="text-xs bg-yellow-50 text-yellow-600 font-semibold px-2 py-1 rounded-full">{t("competitions.logged")}</span>
           </div>
         </div>
       )}

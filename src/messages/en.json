@@ -534,5 +534,37 @@
     "updated": "Profile updated!",
     "saving": "Saving...",
     "saveProfile": "Save profile"
+  },
+  "onboarding": {
+    "skip": "Skip",
+    "next": "Next",
+    "getStarted": "Get started!",
+    "welcome": {
+      "tagline": "By dancers, for dancers",
+      "heading": "Welcome to<br></br>Danceitude",
+      "subheading": "Your app for private lessons, progress and competitions",
+      "cta": "Get started"
+    },
+    "booking": {
+      "title": "Book a private lesson – easier than ever",
+      "description": "Choose a trainer, time and dance style in under a minute. Get confirmation right away – no waiting, no calling.",
+      "highlight": "So much easier than before"
+    },
+    "points": {
+      "title": "Points and level",
+      "description": "Keep track of your progress in freestyle and slow. The app automatically shows where you are on the way to the next level.",
+      "hint": "Freestyle and slow – separate"
+    },
+    "competitions": {
+      "title": "Competitions",
+      "description": "See the countdown to the next competition and log your placements from NM, FDJ and more.",
+      "daysLeft": "days left",
+      "logged": "Logged",
+      "placement": "1st place Freestyle"
+    },
+    "goals": {
+      "title": "Season goals",
+      "description": "Write down what you want to work on this season – tricks you want to learn, competition goals, or what you want to achieve."
+    }
   }
 }
