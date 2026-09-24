@@ -293,6 +293,42 @@
         "dancer": "Dansere",
         "parent": "Foreldere"
       }
+    },
+    "availability": {
+      "heading": "Legg ut ledige tider",
+      "week": "Uke {number}",
+      "slotAlreadyPublished": "Allerede publisert",
+      "slotPast": "Tidspunktet er passert",
+      "selectedCount": "{count} valgt denne dagen",
+      "saving": "Lagrer...",
+      "submit": "{count, plural, one {Legg ut # time} other {Legg ut # timer}}",
+      "duplicateError": "En eller flere av tidene du valgte finnes allerede. Oppdater siden og prøv igjen.",
+      "genericError": "Noe gikk galt: {message}",
+      "posted": "Ledige tider lagt ut!",
+      "notifyDefaultName": "Treneren",
+      "notifyMessage": "{name} har lagt ut {count, plural, one {# ny ledig time} other {# nye ledige timer}}: {dates}"
+    },
+    "bookForDancer": {
+      "heading": "Book time for danser",
+      "dancer1LabelDouble": "Danser 1",
+      "dancer1LabelSingle": "Danserens navn",
+      "dancer2Label": "Danser 2",
+      "linkedToProfile": "Koblet til profil · får varsel",
+      "namePlaceholder": "Skriv navn...",
+      "fullNamePlaceholder": "Fullt navn",
+      "linkToProfile": "Koble til profil",
+      "week": "Uke {number}",
+      "danceStyleLabel": "Danseform",
+      "optional": "(valgfritt)",
+      "saving": "Lagrer...",
+      "submit": "Book time",
+      "slotTakenError": "Kl. {time} er allerede booket. Velg et annet tidspunkt.",
+      "createSlotError": "Klarte ikke opprette time. Prøv igjen.",
+      "bookingFailedError": "Timen ble opprettet men booking feilet. Prøv igjen.",
+      "notifyTitle": "Ny privattime",
+      "notifyMessage": "Treneren har booket en privattime for deg i {style} – {time}",
+      "unknownStyle": "ukjent stil",
+      "atTime": "kl. {time}"
     }
   },
   "om": {

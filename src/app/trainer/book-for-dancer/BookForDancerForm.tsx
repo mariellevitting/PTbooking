@@ -1,11 +1,14 @@
 "use client";
 
 import { useState, useEffect, useRef } from "react";
+import { useTranslations, useLocale } from "next-intl";
 import { useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Search, X } from "lucide-react";
+import { formatDate, formatTime, formatWeekday } from "@/lib/dateUtils";
+import type { Locale } from "@/i18n/locale";
 
 function isDouble(style: string) {
   return style.toLowerCase().includes("dobbel");
@@ -55,8 +58,6 @@ function dateToISO(date: Date) {
   return `${y}-${m}-${d}`;
 }
 
-const DAY_NAMES = ["man", "tir", "ons", "tor", "fre", "lør", "søn"];
-
 interface LinkedUser {
   id: string;
   name: string;
@@ -70,9 +71,13 @@ interface Props {
 }
 
 export default function BookForDancerForm({ trainerId, danceStyles, clubId }: Props) {
+  const t = useTranslations("trainer.bookForDancer");
+  const locale = useLocale() as Locale;
   const router = useRouter();
   const today = new Date();
   today.setHours(0, 0, 0, 0);
+
+  const DAY_NAMES = Array.from({ length: 7 }, (_, i) => formatWeekday(new Date(2024, 0, 1 + i), locale, "short"));
 
   const [weekStart, setWeekStart] = useState(getMondayOfWeek(today));
   const [selectedDate, setSelectedDate] = useState<Date>(today);
@@ -186,7 +191,7 @@ export default function BookForDancerForm({ trainerId, danceStyles, clubId }: Pr
       .maybeSingle();
 
     if (existing?.is_booked) {
-      setError(`Kl. ${time} er allerede booket. Velg et annet tidspunkt.`);
+      setError(t("slotTakenError", { time }));
       setLoading(false);
       return;
     }
@@ -201,7 +206,7 @@ export default function BookForDancerForm({ trainerId, danceStyles, clubId }: Pr
         .select("id")
         .single();
       if (slotError || !newSlot) {
-        setError("Klarte ikke opprette time. Prøv igjen.");
+        setError(t("createSlotError"));
         setLoading(false);
         return;
       }
@@ -218,20 +223,20 @@ export default function BookForDancerForm({ trainerId, danceStyles, clubId }: Pr
     });
 
     if (bookError) {
-      setError("Timen ble opprettet men booking feilet. Prøv igjen.");
+      setError(t("bookingFailedError"));
       setLoading(false);
       return;
     }
 
     if (linkedUser) {
-      const tidspunkt = start.toLocaleDateString("nb-NO", { weekday: "long", day: "numeric", month: "long" }) +
-        " kl. " + start.toLocaleTimeString("nb-NO", { hour: "2-digit", minute: "2-digit" });
-      const message = `Treneren har booket en privattime for deg i ${style || "ukjent stil"} – ${tidspunkt}`;
+      const tidspunkt = formatDate(start, locale, { weekday: "long", day: "numeric", month: "long" }) +
+        " " + t("atTime", { time: formatTime(start, locale) });
+      const message = t("notifyMessage", { style: style || t("unknownStyle"), time: tidspunkt });
       await supabase.from("notifications").insert({ user_id: linkedUser.id, message });
       fetch("/api/notify", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ userIds: [linkedUser.id], title: "Ny privattime", message }),
+        body: JSON.stringify({ userIds: [linkedUser.id], title: t("notifyTitle"), message }),
       }).catch(() => {});
     }
 
@@ -246,13 +251,13 @@ export default function BookForDancerForm({ trainerId, danceStyles, clubId }: Pr
           {/* Danser 1 – kombinert søk + navn */}
           <div ref={searchRef} className="relative">
             <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-              {double ? "Danser 1" : "Danserens navn"}
+              {double ? t("dancer1LabelDouble") : t("dancer1LabelSingle")}
             </label>
             {linkedUser ? (
               <div className="flex items-center justify-between bg-[#f5eeff] dark:bg-[#E2A9F1]/10 border border-[#E2A9F1]/40 rounded-lg px-3 py-2.5">
                 <div>
                   <p className="text-sm font-semibold text-purple-800">{linkedUser.name}</p>
-                  <p className="text-xs text-[#E2A9F1]">Koblet til profil · får varsel</p>
+                  <p className="text-xs text-[#E2A9F1]">{t("linkedToProfile")}</p>
                 </div>
                 <button type="button" onClick={clearLinkedUser} className="text-[#E2A9F1] hover:text-[#c87de0] ml-2">
                   <X size={16} />
@@ -265,7 +270,7 @@ export default function BookForDancerForm({ trainerId, danceStyles, clubId }: Pr
                   value={dancer1}
                   onChange={e => { setDancer1(e.target.value); setSearchQuery(e.target.value); }}
                   onFocus={() => dancer1.length >= 2 && setSearchQuery(dancer1)}
-                  placeholder="Skriv navn..."
+                  placeholder={t("namePlaceholder")}
                   className="w-full border dark:border-gray-700 rounded-lg px-3 py-2 text-sm bg-white dark:bg-gray-900"
                   required
                 />
@@ -275,7 +280,7 @@ export default function BookForDancerForm({ trainerId, danceStyles, clubId }: Pr
                       <button key={u.id} type="button" onClick={() => selectUser(u)}
                         className="w-full text-left px-4 py-2.5 hover:bg-[#f5eeff] dark:bg-[#E2A9F1]/10 dark:hover:bg-purple-950/30 flex items-center justify-between border-t dark:border-gray-700 first:border-t-0">
                         <span className="text-sm font-medium text-gray-800 dark:text-gray-100">{u.name}</span>
-                        <span className="text-xs text-[#E2A9F1]">Koble til profil</span>
+                        <span className="text-xs text-[#E2A9F1]">{t("linkToProfile")}</span>
                       </button>
                     ))}
                   </div>
@@ -286,12 +291,12 @@ export default function BookForDancerForm({ trainerId, danceStyles, clubId }: Pr
 
           {double && (
             <div>
-              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Danser 2</label>
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">{t("dancer2Label")}</label>
               <input
                 type="text"
                 value={dancer2}
                 onChange={(e) => setDancer2(e.target.value)}
-                placeholder="Fullt navn"
+                placeholder={t("fullNamePlaceholder")}
                 className="w-full border dark:border-gray-700 rounded-lg px-3 py-2 text-sm bg-white dark:bg-gray-900"
                 required
               />
@@ -304,7 +309,7 @@ export default function BookForDancerForm({ trainerId, danceStyles, clubId }: Pr
         <CardContent className="pt-4">
           <div className="flex items-center justify-between mb-3">
             <button type="button" onClick={prevWeek} className="text-gray-400 dark:text-gray-500 hover:text-gray-700 dark:hover:text-gray-300 px-2 text-xl">‹</button>
-            <span className="font-semibold text-gray-700 dark:text-gray-300 text-sm">Uke {weekNumber}</span>
+            <span className="font-semibold text-gray-700 dark:text-gray-300 text-sm">{t("week", { number: weekNumber })}</span>
             <button type="button" onClick={nextWeek} className="text-gray-400 dark:text-gray-500 hover:text-gray-700 dark:hover:text-gray-300 px-2 text-xl">›</button>
           </div>
           <div className="grid grid-cols-7 gap-1">
@@ -340,7 +345,7 @@ export default function BookForDancerForm({ trainerId, danceStyles, clubId }: Pr
       <Card>
         <CardContent className="pt-4">
           <p className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-2 capitalize">
-            {selectedDate.toLocaleDateString("nb-NO", { weekday: "long", day: "numeric", month: "long" })}
+            {formatDate(selectedDate, locale, { weekday: "long", day: "numeric", month: "long" })}
           </p>
           <div className="grid grid-cols-4 gap-2">
             {timeSlots.map((slot) => {
@@ -375,7 +380,7 @@ export default function BookForDancerForm({ trainerId, danceStyles, clubId }: Pr
 
       <Card>
         <CardContent className="pt-4">
-          <p className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Danseform <span className="text-gray-400 dark:text-gray-500 font-normal">(valgfritt)</span></p>
+          <p className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">{t("danceStyleLabel")} <span className="text-gray-400 dark:text-gray-500 font-normal">{t("optional")}</span></p>
           <div className="flex flex-wrap gap-2">
             {danceStyles.map((s) => (
               <button
@@ -402,7 +407,7 @@ export default function BookForDancerForm({ trainerId, danceStyles, clubId }: Pr
         className="w-full bg-[#3A3A3A] hover:bg-[#2a2a2a] dark:bg-[#c87de0] dark:hover:bg-[#b56fd0] dark:text-white"
         disabled={loading || !time || !dancer1 || (double && !dancer2)}
       >
-        {loading ? "Lagrer..." : "Book time"}
+        {loading ? t("saving") : t("submit")}
       </Button>
     </form>
   );

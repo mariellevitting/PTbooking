@@ -1,11 +1,14 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import { useTranslations, useLocale } from "next-intl";
 import { useRouter } from "next/navigation";
 import { ArrowLeft } from "lucide-react";
 import { createClient } from "@/lib/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { formatDate, formatWeekday } from "@/lib/dateUtils";
+import type { Locale } from "@/i18n/locale";
 
 function getWeekNumber(date: Date) {
   const d = new Date(Date.UTC(date.getFullYear(), date.getMonth(), date.getDate()));
@@ -54,12 +57,14 @@ function dateToISO(date: Date) {
   return `${y}-${m}-${d}`;
 }
 
-const DAY_NAMES = ["man", "tir", "ons", "tor", "fre", "lør", "søn"];
-
 export default function AvailabilityPage() {
+  const t = useTranslations("trainer.availability");
+  const locale = useLocale() as Locale;
   const router = useRouter();
   const today = new Date();
   today.setHours(0, 0, 0, 0);
+
+  const DAY_NAMES = Array.from({ length: 7 }, (_, i) => formatWeekday(new Date(2024, 0, 1 + i), locale, "short"));
 
   const [weekStart, setWeekStart] = useState(getMondayOfWeek(today));
   const [selectedDate, setSelectedDate] = useState<Date | null>(today);
@@ -171,9 +176,9 @@ export default function AvailabilityPage() {
 
     if (insertError) {
       if (insertError.code === "23505") {
-        setError("En eller flere av tidene du valgte finnes allerede. Oppdater siden og prøv igjen.");
+        setError(t("duplicateError"));
       } else {
-        setError("Noe gikk galt: " + insertError.message);
+        setError(t("genericError", { message: insertError.message }));
       }
       setSaving(false);
     } else {
@@ -191,15 +196,15 @@ export default function AvailabilityPage() {
         .eq("club_id", trainerProfile?.club_id ?? "");
 
       if (recipients && recipients.length > 0) {
-        const trainerName = trainerProfile?.name ?? "Treneren";
+        const trainerName = trainerProfile?.name ?? t("notifyDefaultName");
         const uniqueDates = [...new Set(rows.map(r => {
           const d = new Date(r.start_at);
-          return d.toLocaleDateString("nb-NO", { day: "numeric", month: "short" });
+          return formatDate(d, locale, { day: "numeric", month: "short" });
         }))];
         const dateStr = uniqueDates.join(", ");
         const notifRows = recipients.map(r => ({
           user_id: r.id,
-          message: `${trainerName} har lagt ut ${rows.length} ny${rows.length === 1 ? "" : "e"} ledig${rows.length === 1 ? "" : "e"} time${rows.length === 1 ? "" : "r"}: ${dateStr}`,
+          message: t("notifyMessage", { name: trainerName, count: rows.length, dates: dateStr }),
         }));
         await supabase.from("notifications").insert(notifRows);
 
@@ -227,7 +232,7 @@ export default function AvailabilityPage() {
         <button onClick={() => router.push("/trainer/dashboard")} className="inline-flex items-center justify-center w-12 h-12 rounded-full bg-gray-100 dark:bg-gray-800 hover:bg-[#E2A9F1]/20 text-gray-700 dark:text-gray-200 mb-2 -ml-2">
           <ArrowLeft size={24} strokeWidth={2.5} />
         </button>
-        <h1 className="text-2xl font-bold mb-6">Legg ut ledige tider</h1>
+        <h1 className="text-2xl font-bold mb-6">{t("heading")}</h1>
 
         <Card className="mb-4">
           <CardContent className="pt-4">
@@ -250,7 +255,7 @@ export default function AvailabilityPage() {
                   const d = new Date(today.getFullYear(), today.getMonth() + i, 1);
                   return (
                     <option key={i} value={`${d.getFullYear()}-${d.getMonth()}`}>
-                      {d.toLocaleDateString("nb-NO", { month: "long", year: "numeric" })}
+                      {formatDate(d, locale, { month: "long", year: "numeric" })}
                     </option>
                   );
                 })}
@@ -259,7 +264,7 @@ export default function AvailabilityPage() {
 
             <div className="flex items-center justify-between mb-4">
               <button onClick={prevWeek} className="text-gray-400 dark:text-gray-500 hover:text-gray-700 dark:hover:text-gray-300 px-2 text-xl">‹</button>
-              <span className="font-semibold text-gray-700 dark:text-gray-300">Uke {weekNumber}</span>
+              <span className="font-semibold text-gray-700 dark:text-gray-300">{t("week", { number: weekNumber })}</span>
               <button onClick={nextWeek} className="text-gray-400 dark:text-gray-500 hover:text-gray-700 dark:hover:text-gray-300 px-2 text-xl">›</button>
             </div>
             <div className="grid grid-cols-7 gap-1">
@@ -296,7 +301,7 @@ export default function AvailabilityPage() {
           <Card>
             <CardHeader>
               <CardTitle className="text-base capitalize">
-                {selectedDate.toLocaleDateString("nb-NO", { weekday: "long", day: "numeric", month: "long" })}
+                {formatDate(selectedDate, locale, { weekday: "long", day: "numeric", month: "long" })}
                 <span className="text-sm font-normal text-gray-400 dark:text-gray-500 ml-2">
                   {isWeekend(selectedDate) ? "09:00–21:00" : "14:00–21:00"}
                 </span>
@@ -322,7 +327,7 @@ export default function AvailabilityPage() {
                         type="button"
                         onClick={() => !disabled && toggleSlot(slot)}
                         disabled={disabled}
-                        title={isExisting ? "Allerede publisert" : isPastSlot ? "Tidspunktet er passert" : undefined}
+                        title={isExisting ? t("slotAlreadyPublished") : isPastSlot ? t("slotPast") : undefined}
                         className={`py-2 px-1 rounded-lg text-sm font-medium border transition-colors ${
                           isExisting
                             ? "bg-gray-100 dark:bg-gray-800 text-gray-300 dark:text-gray-600 border-gray-100 dark:border-gray-800 cursor-not-allowed line-through"
@@ -341,20 +346,20 @@ export default function AvailabilityPage() {
 
                 {selectedDate && (selected.get(dateToISO(selectedDate))?.size ?? 0) > 0 && (
                   <p className="text-sm text-[#E2A9F1]">
-                    {selected.get(dateToISO(selectedDate))!.size} valgt denne dagen
+                    {t("selectedCount", { count: selected.get(dateToISO(selectedDate))!.size })}
                   </p>
                 )}
 
 
                 {error && <p className="text-sm text-red-500">{error}</p>}
-                {success && <p className="text-sm text-green-600">Ledige tider lagt ut!</p>}
+                {success && <p className="text-sm text-green-600">{t("posted")}</p>}
 
                 <Button
                   type="submit"
                   className="w-full bg-[#3A3A3A] hover:bg-[#2a2a2a] dark:bg-[#c87de0] dark:hover:bg-[#b56fd0] dark:text-white"
                   disabled={saving || totalSelected === 0}
                 >
-                  {saving ? "Lagrer..." : `Legg ut ${totalSelected > 0 ? totalSelected + " " : ""}time${totalSelected !== 1 ? "r" : ""}`}
+                  {saving ? t("saving") : t("submit", { count: totalSelected })}
                 </Button>
               </form>
             </CardContent>

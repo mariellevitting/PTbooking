@@ -293,6 +293,42 @@
         "dancer": "Dancers",
         "parent": "Parents"
       }
+    },
+    "availability": {
+      "heading": "Post available times",
+      "week": "Week {number}",
+      "slotAlreadyPublished": "Already published",
+      "slotPast": "This time has passed",
+      "selectedCount": "{count} selected this day",
+      "saving": "Saving...",
+      "submit": "{count, plural, one {Post # lesson} other {Post # lessons}}",
+      "duplicateError": "One or more of the times you chose already exist. Refresh the page and try again.",
+      "genericError": "Something went wrong: {message}",
+      "posted": "Available times posted!",
+      "notifyDefaultName": "The trainer",
+      "notifyMessage": "{name} has posted {count, plural, one {# new available lesson} other {# new available lessons}}: {dates}"
+    },
+    "bookForDancer": {
+      "heading": "Book a lesson for a dancer",
+      "dancer1LabelDouble": "Dancer 1",
+      "dancer1LabelSingle": "Dancer's name",
+      "dancer2Label": "Dancer 2",
+      "linkedToProfile": "Linked to profile · will be notified",
+      "namePlaceholder": "Type name...",
+      "fullNamePlaceholder": "Full name",
+      "linkToProfile": "Link to profile",
+      "week": "Week {number}",
+      "danceStyleLabel": "Dance style",
+      "optional": "(optional)",
+      "saving": "Saving...",
+      "submit": "Book lesson",
+      "slotTakenError": "The {time} slot is already booked. Choose another time.",
+      "createSlotError": "Couldn't create the lesson. Try again.",
+      "bookingFailedError": "The lesson was created but booking failed. Try again.",
+      "notifyTitle": "New lesson",
+      "notifyMessage": "The trainer has booked a lesson for you in {style} – {time}",
+      "unknownStyle": "an unknown style",
+      "atTime": "at {time}"
     }
   },
   "om": {

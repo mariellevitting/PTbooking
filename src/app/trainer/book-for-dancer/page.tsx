@@ -1,10 +1,12 @@
 import { redirect } from "next/navigation";
+import { getTranslations } from "next-intl/server";
 import { createClient } from "@/lib/supabase/server";
 import Link from "next/link";
 import { ArrowLeft } from "lucide-react";
 import BookForDancerForm from "./BookForDancerForm";
 
 export default async function BookForDancerPage() {
+  const t = await getTranslations("trainer.bookForDancer");
   const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) redirect("/login");
@@ -31,7 +33,7 @@ export default async function BookForDancerPage() {
         <Link href="/trainer/dashboard" className="inline-flex items-center justify-center w-12 h-12 rounded-full bg-gray-100 dark:bg-gray-800 hover:bg-[#E2A9F1]/20 text-gray-700 dark:text-gray-200 mb-2 -ml-2">
           <ArrowLeft size={24} strokeWidth={2.5} />
         </Link>
-        <h1 className="text-2xl font-bold mb-6">Book time for danser</h1>
+        <h1 className="text-2xl font-bold mb-6">{t("heading")}</h1>
         <BookForDancerForm trainerId={user.id} danceStyles={danceStyles} clubId={profile.club_id ?? null} />
       </div>
     </main>
