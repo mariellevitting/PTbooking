@@ -151,6 +151,13 @@ export default function AvailabilityPage() {
   function addCustomTime() {
     if (!selectedDate || !customTime) return;
     if (existingSlots.has(customTime)) { setCustomTimeError("Allerede publisert"); return; }
+    const isToday = dateToISO(selectedDate) === dateToISO(today);
+    if (isToday) {
+      const [h, m] = customTime.split(":").map(Number);
+      const slotTime = new Date();
+      slotTime.setHours(h, m, 0, 0);
+      if (slotTime <= new Date()) { setCustomTimeError("Tidspunktet er passert"); return; }
+    }
     setCustomTimeError("");
     const dateKey = dateToISO(selectedDate);
     setSelected((prev) => {
