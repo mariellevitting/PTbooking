@@ -68,6 +68,8 @@ export default function AvailabilityPage() {
   const [success, setSuccess] = useState(false);
   const [error, setError] = useState("");
   const [existingSlots, setExistingSlots] = useState<Set<string>>(new Set());
+  const [customTime, setCustomTime] = useState("");
+  const [customTimeError, setCustomTimeError] = useState("");
 
   const weekDays = getWeekDays(weekStart);
   const weekNumber = getWeekNumber(weekStart);
@@ -129,6 +131,8 @@ export default function AvailabilityPage() {
     setSelectedDate(date);
     setSuccess(false);
     setError("");
+    setCustomTime("");
+    setCustomTimeError("");
     await fetchExistingSlots(date);
   }
 
@@ -142,6 +146,21 @@ export default function AvailabilityPage() {
       if (daySlots.size === 0) next.delete(dateKey); else next.set(dateKey, daySlots);
       return next;
     });
+  }
+
+  function addCustomTime() {
+    if (!selectedDate || !customTime) return;
+    if (existingSlots.has(customTime)) { setCustomTimeError("Allerede publisert"); return; }
+    setCustomTimeError("");
+    const dateKey = dateToISO(selectedDate);
+    setSelected((prev) => {
+      const next = new Map(prev);
+      const daySlots = new Set(next.get(dateKey) ?? []);
+      daySlots.add(customTime);
+      next.set(dateKey, daySlots);
+      return next;
+    });
+    setCustomTime("");
   }
 
   const totalSelected = Array.from(selected.values()).reduce((sum, s) => sum + s.size, 0);
@@ -337,6 +356,48 @@ export default function AvailabilityPage() {
                       </button>
                     );
                   })}
+                </div>
+
+                {(() => {
+                  const customTimesForDay = selectedDate
+                    ? Array.from(selected.get(dateToISO(selectedDate)) ?? []).filter(t => !slots.includes(t)).sort()
+                    : [];
+                  if (customTimesForDay.length === 0) return null;
+                  return (
+                    <div className="flex flex-wrap gap-2">
+                      {customTimesForDay.map(t => (
+                        <button
+                          key={t}
+                          type="button"
+                          onClick={() => toggleSlot(t)}
+                          className="flex items-center gap-1.5 py-1.5 px-3 rounded-lg text-sm font-medium border bg-[#3A3A3A] text-[#E2A9F1] border-[#3A3A3A]"
+                        >
+                          {t} ✕
+                        </button>
+                      ))}
+                    </div>
+                  );
+                })()}
+
+                <div className="border-t dark:border-gray-700 pt-3">
+                  <p className="text-xs text-gray-400 dark:text-gray-500 mb-2">Trenger du en tid utenom listen over (f.eks. i skoleferier)?</p>
+                  <div className="flex gap-2">
+                    <input
+                      type="time"
+                      value={customTime}
+                      onChange={(e) => { setCustomTime(e.target.value); setCustomTimeError(""); }}
+                      className="flex-1 border dark:border-gray-700 rounded-lg px-3 py-2 text-sm bg-white dark:bg-gray-900 text-gray-700 dark:text-gray-300"
+                    />
+                    <button
+                      type="button"
+                      onClick={addCustomTime}
+                      disabled={!customTime}
+                      className="px-4 rounded-lg text-sm font-medium bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700 disabled:opacity-50"
+                    >
+                      + Legg til
+                    </button>
+                  </div>
+                  {customTimeError && <p className="text-xs text-red-500 mt-1">{customTimeError}</p>}
                 </div>
 
                 {selectedDate && (selected.get(dateToISO(selectedDate))?.size ?? 0) > 0 && (
