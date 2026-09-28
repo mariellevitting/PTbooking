@@ -213,7 +213,7 @@ export default function AvailabilityPage() {
         .from("profiles")
         .select("id")
         .in("role", ["dancer", "parent"])
-        .eq("notify_new_slots", true)
+        .or("notify_new_slots.is.null,notify_new_slots.eq.true")
         .eq("club_id", trainerProfile?.club_id ?? "");
 
       if (recipients && recipients.length > 0) {
