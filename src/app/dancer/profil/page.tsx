@@ -3,6 +3,7 @@ import { createClient } from "@/lib/supabase/server";
 import Link from "next/link";
 import { ArrowLeft } from "lucide-react";
 import DancerProfileClient from "./DancerProfileClient";
+import ThemeSetting from "@/components/ThemeSetting";
 
 export default async function DancerProfilPage() {
   const supabase = await createClient();
@@ -24,6 +25,7 @@ export default async function DancerProfilPage() {
           <ArrowLeft size={24} strokeWidth={2.5} />
         </Link>
         <h1 className="text-2xl font-bold mb-6">Min profil</h1>
+        <div className="mb-4"><ThemeSetting /></div>
         <DancerProfileClient
           userId={user.id}
           name={profile.name}

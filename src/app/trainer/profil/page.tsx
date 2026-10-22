@@ -1,6 +1,7 @@
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import ProfilForm from "./ProfilForm";
+import ThemeSetting from "@/components/ThemeSetting";
 import Link from "next/link";
 import { ArrowLeft, Users } from "lucide-react";
 import { getClubById, danceStylesFor } from "@/lib/club";
@@ -53,11 +54,14 @@ export default async function TrainerProfilPage() {
           phone={profile.phone ?? ""}
           bio={trainerDetails?.bio ?? ""}
           price={trainerDetails?.price ?? null}
-          priceDouble={(trainerDetails as any)?.price_double ?? null}
           danceStyles={trainerDetails?.dance_styles ?? []}
           styleOptions={danceStylesFor(club)}
           avatarUrl={profile.avatar_url ?? null}
         />
+
+        <div className="mt-4">
+          <ThemeSetting />
+        </div>
 
         {isAdmin && allUsers && (
           <>

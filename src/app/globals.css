@@ -137,6 +137,13 @@
   padding-top: calc(1.5rem + env(safe-area-inset-top));
 }
 
+/* Layout legger allerede på topbar + safe-area på mobil; unngå dobbel avstand */
+@media (max-width: 767px) {
+  .topbar-offset .page-safe-top {
+    padding-top: 0.5rem;
+  }
+}
+
 /* Prevent iOS auto-zoom on input focus */
 input, textarea, select {
   font-size: max(16px, 1em);

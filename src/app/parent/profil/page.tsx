@@ -4,6 +4,7 @@ import Link from "next/link";
 import { ArrowLeft } from "lucide-react";
 import UserProfileForm from "@/components/UserProfileForm";
 import ChildrenForm from "./ChildrenForm";
+import ThemeSetting from "@/components/ThemeSetting";
 
 export default async function ParentProfilPage() {
   const supabase = await createClient();
@@ -39,6 +40,7 @@ export default async function ParentProfilPage() {
             avatarUrl={profile.avatar_url ?? null}
             notifyNewSlots={profile.notify_new_slots ?? true}
           />
+          <ThemeSetting />
           <ChildrenForm parentId={user.id} children={(children ?? []).map(c => ({ id: c.id, name: c.name }))} />
         </div>
       </div>
