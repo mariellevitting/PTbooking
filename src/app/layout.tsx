@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Poppins } from "next/font/google";
+import { Poppins, Instrument_Serif } from "next/font/google";
 import "./globals.css";
 import Footer from "@/components/Footer";
 import CapacitorSessionRestore from "@/components/CapacitorSessionRestore";
@@ -10,6 +10,13 @@ const poppins = Poppins({
   subsets: ["latin"],
   weight: ["400", "500", "600", "700"],
   variable: "--font-poppins",
+});
+
+const instrumentSerif = Instrument_Serif({
+  subsets: ["latin"],
+  weight: "400",
+  style: "italic",
+  variable: "--font-display",
 });
 
 export const metadata: Metadata = {
@@ -41,7 +48,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="nb" className={`${poppins.variable} h-full antialiased`} style={{ background: "#3A3A3A" }}>
+    <html lang="nb" className={`${poppins.variable} ${instrumentSerif.variable} h-full antialiased`} style={{ background: "#3A3A3A" }}>
       <body className="min-h-full flex flex-col font-[family-name:var(--font-poppins)] bg-[#3A3A3A]">
         <CapacitorSessionRestore />
         <OneSignalInit />

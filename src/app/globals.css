@@ -167,9 +167,11 @@ input, textarea, select {
   opacity: 0.25;
 }
 
-/* Apples systemfont (SF Pro Display på iPhone), med fallback */
+/* Elegant, skrå hilsen-font (Instrument Serif kursiv) */
 .font-display {
-  font-family: -apple-system, "SF Pro Display", BlinkMacSystemFont, "Helvetica Neue", Arial, sans-serif;
-  font-weight: 600;
-  letter-spacing: -0.02em;
+  font-family: var(--font-display), Georgia, serif;
+  font-style: italic;
+  font-weight: 400;
+  letter-spacing: -0.01em;
+  line-height: 1.1;
 }

@@ -50,7 +50,7 @@ export default async function TrainerDashboard() {
       <div className="home-gradient" />
       {/* NMCountdown – rendres kun én gang, vises bare på mobil */}
       <div className="lg:hidden px-6 pt-6 max-w-lg mx-auto">
-        <h1 className="font-display text-3xl mb-6">{greetingText}, {profile.name.split(" ")[0]}! 👋</h1>
+        <h1 className="font-display text-4xl mb-6">{greetingText}, {profile.name.split(" ")[0]}! 👋</h1>
         <NMCountdown href="/trainer/konkurranser" clubId={clubId} />
       </div>
 
