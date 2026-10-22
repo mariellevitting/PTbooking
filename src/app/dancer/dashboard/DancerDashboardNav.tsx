@@ -12,6 +12,7 @@ import LogoutButton from "@/components/LogoutButton";
 import ThemeToggle from "@/components/ThemeToggle";
 import FeedbackButton from "@/components/FeedbackButton";
 import NMCountdown from "@/components/NMCountdown";
+import SwapRequests from "@/components/SwapRequests";
 import CompetitionList from "@/components/CompetitionList";
 import PrivattimeInfo from "@/components/PrivattimeInfo";
 import PoengForklaring from "@/components/PoengForklaring";
@@ -297,6 +298,7 @@ export default function DancerDashboardNav(props: Props) {
       {active === "timer" && (
         <div>
           <NMCountdown clubId={props.club?.id ?? null} />
+          <SwapRequests />
           <div className="flex justify-between items-center mb-3 mt-4">
             <h2 className="font-semibold text-lg">Mine privattimer</h2>
             <Link href="/book" className="text-sm font-medium px-3 py-1.5 rounded-lg bg-[#3A3A3A] hover:bg-[#2a2a2a] dark:bg-[#c87de0] dark:hover:bg-[#b56fd0] text-white transition-colors">
