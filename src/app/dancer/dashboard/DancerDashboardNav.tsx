@@ -236,11 +236,6 @@ export default function DancerDashboardNav(props: Props) {
         </div>
       </aside>
 
-      <div className="relative isolate md:ml-56 px-4 pb-4 pt-[calc(3.5rem+env(safe-area-inset-top))] md:p-6">
-      {active === "timer" && <div className="home-gradient" />}
-      {/* Innhold */}
-      <div className="max-w-lg mx-auto space-y-4">
-
         {/* Mobil: slide-in drawer */}
         {menuOpen && (
           <div className="fixed inset-0 z-50 md:hidden">
@@ -288,6 +283,12 @@ export default function DancerDashboardNav(props: Props) {
             </div>
           </div>
         )}
+
+      <div className="relative isolate md:ml-56 px-4 pb-4 pt-[calc(3.5rem+env(safe-area-inset-top))] md:p-6">
+      {active === "timer" && <div className="home-gradient" />}
+      {/* Innhold */}
+      <div className="max-w-lg mx-auto space-y-4">
+
 
 
       {active === "timer" && (
