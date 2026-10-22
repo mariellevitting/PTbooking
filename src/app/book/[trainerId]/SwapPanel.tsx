@@ -32,6 +32,7 @@ export default function SwapPanel({ target, mine, trainerName, onClose }: {
 
   async function send(my: BookedSlot) {
     if (sending) return;
+    if (!confirm(`Er du sikker på at du vil sende bytteforespørsel til ${target.dancer_name}?`)) return;
     setSending(my.booking_id);
     setError("");
     const supabase = createClient();
@@ -64,7 +65,7 @@ export default function SwapPanel({ target, mine, trainerName, onClose }: {
         <p className="text-sm text-gray-500 dark:text-gray-400">Du må ha en booket time hos {trainerName} for å kunne be om bytte.</p>
       ) : (
         <>
-          <p className="text-sm text-gray-600 dark:text-gray-300">Be om å bytte med en av dine timer:</p>
+          <p className="text-sm text-gray-600 dark:text-gray-300">Velg hvilken av dine timer du vil bytte:</p>
           <div className="space-y-2">
             {mine.map(m => (
               <button
@@ -74,7 +75,7 @@ export default function SwapPanel({ target, mine, trainerName, onClose }: {
                 disabled={!!sending}
                 className="w-full text-left px-3 py-2.5 rounded-lg border border-gray-200 dark:border-gray-700 hover:border-[#E2A9F1] text-sm disabled:opacity-50"
               >
-                <span className="font-medium text-[#9b59c4] dark:text-[#E2A9F1]">{sending === m.booking_id ? "Sender…" : "Tilby"}</span>{" "}
+                <span className="font-medium text-[#9b59c4] dark:text-[#E2A9F1]">{sending === m.booking_id ? "Sender…" : "Bytteforespørsel"}</span>{" "}
                 <span className="text-gray-700 dark:text-gray-300">{when(m.start_at)}</span>
                 {m.dancer_name && <span className="text-gray-400"> · {m.dancer_name}</span>}
               </button>
