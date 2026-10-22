@@ -314,9 +314,9 @@ export default function BookingForm({ slots, trainerName, bookerId, bookerName, 
         )}
 
         <div className="flex items-center justify-between">
-          <button type="button" onClick={() => { const p = new Date(weekStart); p.setDate(p.getDate() - 7); setWeekStart(p); }} disabled={!canGoPrev} className={`text-2xl px-2 ${canGoPrev ? "text-gray-600 dark:text-gray-400 hover:text-[#E2A9F1]" : "text-gray-200 dark:text-gray-700"}`}>‹</button>
+          <button type="button" onClick={() => { const p = new Date(weekStart); p.setDate(p.getDate() - 7); setSwapTarget(null); setWeekStart(p); }} disabled={!canGoPrev} className={`text-2xl px-2 ${canGoPrev ? "text-gray-600 dark:text-gray-400 hover:text-[#E2A9F1]" : "text-gray-200 dark:text-gray-700"}`}>‹</button>
           <span className="font-semibold text-gray-700 dark:text-gray-300">Uke {getWeekNumber(weekStart)}</span>
-          <button type="button" onClick={() => { const n = new Date(weekStart); n.setDate(n.getDate() + 7); setWeekStart(n); }} className="text-2xl px-2 text-gray-600 dark:text-gray-400 hover:text-[#E2A9F1]">›</button>
+          <button type="button" onClick={() => { const n = new Date(weekStart); n.setDate(n.getDate() + 7); setSwapTarget(null); setWeekStart(n); }} className="text-2xl px-2 text-gray-600 dark:text-gray-400 hover:text-[#E2A9F1]">›</button>
         </div>
 
         {myBooked.length > 0 && bookedSlots.length > myBooked.length && (
@@ -364,6 +364,7 @@ export default function BookingForm({ slots, trainerName, bookerId, bookerName, 
                       type="button"
                       onClick={() => {
                         if (slot.is_booked) return;
+                        setSwapTarget(null);
                         setSelectedSlots(prev =>
                           prev.some(s => s.id === slot.id)
                             ? prev.filter(s => s.id !== slot.id)

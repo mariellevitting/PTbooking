@@ -20,6 +20,10 @@ function when(iso: string) {
   return `${formatDate(d, { weekday: "long", day: "numeric", month: "long" })} kl ${formatTime(d)}`;
 }
 
+function cap(text: string) {
+  return text.charAt(0).toUpperCase() + text.slice(1);
+}
+
 export default function SwapPanel({ target, mine, trainerName, onClose }: {
   target: BookedSlot;
   mine: BookedSlot[];
@@ -55,7 +59,7 @@ export default function SwapPanel({ target, mine, trainerName, onClose }: {
       <div className="flex items-start justify-between gap-2">
         <div>
           <p className="text-sm font-semibold text-gray-800 dark:text-gray-100">Opptatt av {target.dancer_name}</p>
-          <p className="text-xs text-gray-500 dark:text-gray-400 capitalize">{when(target.start_at)}</p>
+          <p className="text-xs text-gray-500 dark:text-gray-400">{cap(when(target.start_at))}</p>
         </div>
         <button type="button" onClick={onClose} aria-label="Lukk" className="text-gray-400 hover:text-gray-600"><X size={16} /></button>
       </div>
@@ -98,8 +102,8 @@ export default function SwapPanel({ target, mine, trainerName, onClose }: {
               Er du sikker på at du vil sende bytteforespørsel til <span className="font-semibold">{target.dancer_name}</span>?
             </p>
             <div className="mt-3 rounded-xl bg-gray-50 dark:bg-gray-800 p-3 text-sm space-y-1">
-              <p className="text-gray-500 dark:text-gray-400">Din time: <span className="text-gray-800 dark:text-gray-100 capitalize">{when(confirming.start_at)}</span></p>
-              <p className="text-gray-500 dark:text-gray-400">Ønsket time: <span className="text-gray-800 dark:text-gray-100 capitalize">{when(target.start_at)}</span></p>
+              <p className="text-gray-500 dark:text-gray-400">Din time: <span className="text-gray-800 dark:text-gray-100">{cap(when(confirming.start_at))}</span></p>
+              <p className="text-gray-500 dark:text-gray-400">Ønsket time: <span className="text-gray-800 dark:text-gray-100">{cap(when(target.start_at))}</span></p>
             </div>
             <p className="text-xs text-gray-500 dark:text-gray-400 mt-3">
               Byttet skjer først når {target.dancer_name} har godkjent forespørselen. Til da beholder dere begge timene deres.
