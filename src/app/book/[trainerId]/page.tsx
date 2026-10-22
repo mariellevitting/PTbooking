@@ -49,6 +49,9 @@ export default async function TrainerBookPage({ params }: { params: Promise<{ tr
     .gte("start_at", new Date().toISOString())
     .order("start_at");
 
+  // Opptatte tider med navn (for bytteforespørsler). Mangler funksjonen, vises ingen bytte-mulighet.
+  const { data: bookedSlots } = await supabase.rpc("list_trainer_booked_slots", { p_trainer_id: trainerId });
+
   const styles: string[] = (trainerDetails?.dance_styles?.length ?? 0) > 0
     ? trainerDetails!.dance_styles
     : danceStylesFor(club);
@@ -117,6 +120,7 @@ export default async function TrainerBookPage({ params }: { params: Promise<{ tr
             priceDouble={(trainerDetails as any)?.price_double ?? null}
             paymentLabel={club?.payment_label ?? null}
             clubId={profile.club_id ?? null}
+            bookedSlots={(bookedSlots as any[]) ?? []}
           />
         )}
       </div>

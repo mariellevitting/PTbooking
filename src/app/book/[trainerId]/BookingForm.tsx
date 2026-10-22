@@ -8,6 +8,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Search, X } from "lucide-react";
 import { styleColor } from "@/lib/danceStyleColors";
+import SwapPanel, { type BookedSlot } from "./SwapPanel";
 
 const isDoubleStyle = (style: string) => style.toLowerCase().includes("dobbel");
 
@@ -50,10 +51,15 @@ interface Props {
   priceDouble?: number | null;
   paymentLabel?: string | null;
   clubId?: string | null;
+  bookedSlots?: BookedSlot[];
 }
 
-export default function BookingForm({ slots, trainerName, bookerId, bookerName, bookerRole, danceStyles, children, price, priceDouble, paymentLabel, clubId }: Props) {
+export default function BookingForm({ slots, trainerName, bookerId, bookerName, bookerRole, danceStyles, children, price, priceDouble, paymentLabel, clubId, bookedSlots = [] }: Props) {
   const router = useRouter();
+  const [swapTarget, setSwapTarget] = useState<BookedSlot | null>(null);
+  const bookedBySlot = new Map(bookedSlots.map(b => [b.slot_id, b]));
+  const isMine = (b: BookedSlot) => b.owner_id === bookerId || b.booker_id === bookerId;
+  const myBooked = bookedSlots.filter(isMine);
   const isParent = bookerRole === "parent";
   const isDouble = isDoubleStyle;
   const priceFor = (style: string) => (isDoubleStyle(style) ? (priceDouble ?? price) : price);
@@ -313,6 +319,10 @@ export default function BookingForm({ slots, trainerName, bookerId, bookerName, 
           <button type="button" onClick={() => { const n = new Date(weekStart); n.setDate(n.getDate() + 7); setWeekStart(n); }} className="text-2xl px-2 text-gray-600 dark:text-gray-400 hover:text-[#E2A9F1]">›</button>
         </div>
 
+        {myBooked.length > 0 && bookedSlots.length > myBooked.length && (
+          <p className="text-xs text-gray-400 dark:text-gray-500 text-center">Trykk på en opptatt tid for å be om å bytte time</p>
+        )}
+
         {Object.keys(weekGrouped).length === 0 ? (
           <div className="bg-white dark:bg-gray-900 rounded-xl border dark:border-gray-700 p-6 text-center text-gray-400 dark:text-gray-500">
             <p className="font-medium">Treneren har ikke lagt ut ledige privattimer ennå</p>
@@ -326,6 +336,28 @@ export default function BookingForm({ slots, trainerName, bookerId, bookerName, 
                 {daySlots.map((slot) => {
                   const time = new Date(slot.start_at).toLocaleTimeString("nb-NO", { hour: "2-digit", minute: "2-digit" });
                   const isSelected = selectedSlots.some(s => s.id === slot.id);
+                  const booked = bookedBySlot.get(slot.id);
+                  if (slot.is_booked && booked) {
+                    const mineSlot = isMine(booked);
+                    return (
+                      <button
+                        key={slot.id}
+                        type="button"
+                        onClick={() => !mineSlot && setSwapTarget(booked)}
+                        disabled={mineSlot}
+                        className={`py-1.5 px-2 rounded-lg text-sm font-medium border transition-colors leading-tight ${
+                          mineSlot
+                            ? "bg-[#f5eeff] dark:bg-[#E2A9F1]/10 text-[#9b59c4] border-[#E2A9F1]/50 cursor-default"
+                            : swapTarget?.slot_id === slot.id
+                            ? "bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-300 border-[#E2A9F1]"
+                            : "bg-gray-100 dark:bg-gray-800 text-gray-500 dark:text-gray-400 border-gray-200 dark:border-gray-700 hover:border-[#E2A9F1]"
+                        }`}
+                      >
+                        {time}
+                        <span className="block text-[10px] font-normal truncate">{mineSlot ? "Din time" : booked.dancer_name}</span>
+                      </button>
+                    );
+                  }
                   return (
                     <button
                       key={slot.id}
@@ -354,6 +386,16 @@ export default function BookingForm({ slots, trainerName, bookerId, bookerName, 
               </div>
             </div>
           ))
+        )}
+
+        {swapTarget && (
+          <SwapPanel
+            key={swapTarget.booking_id}
+            target={swapTarget}
+            mine={myBooked}
+            trainerName={trainerName}
+            onClose={() => setSwapTarget(null)}
+          />
         )}
 
         {selectedSlots.length > 0 && (
