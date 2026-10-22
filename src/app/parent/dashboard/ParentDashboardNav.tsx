@@ -335,7 +335,7 @@ export default function ParentDashboardNav({ userName, avatarUrl, notifications,
       {menuOpen && (
         <div className="fixed inset-0 z-50 md:hidden">
           <div className="absolute inset-0 bg-black/50" onClick={() => setMenuOpen(false)} />
-          <div className="absolute left-0 top-0 h-full w-72 bg-white dark:bg-gray-900 shadow-2xl flex flex-col">
+          <div className="absolute left-0 top-0 h-full w-72 bg-white dark:bg-gray-900 shadow-2xl flex flex-col rounded-r-[32px] overflow-hidden">
             <div className="flex justify-end p-4">
               <button onClick={() => setMenuOpen(false)} className="p-1.5 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800">
                 <X size={20} className="text-gray-500 dark:text-gray-400" />
