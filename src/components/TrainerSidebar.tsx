@@ -93,7 +93,7 @@ export default function TrainerSidebar({ name, userId, email, avatarUrl, notific
                     key={href}
                     href={href}
                     onClick={() => setMenuOpen(false)}
-                    className={`w-[calc(100%-1.5rem)] mx-3 my-0.5 flex items-center gap-4 px-4 py-3 rounded-xl text-[15px] font-medium transition-colors ${active ? "bg-[#edd5f9] dark:bg-[#E2A9F1]/20 text-[#9b59c4] dark:text-[#E2A9F1] font-semibold" : "text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-950"}`}
+                    className={`w-[calc(100%-1.5rem)] mx-3 my-0.5 flex items-center gap-4 px-4 py-3 rounded-xl text-[15px] font-medium transition-colors ${active ? "text-black dark:text-white font-semibold" : "text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-950"}`}
                   >
                     <Icon size={22} className={active ? "text-[#c87de0]" : "text-gray-400 dark:text-gray-500"} />
                     {label}

@@ -349,7 +349,7 @@ export default function ParentDashboardNav({ userName, avatarUrl, notifications,
             <div className="flex-1 py-4 overflow-y-auto">
               {sections.map(s => (
                 <button key={s.id} onClick={() => goTo(s.id)}
-                  className={`w-[calc(100%-1.5rem)] mx-3 my-0.5 flex items-center gap-4 px-4 py-3 rounded-xl text-[15px] font-medium transition-colors ${active === s.id ? "bg-[#edd5f9] dark:bg-[#E2A9F1]/20 text-[#9b59c4] dark:text-[#E2A9F1] font-semibold" : "text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-950"}`}>
+                  className={`w-[calc(100%-1.5rem)] mx-3 my-0.5 flex items-center gap-4 px-4 py-3 rounded-xl text-[15px] font-medium transition-colors ${active === s.id ? "text-black dark:text-white font-semibold" : "text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-950"}`}>
                   <span className={`[&>svg]:w-[22px] [&>svg]:h-[22px] ${active === s.id ? "text-[#c87de0]" : "text-gray-400 dark:text-gray-500"}`}>{s.icon}</span>
                   {s.label}
                 </button>
