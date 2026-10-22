@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import Link from "next/link";
 import { Check, ChevronLeft, ChevronRight, Target, Clock, Calendar, History, UserPlus } from "lucide-react";
 import { createClient } from "@/lib/supabase/client";
+import RemoveCompletedBooking from "@/components/RemoveCompletedBooking";
 import { useRouter } from "next/navigation";
 import { formatTime } from "@/lib/dateUtils";
 
@@ -141,7 +142,10 @@ export default function TrainerWebDashboard({ slots, completedSlots, trainerName
   });
   const [selectedDate, setSelectedDate] = useState<string>(() => initialSelectedDate);
 
-  const slotDates = new Set(slots.map(s => dk(new Date(s.start_at))));
+  // Kalenderen viser både kommende tider og gjennomførte bookede timer (for betaling, purring og sletting)
+  const pastBooked = completedSlots.filter(s => s.bookings?.some(b => b.status === "confirmed")) as unknown as Slot[];
+  const allSlots = [...slots, ...pastBooked];
+  const slotDates = new Set(allSlots.map(s => dk(new Date(s.start_at))));
 
   // 7-dagers statistikk (stabile verdier — ikke avhengig av Date.now() i render)
   const confirmedCompleted = completedSlots.filter(s => s.bookings?.some(b => b.status === "confirmed"));
@@ -169,7 +173,7 @@ export default function TrainerWebDashboard({ slots, completedSlots, trainerName
   const monthName = firstDay.toLocaleDateString("nb-NO", { month: "long", year: "numeric" });
 
   // Valgt dato
-  const selectedSlots = slots.filter(s => dk(new Date(s.start_at)) === selectedDate).sort((a, b) => a.start_at.localeCompare(b.start_at));
+  const selectedSlots = allSlots.filter(s => dk(new Date(s.start_at)) === selectedDate).sort((a, b) => a.start_at.localeCompare(b.start_at));
   const selectedDateObj = new Date(selectedDate + "T12:00:00");
   const selectedLabel = selectedDateObj.toLocaleDateString("nb-NO", { weekday: "long", day: "numeric", month: "long" });
 
@@ -188,7 +192,7 @@ export default function TrainerWebDashboard({ slots, completedSlots, trainerName
         <div className="absolute inset-0 bg-gradient-to-r from-black/65 via-black/35 to-transparent" />
         <div className="relative z-10 p-7 h-full flex flex-col justify-end">
           <p className="text-white/70 text-xs font-semibold tracking-widest uppercase mb-1">{todayLabel}</p>
-          <h1 className="text-3xl font-bold text-white">{greetingText}, {trainerName.split(" ")[0]}!</h1>
+          <h1 className="font-display text-4xl text-white">{greetingText}, {trainerName.split(" ")[0]}!</h1>
         </div>
       </div>
 
@@ -220,7 +224,7 @@ export default function TrainerWebDashboard({ slots, completedSlots, trainerName
                 const hasSlots = slotDates.has(key);
                 const isSel = key === selectedDate;
                 return (
-                  <button key={key} onClick={() => !isPast && setSelectedDate(key)} disabled={isPast}
+                  <button key={key} onClick={() => (!isPast || hasSlots) && setSelectedDate(key)} disabled={isPast && !hasSlots}
                     className={`mx-auto w-8 h-8 rounded-full text-sm font-medium flex items-center justify-center transition-colors
                       ${isSel && hasSlots ? "bg-[#9b59c4] text-white" :
                         isSel ? "bg-[#3A3A3A] dark:bg-gray-600 text-white" :
@@ -295,6 +299,7 @@ export default function TrainerWebDashboard({ slots, completedSlots, trainerName
                               <PaidToggle bookingId={booking.id} initialPaid={!!booking.paid} />
                               {!booking.paid && <KvitteringReminder booking={booking} when={`${dayFull} kl ${formatTime(start)}`} trainerName={trainerName} trainerId={trainerId} />}
                               {mounted && end > new Date() && <Link href={`/trainer/avbestill/${booking.id}`} prefetch={false} className="text-xs text-red-400 hover:text-red-600">Avbestill</Link>}
+                              {mounted && end <= new Date() && <RemoveCompletedBooking bookingId={booking.id} dancerName={booking.dancer_name} />}
                             </div>
                           </div>
                         ) : (
@@ -304,7 +309,9 @@ export default function TrainerWebDashboard({ slots, completedSlots, trainerName
                           </div>
                         )}
                       </div>
-                      {booking && <span className="text-xs bg-[#edd5f9] dark:bg-[#E2A9F1]/15 text-[#9b59c4] dark:text-[#E2A9F1] px-2.5 py-1 rounded-full ml-3 whitespace-nowrap">Opptatt</span>}
+                      {booking && (mounted && end <= new Date()
+                        ? <span className="text-xs bg-gray-100 dark:bg-gray-800 text-gray-500 dark:text-gray-400 px-2.5 py-1 rounded-full ml-3 whitespace-nowrap">Fullført</span>
+                        : <span className="text-xs bg-[#edd5f9] dark:bg-[#E2A9F1]/15 text-[#9b59c4] dark:text-[#E2A9F1] px-2.5 py-1 rounded-full ml-3 whitespace-nowrap">Opptatt</span>)}
                     </div>
                   </div>
                 );
