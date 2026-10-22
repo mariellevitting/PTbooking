@@ -5,7 +5,7 @@ import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Menu, X, Calendar, Target, Trophy, Medal, Star, Info, UserCircle, User } from "lucide-react";
-import GoalsList from "@/components/GoalsList";
+import GoalsTabs from "@/components/GoalsTabs";
 import CompetitionResultsCard from "@/components/CompetitionResultsCard";
 import NotificationBell from "@/components/NotificationBell";
 import LogoutButton from "@/components/LogoutButton";
@@ -48,6 +48,8 @@ interface Props {
   upcomingBookings: Booking[];
   completedBookings: Booking[];
   seasonGoals: string;
+  goalsFreestyle?: string;
+  goalsSlow?: string;
   pointsFreestyle: number;
   pointsSlow: number;
   levelFreestyle: number;
@@ -84,6 +86,8 @@ export default function DancerDashboardNav(props: Props) {
   const [menuOpen, setMenuOpen] = useState(false);
   const [bookingTab, setBookingTab] = useState<"kommende" | "gjennomforte">("kommende");
   const [goals, setGoals] = useState(props.seasonGoals);
+  const [goalsFreestyle, setGoalsFreestyle] = useState(props.goalsFreestyle ?? "");
+  const [goalsSlow, setGoalsSlow] = useState(props.goalsSlow ?? "");
   const [visibleToTrainer, setVisibleToTrainer] = useState(props.goalsVisibleToTrainer ?? true);
   const [freestyle, setFreestyle] = useState(props.pointsFreestyle);
   const [slow, setSlow] = useState(props.pointsSlow);
@@ -134,6 +138,8 @@ export default function DancerDashboardNav(props: Props) {
       const supabase = createClient();
       const { error } = await supabase.from("profiles").update({
         season_goals: goals,
+        goals_freestyle: goalsFreestyle,
+        goals_slow: goalsSlow,
         points_freestyle: freestyle,
         points_slow: slow,
         level_freestyle: levelF,
@@ -145,7 +151,7 @@ export default function DancerDashboardNav(props: Props) {
       else { setSaved(true); setSaveError(null); }
     }, 600);
     return () => clearTimeout(timer);
-  }, [goals, freestyle, slow, levelF, levelS, visibleToTrainer]);
+  }, [goals, goalsFreestyle, goalsSlow, freestyle, slow, levelF, levelS, visibleToTrainer]);
 
   // Booking sections grouped by week
   const grouped: Record<string, Booking[]> = {};
@@ -411,8 +417,15 @@ export default function DancerDashboardNav(props: Props) {
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <p className="text-xs text-gray-400 dark:text-gray-500 mb-3">F.eks. triks du vil lære, mål for konkurranser, hva du vil jobbe med denne sesongen. Huk av når du har klart målet ditt.</p>
-            <GoalsList value={goals} onChange={g => { setGoals(g); setSaved(false); }} />
+            <GoalsTabs
+              values={{ season: goals, freestyle: goalsFreestyle, slow: goalsSlow }}
+              onChange={(key, val) => {
+                if (key === "season") setGoals(val);
+                else if (key === "freestyle") setGoalsFreestyle(val);
+                else setGoalsSlow(val);
+                setSaved(false);
+              }}
+            />
             <label className="flex items-center gap-2 mt-4 cursor-pointer select-none">
               <input
                 type="checkbox"
@@ -420,7 +433,7 @@ export default function DancerDashboardNav(props: Props) {
                 onChange={e => { setVisibleToTrainer(e.target.checked); setSaved(false); }}
                 className="w-4 h-4 accent-[#c87de0] rounded"
               />
-              <span className="text-sm text-gray-600 dark:text-gray-400">Vis sesongmål for trenere</span>
+              <span className="text-sm text-gray-600 dark:text-gray-400">Vis målene mine for trenere</span>
             </label>
           </CardContent>
         </Card>

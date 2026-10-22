@@ -4,7 +4,7 @@ import { useState, useEffect, useRef } from "react";
 import { createClient } from "@/lib/supabase/client";
 import Link from "next/link";
 import { Menu, X, Calendar, Trophy, Medal, Star, Info, UserCircle, User, Target } from "lucide-react";
-import GoalsList from "@/components/GoalsList";
+import GoalsTabs, { type GoalValues } from "@/components/GoalsTabs";
 import { Button } from "@/components/ui/button";
 import LogoutButton from "@/components/LogoutButton";
 import NotificationBell from "@/components/NotificationBell";
@@ -76,10 +76,16 @@ function ParentResultsSection({ parentId, children }: { parentId: string; childr
   );
 }
 
+const EMPTY_GOALS: GoalValues = { season: "", freestyle: "", slow: "" };
+
+function goalsToRow(g: GoalValues) {
+  return { season_goals: g.season, goals_freestyle: g.freestyle, goals_slow: g.slow };
+}
+
 function ParentGoalsSection({ children }: { children: Child[] }) {
   const [selectedId, setSelectedId] = useState(children[0]?.id ?? "");
-  const goalsCache = useRef<Record<string, string>>({});
-  const [goals, setGoals] = useState("");
+  const goalsCache = useRef<Record<string, GoalValues>>({});
+  const [goals, setGoals] = useState<GoalValues>(EMPTY_GOALS);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [saved, setSaved] = useState(false);
@@ -95,11 +101,11 @@ function ParentGoalsSection({ children }: { children: Child[] }) {
     const ids = children.map(c => c.id);
     if (ids.length === 0) { setLoading(false); return; }
     const supabase = createClient();
-    supabase.from("children").select("id, season_goals").in("id", ids).then(({ data }) => {
-      const fetched: Record<string, string> = {};
-      for (const row of data ?? []) fetched[row.id] = row.season_goals ?? "";
+    supabase.from("children").select("id, season_goals, goals_freestyle, goals_slow").in("id", ids).then(({ data }) => {
+      const fetched: Record<string, GoalValues> = {};
+      for (const row of data ?? []) fetched[row.id] = { season: row.season_goals ?? "", freestyle: row.goals_freestyle ?? "", slow: row.goals_slow ?? "" };
       goalsCache.current = fetched;
-      const first = fetched[children[0]?.id ?? ""] ?? "";
+      const first = fetched[children[0]?.id ?? ""] ?? EMPTY_GOALS;
       currentGoalsRef.current = first;
       setGoals(first);
       setLoading(false);
@@ -111,7 +117,7 @@ function ParentGoalsSection({ children }: { children: Child[] }) {
     return () => {
       if (!isDirty.current) return;
       const supabase = createClient();
-      supabase.from("children").update({ season_goals: currentGoalsRef.current }).eq("id", currentIdRef.current);
+      supabase.from("children").update(goalsToRow(currentGoalsRef.current)).eq("id", currentIdRef.current);
     };
   }, []);
 
@@ -122,12 +128,12 @@ function ParentGoalsSection({ children }: { children: Child[] }) {
     goalsCache.current[idToSave] = goalsTosave;
     const supabase = createClient();
     if (isDirty.current) {
-      supabase.from("children").update({ season_goals: goalsTosave }).eq("id", idToSave);
+      supabase.from("children").update(goalsToRow(goalsTosave)).eq("id", idToSave);
       isDirty.current = false;
     }
     currentIdRef.current = id;
     setSelectedId(id);
-    const next = goalsCache.current[id] ?? "";
+    const next = goalsCache.current[id] ?? EMPTY_GOALS;
     currentGoalsRef.current = next;
     setGoals(next);
     setSaved(false);
@@ -146,7 +152,7 @@ function ParentGoalsSection({ children }: { children: Child[] }) {
     const currentId = selectedId;
     const timer = setTimeout(async () => {
       const supabase = createClient();
-      const { error } = await supabase.from("children").update({ season_goals: goals }).eq("id", currentId);
+      const { error } = await supabase.from("children").update(goalsToRow(goals)).eq("id", currentId);
       setSaving(false);
       if (error) { setSaveError("Feil: " + error.message); }
       else { setSaved(true); setSaveError(null); isDirty.current = false; }
@@ -169,8 +175,7 @@ function ParentGoalsSection({ children }: { children: Child[] }) {
       )}
       {children.length === 1 && <p className="text-sm font-medium text-gray-700 dark:text-gray-300">{children[0].name}</p>}
       <div className="bg-white dark:bg-gray-900 rounded-2xl border dark:border-gray-700 p-5 space-y-3">
-        <p className="text-xs text-gray-400 dark:text-gray-500 mb-3">F.eks. triks, mål for konkurranser, hva danseren vil jobbe med. Huk av når du har klart målet ditt.</p>
-        {loading ? <p className="text-sm text-gray-400">Laster...</p> : <GoalsList value={goals} onChange={g => setGoals(g)} />}
+        {loading ? <p className="text-sm text-gray-400">Laster...</p> : <GoalsTabs key={selectedId} values={goals} onChange={(key, val) => setGoals(g => ({ ...g, [key]: val }))} />}
       </div>
       {(saving || saved || saveError) && (
         <p className={`text-xs text-center ${saveError ? "text-red-500" : "text-gray-400 dark:text-gray-500"}`}>

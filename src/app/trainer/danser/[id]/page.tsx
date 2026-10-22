@@ -1,11 +1,10 @@
 import { redirect } from "next/navigation";
 import Link from "next/link";
+import GoalsReadOnly from "@/components/GoalsReadOnly";
 import { createClient } from "@/lib/supabase/server";
 import { ArrowLeft } from "lucide-react";
 import { formatDate, formatTime } from "@/lib/dateUtils";
 
-function isDone(goal: string) { return goal.startsWith("[x] "); }
-function goalText(goal: string) { return isDone(goal) ? goal.slice(4) : goal; }
 
 export default async function TrainerDancerProfilePage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
@@ -18,7 +17,7 @@ export default async function TrainerDancerProfilePage({ params }: { params: Pro
 
   const { data: dancer } = await supabase
     .from("profiles")
-    .select("id, name, avatar_url, season_goals, goals_visible_to_trainer")
+    .select("id, name, avatar_url, season_goals, goals_freestyle, goals_slow, goals_visible_to_trainer")
     .eq("id", id)
     .in("role", ["dancer", "parent"])
     .eq("club_id", trainerProfile.club_id ?? "")
@@ -37,10 +36,6 @@ export default async function TrainerDancerProfilePage({ params }: { params: Pro
   const dancerSlots = (slots ?? []).filter(s =>
     s.bookings?.some((b: any) => b.status === "confirmed" && b.dancer_name?.toLowerCase().includes(dancer.name.toLowerCase()))
   );
-
-  const goals = dancer.season_goals
-    ? dancer.season_goals.split("\n").filter((g: string) => g.trim() !== "")
-    : [];
 
   return (
     <main className="bg-gray-50 dark:bg-gray-950 px-6 pb-6 page-safe-top">
@@ -64,26 +59,11 @@ export default async function TrainerDancerProfilePage({ params }: { params: Pro
 
         {/* Sesongmål */}
         <div className="bg-white dark:bg-gray-900 rounded-2xl border dark:border-gray-700 p-5 mb-6">
-          <h2 className="text-base font-semibold text-gray-900 dark:text-white mb-3">Sesongmål</h2>
+          <h2 className="text-base font-semibold text-gray-900 dark:text-white mb-3">Mål</h2>
           {dancer.goals_visible_to_trainer === false ? (
-            <p className="text-sm text-gray-400 dark:text-gray-500">Danseren har valgt å ikke dele sesongmål med trenere</p>
-          ) : goals.length === 0 ? (
-            <p className="text-sm text-gray-400 dark:text-gray-500">Ingen mål satt ennå</p>
+            <p className="text-sm text-gray-400 dark:text-gray-500">Danseren har valgt å ikke dele målene sine med trenere</p>
           ) : (
-            <ul className="space-y-2">
-              {goals.map((goal: string, i: number) => {
-                const done = isDone(goal);
-                return (
-                  <li key={i} className="flex items-center justify-between gap-2 text-sm py-1.5">
-                    <span className="flex items-start gap-2 text-gray-700 dark:text-gray-300">
-                      <span className="text-[#c87de0] mt-0.5">•</span>
-                      {goalText(goal)}
-                    </span>
-                    {done && <span className="text-xs text-green-600 dark:text-green-400 font-medium whitespace-nowrap">Mål nådd</span>}
-                  </li>
-                );
-              })}
-            </ul>
+            <GoalsReadOnly values={{ season: dancer.season_goals, freestyle: dancer.goals_freestyle, slow: dancer.goals_slow }} emptyText="Ingen mål satt ennå" />
           )}
         </div>
 
