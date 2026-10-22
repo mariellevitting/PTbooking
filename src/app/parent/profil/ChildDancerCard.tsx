@@ -160,11 +160,11 @@ export default function ChildDancerCard({ parentId, children, hideResults, hideG
         </CardHeader>
         <CardContent className="space-y-6">
           {[
-            { label: "Freestyle", points: freestyle, level: levelF, needed: neededF, onChange: handleFreestyleChange },
-            { label: "Slow", points: slow, level: levelS, needed: neededS, onChange: handleSlowChange },
-          ].map(({ label, points, level, needed, onChange }, idx) => (
+            { label: "Freestyle", points: freestyle, level: levelF, needed: neededF, onChange: handleFreestyleChange, onLevelChange: (l: number) => { setLevelF(l); setFreestyle(0); setSuccess(false); } },
+            { label: "Slow", points: slow, level: levelS, needed: neededS, onChange: handleSlowChange, onLevelChange: (l: number) => { setLevelS(l); setSlow(0); setSuccess(false); } },
+          ].map(({ label, points, level, needed, onChange, onLevelChange }, idx) => (
             <div key={label} className={idx > 0 ? "border-t dark:border-gray-700 pt-6" : ""}>
-              <PoengNivaa label={label} points={points} level={level} needed={needed} onChange={onChange} />
+              <PoengNivaa label={label} points={points} level={level} needed={needed} onChange={onChange} onLevelChange={onLevelChange} />
             </div>
           ))}
           <PoengForklaring />

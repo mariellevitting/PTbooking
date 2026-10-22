@@ -1,7 +1,7 @@
 "use client";
 
 import { Fragment } from "react";
-import { Trophy } from "lucide-react";
+import { Trophy, Star } from "lucide-react";
 import PointsStepper from "./PointsStepper";
 
 const LEVELS = ["Rekrutt", "Litt øvet", "Mester", "Champ", "Elite"];
@@ -12,10 +12,12 @@ interface Props {
   level: number;
   needed: number;
   onChange?: (val: number) => void;
+  onLevelChange?: (level: number) => void;
   readOnly?: boolean;
 }
 
-export default function PoengNivaa({ label, points, level, needed, onChange, readOnly }: Props) {
+export default function PoengNivaa({ label, points, level, needed, onChange, onLevelChange, readOnly }: Props) {
+  const topLevel = level >= 3;
   const shown = Math.min(points, needed);
   const pct = needed > 0 ? Math.round((shown / needed) * 100) : 0;
 
@@ -28,9 +30,9 @@ export default function PoengNivaa({ label, points, level, needed, onChange, rea
         {LEVELS.map((_, i) => (
           <Fragment key={i}>
             <span
-              className={`w-3.5 h-3.5 rounded-full shrink-0 ${
-                i <= level ? "bg-[#c87de0]" : "border-2 border-gray-300 dark:border-gray-600"
-              }`}
+              className={`rounded-full shrink-0 ${
+                i === level && topLevel ? "w-[18px] h-[18px] ring-[3px] ring-[#f0dcf8] dark:ring-[#E2A9F1]/25" : "w-3.5 h-3.5"
+              } ${i <= level ? "bg-[#c87de0]" : "border-2 border-gray-300 dark:border-gray-600"}`}
             />
             {i < LEVELS.length - 1 && (
               i < level ? (
@@ -54,22 +56,51 @@ export default function PoengNivaa({ label, points, level, needed, onChange, rea
         ))}
       </div>
 
-      {level >= 4 ? (
-        <p className="text-center text-sm text-gray-500 dark:text-gray-400 mb-3">Øverste nivå 🎉</p>
-      ) : level === 3 ? (
-        <div className="flex items-center gap-2 text-sm text-gray-500 dark:text-gray-400 bg-yellow-50 dark:bg-yellow-900/10 border border-yellow-200 dark:border-yellow-700/30 rounded-lg px-3 py-2 mb-3">
-          <Trophy size={14} className="text-yellow-500 dark:text-yellow-600" /> Neste nivå avgjøres av ranking på stevner
-        </div>
+      {topLevel ? (
+        <>
+          <div className="flex flex-col items-center justify-center rounded-xl bg-[#3A3A3A] py-4 mb-3">
+            {level >= 4
+              ? <Star size={24} className="text-[#E2A9F1]" />
+              : <Trophy size={24} className="text-[#E2A9F1]" />}
+            <p className="text-2xl font-semibold text-[#E2A9F1] mt-1">{LEVELS[level]}</p>
+          </div>
+          {!readOnly && onLevelChange && (
+            <>
+              <div className="flex gap-1 bg-gray-100 dark:bg-gray-800 rounded-xl p-1">
+                {[3, 4].map(l => (
+                  <button
+                    key={l}
+                    type="button"
+                    onClick={() => onLevelChange(l)}
+                    className={`flex-1 py-2 rounded-lg text-sm font-medium transition-colors ${
+                      level === l ? "bg-white dark:bg-gray-900 text-[#9b59c4] dark:text-[#E2A9F1] shadow-sm" : "text-gray-500 dark:text-gray-400"
+                    }`}
+                  >
+                    {LEVELS[l]}
+                  </button>
+                ))}
+              </div>
+              <button
+                type="button"
+                onClick={() => onLevelChange(2)}
+                className="block mx-auto mt-2.5 text-xs text-gray-400 dark:text-gray-500 underline"
+              >
+                Tilbake til Mester
+              </button>
+            </>
+          )}
+        </>
       ) : (
-        <p className="text-center text-sm text-gray-500 dark:text-gray-400 mb-3">
-          {shown} av {needed} poeng til {LEVELS[level + 1]}
-        </p>
-      )}
-
-      {!readOnly && onChange && (
-        <div className="flex justify-center">
-          <PointsStepper value={points} onChange={onChange} />
-        </div>
+        <>
+          <p className="text-center text-sm text-gray-500 dark:text-gray-400 mb-3">
+            {shown} av {needed} poeng til {LEVELS[level + 1]}
+          </p>
+          {!readOnly && onChange && (
+            <div className="flex justify-center">
+              <PointsStepper value={points} onChange={onChange} />
+            </div>
+          )}
+        </>
       )}
     </div>
   );
