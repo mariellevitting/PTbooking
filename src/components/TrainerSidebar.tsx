@@ -142,10 +142,10 @@ export default function TrainerSidebar({ name, userId, email, avatarUrl, notific
                 key={href}
                 href={href}
                 className={`flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-colors ${
-                  active ? "bg-[#3A3A3A] text-[#E2A9F1]" : "text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800"
+                  active ? "text-black dark:text-white font-semibold" : "text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800"
                 }`}
               >
-                <Icon size={18} />
+                <Icon size={18} className={active ? "text-[#c87de0]" : "text-gray-400 dark:text-gray-500"} />
                 {label}
               </Link>
             );
