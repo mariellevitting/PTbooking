@@ -370,7 +370,7 @@ export default function ParentDashboardNav({ userName, avatarUrl, notifications,
         <div className="max-w-lg mx-auto px-4 pb-6 pt-[calc(3.5rem+env(safe-area-inset-top))] md:py-6 space-y-4">
 
           {active === "timer" && (
-            <h1 className="font-display text-4xl">{greeting()}, {userName.split(" ")[0]}! 👋</h1>
+            <h1 className="font-display text-[28px]">{greeting()}, <span className="whitespace-nowrap">{userName.split(" ")[0]}! 👋</span></h1>
           )}
 
           {/* Mine privattimer */}

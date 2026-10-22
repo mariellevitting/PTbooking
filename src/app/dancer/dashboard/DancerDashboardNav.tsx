@@ -284,7 +284,7 @@ export default function DancerDashboardNav(props: Props) {
 
 
       {active === "timer" && (
-        <h1 className="font-display text-4xl">{greeting()}, {props.userName.split(" ")[0]}! 👋</h1>
+        <h1 className="font-display text-[28px]">{greeting()}, <span className="whitespace-nowrap">{props.userName.split(" ")[0]}! 👋</span></h1>
       )}
 
       {/* Mine timer */}
