@@ -229,7 +229,8 @@ export default function DancerDashboardNav(props: Props) {
         </div>
       </aside>
 
-      <div className="md:ml-56 px-4 pb-4 pt-[calc(3.5rem+env(safe-area-inset-top))] md:p-6">
+      <div className="relative isolate md:ml-56 px-4 pb-4 pt-[calc(3.5rem+env(safe-area-inset-top))] md:p-6">
+      {active === "timer" && <div className="home-gradient md:hidden" />}
       {/* Innhold */}
       <div className="max-w-lg mx-auto space-y-4">
 
@@ -283,7 +284,7 @@ export default function DancerDashboardNav(props: Props) {
 
 
       {active === "timer" && (
-        <h1 className="text-2xl font-bold">{greeting()}, {props.userName.split(" ")[0]}! 👋</h1>
+        <h1 className="font-display text-3xl">{greeting()}, {props.userName.split(" ")[0]}! 👋</h1>
       )}
 
       {/* Mine timer */}

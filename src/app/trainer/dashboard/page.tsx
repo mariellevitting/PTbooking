@@ -46,10 +46,11 @@ export default async function TrainerDashboard() {
   const greetingText = greeting();
 
   return (
-    <main className="bg-gray-50 dark:bg-gray-950 min-h-screen">
+    <main className="relative isolate bg-gray-50 dark:bg-gray-950 min-h-screen">
+      <div className="home-gradient lg:hidden" />
       {/* NMCountdown – rendres kun én gang, vises bare på mobil */}
       <div className="lg:hidden px-6 pt-6 max-w-lg mx-auto">
-        <h1 className="text-2xl font-bold mb-6">{greetingText}, {profile.name.split(" ")[0]}! 👋</h1>
+        <h1 className="font-display text-3xl mb-6">{greetingText}, {profile.name.split(" ")[0]}! 👋</h1>
         <NMCountdown href="/trainer/konkurranser" clubId={clubId} />
       </div>
 

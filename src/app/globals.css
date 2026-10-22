@@ -148,3 +148,26 @@
 input, textarea, select {
   font-size: max(16px, 1em);
 }
+/* Myk fargetoning øverst på forsiden i mobilappen */
+.home-gradient {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 420px;
+  z-index: -10;
+  pointer-events: none;
+  background: linear-gradient(120deg, #f7c6a3 0%, #f2b3c8 35%, #dcb2f0 68%, #b8c4f6 100%);
+  -webkit-mask-image: linear-gradient(to bottom, #000 35%, transparent 100%);
+  mask-image: linear-gradient(to bottom, #000 35%, transparent 100%);
+}
+.dark .home-gradient {
+  opacity: 0.25;
+}
+
+/* Apples systemfont (SF Pro Display på iPhone), med fallback */
+.font-display {
+  font-family: -apple-system, "SF Pro Display", BlinkMacSystemFont, "Helvetica Neue", Arial, sans-serif;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+}
