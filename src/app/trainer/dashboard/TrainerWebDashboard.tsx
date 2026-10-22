@@ -188,7 +188,7 @@ export default function TrainerWebDashboard({ slots, completedSlots, trainerName
         <div className="absolute inset-0 bg-gradient-to-r from-black/65 via-black/35 to-transparent" />
         <div className="relative z-10 p-7 h-full flex flex-col justify-end">
           <p className="text-white/70 text-xs font-semibold tracking-widest uppercase mb-1">{todayLabel}</p>
-          <h1 className="text-3xl font-bold text-white">{greetingText}, {trainerName.split(" ")[0]}! 👋</h1>
+          <h1 className="text-3xl font-bold text-white">{greetingText}, {trainerName.split(" ")[0]}!</h1>
         </div>
       </div>
 

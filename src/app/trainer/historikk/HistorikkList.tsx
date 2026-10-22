@@ -4,6 +4,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { Check } from "lucide-react";
 import { createClient } from "@/lib/supabase/client";
+import RemoveCompletedBooking from "@/components/RemoveCompletedBooking";
 import { formatDate, formatTime } from "@/lib/dateUtils";
 
 interface Booking {
@@ -143,6 +144,7 @@ export default function HistorikkList({ monthGroups, trainerName, trainerId }: P
                     <div className="flex flex-col items-end gap-1 shrink-0">
                       <span className="text-xs bg-gray-100 dark:bg-gray-800 text-gray-500 dark:text-gray-400 px-2 py-1 rounded-full">Fullført</span>
                       {booking && <PaidToggle bookingId={booking.id} initialPaid={!!booking.paid} />}
+                      {booking && <RemoveCompletedBooking bookingId={booking.id} dancerName={booking.dancer_name} />}
                     </div>
                   </div>
                   {booking && !booking.paid && (

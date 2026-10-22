@@ -6,6 +6,7 @@ import { useRouter } from "next/navigation";
 import { Check } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { createClient } from "@/lib/supabase/client";
+import RemoveCompletedBooking from "@/components/RemoveCompletedBooking";
 import { formatDate, formatTime, formatDateKey } from "@/lib/dateUtils";
 
 interface Booking {
@@ -319,6 +320,7 @@ export default function TrainerDashboardTabs({ slots, completedSlots, trainerNam
                                 {!(booking as any).paid && (
                                   <KvitteringReminder booking={booking as any} when={`${dayLabel} kl ${formatTime(start)}`} trainerName={trainerName} trainerId={trainerId} />
                                 )}
+                                <RemoveCompletedBooking bookingId={booking.id} dancerName={booking.dancer_name} />
                               </div>
                             )}
                           </div>
