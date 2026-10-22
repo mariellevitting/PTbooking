@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { X } from "lucide-react";
+import { X, ArrowLeftRight } from "lucide-react";
 import { createClient } from "@/lib/supabase/client";
 import { formatDate, formatTime } from "@/lib/dateUtils";
 
@@ -29,10 +29,11 @@ export default function SwapPanel({ target, mine, trainerName, onClose }: {
   const [sending, setSending] = useState<string | null>(null);
   const [sent, setSent] = useState(false);
   const [error, setError] = useState("");
+  const [confirming, setConfirming] = useState<BookedSlot | null>(null);
 
   async function send(my: BookedSlot) {
     if (sending) return;
-    if (!confirm(`Er du sikker på at du vil sende bytteforespørsel til ${target.dancer_name}?`)) return;
+    setConfirming(null);
     setSending(my.booking_id);
     setError("");
     const supabase = createClient();
@@ -71,7 +72,7 @@ export default function SwapPanel({ target, mine, trainerName, onClose }: {
               <button
                 key={m.booking_id}
                 type="button"
-                onClick={() => send(m)}
+                onClick={() => setConfirming(m)}
                 disabled={!!sending}
                 className="w-full text-left px-3 py-2.5 rounded-lg border border-gray-200 dark:border-gray-700 hover:border-[#E2A9F1] text-sm disabled:opacity-50"
               >
@@ -84,6 +85,35 @@ export default function SwapPanel({ target, mine, trainerName, onClose }: {
         </>
       )}
       {error && <p className="text-xs text-red-500">{error}</p>}
+
+      {confirming && (
+        <div className="fixed inset-0 z-[60] flex items-center justify-center p-6" role="dialog" aria-modal="true" aria-labelledby="swap-confirm-title">
+          <div className="absolute inset-0 bg-black/50" onClick={() => setConfirming(null)} />
+          <div className="relative w-full max-w-sm bg-white dark:bg-gray-900 rounded-2xl shadow-2xl p-5">
+            <div className="w-11 h-11 rounded-full bg-[#f5eeff] dark:bg-[#E2A9F1]/15 flex items-center justify-center mb-3">
+              <ArrowLeftRight size={20} className="text-[#c87de0]" />
+            </div>
+            <h3 id="swap-confirm-title" className="text-lg font-semibold text-gray-900 dark:text-white">Send bytteforespørsel?</h3>
+            <p className="text-sm text-gray-600 dark:text-gray-300 mt-1">
+              Er du sikker på at du vil sende bytteforespørsel til <span className="font-semibold">{target.dancer_name}</span>?
+            </p>
+            <div className="mt-3 rounded-xl bg-gray-50 dark:bg-gray-800 p-3 text-sm space-y-1">
+              <p className="text-gray-500 dark:text-gray-400">Din time: <span className="text-gray-800 dark:text-gray-100 capitalize">{when(confirming.start_at)}</span></p>
+              <p className="text-gray-500 dark:text-gray-400">Bytter til: <span className="text-gray-800 dark:text-gray-100 capitalize">{when(target.start_at)}</span></p>
+            </div>
+            <div className="flex gap-2 mt-4">
+              <button type="button" onClick={() => setConfirming(null)}
+                className="flex-1 py-2.5 rounded-xl text-sm font-medium border border-gray-200 dark:border-gray-700 text-gray-600 dark:text-gray-300">
+                Avbryt
+              </button>
+              <button type="button" onClick={() => send(confirming)}
+                className="flex-1 py-2.5 rounded-xl text-sm font-medium bg-[#3A3A3A] text-[#E2A9F1] dark:bg-[#c87de0] dark:text-white">
+                Send
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
