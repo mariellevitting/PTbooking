@@ -3,9 +3,8 @@
 import { useState } from "react";
 import { Search, ChevronDown, Target } from "lucide-react";
 import PoengNivaa from "@/components/PoengNivaa";
+import GoalsReadOnly from "@/components/GoalsReadOnly";
 
-function isDone(goal: string) { return goal.startsWith("[x] "); }
-function goalText(goal: string) { return isDone(goal) ? goal.slice(4) : goal; }
 function parseGoals(raw: string | null) {
   return (raw ?? "").split("\n").map(g => g.trim()).filter(g => g !== "");
 }
@@ -21,6 +20,8 @@ interface Person {
   name: string;
   avatar_url: string | null;
   season_goals: string | null;
+  goals_freestyle?: string | null;
+  goals_slow?: string | null;
   role: string;
   parentName?: string | null;
   points_freestyle: number;
@@ -37,7 +38,7 @@ function subtitle(p: Person) {
 
 function Row({ p }: { p: Person }) {
   const [open, setOpen] = useState(false);
-  const goals = parseGoals(p.season_goals);
+  const goals = [...parseGoals(p.season_goals), ...parseGoals(p.goals_freestyle ?? null), ...parseGoals(p.goals_slow ?? null)];
 
   return (
     <div className="bg-white dark:bg-gray-900 rounded-xl border dark:border-gray-700 overflow-hidden">
@@ -67,26 +68,8 @@ function Row({ p }: { p: Person }) {
 
       {open && (
         <div className="px-4 pb-4 pt-1 border-t dark:border-gray-700 space-y-4">
-          <div>
-            <p className="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wide mt-3 mb-2">Sesongmål</p>
-            {goals.length === 0 ? (
-              <p className="text-sm text-gray-400 dark:text-gray-500">Ingen mål delt ennå</p>
-            ) : (
-              <ul className="space-y-1.5">
-                {goals.map((goal, i) => {
-                  const done = isDone(goal);
-                  return (
-                    <li key={i} className="flex items-center justify-between gap-2 text-sm py-0.5">
-                      <span className="flex items-start gap-2 text-gray-700 dark:text-gray-300">
-                        <span className="text-[#c87de0] mt-0.5">•</span>
-                        {goalText(goal)}
-                      </span>
-                      {done && <span className="text-xs text-green-600 dark:text-green-400 font-medium whitespace-nowrap">Mål nådd</span>}
-                    </li>
-                  );
-                })}
-              </ul>
-            )}
+          <div className="pt-3">
+            <GoalsReadOnly values={{ season: p.season_goals, freestyle: p.goals_freestyle, slow: p.goals_slow }} />
           </div>
 
           <div className="space-y-4 pt-1">

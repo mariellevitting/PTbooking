@@ -1,6 +1,7 @@
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import SesongmalSearch from "./SesongmalSearch";
+import { hasAnyGoals } from "@/components/GoalsReadOnly";
 
 export const dynamic = "force-dynamic";
 
@@ -30,20 +31,18 @@ export default async function TrainerSesongmalPage() {
   const [{ data: dancerProfiles }, { data: allChildren }] = await Promise.all([
     supabase
       .from("profiles")
-      .select(`id, name, avatar_url, season_goals, goals_visible_to_trainer, role, ${POINT_COLS}`)
+      .select(`id, name, avatar_url, season_goals, goals_freestyle, goals_slow, goals_visible_to_trainer, role, ${POINT_COLS}`)
       .in("role", ["dancer", "parent"])
       .eq("club_id", clubId)
       .order("name"),
     clubParentIds.length > 0
       ? supabase
           .from("children")
-          .select(`id, name, season_goals, parent_id, ${POINT_COLS}`)
+          .select(`id, name, season_goals, goals_freestyle, goals_slow, parent_id, ${POINT_COLS}`)
           .in("parent_id", clubParentIds)
           .order("name")
       : Promise.resolve({ data: [] }),
   ]);
-
-  const hasGoals = (g: string | null) => (g ?? "").split("\n").some(l => l.trim() !== "");
 
   const profiles = (dancerProfiles ?? [])
     .map((p: any) => ({
@@ -51,13 +50,15 @@ export default async function TrainerSesongmalPage() {
       name: p.name,
       avatar_url: p.avatar_url,
       season_goals: p.goals_visible_to_trainer === false ? null : p.season_goals,
+      goals_freestyle: p.goals_visible_to_trainer === false ? null : p.goals_freestyle,
+      goals_slow: p.goals_visible_to_trainer === false ? null : p.goals_slow,
       role: p.role as string,
       points_freestyle: p.points_freestyle ?? 0,
       points_slow: p.points_slow ?? 0,
       level_freestyle: p.level_freestyle ?? 0,
       level_slow: p.level_slow ?? 0,
     }))
-    .filter((p) => hasGoals(p.season_goals));
+    .filter((p) => hasAnyGoals({ season: p.season_goals, freestyle: p.goals_freestyle, slow: p.goals_slow }));
 
   const children = (allChildren ?? [])
     .map((c: any) => ({
@@ -65,6 +66,8 @@ export default async function TrainerSesongmalPage() {
       name: c.name,
       avatar_url: parentMap[c.parent_id]?.avatar_url ?? null,
       season_goals: c.season_goals,
+      goals_freestyle: c.goals_freestyle,
+      goals_slow: c.goals_slow,
       role: "child" as const,
       parentName: parentMap[c.parent_id]?.name ?? null,
       points_freestyle: c.points_freestyle ?? 0,
@@ -72,7 +75,7 @@ export default async function TrainerSesongmalPage() {
       level_freestyle: c.level_freestyle ?? 0,
       level_slow: c.level_slow ?? 0,
     }))
-    .filter((c) => hasGoals(c.season_goals));
+    .filter((c) => hasAnyGoals({ season: c.season_goals, freestyle: c.goals_freestyle, slow: c.goals_slow }));
 
   return (
     <main className="bg-gray-50 dark:bg-gray-950 min-h-screen p-6">
