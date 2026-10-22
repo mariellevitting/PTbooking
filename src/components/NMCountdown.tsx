@@ -60,7 +60,7 @@ interface Props {
 export default function NMCountdown({ href, clubId }: Props) {
   const instanceId = useId();
   const [tick, setTick] = useState(0);
-  const [count, setCount] = useState<number | null>(null);
+  const [participants, setParticipants] = useState<{ name: string; avatar_url: string | null }[]>([]);
 
   const upcoming = COMPETITIONS.filter(c => getTimeLeft(c.date) !== null);
   const next = upcoming[0];
@@ -78,11 +78,11 @@ export default function NMCountdown({ href, clubId }: Props) {
     const fetchCount = async () => {
       let q = supabase
         .from("competition_participations")
-        .select(clubId ? "id, profiles!inner(club_id)" : "id", { count: "exact", head: true })
+        .select("profiles!inner(name, avatar_url, club_id)")
         .eq("competition_name", competitionName);
       if (clubId) q = q.eq("profiles.club_id", clubId);
-      const { count: c } = await q;
-      setCount(c ?? 0);
+      const { data } = await q;
+      setParticipants((data ?? []).map((r: any) => ({ name: r.profiles?.name ?? "", avatar_url: r.profiles?.avatar_url ?? null })));
     };
 
     fetchCount();
@@ -98,20 +98,36 @@ export default function NMCountdown({ href, clubId }: Props) {
   if (upcoming.length === 0) return null;
   const timeLeft = getTimeLeft(next.date)!;
 
+  const shownAvatars = participants.slice(0, 3);
+  const extra = participants.length - shownAvatars.length;
+  const AVATAR_BG = ["bg-[#edd5f9] text-[#9b59c4]", "bg-[#f4c0d1] text-[#72243E]", "bg-[#cfe0fb] text-[#0C447C]"];
+
   const box = (
-    <div className="bg-[#3A3A3A] rounded-xl px-4 py-3 flex items-center justify-between">
-      <div>
-        <p className="text-xs text-[#e8c4f5] font-semibold uppercase tracking-wide">Neste konkurranse</p>
-        <p className="text-sm font-bold text-white">{next.short}</p>
-        <p className="text-xs text-[#e8c4f5]">{next.dateLabel}{next.location ? ` · ${next.location}` : ""}</p>
-        {count !== null && count > 0 && (
-          <p className="text-xs text-[#e8c4f5] mt-1">{count} stk skal delta</p>
-        )}
+    <div className="bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-full py-2 pl-2 pr-3 flex items-center gap-3 shadow-sm">
+      <div className="w-14 h-14 rounded-full bg-[#3A3A3A] flex flex-col items-center justify-center shrink-0">
+        <p className="text-xl font-semibold leading-none text-[#E2A9F1]">{timeLeft.days}</p>
+        <p className="text-[10px] text-[#d9c3e3]">{timeLeft.days === 1 ? "dag" : "dager"}</p>
       </div>
-      <div className="text-right ml-4">
-        <p className="text-3xl font-bold text-white">{timeLeft.days}</p>
-        <p className="text-xs text-[#e8c4f5]">dager igjen</p>
+      <div className="flex-1 min-w-0">
+        <p className="font-semibold text-gray-900 dark:text-white truncate">{next.short}</p>
+        <p className="text-xs text-gray-500 dark:text-gray-400 truncate">{next.dateLabel}</p>
       </div>
+      {participants.length > 0 && (
+        <div className="flex items-center shrink-0" aria-label={`${participants.length} skal delta`}>
+          {shownAvatars.map((p, i) => (
+            p.avatar_url ? (
+              <img key={i} src={p.avatar_url} alt={p.name} className={`w-7 h-7 rounded-full object-cover border-2 border-white dark:border-gray-900 ${i > 0 ? "-ml-2" : ""}`} />
+            ) : (
+              <span key={i} className={`w-7 h-7 rounded-full border-2 border-white dark:border-gray-900 flex items-center justify-center text-xs font-semibold ${AVATAR_BG[i % 3]} ${i > 0 ? "-ml-2" : ""}`}>
+                {p.name.charAt(0)}
+              </span>
+            )
+          ))}
+          {extra > 0 && (
+            <span className="h-7 px-2 -ml-2 rounded-full border-2 border-white dark:border-gray-900 bg-gray-100 dark:bg-gray-800 text-xs text-gray-600 dark:text-gray-300 flex items-center">+{extra}</span>
+          )}
+        </div>
+      )}
     </div>
   );
 
