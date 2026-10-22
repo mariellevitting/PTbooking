@@ -12,6 +12,7 @@ import FeedbackButton from "@/components/FeedbackButton";
 import ThemeToggle from "@/components/ThemeToggle";
 import NMCountdown from "@/components/NMCountdown";
 import SwapRequests from "@/components/SwapRequests";
+import PushPrompt from "@/components/PushPrompt";
 import CompetitionList from "@/components/CompetitionList";
 import PrivattimeInfo from "@/components/PrivattimeInfo";
 import type { ClubConfig } from "@/lib/club";
@@ -384,6 +385,7 @@ export default function ParentDashboardNav({ userName, avatarUrl, notifications,
             <div>
               <NMCountdown clubId={club?.id ?? null} />
               <SwapRequests />
+              <PushPrompt />
               <div className="flex justify-between items-center mb-3 mt-4">
                 <h2 className="font-semibold text-lg">Mine privattimer</h2>
                 <Link href="/book">

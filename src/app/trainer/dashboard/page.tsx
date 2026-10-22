@@ -2,6 +2,7 @@ import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { greeting } from "@/lib/greeting";
 import NMCountdown from "@/components/NMCountdown";
+import PushPrompt from "@/components/PushPrompt";
 import TrainerDashboardTabs from "./TrainerDashboardTabs";
 import TrainerWebDashboard from "./TrainerWebDashboard";
 import Link from "next/link";
@@ -52,6 +53,7 @@ export default async function TrainerDashboard() {
       <div className="lg:hidden px-6 pt-6 max-w-lg mx-auto">
         <h1 className="font-display text-[28px] mb-6">{greetingText}, <span className="whitespace-nowrap">{profile.name.split(" ")[0]}!</span></h1>
         <NMCountdown href="/trainer/konkurranser" clubId={clubId} />
+        <PushPrompt text="Få beskjed når noen booker, avbestiller eller bytter timer hos deg, og om meldinger fra klubben." />
       </div>
 
       {/* Mobil tabs */}
