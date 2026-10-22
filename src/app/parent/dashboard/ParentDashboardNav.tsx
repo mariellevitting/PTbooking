@@ -366,7 +366,7 @@ export default function ParentDashboardNav({ userName, avatarUrl, notifications,
 
       {/* Innhold */}
       <div className="relative isolate md:ml-56">
-        {active === "timer" && <div className="home-gradient md:hidden" />}
+        {active === "timer" && <div className="home-gradient" />}
         <div className="max-w-lg mx-auto px-4 pb-6 pt-[calc(3.5rem+env(safe-area-inset-top))] md:py-6 space-y-4">
 
           {active === "timer" && (

@@ -151,15 +151,17 @@ input, textarea, select {
 /* Myk fargetoning øverst på forsiden i mobilappen */
 .home-gradient {
   position: absolute;
-  top: 0;
+  /* Starter over containeren så den alltid når helt opp til headeren,
+     uansett skjermstørrelse og safe-area (resten skjules under headeren). */
+  top: -240px;
   left: 0;
   right: 0;
-  height: 420px;
+  height: 680px;
   z-index: -10;
   pointer-events: none;
   background: linear-gradient(120deg, #f7c6a3 0%, #f2b3c8 35%, #dcb2f0 68%, #b8c4f6 100%);
-  -webkit-mask-image: linear-gradient(to bottom, #000 35%, transparent 100%);
-  mask-image: linear-gradient(to bottom, #000 35%, transparent 100%);
+  -webkit-mask-image: linear-gradient(to bottom, #000 55%, transparent 100%);
+  mask-image: linear-gradient(to bottom, #000 55%, transparent 100%);
 }
 .dark .home-gradient {
   opacity: 0.25;

@@ -230,7 +230,7 @@ export default function DancerDashboardNav(props: Props) {
       </aside>
 
       <div className="relative isolate md:ml-56 px-4 pb-4 pt-[calc(3.5rem+env(safe-area-inset-top))] md:p-6">
-      {active === "timer" && <div className="home-gradient md:hidden" />}
+      {active === "timer" && <div className="home-gradient" />}
       {/* Innhold */}
       <div className="max-w-lg mx-auto space-y-4">
 
