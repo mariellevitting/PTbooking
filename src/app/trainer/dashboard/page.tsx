@@ -48,7 +48,6 @@ export default async function TrainerDashboard() {
 
   return (
     <main className="relative isolate bg-gray-50 dark:bg-gray-950 min-h-screen">
-      <div className="home-gradient" />
       {/* NMCountdown – rendres kun én gang, vises bare på mobil */}
       <div className="lg:hidden px-6 pt-6 max-w-lg mx-auto">
         <h1 className="font-display text-[28px] mb-6">{greetingText}, <span className="whitespace-nowrap">{profile.name.split(" ")[0]}!</span></h1>

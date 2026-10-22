@@ -175,3 +175,8 @@ input, textarea, select {
   letter-spacing: -0.01em;
   line-height: 1.1;
 }
+
+/* Toningen ligger i rot-layouten; sidene skal ikke male over den med egen bakgrunn */
+.app-shell main {
+  background-color: transparent !important;
+}

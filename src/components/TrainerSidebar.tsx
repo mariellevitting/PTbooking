@@ -8,6 +8,7 @@ import LogoutButton from "@/components/LogoutButton";
 import NotificationBell from "@/components/NotificationBell";
 import ThemeToggle from "@/components/ThemeToggle";
 import FeedbackButton from "@/components/FeedbackButton";
+import CloudEdge from "@/components/CloudEdge";
 
 const NAV = [
   { href: "/trainer/dashboard", label: "Mine timer", icon: Calendar },
@@ -65,7 +66,8 @@ export default function TrainerSidebar({ name, userId, email, avatarUrl, notific
       {menuOpen && (
         <div className="fixed inset-0 z-50 md:hidden">
           <div className="absolute inset-0 bg-black/50" onClick={() => setMenuOpen(false)} />
-          <div className="absolute left-0 top-0 h-full w-72 bg-white dark:bg-gray-900 shadow-2xl flex flex-col rounded-r-[32px] overflow-hidden">
+          <div className="absolute left-0 top-0 h-full w-72 bg-white dark:bg-gray-900 flex flex-col [filter:drop-shadow(0_12px_28px_rgba(0,0,0,0.28))]">
+            <CloudEdge />
             <div className="flex justify-end p-4">
               <button onClick={() => setMenuOpen(false)} className="p-1.5 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800">
                 <X size={20} className="text-gray-500 dark:text-gray-400" />

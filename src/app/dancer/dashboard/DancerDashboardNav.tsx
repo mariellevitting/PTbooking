@@ -14,6 +14,7 @@ import FeedbackButton from "@/components/FeedbackButton";
 import NMCountdown from "@/components/NMCountdown";
 import SwapRequests from "@/components/SwapRequests";
 import PushPrompt from "@/components/PushPrompt";
+import CloudEdge from "@/components/CloudEdge";
 import CompetitionList from "@/components/CompetitionList";
 import PrivattimeInfo from "@/components/PrivattimeInfo";
 import PoengForklaring from "@/components/PoengForklaring";
@@ -243,7 +244,8 @@ export default function DancerDashboardNav(props: Props) {
             {/* Mørk bakgrunn */}
             <div className="absolute inset-0 bg-black/50" onClick={() => setMenuOpen(false)} />
             {/* Drawer */}
-            <div className="absolute left-0 top-0 h-full w-72 bg-white dark:bg-gray-900 shadow-2xl flex flex-col rounded-r-[32px] overflow-hidden">
+            <div className="absolute left-0 top-0 h-full w-72 bg-white dark:bg-gray-900 flex flex-col [filter:drop-shadow(0_12px_28px_rgba(0,0,0,0.28))]">
+            <CloudEdge />
               {/* Lukk-knapp */}
               <div className="flex justify-end p-4">
                 <button onClick={() => setMenuOpen(false)} className="p-1.5 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800">
@@ -286,7 +288,6 @@ export default function DancerDashboardNav(props: Props) {
         )}
 
       <div className="relative isolate md:ml-56 px-4 pb-4 pt-[calc(3.5rem+env(safe-area-inset-top))] md:p-6">
-      {active === "timer" && <div className="home-gradient" />}
       {/* Innhold */}
       <div className="max-w-lg mx-auto space-y-4">
 

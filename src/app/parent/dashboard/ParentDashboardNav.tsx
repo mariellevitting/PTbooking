@@ -13,6 +13,7 @@ import ThemeToggle from "@/components/ThemeToggle";
 import NMCountdown from "@/components/NMCountdown";
 import SwapRequests from "@/components/SwapRequests";
 import PushPrompt from "@/components/PushPrompt";
+import CloudEdge from "@/components/CloudEdge";
 import CompetitionList from "@/components/CompetitionList";
 import PrivattimeInfo from "@/components/PrivattimeInfo";
 import type { ClubConfig } from "@/lib/club";
@@ -335,7 +336,8 @@ export default function ParentDashboardNav({ userName, avatarUrl, notifications,
       {menuOpen && (
         <div className="fixed inset-0 z-50 md:hidden">
           <div className="absolute inset-0 bg-black/50" onClick={() => setMenuOpen(false)} />
-          <div className="absolute left-0 top-0 h-full w-72 bg-white dark:bg-gray-900 shadow-2xl flex flex-col rounded-r-[32px] overflow-hidden">
+          <div className="absolute left-0 top-0 h-full w-72 bg-white dark:bg-gray-900 flex flex-col [filter:drop-shadow(0_12px_28px_rgba(0,0,0,0.28))]">
+            <CloudEdge />
             <div className="flex justify-end p-4">
               <button onClick={() => setMenuOpen(false)} className="p-1.5 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800">
                 <X size={20} className="text-gray-500 dark:text-gray-400" />
@@ -373,7 +375,6 @@ export default function ParentDashboardNav({ userName, avatarUrl, notifications,
 
       {/* Innhold */}
       <div className="relative isolate md:ml-56">
-        {active === "timer" && <div className="home-gradient" />}
         <div className="max-w-lg mx-auto px-4 pb-6 pt-[calc(3.5rem+env(safe-area-inset-top))] md:py-6 space-y-4">
 
           {active === "timer" && (

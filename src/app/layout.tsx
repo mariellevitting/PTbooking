@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Poppins, Instrument_Serif } from "next/font/google";
 import "./globals.css";
 import Footer from "@/components/Footer";
+import AppGradient from "@/components/AppGradient";
 import CapacitorSessionRestore from "@/components/CapacitorSessionRestore";
 import OneSignalInit from "@/components/OneSignalInit";
 import OneSignalWebInit from "@/components/OneSignalWebInit";
@@ -53,7 +54,10 @@ export default function RootLayout({
         <CapacitorSessionRestore />
         <OneSignalInit />
         <OneSignalWebInit />
-        {children}
+        <div className="app-shell relative isolate flex-1 flex flex-col bg-gray-50 dark:bg-gray-950">
+          <AppGradient />
+          {children}
+        </div>
         <Footer />
       </body>
     </html>
