@@ -170,6 +170,6 @@ input, textarea, select {
 /* Apples systemfont (SF Pro Display på iPhone), med fallback */
 .font-display {
   font-family: -apple-system, "SF Pro Display", BlinkMacSystemFont, "Helvetica Neue", Arial, sans-serif;
-  font-weight: 700;
+  font-weight: 600;
   letter-spacing: -0.02em;
 }
