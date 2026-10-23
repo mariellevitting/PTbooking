@@ -15,7 +15,7 @@ export function hasAnyGoals(v: Partial<Record<keyof GoalValues, string | null>>)
 }
 
 export default function GoalsReadOnly({ values, emptyText = "Ingen mål delt ennå" }: { values: Partial<Record<keyof GoalValues, string | null>>; emptyText?: string }) {
-  const groups = GROUPS.map(g => ({ ...g, goals: parse(values[g.key]) })).filter(g => g.goals.length > 0);
+  const groups = GROUPS.map(g => ({ ...g, goals: parse(values[g.key]).sort((a, b) => Number(a.startsWith("[x] ")) - Number(b.startsWith("[x] "))) })).filter(g => g.goals.length > 0);
   if (groups.length === 0) return <p className="text-sm text-gray-400 dark:text-gray-500">{emptyText}</p>;
   return (
     <div className="space-y-4">
