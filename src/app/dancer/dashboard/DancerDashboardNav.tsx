@@ -432,15 +432,31 @@ export default function DancerDashboardNav(props: Props) {
                 setSaved(false);
               }}
             />
-            <label className="flex items-center gap-2 mt-4 cursor-pointer select-none">
-              <input
-                type="checkbox"
-                checked={visibleToTrainer}
-                onChange={e => { setVisibleToTrainer(e.target.checked); setSaved(false); }}
-                className="w-4 h-4 accent-[#c87de0] rounded"
+          </CardContent>
+        </Card>
+      )}
+
+      {active === "maal" && (
+        <Card>
+          <CardContent className="pt-5 flex items-center justify-between gap-4">
+            <div>
+              <p className="text-sm font-medium text-gray-800 dark:text-gray-100">Vis målene mine for trenere</p>
+              <p className="text-xs text-gray-500 dark:text-gray-400">Gjelder Sesong, Freestyle og Slow</p>
+            </div>
+            <button
+              type="button"
+              role="switch"
+              aria-checked={visibleToTrainer}
+              aria-label="Vis målene mine for trenere"
+              onClick={() => { setVisibleToTrainer(v => !v); setSaved(false); }}
+              className="relative inline-flex h-6 w-11 shrink-0 items-center rounded-full transition-colors"
+              style={{ background: visibleToTrainer ? "#E2A9F1" : "#d1d5db" }}
+            >
+              <span
+                className="inline-block h-5 w-5 rounded-full bg-white transition-transform"
+                style={{ transform: visibleToTrainer ? "translateX(22px)" : "translateX(2px)" }}
               />
-              <span className="text-sm text-gray-600 dark:text-gray-400">Vis målene mine for trenere</span>
-            </label>
+            </button>
           </CardContent>
         </Card>
       )}
