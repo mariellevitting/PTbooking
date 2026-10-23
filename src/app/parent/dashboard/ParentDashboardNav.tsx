@@ -226,6 +226,11 @@ interface Props {
 
 export default function ParentDashboardNav({ userName, avatarUrl, notifications, upcomingBookings, completedBookings, parentId, children, trainers = [], club = null }: Props) {
   const [active, setActive] = useState("timer");
+  useEffect(() => {
+    const onShow = () => setActive("timer");
+    window.addEventListener("danceitude:show-swaps", onShow);
+    return () => window.removeEventListener("danceitude:show-swaps", onShow);
+  }, []);
   // parentId brukes som userId for feedback
   const [bookingTab, setBookingTab] = useState<"kommende" | "gjennomforte">("kommende");
   const [menuOpen, setMenuOpen] = useState(false);

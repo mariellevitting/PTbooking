@@ -3,6 +3,9 @@
 import { useState, useRef, useEffect } from "react";
 import { createClient } from "@/lib/supabase/client";
 import { Bell, Trash2 } from "lucide-react";
+import { useRouter, usePathname } from "next/navigation";
+
+const isSwapRequest = (msg: string) => msg.includes("vil bytte privattime med deg");
 
 interface Notification {
   id: string;
@@ -17,6 +20,8 @@ interface Props {
 
 export default function NotificationBell({ notifications: initial }: Props) {
   const [open, setOpen] = useState(false);
+  const router = useRouter();
+  const pathname = usePathname() ?? "";
   const [notifications, setNotifications] = useState(initial);
   const [clearing, setClearing] = useState(false);
   const [dropdownPos, setDropdownPos] = useState({ top: 0, left: 0 });
@@ -117,13 +122,25 @@ export default function NotificationBell({ notifications: initial }: Props) {
             </div>
           ) : (
             <div className="max-h-96 overflow-y-auto divide-y">
-              {notifications.map((n) => (
-                <div key={n.id} className={`px-4 py-3 flex gap-3 items-start ${!n.read ? "bg-[#f5eeff] dark:bg-[#E2A9F1]/10 dark:bg-purple-950/30" : ""}`}>
+              {notifications.map((n) => {
+                const dashboard = pathname.startsWith("/parent") ? "/parent/dashboard" : pathname.startsWith("/dancer") ? "/dancer/dashboard" : null;
+                const clickable = isSwapRequest(n.message) && !!dashboard;
+                return (
+                <div
+                  key={n.id}
+                  onClick={clickable ? () => {
+                    setOpen(false);
+                    router.push(`${dashboard}?bytte=1`);
+                    window.dispatchEvent(new Event("danceitude:show-swaps"));
+                  } : undefined}
+                  className={`px-4 py-3 flex gap-3 items-start ${clickable ? "cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-800" : ""} ${!n.read ? "bg-[#f5eeff] dark:bg-[#E2A9F1]/10 dark:bg-purple-950/30" : ""}`}
+                >
                   <div className="w-9 h-9 rounded-full bg-[#edd5f9] dark:bg-[#E2A9F1]/15 flex items-center justify-center text-[#E2A9F1] shrink-0 text-sm font-bold">
                     PT
                   </div>
                   <div className="flex-1 min-w-0">
                     <p className="text-sm text-gray-800 dark:text-gray-100">{n.message}</p>
+                    {clickable && <p className="text-xs font-medium text-[#9b59c4] dark:text-[#E2A9F1] mt-1">Trykk for å svare →</p>}
                     <p className="text-xs text-gray-400 dark:text-gray-500 mt-0.5">
                       {new Date(n.created_at).toLocaleDateString("nb-NO", { day: "numeric", month: "short" })} · {new Date(n.created_at).toLocaleTimeString("nb-NO", { hour: "2-digit", minute: "2-digit" })}
                     </p>
@@ -132,7 +149,8 @@ export default function NotificationBell({ notifications: initial }: Props) {
                     <div className="w-2 h-2 rounded-full bg-[#f5eeff] dark:bg-[#E2A9F1]/100 mt-1.5 shrink-0" />
                   )}
                 </div>
-              ))}
+                );
+              })}
             </div>
           )}
         </div>

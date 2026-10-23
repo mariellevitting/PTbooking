@@ -86,6 +86,11 @@ const sections = [
 
 export default function DancerDashboardNav(props: Props) {
   const [active, setActive] = useState("timer");
+  useEffect(() => {
+    const onShow = () => setActive("timer");
+    window.addEventListener("danceitude:show-swaps", onShow);
+    return () => window.removeEventListener("danceitude:show-swaps", onShow);
+  }, []);
   const [menuOpen, setMenuOpen] = useState(false);
   const [bookingTab, setBookingTab] = useState<"kommende" | "gjennomforte">("kommende");
   const [goals, setGoals] = useState(props.seasonGoals);

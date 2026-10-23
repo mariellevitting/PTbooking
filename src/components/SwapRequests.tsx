@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import { ArrowLeftRight } from "lucide-react";
 import { createClient } from "@/lib/supabase/client";
@@ -37,10 +37,33 @@ export default function SwapRequests() {
   const [requests, setRequests] = useState<IncomingSwap[]>([]);
   const [busy, setBusy] = useState<string | null>(null);
   const [error, setError] = useState("");
+  const [focusRequested, setFocusRequested] = useState(false);
+  const [highlight, setHighlight] = useState(false);
+  const boxRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     createClient().rpc("get_incoming_swaps").then(({ data }) => setRequests((data as IncomingSwap[]) ?? []));
   }, []);
+
+  // Trykk på et bytte-varsel i bjella: rull hit og la boksen blinke
+  useEffect(() => {
+    if (window.location.search.includes("bytte=1")) setFocusRequested(true);
+    const onShow = () => setFocusRequested(true);
+    window.addEventListener("danceitude:show-swaps", onShow);
+    return () => window.removeEventListener("danceitude:show-swaps", onShow);
+  }, []);
+
+  useEffect(() => {
+    if (!focusRequested || requests.length === 0) return;
+    const t = setTimeout(() => {
+      boxRef.current?.scrollIntoView({ behavior: "smooth", block: "center" });
+      setHighlight(true);
+      setTimeout(() => setHighlight(false), 2500);
+      setFocusRequested(false);
+      window.history.replaceState(null, "", window.location.pathname);
+    }, 150);
+    return () => clearTimeout(t);
+  }, [focusRequested, requests.length]);
 
   async function respond(r: IncomingSwap, accept: boolean) {
     if (busy) return;
@@ -66,9 +89,9 @@ export default function SwapRequests() {
   if (requests.length === 0) return null;
 
   return (
-    <div className="space-y-2 mt-4">
+    <div ref={boxRef} className="space-y-2 mt-4 scroll-mt-24">
       {requests.map(r => (
-        <div key={r.request_id} className="bg-white dark:bg-gray-900 rounded-2xl border border-[#E2A9F1]/60 p-4">
+        <div key={r.request_id} className={`bg-white dark:bg-gray-900 rounded-2xl border p-4 transition-all duration-500 ${highlight ? "border-[#c87de0] ring-4 ring-[#E2A9F1]/50 scale-[1.02]" : "border-[#E2A9F1]/60"}`}>
           <p className="flex items-center gap-2 text-sm font-semibold text-gray-800 dark:text-gray-100">
             <ArrowLeftRight size={16} className="text-[#c87de0]" /> Bytteforespørsel fra {r.requester_name}
           </p>
