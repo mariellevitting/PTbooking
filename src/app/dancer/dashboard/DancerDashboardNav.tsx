@@ -156,14 +156,13 @@ export default function DancerDashboardNav(props: Props) {
         level_freestyle: levelF,
         level_slow: levelS,
         goals_visible_to_trainer: visibleToTrainer,
-        results_visible_to_trainer: resultsVisible,
       }).eq("id", props.userId);
       setSaving(false);
       if (error) { setSaveError("Feil: " + error.message); }
       else { setSaved(true); setSaveError(null); }
     }, 600);
     return () => clearTimeout(timer);
-  }, [goals, goalsFreestyle, goalsSlow, freestyle, slow, levelF, levelS, visibleToTrainer, resultsVisible]);
+  }, [goals, goalsFreestyle, goalsSlow, freestyle, slow, levelF, levelS, visibleToTrainer]);
 
   // Booking sections grouped by week
   const grouped: Record<string, Booking[]> = {};
@@ -509,7 +508,13 @@ export default function DancerDashboardNav(props: Props) {
               role="switch"
               aria-checked={resultsVisible}
               aria-label="Vis resultatene mine for trenere"
-              onClick={() => { setResultsVisible(v => !v); setSaved(false); }}
+              onClick={async () => {
+                const next = !resultsVisible;
+                setResultsVisible(next);
+                const { error } = await createClient().from("profiles").update({ results_visible_to_trainer: next }).eq("id", props.userId);
+                if (error) { setResultsVisible(!next); setSaveError("Kunne ikke lagre innstillingen"); }
+                else { setSaveError(null); setSaved(true); }
+              }}
               className="relative inline-flex h-6 w-11 shrink-0 items-center rounded-full transition-colors"
               style={{ background: resultsVisible ? "#E2A9F1" : "#d1d5db" }}
             >
