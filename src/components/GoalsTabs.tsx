@@ -18,10 +18,6 @@ const HINTS: Record<GoalKey, string> = {
   slow: "Teknikk og mål du vil jobbe med i slow.",
 };
 
-function count(v: string) {
-  return v ? v.split("\n").filter(g => g.trim() !== "").length : 0;
-}
-
 export default function GoalsTabs({ values, onChange }: { values: GoalValues; onChange: (key: GoalKey, val: string) => void }) {
   const [tab, setTab] = useState<GoalKey>("season");
   return (
@@ -34,7 +30,7 @@ export default function GoalsTabs({ values, onChange }: { values: GoalValues; on
             onClick={() => setTab(t.key)}
             className={`flex-1 px-2 py-1.5 rounded-lg text-sm font-medium transition-colors ${tab === t.key ? "bg-white dark:bg-gray-900 text-[#c87de0] shadow-sm" : "text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300"}`}
           >
-            {t.label}{count(values[t.key]) > 0 && <span className="ml-1 text-xs opacity-70">{count(values[t.key])}</span>}
+            {t.label}
           </button>
         ))}
       </div>

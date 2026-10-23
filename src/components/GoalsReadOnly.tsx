@@ -29,7 +29,7 @@ export default function GoalsReadOnly({ values, emptyText = "Ingen mål delt enn
                 <li key={i} className="flex items-center justify-between gap-2 text-sm py-0.5">
                   <span className={`flex items-start gap-2 ${done ? "text-gray-400 dark:text-gray-500 line-through" : "text-gray-700 dark:text-gray-300"}`}>
                     <span className="text-[#c87de0] mt-0.5 no-underline">•</span>
-                    {done ? goal.slice(4) : goal}
+                    {done || goal.startsWith("[ ] ") ? goal.slice(4) : goal}
                   </span>
                   {done && <span className="text-xs text-green-600 dark:text-green-400 font-medium whitespace-nowrap">Mål nådd</span>}
                 </li>

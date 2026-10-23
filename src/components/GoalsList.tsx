@@ -9,7 +9,8 @@ interface Props {
 }
 
 function isDone(goal: string) { return goal.startsWith("[x] "); }
-function goalText(goal: string) { return isDone(goal) ? goal.slice(4) : goal; }
+// "[ ] " kan forekomme i importerte data; behandles som ikke huket av
+function goalText(goal: string) { return goal.startsWith("[x] ") || goal.startsWith("[ ] ") ? goal.slice(4) : goal; }
 
 export default function GoalsList({ value, onChange }: Props) {
   const goals = value ? value.split("\n").filter(g => g.trim() !== "") : [];
