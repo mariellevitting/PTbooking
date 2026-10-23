@@ -20,7 +20,7 @@ export default function ThemeSetting() {
 
   return (
     <Card>
-      <CardContent className="pt-5 flex items-center justify-between">
+      <CardContent className="flex items-center justify-between gap-4">
         <div className="flex items-center gap-3">
           {dark ? <Moon size={18} className="text-[#E2A9F1]" /> : <Sun size={18} className="text-[#E2A9F1]" />}
           <div>

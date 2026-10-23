@@ -81,7 +81,7 @@ export default function GoalsList({ value, onChange }: Props) {
           onKeyDown={handleKeyDown}
           onBlur={handleBlur}
           placeholder="Legg til et mål..."
-          className="flex-1 border border-gray-100 dark:border-gray-700 bg-white/80 dark:bg-gray-800/70 dark:text-white rounded-[14px] px-3.5 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-[#E2A9F1]"
+          className="flex-1 min-w-0 border border-gray-100 dark:border-gray-700 bg-white/80 dark:bg-gray-800/70 dark:text-white rounded-[14px] px-3.5 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-[#E2A9F1]"
         />
         <button
           type="button"

@@ -443,7 +443,7 @@ export default function DancerDashboardNav(props: Props) {
 
       {active === "maal" && (
         <Card>
-          <CardContent className="pt-5 flex items-center justify-between gap-4">
+          <CardContent className="flex items-center justify-between gap-4">
             <div>
               <p className="text-sm font-medium text-gray-800 dark:text-gray-100">Vis målene mine for trenere</p>
               <p className="text-xs text-gray-500 dark:text-gray-400">Gjelder Sesong, Freestyle og Slow</p>
