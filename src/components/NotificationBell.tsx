@@ -40,6 +40,7 @@ export default function NotificationBell({ notifications: initial }: Props) {
     router.push(trainerId ? `/book/${trainerId}` : "/book");
   }
   const [notifications, setNotifications] = useState(initial);
+  const [trainerAvatars, setTrainerAvatars] = useState<Record<string, string>>({});
   const [clearing, setClearing] = useState(false);
   const [dropdownPos, setDropdownPos] = useState({ top: 0, left: 0 });
   const buttonRef = useRef<HTMLButtonElement>(null);
@@ -71,6 +72,16 @@ export default function NotificationBell({ notifications: initial }: Props) {
         .eq("user_id", user.id)
         .order("created_at", { ascending: false })
         .then(({ data }) => { if (data) setNotifications(data as Notification[]); });
+      // Profilbilder til trenerne i klubben, for varsler om nye ledige tider
+      supabase.from("profiles").select("club_id").eq("id", user.id).single().then(({ data: me }) => {
+        let q = supabase.from("profiles").select("name, avatar_url").eq("role", "trainer").not("avatar_url", "is", null);
+        if (me?.club_id) q = q.eq("club_id", me.club_id);
+        q.then(({ data }) => {
+          const map: Record<string, string> = {};
+          for (const t of data ?? []) if (t.avatar_url) map[t.name] = t.avatar_url;
+          setTrainerAvatars(map);
+        });
+      });
     });
   }, []);
 
@@ -158,9 +169,13 @@ export default function NotificationBell({ notifications: initial }: Props) {
                   } : undefined}
                   className={`px-4 py-3 flex gap-3 items-start ${clickable ? "cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-800" : ""} ${!n.read ? "bg-[#f5eeff] dark:bg-[#E2A9F1]/10 dark:bg-purple-950/30" : ""}`}
                 >
-                  <div className="w-9 h-9 rounded-full bg-[#edd5f9] dark:bg-[#E2A9F1]/15 flex items-center justify-center text-[#E2A9F1] shrink-0 text-sm font-bold">
-                    PT
-                  </div>
+                  {newSlots && trainerAvatars[n.message.split(NEW_SLOTS_MARK)[0].trim()] ? (
+                    <img src={trainerAvatars[n.message.split(NEW_SLOTS_MARK)[0].trim()]} alt="" className="w-9 h-9 rounded-full object-cover shrink-0" />
+                  ) : (
+                    <div className="w-9 h-9 rounded-full bg-[#edd5f9] dark:bg-[#E2A9F1]/15 flex items-center justify-center text-[#c87de0] shrink-0 text-sm font-bold">
+                      DT
+                    </div>
+                  )}
                   <div className="flex-1 min-w-0">
                     <p className="text-sm text-gray-800 dark:text-gray-100">{n.message}</p>
                     {clickable && <p className="text-xs font-medium text-[#9b59c4] dark:text-[#E2A9F1] mt-1">{swap ? "Trykk for å svare →" : "Se ledige tider →"}</p>}
