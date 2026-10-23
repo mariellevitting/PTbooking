@@ -6,6 +6,8 @@ import { Bell, Trash2 } from "lucide-react";
 import { useRouter, usePathname } from "next/navigation";
 
 const isSwapRequest = (msg: string) => msg.includes("vil bytte privattime med deg");
+const NEW_SLOTS_MARK = " har lagt ut ";
+const isNewSlots = (msg: string) => msg.includes(NEW_SLOTS_MARK) && /ledige? time/.test(msg);
 
 interface Notification {
   id: string;
@@ -22,6 +24,21 @@ export default function NotificationBell({ notifications: initial }: Props) {
   const [open, setOpen] = useState(false);
   const router = useRouter();
   const pathname = usePathname() ?? "";
+
+  // Finn treneren ut fra navnet i varselet (i egen klubb) og åpne bookingsiden hennes/hans
+  async function openTrainerBooking(trainerName: string) {
+    const supabase = createClient();
+    const { data: { user } } = await supabase.auth.getUser();
+    let trainerId: string | null = null;
+    if (user) {
+      const { data: me } = await supabase.from("profiles").select("club_id").eq("id", user.id).single();
+      let q = supabase.from("profiles").select("id").eq("role", "trainer").eq("name", trainerName.trim()).limit(1);
+      if (me?.club_id) q = q.eq("club_id", me.club_id);
+      const { data } = await q;
+      trainerId = data?.[0]?.id ?? null;
+    }
+    router.push(trainerId ? `/book/${trainerId}` : "/book");
+  }
   const [notifications, setNotifications] = useState(initial);
   const [clearing, setClearing] = useState(false);
   const [dropdownPos, setDropdownPos] = useState({ top: 0, left: 0 });
@@ -124,14 +141,20 @@ export default function NotificationBell({ notifications: initial }: Props) {
             <div className="max-h-96 overflow-y-auto divide-y">
               {notifications.map((n) => {
                 const dashboard = pathname.startsWith("/parent") ? "/parent/dashboard" : pathname.startsWith("/dancer") ? "/dancer/dashboard" : null;
-                const clickable = isSwapRequest(n.message) && !!dashboard;
+                const swap = isSwapRequest(n.message) && !!dashboard;
+                const newSlots = isNewSlots(n.message);
+                const clickable = swap || newSlots;
                 return (
                 <div
                   key={n.id}
                   onClick={clickable ? () => {
                     setOpen(false);
-                    router.push(`${dashboard}?bytte=1`);
-                    window.dispatchEvent(new Event("danceitude:show-swaps"));
+                    if (swap) {
+                      router.push(`${dashboard}?bytte=1`);
+                      window.dispatchEvent(new Event("danceitude:show-swaps"));
+                    } else {
+                      openTrainerBooking(n.message.split(NEW_SLOTS_MARK)[0]);
+                    }
                   } : undefined}
                   className={`px-4 py-3 flex gap-3 items-start ${clickable ? "cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-800" : ""} ${!n.read ? "bg-[#f5eeff] dark:bg-[#E2A9F1]/10 dark:bg-purple-950/30" : ""}`}
                 >
@@ -140,7 +163,7 @@ export default function NotificationBell({ notifications: initial }: Props) {
                   </div>
                   <div className="flex-1 min-w-0">
                     <p className="text-sm text-gray-800 dark:text-gray-100">{n.message}</p>
-                    {clickable && <p className="text-xs font-medium text-[#9b59c4] dark:text-[#E2A9F1] mt-1">Trykk for å svare →</p>}
+                    {clickable && <p className="text-xs font-medium text-[#9b59c4] dark:text-[#E2A9F1] mt-1">{swap ? "Trykk for å svare →" : "Se ledige tider →"}</p>}
                     <p className="text-xs text-gray-400 dark:text-gray-500 mt-0.5">
                       {new Date(n.created_at).toLocaleDateString("nb-NO", { day: "numeric", month: "short" })} · {new Date(n.created_at).toLocaleTimeString("nb-NO", { hour: "2-digit", minute: "2-digit" })}
                     </p>

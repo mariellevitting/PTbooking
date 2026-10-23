@@ -156,7 +156,14 @@ export default function BookingForm({ slots, trainerName, bookerId, bookerName, 
     return Math.ceil((((d.getTime() - yearStart.getTime()) / 86400000) + 1) / 7);
   }
 
-  const [weekStart, setWeekStart] = useState(getMonday(new Date()));
+  // Start på uken med første ledige time, så man slipper å bla seg fram
+  const [weekStart, setWeekStart] = useState(() => {
+    const now = new Date();
+    const firstFree = slots
+      .filter(s => !s.is_booked && new Date(s.start_at) > now)
+      .sort((a, b) => a.start_at.localeCompare(b.start_at))[0];
+    return getMonday(firstFree ? new Date(firstFree.start_at) : now);
+  });
   const weekEnd = new Date(weekStart);
   weekEnd.setDate(weekStart.getDate() + 6);
   weekEnd.setHours(23, 59, 59);
