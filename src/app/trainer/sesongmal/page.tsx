@@ -44,6 +44,18 @@ export default async function TrainerSesongmalPage() {
       : Promise.resolve({ data: [] }),
   ]);
 
+  // Resultater: RLS gir bare treff for dansere i egen klubb som deler resultatene sine
+  const ownerIds = (dancerProfiles ?? []).map((p: any) => p.id);
+  const { data: allResults } = ownerIds.length > 0
+    ? await supabase
+        .from("competition_results")
+        .select("user_id, child_id, competition_name, placement_freestyle, placement_slow, created_at")
+        .in("user_id", ownerIds)
+        .order("created_at", { ascending: false })
+    : { data: [] as any[] };
+  const resultsFor = (userId: string | null, childId: string | null) =>
+    (allResults ?? []).filter((r: any) => childId ? r.child_id === childId : r.user_id === userId && !r.child_id);
+
   const profiles = (dancerProfiles ?? [])
     .map((p: any) => ({
       id: p.id,
@@ -57,8 +69,9 @@ export default async function TrainerSesongmalPage() {
       points_slow: p.points_slow ?? 0,
       level_freestyle: p.level_freestyle ?? 0,
       level_slow: p.level_slow ?? 0,
+      results: resultsFor(p.id, null),
     }))
-    .filter((p) => hasAnyGoals({ season: p.season_goals, freestyle: p.goals_freestyle, slow: p.goals_slow }));
+    .filter((p) => p.results.length > 0 || hasAnyGoals({ season: p.season_goals, freestyle: p.goals_freestyle, slow: p.goals_slow }));
 
   const children = (allChildren ?? [])
     .map((c: any) => ({
@@ -74,18 +87,19 @@ export default async function TrainerSesongmalPage() {
       points_slow: c.points_slow ?? 0,
       level_freestyle: c.level_freestyle ?? 0,
       level_slow: c.level_slow ?? 0,
+      results: resultsFor(null, c.id),
     }))
-    .filter((c) => hasAnyGoals({ season: c.season_goals, freestyle: c.goals_freestyle, slow: c.goals_slow }));
+    .filter((c) => c.results.length > 0 || hasAnyGoals({ season: c.season_goals, freestyle: c.goals_freestyle, slow: c.goals_slow }));
 
   return (
     <main className="bg-gray-50 dark:bg-gray-950 min-h-screen p-6">
       <div className="max-w-lg mx-auto">
         <h1 className="text-2xl font-bold mb-1">Sesongmål</h1>
-        <p className="text-gray-500 dark:text-gray-400 text-sm mb-6">Søk opp en danser for å se mål og poeng</p>
+        <p className="text-gray-500 dark:text-gray-400 text-sm mb-6">Søk opp en danser for å se mål, poeng og resultater</p>
 
         {profiles.length === 0 && children.length === 0 ? (
           <div className="bg-white dark:bg-gray-900 rounded-xl border dark:border-gray-700 p-5 text-center text-gray-400 dark:text-gray-500">
-            <p className="font-medium">Ingen har delt sesongmål ennå</p>
+            <p className="font-medium">Ingen har delt mål eller resultater ennå</p>
           </div>
         ) : (
           <SesongmalSearch profiles={profiles} children={children} />

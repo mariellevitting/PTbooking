@@ -4,6 +4,8 @@ import { useState } from "react";
 import { Search, ChevronDown, Target } from "lucide-react";
 import PoengNivaa from "@/components/PoengNivaa";
 import GoalsReadOnly from "@/components/GoalsReadOnly";
+import CollapsibleSection from "@/components/CollapsibleSection";
+import ResultsReadOnly, { type ResultRow } from "@/components/ResultsReadOnly";
 
 function parseGoals(raw: string | null) {
   return (raw ?? "").split("\n").map(g => g.trim()).filter(g => g !== "");
@@ -28,6 +30,7 @@ interface Person {
   points_slow: number;
   level_freestyle: number;
   level_slow: number;
+  results?: ResultRow[];
 }
 
 function subtitle(p: Person) {
@@ -68,8 +71,13 @@ function Row({ p }: { p: Person }) {
 
       {open && (
         <div className="px-4 pb-4 pt-1 border-t dark:border-gray-700 space-y-4">
-          <div className="pt-3">
-            <GoalsReadOnly values={{ season: p.season_goals, freestyle: p.goals_freestyle, slow: p.goals_slow }} />
+          <div className="pt-3 space-y-2">
+            <CollapsibleSection title="Sesongmål" meta={goals.length > 0 ? `${goals.length} mål` : undefined}>
+              <GoalsReadOnly values={{ season: p.season_goals, freestyle: p.goals_freestyle, slow: p.goals_slow }} />
+            </CollapsibleSection>
+            <CollapsibleSection title="Resultater" meta={(p.results?.length ?? 0) > 0 ? `${p.results!.length} konkurranser` : undefined}>
+              <ResultsReadOnly results={p.results ?? []} />
+            </CollapsibleSection>
           </div>
 
           <div className="space-y-4 pt-1">

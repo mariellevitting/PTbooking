@@ -56,6 +56,7 @@ export default async function DancerDashboard() {
           goalsFreestyle={profile.goals_freestyle ?? ""}
           goalsSlow={profile.goals_slow ?? ""}
           goalsVisibleToTrainer={profile.goals_visible_to_trainer ?? true}
+          resultsVisibleToTrainer={profile.results_visible_to_trainer ?? true}
           pointsFreestyle={profile.points_freestyle ?? 0}
           pointsSlow={profile.points_slow ?? 0}
           levelFreestyle={profile.level_freestyle ?? 0}

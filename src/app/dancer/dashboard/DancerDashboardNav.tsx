@@ -63,6 +63,7 @@ interface Props {
   mobileNavOnly?: boolean;
   trainers?: { name: string; avatarUrl: string | null; styles: string[] }[];
   goalsVisibleToTrainer?: boolean;
+  resultsVisibleToTrainer?: boolean;
   club?: ClubConfig | null;
 }
 
@@ -97,6 +98,7 @@ export default function DancerDashboardNav(props: Props) {
   const [goalsFreestyle, setGoalsFreestyle] = useState(props.goalsFreestyle ?? "");
   const [goalsSlow, setGoalsSlow] = useState(props.goalsSlow ?? "");
   const [visibleToTrainer, setVisibleToTrainer] = useState(props.goalsVisibleToTrainer ?? true);
+  const [resultsVisible, setResultsVisible] = useState(props.resultsVisibleToTrainer ?? true);
   const [freestyle, setFreestyle] = useState(props.pointsFreestyle);
   const [slow, setSlow] = useState(props.pointsSlow);
   const [levelF, setLevelF] = useState(props.levelFreestyle);
@@ -153,13 +155,14 @@ export default function DancerDashboardNav(props: Props) {
         level_freestyle: levelF,
         level_slow: levelS,
         goals_visible_to_trainer: visibleToTrainer,
+        results_visible_to_trainer: resultsVisible,
       }).eq("id", props.userId);
       setSaving(false);
       if (error) { setSaveError("Feil: " + error.message); }
       else { setSaved(true); setSaveError(null); }
     }, 600);
     return () => clearTimeout(timer);
-  }, [goals, goalsFreestyle, goalsSlow, freestyle, slow, levelF, levelS, visibleToTrainer]);
+  }, [goals, goalsFreestyle, goalsSlow, freestyle, slow, levelF, levelS, visibleToTrainer, resultsVisible]);
 
   // Booking sections grouped by week
   const grouped: Record<string, Booking[]> = {};
@@ -493,6 +496,31 @@ export default function DancerDashboardNav(props: Props) {
         <CompetitionResultsCard userId={props.userId} initialResults={props.competitionResults} />
       )}
 
+      {active === "resultater" && (
+        <Card>
+          <CardContent className="flex items-center justify-between gap-4">
+            <div>
+              <p className="text-sm font-medium text-gray-800 dark:text-gray-100">Vis resultatene mine for trenere</p>
+              <p className="text-xs text-gray-500 dark:text-gray-400">Trenerne i klubben ser plasseringene dine</p>
+            </div>
+            <button
+              type="button"
+              role="switch"
+              aria-checked={resultsVisible}
+              aria-label="Vis resultatene mine for trenere"
+              onClick={() => { setResultsVisible(v => !v); setSaved(false); }}
+              className="relative inline-flex h-6 w-11 shrink-0 items-center rounded-full transition-colors"
+              style={{ background: resultsVisible ? "#E2A9F1" : "#d1d5db" }}
+            >
+              <span
+                className="inline-block h-5 w-5 rounded-full bg-white transition-transform"
+                style={{ transform: resultsVisible ? "translateX(22px)" : "translateX(2px)" }}
+              />
+            </button>
+          </CardContent>
+        </Card>
+      )}
+
       {/* Kommende konkurranser */}
       {active === "konkurranser" && (
         <CompetitionList userId={props.userId} showCountdown clubId={props.club?.id ?? null} />
@@ -525,7 +553,7 @@ export default function DancerDashboardNav(props: Props) {
         )}
 
         {/* Auto-lagring status */}
-        {(active === "maal" || active === "nivaer") && (saving || saved || saveError) && (
+        {(active === "maal" || active === "nivaer" || active === "resultater") && (saving || saved || saveError) && (
           <p className={`text-xs text-center pb-1 ${saveError ? "text-red-500" : "text-gray-400 dark:text-gray-500"}`}>
             {saving ? "Lagrer..." : saveError ? saveError : "✓ Lagret"}
           </p>
