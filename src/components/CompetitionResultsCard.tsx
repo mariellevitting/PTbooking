@@ -4,6 +4,8 @@ import { useState, useEffect } from "react";
 import { createClient } from "@/lib/supabase/client";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Medal, Plus, Trash2, Check } from "lucide-react";
+import PlacementPicker from "@/components/PlacementPicker";
+import { formatPlacement } from "@/lib/placement";
 
 const COMPETITIONS = [
   { name: "Norgesmesterskapet 2026", short: "NM 2026" },
@@ -13,13 +15,7 @@ const COMPETITIONS = [
   { name: "Dancer of the Year / FDJ 9", short: "DOTY / FDJ 9" },
 ];
 
-function placementLabel(p: string | null) {
-  if (!p) return null;
-  if (p === "1") return "🥇 1. plass";
-  if (p === "2") return "🥈 2. plass";
-  if (p === "3") return "🥉 3. plass";
-  return p;
-}
+const placementLabel = formatPlacement;
 
 function placementColor(p: string | null) {
   if (p === "1") return "text-yellow-500";
@@ -116,20 +112,8 @@ export default function CompetitionResultsCard({ userId, initialResults, childId
                 {COMPETITIONS.map(c => <option key={c.name} value={c.name}>{c.short}</option>)}
               </select>
             </div>
-            <div className="grid grid-cols-2 gap-3">
-              <div className="space-y-1">
-                <label className="text-xs font-medium text-gray-600 dark:text-gray-400">Freestyle-plassering</label>
-                <input type="text" value={placementF} onChange={e => setPlacementF(e.target.value)}
-                  placeholder="f.eks. 1, finalist"
-                  className="w-full border dark:border-gray-700 bg-white dark:bg-gray-900 dark:text-white rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#E2A9F1]" />
-              </div>
-              <div className="space-y-1">
-                <label className="text-xs font-medium text-gray-600 dark:text-gray-400">Slow-plassering</label>
-                <input type="text" value={placementS} onChange={e => setPlacementS(e.target.value)}
-                  placeholder="f.eks. 2, semifinalist"
-                  className="w-full border dark:border-gray-700 bg-white dark:bg-gray-900 dark:text-white rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#E2A9F1]" />
-              </div>
-            </div>
+            <PlacementPicker label="Freestyle – hvor langt kom du?" value={placementF} onChange={setPlacementF} />
+            <PlacementPicker label="Slow – hvor langt kom du?" value={placementS} onChange={setPlacementS} />
             <div className="flex gap-2">
               <button onClick={handleAdd} disabled={saving || (!placementF && !placementS)}
                 className="flex-1 bg-[#3A3A3A] hover:bg-[#2a2a2a] dark:bg-[#c87de0] dark:hover:bg-[#b56fd0] dark:text-white disabled:opacity-50 text-white text-sm font-medium rounded-lg py-2">

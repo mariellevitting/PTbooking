@@ -1,4 +1,5 @@
 import { COMPETITIONS } from "@/components/CompetitionList";
+import { formatPlacement } from "@/lib/placement";
 
 export interface ResultRow {
   competition_name: string;
@@ -7,10 +8,7 @@ export interface ResultRow {
 }
 
 function label(p: string) {
-  if (p === "1") return "🥇 1. plass";
-  if (p === "2") return "🥈 2. plass";
-  if (p === "3") return "🥉 3. plass";
-  return p;
+  return formatPlacement(p) ?? p;
 }
 
 export default function ResultsReadOnly({ results }: { results: ResultRow[] }) {
