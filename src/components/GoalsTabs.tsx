@@ -14,8 +14,8 @@ const TABS: { key: GoalKey; label: string }[] = [
 
 const HINTS: Record<GoalKey, string> = {
   season: "Hva vil du klare i løpet av sesongen? Huk av når du har klart målet.",
-  freestyle: "Triks, teknikk og mål du vil jobbe med i freestyle.",
-  slow: "Teknikk og mål du vil jobbe med i slow.",
+  freestyle: "Triks og teknikk du vil lære, og hva du vil oppnå på konkurranser i freestyle, f.eks. komme til finale eller ta pallplass.",
+  slow: "Teknikk og uttrykk du vil jobbe med, og hva du vil oppnå på konkurranser i slow, f.eks. gå videre fra første runde eller nå finalen.",
 };
 
 export default function GoalsTabs({ values, onChange }: { values: GoalValues; onChange: (key: GoalKey, val: string) => void }) {
