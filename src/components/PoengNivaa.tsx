@@ -84,39 +84,17 @@ export default function PoengNivaa({ label, points, level, needed, onChange, onL
       {!clickable && <div className="mb-2" />}
 
       {topLevel ? (
-        <>
-          <div className="flex flex-col items-center justify-center rounded-xl bg-[#3A3A3A] py-4 mb-3">
-            {level >= 4
-              ? <Star size={24} className="text-[#E2A9F1]" />
-              : <Trophy size={24} className="text-[#E2A9F1]" />}
-            <p className="text-2xl font-semibold text-[#E2A9F1] mt-1">{LEVELS[level]}</p>
+        <div className="flex justify-center mb-1">
+          <div
+            className="inline-flex items-center gap-2 rounded-full px-5 py-2 border shadow-sm"
+            style={level >= 4
+              ? { background: "linear-gradient(120deg, #fff6d6 0%, #f3d27a 45%, #fbe9b0 70%, #e9c25c 100%)", borderColor: "#e6c463", color: "#6b4e00" }
+              : { background: "linear-gradient(120deg, #f7f8fa 0%, #d9dde3 45%, #f1f3f6 70%, #c9ced6 100%)", borderColor: "#cfd4db", color: "#3f4650" }}
+          >
+            {level >= 4 ? <Star size={18} /> : <Trophy size={18} />}
+            <span className="text-base font-semibold">{LEVELS[level]}</span>
           </div>
-          {!readOnly && onLevelChange && (
-            <>
-              <div className="flex gap-1 bg-gray-100 dark:bg-gray-800 rounded-xl p-1">
-                {[3, 4].map(l => (
-                  <button
-                    key={l}
-                    type="button"
-                    onClick={() => onLevelChange(l)}
-                    className={`flex-1 py-2 rounded-lg text-sm font-medium transition-colors ${
-                      level === l ? "bg-white dark:bg-gray-900 text-[#9b59c4] dark:text-[#E2A9F1] shadow-sm" : "text-gray-500 dark:text-gray-400"
-                    }`}
-                  >
-                    {LEVELS[l]}
-                  </button>
-                ))}
-              </div>
-              <button
-                type="button"
-                onClick={() => onLevelChange(2)}
-                className="block mx-auto mt-2.5 text-xs text-gray-400 dark:text-gray-500 underline"
-              >
-                Tilbake til Mester
-              </button>
-            </>
-          )}
-        </>
+        </div>
       ) : (
         <>
           <p className="text-center text-sm text-gray-500 dark:text-gray-400 mb-3">
