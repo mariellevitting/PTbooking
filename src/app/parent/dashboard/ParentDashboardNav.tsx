@@ -3,7 +3,8 @@
 import { useState, useEffect, useRef } from "react";
 import { createClient } from "@/lib/supabase/client";
 import Link from "next/link";
-import { Menu, X, Calendar, Trophy, Medal, Star, Info, UserCircle, User, Target } from "lucide-react";
+import { Menu, X, Calendar, Trophy, Medal, Star, Info, UserCircle, User } from "lucide-react";
+import TargetArrowIcon from "@/components/TargetArrowIcon";
 import GoalsTabs, { type GoalValues } from "@/components/GoalsTabs";
 import { Button } from "@/components/ui/button";
 import LogoutButton from "@/components/LogoutButton";
@@ -33,7 +34,7 @@ const COMPETITIONS = [
 
 const sections = [
   { id: "timer", label: "Mine privattimer", icon: <Calendar size={15} /> },
-  { id: "maal", label: "Sesongmål", icon: <Target size={15} /> },
+  { id: "maal", label: "Sesongmål", icon: <TargetArrowIcon size={15} /> },
   { id: "nivaer", label: "Poeng og nivå", icon: <Trophy size={15} /> },
   { id: "resultater", label: "Resultater", icon: <Medal size={15} /> },
   { id: "konkurranser", label: "Konkurranser", icon: <Star size={15} /> },

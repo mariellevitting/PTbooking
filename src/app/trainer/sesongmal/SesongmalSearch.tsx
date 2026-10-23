@@ -1,7 +1,8 @@
 "use client";
 
 import { useState } from "react";
-import { Search, ChevronDown, Target } from "lucide-react";
+import { Search, ChevronDown } from "lucide-react";
+import TargetArrowIcon from "@/components/TargetArrowIcon";
 import PoengNivaa from "@/components/PoengNivaa";
 import GoalsReadOnly from "@/components/GoalsReadOnly";
 import CollapsibleSection from "@/components/CollapsibleSection";
@@ -60,7 +61,7 @@ function Row({ p }: { p: Person }) {
         </div>
         {goals.length > 0 && (
           <span className="flex items-center gap-1 text-xs text-gray-400 dark:text-gray-500 flex-shrink-0">
-            <Target size={13} />{goals.length}
+            <TargetArrowIcon size={13} />{goals.length}
           </span>
         )}
         <ChevronDown

@@ -4,7 +4,8 @@ import { useState, useEffect, useRef } from "react";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Menu, X, Calendar, Target, Trophy, Medal, Star, Info, UserCircle, User } from "lucide-react";
+import { Menu, X, Calendar, Trophy, Medal, Star, Info, UserCircle, User } from "lucide-react";
+import TargetArrowIcon from "@/components/TargetArrowIcon";
 import GoalsTabs from "@/components/GoalsTabs";
 import CompetitionResultsCard from "@/components/CompetitionResultsCard";
 import NotificationBell from "@/components/NotificationBell";
@@ -77,7 +78,7 @@ const COMPETITIONS = [
 
 const sections = [
   { id: "timer", label: "Mine timer", icon: <Calendar size={15} /> },
-  { id: "maal", label: "Mine sesongmål", icon: <Target size={15} /> },
+  { id: "maal", label: "Mine sesongmål", icon: <TargetArrowIcon size={15} /> },
   { id: "nivaer", label: "Poeng og nivåer", icon: <Trophy size={15} /> },
   { id: "resultater", label: "Resultater", icon: <Medal size={15} /> },
   { id: "konkurranser", label: "Konkurranser", icon: <Star size={15} /> },
@@ -427,7 +428,7 @@ export default function DancerDashboardNav(props: Props) {
         <Card>
           <CardHeader>
             <CardTitle className="text-base flex items-center gap-2">
-              <Target size={16} className="text-[#E2A9F1]" /> Mine sesongmål
+              <TargetArrowIcon size={16} className="text-[#E2A9F1]" /> Mine sesongmål
             </CardTitle>
           </CardHeader>
           <CardContent>

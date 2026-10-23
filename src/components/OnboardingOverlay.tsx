@@ -1,7 +1,8 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { Calendar, Trophy, Target, Star, ChevronRight, X } from "lucide-react";
+import { Calendar, Trophy, Star, ChevronRight, X } from "lucide-react";
+import TargetArrowIcon from "@/components/TargetArrowIcon";
 
 const SLIDES = [
   { id: "welcome" },
@@ -102,7 +103,7 @@ export default function OnboardingOverlay() {
           competition
         />}
         {slide === 4 && <FeatureSlide
-          icon={<Target size={40} className="text-green-500" />}
+          icon={<TargetArrowIcon size={40} className="text-green-500" />}
           emoji="🎯"
           title="Sesongmål"
           description="Skriv inn hva du vil jobbe med denne sesongen – triks du vil lære, mål for konkurranser eller hva du vil oppnå."

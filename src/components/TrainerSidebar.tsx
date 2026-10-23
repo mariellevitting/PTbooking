@@ -2,7 +2,8 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Calendar, Clock, UserCircle, Trophy, History, PlusCircle, Menu, X, LayoutDashboard, Target } from "lucide-react";
+import { Calendar, Clock, UserCircle, Trophy, History, PlusCircle, Menu, X, LayoutDashboard } from "lucide-react";
+import TargetArrowIcon from "@/components/TargetArrowIcon";
 import { useState } from "react";
 import LogoutButton from "@/components/LogoutButton";
 import NotificationBell from "@/components/NotificationBell";
@@ -15,7 +16,7 @@ const NAV = [
   { href: "/trainer/availability", label: "Legg ut tid", icon: PlusCircle },
   { href: "/trainer/book-for-dancer", label: "Book for danser", icon: Clock },
   { href: "/trainer/historikk", label: "Historikk", icon: History },
-  { href: "/trainer/sesongmal", label: "Sesongmål", icon: Target },
+  { href: "/trainer/sesongmal", label: "Sesongmål", icon: TargetArrowIcon },
   { href: "/trainer/konkurranser", label: "Konkurranser", icon: Trophy },
   { href: "/trainer/profil", label: "Profil", icon: UserCircle },
   { href: "/admin", label: "Admin", icon: LayoutDashboard },

@@ -4,7 +4,8 @@ import { useState, useEffect, useRef } from "react";
 import { createClient } from "@/lib/supabase/client";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Target, Trophy, Check, ChevronLeft } from "lucide-react";
+import { Trophy, Check, ChevronLeft } from "lucide-react";
+import TargetArrowIcon from "@/components/TargetArrowIcon";
 import PoengForklaring from "@/components/PoengForklaring";
 import PoengNivaa from "@/components/PoengNivaa";
 import CompetitionResultsCard from "@/components/CompetitionResultsCard";
@@ -142,7 +143,7 @@ export default function ChildDancerCard({ parentId, children, hideResults, hideG
         <Card>
           <CardHeader>
             <CardTitle className="text-base flex items-center gap-2">
-              <Target size={16} className="text-[#E2A9F1]" /> Sesongmål
+              <TargetArrowIcon size={16} className="text-[#E2A9F1]" /> Sesongmål
             </CardTitle>
           </CardHeader>
           <CardContent>

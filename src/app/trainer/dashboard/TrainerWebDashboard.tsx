@@ -2,7 +2,8 @@
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
-import { Check, ChevronLeft, ChevronRight, Target, Clock, Calendar, History, UserPlus } from "lucide-react";
+import { Check, ChevronLeft, ChevronRight, Clock, Calendar, History, UserPlus } from "lucide-react";
+import TargetArrowIcon from "@/components/TargetArrowIcon";
 import { createClient } from "@/lib/supabase/client";
 import RemoveCompletedBooking from "@/components/RemoveCompletedBooking";
 import { useRouter } from "next/navigation";
@@ -366,7 +367,7 @@ export default function TrainerWebDashboard({ slots, completedSlots, trainerName
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">
               <div className="w-10 h-10 rounded-full bg-[#edd5f9] dark:bg-[#E2A9F1]/15 flex items-center justify-center">
-                <Target size={18} className="text-[#9b59c4] dark:text-[#E2A9F1]" />
+                <TargetArrowIcon size={18} className="text-[#9b59c4] dark:text-[#E2A9F1]" />
               </div>
               <p className="text-sm text-gray-500 dark:text-gray-400">Se danserenes mål og fremgang</p>
             </div>
