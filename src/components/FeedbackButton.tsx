@@ -45,7 +45,7 @@ export default function FeedbackButton({ userId, userName, role }: Props) {
           <div className="absolute inset-0 bg-black/40" onClick={() => setOpen(false)} />
           <div className="relative bg-white dark:bg-gray-900 rounded-t-2xl sm:rounded-2xl shadow-xl w-full sm:max-w-md p-6">
             <div className="flex items-center justify-between mb-4">
-              <h2 className="text-lg font-bold text-gray-900 dark:text-white">Gi tilbakemelding</h2>
+              <h2 className="text-lg font-bold text-gray-900 dark:text-white">Tilbakemelding på appen</h2>
               <button onClick={() => setOpen(false)} className="p-1.5 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800">
                 <X size={18} className="text-gray-500" />
               </button>
@@ -60,12 +60,15 @@ export default function FeedbackButton({ userId, userName, role }: Props) {
             ) : (
               <form onSubmit={handleSubmit} className="space-y-4">
                 <p className="text-sm text-gray-500 dark:text-gray-400">
-                  Hva fungerer bra? Hva kan bli bedre? Del gjerne alt – stort og smått.
+                  Dette går til den som utvikler appen – skriv om bugs, forslag eller ting som er vanskelig å finne.
+                </p>
+                <p className="text-xs text-amber-600 dark:text-amber-400 bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-900 rounded-lg px-3 py-2">
+                  Ikke bruk denne for sesongmål, sykdom eller avbud – det må meldes til treneren din som vanlig, det kommer ikke frem her.
                 </p>
                 <textarea
                   value={message}
                   onChange={e => setMessage(e.target.value)}
-                  placeholder="Skriv din tilbakemelding her..."
+                  placeholder="Skriv tilbakemelding om appen her..."
                   rows={5}
                   required
                   className="w-full rounded-xl border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-white text-sm p-3 resize-none focus:outline-none focus:ring-2 focus:ring-[#E2A9F1]"
