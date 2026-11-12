@@ -23,6 +23,7 @@ export interface ClubConfig {
   dance_styles: string[] | null;
   contact_name: string | null;
   contact_info: string | null;
+  logo_url: string | null;
 }
 
 /** Brukes når en verdi mangler på klubben, eller når det ikke finnes klubb-kontekst. */
@@ -44,7 +45,7 @@ export const CLUB_DEFAULTS = {
 } as const;
 
 const CLUB_COLUMNS =
-  "id, name, short_name, city, primary_color, website, lesson_info, lesson_duration_min, lesson_price_text, default_price, payment_label, payment_info, payment_url, receipt_note, dance_styles, contact_name, contact_info";
+  "id, name, short_name, city, primary_color, website, lesson_info, lesson_duration_min, lesson_price_text, default_price, payment_label, payment_info, payment_url, receipt_note, dance_styles, contact_name, contact_info, logo_url";
 
 /** Henter klubb-konfig for en gitt klubb-id. */
 export async function getClubById(
