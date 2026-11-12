@@ -52,6 +52,7 @@ interface Props {
   avatarUrl: string | null;
   upcomingBookings: Booking[];
   completedBookings: Booking[];
+  upcomingRoomBookings?: Booking[];
   seasonGoals: string;
   goalsFreestyle?: string;
   goalsSlow?: string;
@@ -167,12 +168,21 @@ export default function DancerDashboardNav(props: Props) {
     return () => clearTimeout(timer);
   }, [goals, goalsFreestyle, goalsSlow, freestyle, slow, levelF, levelS, visibleToTrainer]);
 
-  // Booking sections grouped by week
-  const grouped: Record<string, Booking[]> = {};
+  // Booking sections grouped by week – privattimer + sal-bookinger (egentrening) slått sammen
+  const grouped: Record<string, any[]> = {};
   for (const b of props.upcomingBookings) {
     const key = formatDateKey(new Date(b.availability_slots.start_at));
     if (!grouped[key]) grouped[key] = [];
-    grouped[key].push(b);
+    grouped[key].push({ kind: "lesson", start: b.availability_slots.start_at, end: b.availability_slots.end_at, booking: b });
+  }
+  for (const rb of props.upcomingRoomBookings ?? []) {
+    if (!rb.room_slots) continue;
+    const key = formatDateKey(new Date(rb.room_slots.start_at));
+    if (!grouped[key]) grouped[key] = [];
+    grouped[key].push({ kind: "room", start: rb.room_slots.start_at, end: rb.room_slots.end_at, booking: rb });
+  }
+  for (const key of Object.keys(grouped)) {
+    grouped[key].sort((a, b) => a.start.localeCompare(b.start));
   }
   const weekGroups: Record<number, string[]> = {};
   for (const dateKey of Object.keys(grouped).sort()) {
@@ -358,7 +368,7 @@ export default function DancerDashboardNav(props: Props) {
           </div>
 
           {bookingTab === "kommende" && (
-            props.upcomingBookings.length === 0 ? (
+            props.upcomingBookings.length === 0 && (props.upcomingRoomBookings ?? []).length === 0 ? (
               <div className="bg-white dark:bg-gray-900 rounded-xl border dark:border-gray-700 p-6 text-center text-gray-400 dark:text-gray-500">
                 <p className="text-lg font-medium mb-2">Ingen kommende timer</p>
                 <p className="text-sm mb-4">Finn en trener og book din første privattime</p>
@@ -377,7 +387,26 @@ export default function DancerDashboardNav(props: Props) {
                           <div key={dateKey}>
                             <p className="text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2 border-b dark:border-gray-700 pb-1">{dayLabel.charAt(0).toUpperCase() + dayLabel.slice(1)}</p>
                             <div className="space-y-2">
-                              {dayBookings.map((booking: Booking) => {
+                              {dayBookings.map((entry: any) => {
+                                if (entry.kind === "room") {
+                                  const booking = entry.booking;
+                                  const start = new Date(entry.start);
+                                  const end = new Date(entry.end);
+                                  return (
+                                    <div key={`room-${booking.id}`} className="bg-white dark:bg-gray-900 rounded-xl border dark:border-gray-700 border-l-4 border-l-amber-400 px-4 py-3">
+                                      <div className="flex justify-between items-start">
+                                        <div>
+                                          <p className="text-sm font-semibold text-gray-700 dark:text-gray-300">{formatTime(start)}–{formatTime(end)}</p>
+                                          <p className="text-sm font-medium text-amber-600 dark:text-amber-400">Egentrening – {booking.room_slots?.rooms?.name ?? "Sal"}</p>
+                                        </div>
+                                        <Link href="/sal">
+                                          <button className="text-xs text-red-400 hover:text-red-600">Avbestill</button>
+                                        </Link>
+                                      </div>
+                                    </div>
+                                  );
+                                }
+                                const booking = entry.booking;
                                 const start = new Date(booking.availability_slots.start_at);
                                 const end = new Date(booking.availability_slots.end_at);
                                 const hoursUntil = (start.getTime() - now.getTime()) / (1000 * 60 * 60);

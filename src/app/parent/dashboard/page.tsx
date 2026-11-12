@@ -37,6 +37,12 @@ export default async function ParentDashboard() {
     .or(`booker_id.eq.${user.id},linked_user_id.eq.${user.id}`)
     .eq("status", "confirmed");
 
+  const { data: roomBookings } = await supabase
+    .from("room_bookings")
+    .select("id, dancer_name, room_slots(start_at, end_at, rooms(name))")
+    .eq("booker_id", user.id)
+    .eq("status", "confirmed");
+
   const now = new Date();
   const upcomingBookings = (bookings ?? [])
     .filter(b => b.availability_slots && new Date(b.availability_slots.end_at) >= now)
@@ -45,6 +51,9 @@ export default async function ParentDashboard() {
   const completedBookings = (bookings ?? [])
     .filter(b => b.availability_slots && new Date(b.availability_slots.end_at) < now)
     .sort((a, b) => new Date(b.availability_slots.start_at).getTime() - new Date(a.availability_slots.start_at).getTime());
+
+  const upcomingRoomBookings = (roomBookings ?? [])
+    .filter((b: any) => b.room_slots && new Date(b.room_slots.end_at) >= now);
 
   return (
     <main className="bg-gray-50 dark:bg-gray-950 min-h-screen pt-14 md:pt-0">
@@ -57,6 +66,7 @@ export default async function ParentDashboard() {
           notifications={notifications ?? []}
           upcomingBookings={upcomingBookings}
           completedBookings={completedBookings}
+          upcomingRoomBookings={upcomingRoomBookings as any}
           children={children ?? []}
           trainers={(trainers ?? []).map(t => ({ name: t.name, avatarUrl: t.avatar_url ?? null, styles: (Array.isArray(t.trainers) ? t.trainers[0]?.dance_styles : (t.trainers as any)?.dance_styles) ?? [] }))}
           club={club}

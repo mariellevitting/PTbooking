@@ -214,19 +214,30 @@ interface Booking {
   };
 }
 
+interface RoomBooking {
+  id: string;
+  dancer_name: string;
+  room_slots: { start_at: string; end_at: string; rooms?: { name: string } | null } | null;
+}
+
+type TimelineEntry =
+  | { kind: "lesson"; start: string; end: string; booking: Booking }
+  | { kind: "room"; start: string; end: string; booking: RoomBooking };
+
 interface Props {
   userName: string;
   avatarUrl: string | null;
   notifications: any[];
   upcomingBookings: Booking[];
   completedBookings: Booking[];
+  upcomingRoomBookings?: RoomBooking[];
   parentId: string;
   children: { id: string; name: string; season_goals: string | null; points_freestyle: number | null; points_slow: number | null; level_freestyle: number | null; level_slow: number | null }[];
   trainers?: { name: string; avatarUrl: string | null; styles: string[] }[];
   club?: ClubConfig | null;
 }
 
-export default function ParentDashboardNav({ userName, avatarUrl, notifications, upcomingBookings, completedBookings, parentId, children, trainers = [], club = null }: Props) {
+export default function ParentDashboardNav({ userName, avatarUrl, notifications, upcomingBookings, completedBookings, upcomingRoomBookings = [], parentId, children, trainers = [], club = null }: Props) {
   const [active, setActive] = useState("timer");
   useEffect(() => {
     const onShow = () => setActive("timer");
@@ -255,11 +266,20 @@ export default function ParentDashboardNav({ userName, avatarUrl, notifications,
 
   const hasRooms = useHasRooms(club?.id ?? null);
 
-  const grouped: Record<string, Booking[]> = {};
+  const grouped: Record<string, TimelineEntry[]> = {};
   for (const b of upcomingBookings) {
     const key = formatDateKey(new Date(b.availability_slots.start_at));
     if (!grouped[key]) grouped[key] = [];
-    grouped[key].push(b);
+    grouped[key].push({ kind: "lesson", start: b.availability_slots.start_at, end: b.availability_slots.end_at, booking: b });
+  }
+  for (const rb of upcomingRoomBookings) {
+    if (!rb.room_slots) continue;
+    const key = formatDateKey(new Date(rb.room_slots.start_at));
+    if (!grouped[key]) grouped[key] = [];
+    grouped[key].push({ kind: "room", start: rb.room_slots.start_at, end: rb.room_slots.end_at, booking: rb });
+  }
+  for (const key of Object.keys(grouped)) {
+    grouped[key].sort((a, b) => a.start.localeCompare(b.start));
   }
   const weekGroups: Record<number, string[]> = {};
   for (const dateKey of Object.keys(grouped).sort()) {
@@ -441,7 +461,7 @@ export default function ParentDashboardNav({ userName, avatarUrl, notifications,
               </div>
 
               {bookingTab === "kommende" && (
-                upcomingBookings.length === 0 ? (
+                upcomingBookings.length === 0 && upcomingRoomBookings.length === 0 ? (
                   <div className="bg-white dark:bg-gray-900 rounded-xl border dark:border-gray-700 p-6 text-center text-gray-400 dark:text-gray-500">
                     <p className="text-lg font-medium mb-2">Ingen kommende timer</p>
                     <p className="text-sm mb-4">Book privattime for ditt barn</p>
@@ -460,7 +480,27 @@ export default function ParentDashboardNav({ userName, avatarUrl, notifications,
                               <div key={dateKey}>
                                 <p className="text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2 border-b dark:border-gray-700 pb-1">{dayLabel.charAt(0).toUpperCase() + dayLabel.slice(1)}</p>
                                 <div className="space-y-2">
-                                  {dayBookings.map(booking => {
+                                  {dayBookings.map(entry => {
+                                    if (entry.kind === "room") {
+                                      const { booking } = entry;
+                                      const start = new Date(entry.start);
+                                      const end = new Date(entry.end);
+                                      return (
+                                        <div key={`room-${booking.id}`} className="bg-white dark:bg-gray-900 rounded-xl border dark:border-gray-700 border-l-4 border-l-amber-400 px-4 py-3">
+                                          <div className="flex justify-between items-start">
+                                            <div>
+                                              <p className="text-sm font-semibold text-gray-700 dark:text-gray-300">{formatTime(start)}–{formatTime(end)}</p>
+                                              <p className="text-sm font-medium text-amber-600 dark:text-amber-400">Egentrening – {booking.room_slots?.rooms?.name ?? "Sal"}</p>
+                                              <p className="text-xs font-medium text-gray-500 dark:text-gray-400">{booking.dancer_name}</p>
+                                            </div>
+                                            <Link href="/sal">
+                                              <button className="text-xs text-red-400 hover:text-red-600">Avbestill</button>
+                                            </Link>
+                                          </div>
+                                        </div>
+                                      );
+                                    }
+                                    const booking = entry.booking;
                                     const start = new Date(booking.availability_slots.start_at);
                                     const end = new Date(booking.availability_slots.end_at);
                                     const hoursUntil = (start.getTime() - new Date().getTime()) / (1000 * 60 * 60);

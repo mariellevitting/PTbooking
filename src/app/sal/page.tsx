@@ -27,13 +27,12 @@ export default async function SalPage() {
 
   const now = new Date().toISOString();
 
-  const [{ data: openSlots }, { data: kids }, { data: myBookings }] = await Promise.all([
+  const [{ data: allSlots }, { data: kids }, { data: myBookings }] = await Promise.all([
     roomIds.length > 0
       ? supabase
           .from("room_slots")
           .select("id, room_id, start_at, end_at, is_booked")
           .in("room_id", roomIds)
-          .eq("is_booked", false)
           .gte("start_at", now)
           .order("start_at")
       : Promise.resolve({ data: [] }),
@@ -57,7 +56,7 @@ export default async function SalPage() {
   return (
     <SalBookingClient
       rooms={rooms ?? []}
-      openSlots={(openSlots ?? []) as any}
+      allSlots={(allSlots ?? []) as any}
       userId={user.id}
       userName={profile.name}
       role={profile.role}

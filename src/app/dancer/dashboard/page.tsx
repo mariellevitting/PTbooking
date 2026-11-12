@@ -33,6 +33,12 @@ export default async function DancerDashboard() {
     supabase.from("profiles").select("id, name, avatar_url, trainers(dance_styles)").eq("role", "trainer").eq("club_id", profile.club_id ?? "").order("name"),
   ]);
 
+  const { data: roomBookings } = await supabase
+    .from("room_bookings")
+    .select("id, dancer_name, room_slots(start_at, end_at, rooms(name))")
+    .eq("booker_id", user.id)
+    .eq("status", "confirmed");
+
   const now = new Date();
   const upcomingBookings = (bookings ?? [])
     .filter(b => b.availability_slots && new Date(b.availability_slots.end_at) >= now)
@@ -41,6 +47,9 @@ export default async function DancerDashboard() {
   const completedBookings = (bookings ?? [])
     .filter(b => b.availability_slots && new Date(b.availability_slots.end_at) < now)
     .sort((a, b) => new Date(b.availability_slots.start_at).getTime() - new Date(a.availability_slots.start_at).getTime());
+
+  const upcomingRoomBookings = (roomBookings ?? [])
+    .filter((b: any) => b.room_slots && new Date(b.room_slots.end_at) >= now);
 
   return (
     <main className="bg-gray-50 dark:bg-gray-950 min-h-screen pt-14 md:pt-0">
@@ -52,6 +61,7 @@ export default async function DancerDashboard() {
           avatarUrl={profile.avatar_url ?? null}
           upcomingBookings={upcomingBookings}
           completedBookings={completedBookings}
+          upcomingRoomBookings={upcomingRoomBookings as any}
           seasonGoals={profile.season_goals ?? ""}
           goalsFreestyle={profile.goals_freestyle ?? ""}
           goalsSlow={profile.goals_slow ?? ""}

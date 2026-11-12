@@ -14,11 +14,12 @@ interface Room {
   name: string;
 }
 
-interface OpenSlot {
+interface SlotRow {
   id: string;
   room_id: string;
   start_at: string;
   end_at: string;
+  is_booked: boolean;
 }
 
 interface Child {
@@ -34,7 +35,7 @@ interface MyBooking {
 
 interface Props {
   rooms: Room[];
-  openSlots: OpenSlot[];
+  allSlots: SlotRow[];
   userId: string;
   userName: string;
   role: string;
@@ -69,11 +70,11 @@ async function notifyTrainers(supabase: ReturnType<typeof createClient>, clubId:
   }).catch(() => {});
 }
 
-export default function SalBookingClient({ rooms, openSlots, userId, userName, role, clubId, kids, myBookings, backHref }: Props) {
+export default function SalBookingClient({ rooms, allSlots, userId, userName, role, clubId, kids, myBookings, backHref }: Props) {
   const router = useRouter();
   const [tab, setTab] = useState<"book" | "mine">("book");
   const [activeRoom, setActiveRoom] = useState<string>(rooms[0]?.id ?? "");
-  const [selected, setSelected] = useState<OpenSlot[]>([]);
+  const [selected, setSelected] = useState<SlotRow[]>([]);
   const [dancerChoice, setDancerChoice] = useState<string>(role === "parent" && kids.length === 1 ? kids[0].name : role === "dancer" ? userName : "");
   const [customName, setCustomName] = useState("");
   const [loading, setLoading] = useState(false);
@@ -82,12 +83,12 @@ export default function SalBookingClient({ rooms, openSlots, userId, userName, r
   const [bookedInfo, setBookedInfo] = useState<BookedInfo | null>(null);
 
   const roomSlots = useMemo(
-    () => openSlots.filter(s => s.room_id === activeRoom).sort((a, b) => a.start_at.localeCompare(b.start_at)),
-    [openSlots, activeRoom]
+    () => allSlots.filter(s => s.room_id === activeRoom).sort((a, b) => a.start_at.localeCompare(b.start_at)),
+    [allSlots, activeRoom]
   );
 
   const groupedByDay = useMemo(() => {
-    const map = new Map<string, OpenSlot[]>();
+    const map = new Map<string, SlotRow[]>();
     for (const s of roomSlots) {
       const key = formatDateKey(new Date(s.start_at));
       if (!map.has(key)) map.set(key, []);
@@ -102,7 +103,8 @@ export default function SalBookingClient({ rooms, openSlots, userId, userName, r
     setBookedInfo(null);
   }
 
-  function toggleSlot(slot: OpenSlot) {
+  function toggleSlot(slot: SlotRow) {
+    if (slot.is_booked) return;
     setBookedInfo(null);
     const already = selected.find(s => s.id === slot.id);
     if (already) {
@@ -284,7 +286,7 @@ export default function SalBookingClient({ rooms, openSlots, userId, userName, r
 
                 {groupedByDay.length === 0 ? (
                   <div className="bg-white dark:bg-gray-900 rounded-xl border dark:border-gray-700 p-6 text-center text-gray-400 dark:text-gray-500">
-                    Ingen ledige tider i {roomName} akkurat nå
+                    Ingen tider lagt ut i {roomName} ennå
                   </div>
                 ) : (
                   <div className="space-y-4">
@@ -300,8 +302,12 @@ export default function SalBookingClient({ rooms, openSlots, userId, userName, r
                               <button
                                 key={s.id}
                                 onClick={() => toggleSlot(s)}
+                                disabled={s.is_booked}
+                                title={s.is_booked ? "Opptatt" : undefined}
                                 className={`px-3 py-1.5 rounded-lg text-sm font-medium border transition-colors ${
-                                  isSelected
+                                  s.is_booked
+                                    ? "bg-gray-100 dark:bg-gray-800 text-gray-300 dark:text-gray-600 border-gray-100 dark:border-gray-800 cursor-not-allowed line-through"
+                                    : isSelected
                                     ? "bg-[#3A3A3A] text-[#E2A9F1] border-[#3A3A3A] dark:bg-[#c87de0] dark:text-white dark:border-[#c87de0]"
                                     : "bg-white dark:bg-gray-900 text-gray-600 dark:text-gray-400 border-gray-200 dark:border-gray-700"
                                 }`}
@@ -329,9 +335,11 @@ export default function SalBookingClient({ rooms, openSlots, userId, userName, r
                         </p>
                       </div>
 
-                      <div>
-                        <label className="text-sm font-medium text-gray-800 dark:text-gray-100 mb-1.5 block">Hvem skal trene?</label>
-                        {role === "parent" && kids.length > 0 ? (
+                      {/* "Hvem skal trene?" trengs bare når det faktisk er noe å velge mellom:
+                          danser = alltid seg selv, forelder med ett barn = det barnet automatisk. */}
+                      {role === "parent" && kids.length > 1 && (
+                        <div>
+                          <label className="text-sm font-medium text-gray-800 dark:text-gray-100 mb-1.5 block">Hvem skal trene?</label>
                           <div className="flex flex-wrap gap-2">
                             {kids.map(c => (
                               <button
@@ -349,16 +357,28 @@ export default function SalBookingClient({ rooms, openSlots, userId, userName, r
                               Annen danser
                             </button>
                           </div>
-                        ) : null}
-                        {(role !== "parent" || kids.length === 0 || dancerChoice === "__custom__") && (
+                          {dancerChoice === "__custom__" && (
+                            <input
+                              value={customName}
+                              onChange={e => setCustomName(e.target.value)}
+                              placeholder="Navn på danser"
+                              className="mt-2 w-full border dark:border-gray-700 rounded-lg px-3 py-2 text-sm bg-white dark:bg-gray-900 text-gray-900 dark:text-white"
+                            />
+                          )}
+                        </div>
+                      )}
+
+                      {role === "parent" && kids.length === 0 && (
+                        <div>
+                          <label className="text-sm font-medium text-gray-800 dark:text-gray-100 mb-1.5 block">Hvem skal trene?</label>
                           <input
-                            value={dancerChoice === "__custom__" ? customName : dancerChoice}
-                            onChange={e => (dancerChoice === "__custom__" ? setCustomName(e.target.value) : setDancerChoice(e.target.value))}
+                            value={dancerChoice}
+                            onChange={e => setDancerChoice(e.target.value)}
                             placeholder="Navn på danser"
-                            className="mt-2 w-full border dark:border-gray-700 rounded-lg px-3 py-2 text-sm bg-white dark:bg-gray-900 text-gray-900 dark:text-white"
+                            className="w-full border dark:border-gray-700 rounded-lg px-3 py-2 text-sm bg-white dark:bg-gray-900 text-gray-900 dark:text-white"
                           />
-                        )}
-                      </div>
+                        </div>
+                      )}
 
                       {error && <p className="text-sm text-red-500">{error}</p>}
 
