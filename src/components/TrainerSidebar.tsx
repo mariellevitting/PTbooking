@@ -19,7 +19,7 @@ const BASE_NAV = [
   { href: "/trainer/sesongmal", label: "Sesongmål", icon: TargetArrowIcon },
   { href: "/trainer/konkurranser", label: "Konkurranser", icon: Trophy },
   { href: "/trainer/profil", label: "Profil", icon: UserCircle },
-  { href: "/admin", label: "Admin", icon: LayoutDashboard },
+  { href: "/admin", label: "Trenerkalender", icon: LayoutDashboard },
 ];
 
 const SALER_ITEM = { href: "/trainer/saler", label: "Administrer saler", icon: Building2 };
