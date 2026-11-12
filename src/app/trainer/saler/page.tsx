@@ -61,6 +61,31 @@ interface Room {
   name: string;
 }
 
+// roomId -> dateKey -> klokkeslett. Valgt, men ikke publisert ennå.
+// Egen nøkkel per sal slik at man kan velge tider i flere saler før man
+// publiserer alt samlet – bytte av sal-fane skal ikke slette valg man
+// allerede har gjort i en annen sal.
+type PendingMap = Map<string, Map<string, Set<string>>>;
+
+function getRoomDay(pending: PendingMap, roomId: string | null, dateKey: string): Set<string> {
+  if (!roomId) return new Set();
+  return pending.get(roomId)?.get(dateKey) ?? new Set();
+}
+
+function countAll(pending: PendingMap): number {
+  let total = 0;
+  for (const byDate of pending.values()) {
+    for (const times of byDate.values()) total += times.size;
+  }
+  return total;
+}
+
+function countForRoom(pending: PendingMap, roomId: string): number {
+  let total = 0;
+  for (const times of (pending.get(roomId)?.values() ?? [])) total += times.size;
+  return total;
+}
+
 export default function SalerPage() {
   const router = useRouter();
   const today = new Date();
@@ -72,7 +97,7 @@ export default function SalerPage() {
 
   const [weekStart, setWeekStart] = useState(getMondayOfWeek(today));
   const [selectedDate, setSelectedDate] = useState<Date | null>(today);
-  const [selected, setSelected] = useState<Map<string, Set<string>>>(new Map());
+  const [pending, setPending] = useState<PendingMap>(new Map());
   const [saving, setSaving] = useState(false);
   const [success, setSuccess] = useState(false);
   const [error, setError] = useState("");
@@ -127,9 +152,10 @@ export default function SalerPage() {
     setExistingSlots(times);
   }
 
+  // Bytte sal beholder valgene du har gjort i andre saler – de forsvinner
+  // først når du publiserer (eller laster siden på nytt).
   function pickRoom(roomId: string) {
     setActiveRoom(roomId);
-    setSelected(new Map());
     setSuccess(false);
     setError("");
     if (selectedDate) fetchExistingSlots(roomId, selectedDate);
@@ -172,19 +198,21 @@ export default function SalerPage() {
   }
 
   function toggleSlot(slot: string) {
-    if (!selectedDate) return;
+    if (!selectedDate || !activeRoom) return;
     const dateKey = dateToISO(selectedDate);
-    setSelected((prev) => {
+    setPending((prev) => {
       const next = new Map(prev);
-      const daySlots = new Set(next.get(dateKey) ?? []);
+      const byDate = new Map(next.get(activeRoom) ?? []);
+      const daySlots = new Set(byDate.get(dateKey) ?? []);
       daySlots.has(slot) ? daySlots.delete(slot) : daySlots.add(slot);
-      if (daySlots.size === 0) next.delete(dateKey); else next.set(dateKey, daySlots);
+      if (daySlots.size === 0) byDate.delete(dateKey); else byDate.set(dateKey, daySlots);
+      if (byDate.size === 0) next.delete(activeRoom); else next.set(activeRoom, byDate);
       return next;
     });
   }
 
   function addCustomTime() {
-    if (!selectedDate || !customTime) return;
+    if (!selectedDate || !activeRoom || !customTime) return;
     if (existingSlots.has(customTime)) { setCustomTimeError("Allerede publisert"); return; }
     const isToday = dateToISO(selectedDate) === dateToISO(today);
     if (isToday) {
@@ -195,21 +223,26 @@ export default function SalerPage() {
     }
     setCustomTimeError("");
     const dateKey = dateToISO(selectedDate);
-    setSelected((prev) => {
+    setPending((prev) => {
       const next = new Map(prev);
-      const daySlots = new Set(next.get(dateKey) ?? []);
+      const byDate = new Map(next.get(activeRoom) ?? []);
+      const daySlots = new Set(byDate.get(dateKey) ?? []);
       daySlots.add(customTime);
-      next.set(dateKey, daySlots);
+      byDate.set(dateKey, daySlots);
+      next.set(activeRoom, byDate);
       return next;
     });
     setCustomTime("");
   }
 
-  const totalSelected = Array.from(selected.values()).reduce((sum, s) => sum + s.size, 0);
+  const dateKey = selectedDate ? dateToISO(selectedDate) : "";
+  const selectedToday = getRoomDay(pending, activeRoom, dateKey);
+  const totalPending = countAll(pending);
+  const roomsWithPending = rooms.filter(r => countForRoom(pending, r.id) > 0);
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
-    if (totalSelected === 0 || !activeRoom) return;
+    if (totalPending === 0) return;
     setSaving(true);
     setError("");
 
@@ -218,14 +251,16 @@ export default function SalerPage() {
     if (!user) return;
 
     const rows: { room_id: string; start_at: string; end_at: string }[] = [];
-    for (const [dateKey, times] of selected.entries()) {
-      const baseDate = new Date(`${dateKey}T00:00:00`);
-      for (const time of times) {
-        const [hours, minutes] = time.split(":").map(Number);
-        const start = new Date(baseDate);
-        start.setHours(hours, minutes, 0, 0);
-        const end = new Date(start.getTime() + 30 * 60 * 1000);
-        rows.push({ room_id: activeRoom, start_at: start.toISOString(), end_at: end.toISOString() });
+    for (const [roomId, byDate] of pending.entries()) {
+      for (const [dk, times] of byDate.entries()) {
+        const baseDate = new Date(`${dk}T00:00:00`);
+        for (const time of times) {
+          const [hours, minutes] = time.split(":").map(Number);
+          const start = new Date(baseDate);
+          start.setHours(hours, minutes, 0, 0);
+          const end = new Date(start.getTime() + 30 * 60 * 1000);
+          rows.push({ room_id: roomId, start_at: start.toISOString(), end_at: end.toISOString() });
+        }
       }
     }
     const { error: insertError } = await supabase.from("room_slots").insert(rows);
@@ -237,49 +272,49 @@ export default function SalerPage() {
         setError("Noe gikk galt: " + insertError.message);
       }
       setSaving(false);
-    } else {
-      const { data: trainerProfile } = await supabase
-        .from("profiles")
-        .select("name, club_id")
-        .eq("id", user.id)
-        .single();
-
-      const roomName = rooms.find(r => r.id === activeRoom)?.name ?? "Sal";
-
-      const { data: recipients } = await supabase
-        .from("profiles")
-        .select("id")
-        .in("role", ["dancer", "parent"])
-        .or("notify_new_slots.is.null,notify_new_slots.eq.true")
-        .eq("club_id", trainerProfile?.club_id ?? "");
-
-      if (recipients && recipients.length > 0) {
-        const trainerName = trainerProfile?.name ?? "Treneren";
-        const uniqueDates = [...new Set(rows.map(r => {
-          const d = new Date(r.start_at);
-          return d.toLocaleDateString("nb-NO", { day: "numeric", month: "short" });
-        }))];
-        const dateStr = uniqueDates.join(", ");
-        const message = `${trainerName} har lagt ut ${rows.length} ledig${rows.length === 1 ? "" : "e"} tid${rows.length === 1 ? "" : "er"} i ${roomName} til egentrening: ${dateStr}`;
-        const notifRows = recipients.map(r => ({ user_id: r.id, message }));
-        await supabase.from("notifications").insert(notifRows);
-
-        // Send push-varsel til dansere/foreldre
-        fetch("/api/notify-new-slots", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            userIds: recipients.map(r => r.id),
-            message,
-          }),
-        }).catch(() => {});
-      }
-
-      setSelected(new Map());
-      setSaving(false);
-      setSuccess(true);
-      if (activeRoom && selectedDate) fetchExistingSlots(activeRoom, selectedDate);
+      return;
     }
+
+    const { data: trainerProfile } = await supabase
+      .from("profiles")
+      .select("name, club_id")
+      .eq("id", user.id)
+      .single();
+
+    const { data: recipients } = await supabase
+      .from("profiles")
+      .select("id")
+      .in("role", ["dancer", "parent"])
+      .or("notify_new_slots.is.null,notify_new_slots.eq.true")
+      .eq("club_id", trainerProfile?.club_id ?? "");
+
+    if (recipients && recipients.length > 0) {
+      const trainerName = trainerProfile?.name ?? "Treneren";
+      const roomNames = roomsWithPending.map(r => r.name).join(", ");
+      const uniqueDates = [...new Set(rows.map(r => {
+        const d = new Date(r.start_at);
+        return d.toLocaleDateString("nb-NO", { day: "numeric", month: "short" });
+      }))];
+      const dateStr = uniqueDates.join(", ");
+      const message = `${trainerName} har lagt ut ${rows.length} ledig${rows.length === 1 ? "" : "e"} tid${rows.length === 1 ? "" : "er"} i ${roomNames} til egentrening: ${dateStr}`;
+      const notifRows = recipients.map(r => ({ user_id: r.id, message }));
+      await supabase.from("notifications").insert(notifRows);
+
+      // Send push-varsel til dansere/foreldre
+      fetch("/api/notify-new-slots", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          userIds: recipients.map(r => r.id),
+          message,
+        }),
+      }).catch(() => {});
+    }
+
+    setPending(new Map());
+    setSaving(false);
+    setSuccess(true);
+    if (activeRoom && selectedDate) fetchExistingSlots(activeRoom, selectedDate);
   }
 
   const slots = selectedDate ? getSlotsForDate(selectedDate) : [];
@@ -313,21 +348,35 @@ export default function SalerPage() {
         {/* Sal-velger */}
         {rooms.length > 1 && (
           <div className="flex gap-1 bg-gray-100 dark:bg-gray-800 rounded-xl p-1 mb-4">
-            {rooms.map(r => (
-              <button
-                key={r.id}
-                type="button"
-                onClick={() => pickRoom(r.id)}
-                className={`flex-1 px-3 py-1.5 rounded-lg text-sm font-medium transition-colors ${
-                  activeRoom === r.id
-                    ? "bg-white dark:bg-gray-900 text-[#c87de0] shadow-sm"
-                    : "text-gray-500 dark:text-gray-400"
-                }`}
-              >
-                {r.name}
-              </button>
-            ))}
+            {rooms.map(r => {
+              const count = countForRoom(pending, r.id);
+              return (
+                <button
+                  key={r.id}
+                  type="button"
+                  onClick={() => pickRoom(r.id)}
+                  className={`relative flex-1 px-3 py-1.5 rounded-lg text-sm font-medium transition-colors ${
+                    activeRoom === r.id
+                      ? "bg-white dark:bg-gray-900 text-[#c87de0] shadow-sm"
+                      : "text-gray-500 dark:text-gray-400"
+                  }`}
+                >
+                  {r.name}
+                  {count > 0 && (
+                    <span className="absolute -top-1.5 -right-1.5 bg-[#E2A9F1] text-[#3A3A3A] text-[10px] font-bold w-4 h-4 rounded-full flex items-center justify-center">
+                      {count}
+                    </span>
+                  )}
+                </button>
+              );
+            })}
           </div>
+        )}
+
+        {roomsWithPending.length > 1 && (
+          <p className="text-xs text-gray-500 dark:text-gray-400 mb-4">
+            Du har valgt tider i flere saler ({roomsWithPending.map(r => r.name).join(", ")}) – alt publiseres samlet når du trykker «Publiser».
+          </p>
         )}
 
         <Card className="mb-4">
@@ -409,7 +458,7 @@ export default function SalerPage() {
                 <div className="grid grid-cols-4 gap-2">
                   {slots.map((slot) => {
                     const isExisting = existingSlots.has(slot);
-                    const isSelected = selectedDate ? (selected.get(dateToISO(selectedDate))?.has(slot) ?? false) : false;
+                    const isSelected = selectedToday.has(slot);
                     const isToday = selectedDate && dateToISO(selectedDate) === dateToISO(today);
                     const isPastSlot = isToday && (() => {
                       const [h, m] = slot.split(":").map(Number);
@@ -442,9 +491,7 @@ export default function SalerPage() {
                 </div>
 
                 {(() => {
-                  const customTimesForDay = selectedDate
-                    ? Array.from(selected.get(dateToISO(selectedDate)) ?? []).filter(t => !slots.includes(t)).sort()
-                    : [];
+                  const customTimesForDay = Array.from(selectedToday).filter(t => !slots.includes(t)).sort();
                   if (customTimesForDay.length === 0) return null;
                   return (
                     <div className="flex flex-wrap gap-2">
@@ -483,9 +530,9 @@ export default function SalerPage() {
                   {customTimeError && <p className="text-xs text-red-500 mt-1">{customTimeError}</p>}
                 </div>
 
-                {selectedDate && (selected.get(dateToISO(selectedDate))?.size ?? 0) > 0 && (
+                {selectedToday.size > 0 && (
                   <p className="text-sm text-[#E2A9F1]">
-                    {selected.get(dateToISO(selectedDate))!.size} valgt denne dagen
+                    {selectedToday.size} valgt denne dagen
                   </p>
                 )}
 
@@ -495,9 +542,9 @@ export default function SalerPage() {
                 <Button
                   type="submit"
                   className="w-full bg-[#3A3A3A] hover:bg-[#2a2a2a] dark:bg-[#c87de0] dark:hover:bg-[#b56fd0] dark:text-white"
-                  disabled={saving || totalSelected === 0}
+                  disabled={saving || totalPending === 0}
                 >
-                  {saving ? "Lagrer..." : `Legg ut ${totalSelected > 0 ? totalSelected + " " : ""}time${totalSelected !== 1 ? "r" : ""}`}
+                  {saving ? "Lagrer..." : `Publiser ${totalPending > 0 ? totalPending + " " : ""}time${totalPending !== 1 ? "r" : ""}${roomsWithPending.length > 1 ? ` i ${roomsWithPending.length} saler` : ""}`}
                 </Button>
               </form>
             </CardContent>
