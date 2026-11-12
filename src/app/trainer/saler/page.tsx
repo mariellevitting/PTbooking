@@ -73,6 +73,12 @@ interface PublishedSummary {
   roomNames: string;
 }
 
+interface RoomBookingRow {
+  id: string;
+  dancer_name: string;
+  room_slots: { start_at: string; end_at: string; rooms: { name: string } | null } | null;
+}
+
 // roomId -> dateKey -> klokkeslett. Valgt, men ikke publisert ennå.
 // Egen nøkkel per sal slik at man kan velge tider i flere saler før man
 // publiserer alt samlet – bytte av sal-fane skal ikke slette valg man
@@ -106,6 +112,11 @@ export default function SalerPage() {
   const [rooms, setRooms] = useState<Room[]>([]);
   const [activeRoom, setActiveRoom] = useState<string | null>(null);
   const [roomsLoading, setRoomsLoading] = useState(true);
+
+  const [pageTab, setPageTab] = useState<"publish" | "bookings">("publish");
+  const [bookings, setBookings] = useState<RoomBookingRow[]>([]);
+  const [bookingsLoading, setBookingsLoading] = useState(false);
+  const [bookingsLoaded, setBookingsLoaded] = useState(false);
 
   const [weekStart, setWeekStart] = useState(getMondayOfWeek(today));
   const [selectedDate, setSelectedDate] = useState<Date | null>(today);
@@ -169,6 +180,27 @@ export default function SalerPage() {
       });
     }
     setExistingSlots(map);
+  }
+
+  async function fetchBookings() {
+    setBookingsLoading(true);
+    const supabase = createClient();
+    const { data } = await supabase
+      .from("room_bookings")
+      .select("id, dancer_name, room_slots(start_at, end_at, rooms(name))")
+      .eq("status", "confirmed");
+    const now = new Date();
+    const upcoming = ((data ?? []) as any[])
+      .filter(b => b.room_slots && new Date(b.room_slots.end_at) >= now)
+      .sort((a, b) => a.room_slots.start_at.localeCompare(b.room_slots.start_at));
+    setBookings(upcoming);
+    setBookingsLoading(false);
+    setBookingsLoaded(true);
+  }
+
+  function openBookingsTab() {
+    setPageTab("bookings");
+    if (!bookingsLoaded) fetchBookings();
   }
 
   // Bytte sal beholder valgene du har gjort i andre saler – de forsvinner
@@ -365,6 +397,56 @@ export default function SalerPage() {
         </button>
         <h1 className="font-display text-[28px] mb-6">Legg ut ledige tider – saler</h1>
 
+        <div className="flex gap-1 bg-gray-100 dark:bg-gray-800 rounded-xl p-1 mb-5">
+          <button onClick={() => setPageTab("publish")} className={`flex-1 px-3 py-1.5 rounded-lg text-sm font-medium transition-colors ${pageTab === "publish" ? "bg-white dark:bg-gray-900 text-[#c87de0] shadow-sm" : "text-gray-500 dark:text-gray-400"}`}>
+            Legg ut tider
+          </button>
+          <button onClick={openBookingsTab} className={`flex-1 px-3 py-1.5 rounded-lg text-sm font-medium transition-colors ${pageTab === "bookings" ? "bg-white dark:bg-gray-900 text-[#c87de0] shadow-sm" : "text-gray-500 dark:text-gray-400"}`}>
+            Bookinger {bookings.length > 0 && `(${bookings.length})`}
+          </button>
+        </div>
+
+        {pageTab === "bookings" && (
+          <div className="space-y-3">
+            {bookingsLoading ? (
+              <p className="text-sm text-gray-400 dark:text-gray-500">Laster…</p>
+            ) : bookings.length === 0 ? (
+              <div className="bg-white dark:bg-gray-900 rounded-xl border dark:border-gray-700 p-6 text-center text-gray-400 dark:text-gray-500">
+                Ingen kommende sal-bookinger i noen av salene
+              </div>
+            ) : (
+              bookings.map(b => {
+                const slot = b.room_slots;
+                if (!slot) return null;
+                const start = new Date(slot.start_at);
+                return (
+                  <Card key={b.id}>
+                    <CardContent className="py-4 flex items-center justify-between gap-3">
+                      <div>
+                        <p className="font-semibold text-sm">{slot.rooms?.name ?? "Sal"} – {b.dancer_name}</p>
+                        <p className="text-sm text-gray-500 dark:text-gray-400 capitalize">
+                          {start.toLocaleDateString("nb-NO", { weekday: "long", day: "numeric", month: "short" })} kl.{" "}
+                          {start.toLocaleTimeString("nb-NO", { hour: "2-digit", minute: "2-digit" })}–
+                          {new Date(slot.end_at).toLocaleTimeString("nb-NO", { hour: "2-digit", minute: "2-digit" })}
+                        </p>
+                      </div>
+                      <Button
+                        variant="outline"
+                        className="text-red-500 border-red-200 dark:border-red-900 shrink-0"
+                        onClick={() => router.push(`/trainer/avbestill-sal/${b.id}`)}
+                      >
+                        Avbestill
+                      </Button>
+                    </CardContent>
+                  </Card>
+                );
+              })
+            )}
+          </div>
+        )}
+
+        {pageTab === "publish" && (
+        <>
         {/* Sal-velger */}
         {rooms.length > 1 && (
           <div className="flex gap-1 bg-gray-100 dark:bg-gray-800 rounded-xl p-1 mb-4">
@@ -601,6 +683,8 @@ export default function SalerPage() {
               </form>
             </CardContent>
           </Card>
+        )}
+        </>
         )}
       </div>
     </main>
