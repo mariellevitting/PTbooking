@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Poppins, Instrument_Serif } from "next/font/google";
+import { Poppins, Instrument_Serif, Fredoka } from "next/font/google";
 import "./globals.css";
 import Footer from "@/components/Footer";
 import AppGradient from "@/components/AppGradient";
@@ -18,6 +18,14 @@ const instrumentSerif = Instrument_Serif({
   weight: "400",
   style: "italic",
   variable: "--font-display",
+});
+
+// Prøvefont for "Danceitude" i mobil-topbaren – erstatter med Disko Phonic
+// senere hvis Mie skaffer fontfilen.
+const fredoka = Fredoka({
+  subsets: ["latin"],
+  weight: ["600", "700"],
+  variable: "--font-logo",
 });
 
 export const metadata: Metadata = {
@@ -49,7 +57,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="nb" className={`${poppins.variable} ${instrumentSerif.variable} h-full antialiased`} style={{ background: "#3A3A3A" }}>
+    <html lang="nb" className={`${poppins.variable} ${instrumentSerif.variable} ${fredoka.variable} h-full antialiased`} style={{ background: "#3A3A3A" }}>
       <body className="min-h-full flex flex-col font-[family-name:var(--font-poppins)] bg-[#3A3A3A]">
         <CapacitorSessionRestore />
         <OneSignalInit />

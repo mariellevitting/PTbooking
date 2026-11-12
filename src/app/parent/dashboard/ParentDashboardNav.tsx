@@ -355,7 +355,7 @@ export default function ParentDashboardNav({ userName, avatarUrl, notifications,
         <button onClick={() => setMenuOpen(true)} className="p-1.5 rounded-lg hover:bg-[#2a2a2a] transition-colors">
           <Menu size={24} className="text-[#E2A9F1]" />
         </button>
-        <p className="absolute left-1/2 -translate-x-1/2 text-[#E2A9F1] font-semibold text-sm pointer-events-none">Danceitude</p>
+        <p className="absolute left-1/2 -translate-x-1/2 text-[#E2A9F1] font-[family-name:var(--font-logo)] text-base tracking-wide pointer-events-none">Danceitude</p>
         <div className="flex items-center gap-2">
           <div className="flex items-center gap-3 [&_button]:text-[#E2A9F1] [&_svg]:text-[#E2A9F1] [&_span]:bg-[#E2A9F1] [&_span]:text-[#3A3A3A]">
             <NotificationBell notifications={notifications} />
