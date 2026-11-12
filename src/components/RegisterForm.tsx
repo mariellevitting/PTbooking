@@ -28,6 +28,7 @@ export default function RegisterForm({ prefilledCode, clubName, clubs = [] }: Pr
   const [lastName, setLastName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
   const [trainerCode, setTrainerCode] = useState("");
   const [selectedClub, setSelectedClub] = useState("");
   const [dancerNames, setDancerNames] = useState([""]);
@@ -37,6 +38,10 @@ export default function RegisterForm({ prefilledCode, clubName, clubs = [] }: Pr
   async function handleRegister(e: React.FormEvent) {
     e.preventDefault();
     if (!role) return;
+    if (password !== confirmPassword) {
+      setError("Passordene er ikke like – sjekk at du har skrevet det samme begge steder.");
+      return;
+    }
     setLoading(true);
     setError("");
     const filteredDancers = dancerNames.filter(n => n.trim() !== "");
@@ -100,6 +105,13 @@ export default function RegisterForm({ prefilledCode, clubName, clubs = [] }: Pr
           <div className="space-y-1.5">
             <label className="text-sm font-medium">Passord</label>
             <Input type="password" value={password} onChange={e => setPassword(e.target.value)} placeholder="Minst 6 tegn" minLength={6} required />
+          </div>
+          <div className="space-y-1.5">
+            <label className="text-sm font-medium">Bekreft passord</label>
+            <Input type="password" value={confirmPassword} onChange={e => setConfirmPassword(e.target.value)} placeholder="Skriv passordet på nytt" minLength={6} required />
+            {confirmPassword.length > 0 && password !== confirmPassword && (
+              <p className="text-xs text-red-500">Passordene er ikke like</p>
+            )}
           </div>
           {role === "parent" && (
             <div className="space-y-2">
@@ -183,7 +195,7 @@ export default function RegisterForm({ prefilledCode, clubName, clubs = [] }: Pr
       <div className="hidden md:flex flex-1 items-center justify-center bg-gray-50 dark:bg-gray-950 p-8">
         <div className="w-full max-w-sm">
           <div className="mb-8">
-            <h2 className="text-3xl font-bold text-gray-900 dark:text-white">Lag konto</h2>
+            <h2 className="font-[family-name:var(--font-logo)] text-3xl text-gray-900 dark:text-white">Lag konto</h2>
             <p className="text-gray-500 dark:text-gray-400 mt-1 text-sm">Kom i gang på under ett minutt</p>
           </div>
           {formContent}
