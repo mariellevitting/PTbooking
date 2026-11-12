@@ -6,7 +6,7 @@ import { createClient } from "@/lib/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Check, User, Phone, FileText, Music, Camera, Wallet } from "lucide-react";
+import { Check, User, Phone, FileText, Music, Camera, Wallet, Bell } from "lucide-react";
 import DeleteAccountSection from "@/components/DeleteAccountSection";
 
 interface Props {
@@ -20,11 +20,12 @@ interface Props {
   danceStyles: string[];
   styleOptions?: string[];
   avatarUrl?: string | null;
+  notifyRoomActivity?: boolean;
 }
 
 const FALLBACK_STYLES = ["Slow", "Freestyle", "Jazz", "Moderne", "Freestyle dobbel", "Slow dobbel", "Akro", "Hiphop", "Show"];
 
-export default function ProfilForm({ userId, name, phone, bio, price, priceDouble, showDoublePrice = false, danceStyles, styleOptions, avatarUrl }: Props) {
+export default function ProfilForm({ userId, name, phone, bio, price, priceDouble, showDoublePrice = false, danceStyles, styleOptions, avatarUrl, notifyRoomActivity: initialNotifyRoomActivity = true }: Props) {
   const allStyles = styleOptions && styleOptions.length > 0 ? styleOptions : FALLBACK_STYLES;
   const router = useRouter();
   const [nameVal, setNameVal] = useState(name);
@@ -39,6 +40,7 @@ export default function ProfilForm({ userId, name, phone, bio, price, priceDoubl
   const [priceVal, setPriceVal] = useState(price != null ? String(price) : "");
   const [priceDoubleVal, setPriceDoubleVal] = useState(priceDouble != null ? String(priceDouble) : "");
   const [selected, setSelected] = useState<Set<string>>(new Set(danceStyles));
+  const [notifyRoomActivity, setNotifyRoomActivity] = useState(initialNotifyRoomActivity);
   const [avatar, setAvatar] = useState<string | null>(avatarUrl ?? null);
   const [uploading, setUploading] = useState(false);
   const [saving, setSaving] = useState(false);
@@ -86,7 +88,7 @@ export default function ProfilForm({ userId, name, phone, bio, price, priceDoubl
 
     const { error: profileError } = await supabase
       .from("profiles")
-      .update({ name: nameVal, phone: phoneVal })
+      .update({ name: nameVal, phone: phoneVal, notify_room_activity: notifyRoomActivity })
       .eq("id", userId);
 
     const { error: trainerError } = await supabase
@@ -234,6 +236,33 @@ export default function ProfilForm({ userId, name, phone, bio, price, priceDoubl
           {selected.size > 0 && (
             <p className="text-xs text-[#E2A9F1] mt-3">{selected.size} stil{selected.size !== 1 ? "er" : ""} valgt</p>
           )}
+        </CardContent>
+      </Card>
+
+      <Card>
+        <CardHeader>
+          <CardTitle className="text-base flex items-center gap-2">
+            <Bell size={16} className="text-[#E2A9F1]" /> Varsler
+          </CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div className="flex items-center justify-between">
+            <div>
+              <p className="text-sm font-medium text-gray-800 dark:text-gray-100">Egentrening i saler</p>
+              <p className="text-xs text-gray-500 dark:text-gray-400">Varsel når noen booker eller avbestiller en sal</p>
+            </div>
+            <button
+              type="button"
+              onClick={() => setNotifyRoomActivity(v => !v)}
+              className="relative inline-flex h-6 w-11 items-center rounded-full transition-colors"
+              style={{ background: notifyRoomActivity ? "#E2A9F1" : "#d1d5db" }}
+            >
+              <span
+                className="inline-block h-5 w-5 transform rounded-full bg-white transition-transform"
+                style={{ transform: notifyRoomActivity ? "translateX(22px)" : "translateX(2px)" }}
+              />
+            </button>
+          </div>
         </CardContent>
       </Card>
 

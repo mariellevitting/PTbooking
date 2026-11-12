@@ -61,6 +61,7 @@ export default async function SalPage() {
       userId={user.id}
       userName={profile.name}
       role={profile.role}
+      clubId={profile.club_id ?? null}
       kids={kids ?? []}
       myBookings={upcomingMyBookings as any}
       backHref={backHref}

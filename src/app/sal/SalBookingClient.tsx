@@ -3,7 +3,7 @@
 import { useState, useMemo } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
-import { ArrowLeft } from "lucide-react";
+import { ArrowLeft, CheckCircle } from "lucide-react";
 import { createClient } from "@/lib/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
@@ -38,12 +38,38 @@ interface Props {
   userId: string;
   userName: string;
   role: string;
+  clubId: string | null;
   kids: Child[];
   myBookings: MyBooking[];
   backHref: string;
 }
 
-export default function SalBookingClient({ rooms, openSlots, userId, userName, role, kids, myBookings, backHref }: Props) {
+interface BookedInfo {
+  roomName: string;
+  dancerName: string;
+  start: string;
+  end: string;
+}
+
+// Varsler trenere i klubben som har skrudd på "Egentrening i saler"-varsler.
+async function notifyTrainers(supabase: ReturnType<typeof createClient>, clubId: string | null, message: string) {
+  if (!clubId) return;
+  const { data: trainers } = await supabase
+    .from("profiles")
+    .select("id")
+    .eq("role", "trainer")
+    .eq("club_id", clubId)
+    .or("notify_room_activity.is.null,notify_room_activity.eq.true");
+  if (!trainers || trainers.length === 0) return;
+  await supabase.from("notifications").insert(trainers.map(t => ({ user_id: t.id, message })));
+  fetch("/api/notify-new-slots", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ userIds: trainers.map(t => t.id), message }),
+  }).catch(() => {});
+}
+
+export default function SalBookingClient({ rooms, openSlots, userId, userName, role, clubId, kids, myBookings, backHref }: Props) {
   const router = useRouter();
   const [tab, setTab] = useState<"book" | "mine">("book");
   const [activeRoom, setActiveRoom] = useState<string>(rooms[0]?.id ?? "");
@@ -53,7 +79,7 @@ export default function SalBookingClient({ rooms, openSlots, userId, userName, r
   const [loading, setLoading] = useState(false);
   const [cancellingId, setCancellingId] = useState<string | null>(null);
   const [error, setError] = useState("");
-  const [success, setSuccess] = useState(false);
+  const [bookedInfo, setBookedInfo] = useState<BookedInfo | null>(null);
 
   const roomSlots = useMemo(
     () => openSlots.filter(s => s.room_id === activeRoom).sort((a, b) => a.start_at.localeCompare(b.start_at)),
@@ -73,11 +99,11 @@ export default function SalBookingClient({ rooms, openSlots, userId, userName, r
   function pickRoom(roomId: string) {
     setActiveRoom(roomId);
     setSelected([]);
-    setSuccess(false);
+    setBookedInfo(null);
   }
 
   function toggleSlot(slot: OpenSlot) {
-    setSuccess(false);
+    setBookedInfo(null);
     const already = selected.find(s => s.id === slot.id);
     if (already) {
       setSelected(selected.filter(s => s.id !== slot.id));
@@ -115,22 +141,39 @@ export default function SalBookingClient({ rooms, openSlots, userId, userName, r
       dancer_name: finalDancerName,
     }));
     const { error } = await supabase.from("room_bookings").insert(rows);
-    setLoading(false);
     if (error) {
+      setLoading(false);
       setError(error.message.includes("duplicate") || error.message.includes("unique")
         ? "Noen rakk å booke denne tiden akkurat nå. Prøv en annen tid."
         : error.message);
       return;
     }
+
+    const info: BookedInfo = {
+      roomName,
+      dancerName: finalDancerName,
+      start: selected[0].start_at,
+      end: selected[selected.length - 1].end_at,
+    };
+    const message = `${finalDancerName} har booket ${roomName} til egentrening – ${formatDate(new Date(info.start), { weekday: "long", day: "numeric", month: "short" })} kl. ${formatTime(new Date(info.start))}`;
+    await notifyTrainers(supabase, clubId, message);
+
     setSelected([]);
-    setSuccess(true);
+    setLoading(false);
+    setBookedInfo(info);
     router.refresh();
   }
 
   async function cancelBooking(id: string) {
     setCancellingId(id);
     const supabase = createClient();
+    const booking = myBookings.find(b => b.id === id);
     await supabase.from("room_bookings").update({ status: "cancelled" }).eq("id", id);
+    if (booking?.room_slots) {
+      const start = new Date(booking.room_slots.start_at);
+      const message = `${booking.dancer_name} har avbestilt ${booking.room_slots.rooms?.name ?? "sal"} til egentrening – ${formatDate(start, { weekday: "long", day: "numeric", month: "short" })} kl. ${formatTime(start)}`;
+      await notifyTrainers(supabase, clubId, message);
+    }
     setCancellingId(null);
     router.refresh();
   }
@@ -190,7 +233,36 @@ export default function SalBookingClient({ rooms, openSlots, userId, userName, r
           </div>
         )}
 
-        {tab === "book" && (
+        {tab === "book" && bookedInfo && (
+          <div className="text-center py-4">
+            <div className="w-20 h-20 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-6">
+              <CheckCircle className="w-10 h-10 text-green-600" />
+            </div>
+            <h2 className="font-display text-[28px] mb-2">Booket!</h2>
+            <p className="text-gray-500 dark:text-gray-400 mb-6">Salen er reservert til deg.</p>
+
+            <div className="bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-2xl p-4 mb-8 text-left">
+              <p className="text-xs text-gray-400 dark:text-gray-500 mb-1">{bookedInfo.roomName} · {bookedInfo.dancerName}</p>
+              <p className="font-semibold capitalize">
+                {formatDate(new Date(bookedInfo.start), { weekday: "long", day: "numeric", month: "long" })}
+              </p>
+              <p className="text-sm text-gray-600 dark:text-gray-400">
+                kl. {formatTime(new Date(bookedInfo.start))}–{formatTime(new Date(bookedInfo.end))}
+              </p>
+            </div>
+
+            <div className="flex gap-2">
+              <Button variant="outline" className="flex-1" onClick={() => setBookedInfo(null)}>
+                Book en til
+              </Button>
+              <Button className="flex-1 bg-[#3A3A3A] hover:bg-[#2a2a2a] dark:bg-[#c87de0] dark:hover:bg-[#b56fd0] dark:text-white" onClick={() => { setBookedInfo(null); setTab("mine"); }}>
+                Mine bookinger
+              </Button>
+            </div>
+          </div>
+        )}
+
+        {tab === "book" && !bookedInfo && (
           <>
             {rooms.length === 0 ? (
               <div className="bg-white dark:bg-gray-900 rounded-xl border dark:border-gray-700 p-6 text-center text-gray-400 dark:text-gray-500">
@@ -209,12 +281,6 @@ export default function SalBookingClient({ rooms, openSlots, userId, userName, r
                     </button>
                   ))}
                 </div>
-
-                {success && (
-                  <div className="bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-900 text-green-700 dark:text-green-400 rounded-xl p-4 text-sm mb-4">
-                    Booket! Se under «Mine bookinger».
-                  </div>
-                )}
 
                 {groupedByDay.length === 0 ? (
                   <div className="bg-white dark:bg-gray-900 rounded-xl border dark:border-gray-700 p-6 text-center text-gray-400 dark:text-gray-500">

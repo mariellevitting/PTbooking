@@ -2,7 +2,8 @@
 
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
-import { ArrowLeft } from "lucide-react";
+import { ArrowLeft, CheckCircle } from "lucide-react";
+import Link from "next/link";
 import { createClient } from "@/lib/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -61,6 +62,17 @@ interface Room {
   name: string;
 }
 
+interface SlotInfo {
+  isBooked: boolean;
+  bookingId?: string;
+  dancerName?: string;
+}
+
+interface PublishedSummary {
+  count: number;
+  roomNames: string;
+}
+
 // roomId -> dateKey -> klokkeslett. Valgt, men ikke publisert ennå.
 // Egen nøkkel per sal slik at man kan velge tider i flere saler før man
 // publiserer alt samlet – bytte av sal-fane skal ikke slette valg man
@@ -99,9 +111,9 @@ export default function SalerPage() {
   const [selectedDate, setSelectedDate] = useState<Date | null>(today);
   const [pending, setPending] = useState<PendingMap>(new Map());
   const [saving, setSaving] = useState(false);
-  const [success, setSuccess] = useState(false);
+  const [published, setPublished] = useState<PublishedSummary | null>(null);
   const [error, setError] = useState("");
-  const [existingSlots, setExistingSlots] = useState<Set<string>>(new Set());
+  const [existingSlots, setExistingSlots] = useState<Map<string, SlotInfo>>(new Map());
   const [customTime, setCustomTime] = useState("");
   const [customTimeError, setCustomTimeError] = useState("");
 
@@ -140,23 +152,30 @@ export default function SalerPage() {
 
     const { data: slots } = await supabase
       .from("room_slots")
-      .select("start_at")
+      .select("start_at, is_booked, room_bookings(id, dancer_name, status)")
       .eq("room_id", roomId)
       .gte("start_at", dayStart)
       .lte("start_at", dayEnd);
 
-    const times = new Set((slots ?? []).map((s) => {
+    const map = new Map<string, SlotInfo>();
+    for (const s of slots ?? []) {
       const d = new Date(s.start_at);
-      return `${String(d.getHours()).padStart(2, "0")}:${String(d.getMinutes()).padStart(2, "0")}`;
-    }));
-    setExistingSlots(times);
+      const key = `${String(d.getHours()).padStart(2, "0")}:${String(d.getMinutes()).padStart(2, "0")}`;
+      const booking = ((s as any).room_bookings ?? []).find((b: any) => b.status === "confirmed");
+      map.set(key, {
+        isBooked: !!s.is_booked,
+        bookingId: booking?.id,
+        dancerName: booking?.dancer_name,
+      });
+    }
+    setExistingSlots(map);
   }
 
   // Bytte sal beholder valgene du har gjort i andre saler – de forsvinner
   // først når du publiserer (eller laster siden på nytt).
   function pickRoom(roomId: string) {
     setActiveRoom(roomId);
-    setSuccess(false);
+    setPublished(null);
     setError("");
     if (selectedDate) fetchExistingSlots(roomId, selectedDate);
   }
@@ -170,7 +189,7 @@ export default function SalerPage() {
       const days = getWeekDays(prev);
       const firstAvailable = days.find((d) => d >= today) ?? days[0];
       setSelectedDate(firstAvailable);
-      setSuccess(false);
+      setPublished(null);
       fetchExistingSlots(activeRoom, firstAvailable);
     }
   }
@@ -183,14 +202,14 @@ export default function SalerPage() {
     const days = getWeekDays(next);
     const firstAvailable = days.find((d) => d >= today) ?? days[0];
     setSelectedDate(firstAvailable);
-    setSuccess(false);
+    setPublished(null);
     fetchExistingSlots(activeRoom, firstAvailable);
   }
 
   async function pickDate(date: Date) {
     if (date < today || !activeRoom) return;
     setSelectedDate(date);
-    setSuccess(false);
+    setPublished(null);
     setError("");
     setCustomTime("");
     setCustomTimeError("");
@@ -288,9 +307,10 @@ export default function SalerPage() {
       .or("notify_new_slots.is.null,notify_new_slots.eq.true")
       .eq("club_id", trainerProfile?.club_id ?? "");
 
+    const roomNames = roomsWithPending.map(r => r.name).join(", ");
+
     if (recipients && recipients.length > 0) {
       const trainerName = trainerProfile?.name ?? "Treneren";
-      const roomNames = roomsWithPending.map(r => r.name).join(", ");
       const uniqueDates = [...new Set(rows.map(r => {
         const d = new Date(r.start_at);
         return d.toLocaleDateString("nb-NO", { day: "numeric", month: "short" });
@@ -313,7 +333,7 @@ export default function SalerPage() {
 
     setPending(new Map());
     setSaving(false);
-    setSuccess(true);
+    setPublished({ count: rows.length, roomNames });
     if (activeRoom && selectedDate) fetchExistingSlots(activeRoom, selectedDate);
   }
 
@@ -443,7 +463,28 @@ export default function SalerPage() {
           </CardContent>
         </Card>
 
-        {selectedDate && (
+        {selectedDate && published && (
+          <Card>
+            <CardContent className="pt-8 pb-8 text-center">
+              <div className="w-20 h-20 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-6">
+                <CheckCircle className="w-10 h-10 text-green-600" />
+              </div>
+              <h2 className="font-display text-[28px] mb-2">Publisert!</h2>
+              <p className="text-gray-500 dark:text-gray-400 mb-6">
+                {published.count} ledig{published.count === 1 ? "" : "e"} tid{published.count === 1 ? "" : "er"} i {published.roomNames} er nå klare for booking.
+              </p>
+              <Button
+                variant="outline"
+                className="w-full"
+                onClick={() => setPublished(null)}
+              >
+                Legg ut flere tider
+              </Button>
+            </CardContent>
+          </Card>
+        )}
+
+        {selectedDate && !published && (
           <Card>
             <CardHeader>
               <CardTitle className="text-base capitalize">
@@ -457,7 +498,9 @@ export default function SalerPage() {
               <form onSubmit={handleSubmit} className="space-y-4">
                 <div className="grid grid-cols-4 gap-2">
                   {slots.map((slot) => {
-                    const isExisting = existingSlots.has(slot);
+                    const info = existingSlots.get(slot);
+                    const isExisting = !!info;
+                    const isBooked = !!info?.isBooked && !!info?.bookingId;
                     const isSelected = selectedToday.has(slot);
                     const isToday = selectedDate && dateToISO(selectedDate) === dateToISO(today);
                     const isPastSlot = isToday && (() => {
@@ -466,16 +509,21 @@ export default function SalerPage() {
                       slotTime.setHours(h, m, 0, 0);
                       return slotTime <= new Date();
                     })();
-                    const disabled = isExisting || isPastSlot;
+                    const disabled = (isExisting && !isBooked) || isPastSlot;
                     return (
                       <button
                         key={slot}
                         type="button"
-                        onClick={() => !disabled && toggleSlot(slot)}
-                        disabled={disabled}
-                        title={isExisting ? "Allerede publisert" : isPastSlot ? "Tidspunktet er passert" : undefined}
+                        onClick={() => {
+                          if (isBooked && info?.bookingId) { router.push(`/trainer/avbestill-sal/${info.bookingId}`); return; }
+                          if (!disabled) toggleSlot(slot);
+                        }}
+                        disabled={disabled && !isBooked}
+                        title={isBooked ? `Booket av ${info?.dancerName} – trykk for å avbestille` : isExisting ? "Allerede publisert" : isPastSlot ? "Tidspunktet er passert" : undefined}
                         className={`py-2 px-1 rounded-lg text-sm font-medium border transition-colors ${
-                          isExisting
+                          isBooked
+                            ? "bg-amber-50 dark:bg-amber-900/20 text-amber-700 dark:text-amber-400 border-amber-200 dark:border-amber-900 hover:border-amber-400"
+                            : isExisting
                             ? "bg-gray-100 dark:bg-gray-800 text-gray-300 dark:text-gray-600 border-gray-100 dark:border-gray-800 cursor-not-allowed line-through"
                             : isPastSlot
                             ? "bg-gray-50 dark:bg-gray-950 text-gray-300 dark:text-gray-600 border-gray-100 dark:border-gray-800 cursor-not-allowed"
@@ -489,6 +537,11 @@ export default function SalerPage() {
                     );
                   })}
                 </div>
+
+                <p className="text-xs text-gray-400 dark:text-gray-500 -mt-2">
+                  <span className="inline-block w-2.5 h-2.5 rounded-sm bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-900 align-[-1px] mr-1" />
+                  Booket – trykk på tiden for å se hvem og avbestille
+                </p>
 
                 {(() => {
                   const customTimesForDay = Array.from(selectedToday).filter(t => !slots.includes(t)).sort();
@@ -537,7 +590,6 @@ export default function SalerPage() {
                 )}
 
                 {error && <p className="text-sm text-red-500">{error}</p>}
-                {success && <p className="text-sm text-green-600">Ledige tider lagt ut!</p>}
 
                 <Button
                   type="submit"

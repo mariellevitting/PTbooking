@@ -59,6 +59,7 @@ export default async function TrainerProfilPage() {
           danceStyles={trainerDetails?.dance_styles ?? []}
           styleOptions={danceStylesFor(club)}
           avatarUrl={profile.avatar_url ?? null}
+          notifyRoomActivity={(profile as any).notify_room_activity ?? true}
         />
 
         <div className="mt-4">

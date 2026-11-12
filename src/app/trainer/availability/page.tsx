@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
-import { ArrowLeft } from "lucide-react";
+import { ArrowLeft, CheckCircle } from "lucide-react";
 import { createClient } from "@/lib/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -65,7 +65,7 @@ export default function AvailabilityPage() {
   const [selectedDate, setSelectedDate] = useState<Date | null>(today);
   const [selected, setSelected] = useState<Map<string, Set<string>>>(new Map());
   const [saving, setSaving] = useState(false);
-  const [success, setSuccess] = useState(false);
+  const [published, setPublished] = useState<number | null>(null);
   const [error, setError] = useState("");
   const [existingSlots, setExistingSlots] = useState<Set<string>>(new Set());
   const [customTime, setCustomTime] = useState("");
@@ -110,7 +110,7 @@ export default function AvailabilityPage() {
       const days = getWeekDays(prev);
       const firstAvailable = days.find((d) => d >= today) ?? days[0];
       setSelectedDate(firstAvailable);
-      setSuccess(false);
+      setPublished(null);
       fetchExistingSlots(firstAvailable);
     }
   }
@@ -122,14 +122,14 @@ export default function AvailabilityPage() {
     const days = getWeekDays(next);
     const firstAvailable = days.find((d) => d >= today) ?? days[0];
     setSelectedDate(firstAvailable);
-    setSuccess(false);
+    setPublished(null);
     fetchExistingSlots(firstAvailable);
   }
 
   async function pickDate(date: Date) {
     if (date < today) return;
     setSelectedDate(date);
-    setSuccess(false);
+    setPublished(null);
     setError("");
     setCustomTime("");
     setCustomTimeError("");
@@ -240,8 +240,10 @@ export default function AvailabilityPage() {
         }).catch(() => {});
       }
 
-      router.push("/trainer/dashboard");
-      router.refresh();
+      setSelected(new Map());
+      setSaving(false);
+      setPublished(rows.length);
+      if (selectedDate) fetchExistingSlots(selectedDate);
     }
   }
 
@@ -318,7 +320,29 @@ export default function AvailabilityPage() {
           </CardContent>
         </Card>
 
-        {selectedDate && (
+        {selectedDate && published !== null && (
+          <Card>
+            <CardContent className="pt-8 pb-8 text-center">
+              <div className="w-20 h-20 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-6">
+                <CheckCircle className="w-10 h-10 text-green-600" />
+              </div>
+              <h2 className="font-display text-[28px] mb-2">Publisert!</h2>
+              <p className="text-gray-500 dark:text-gray-400 mb-6">
+                {published} ledig{published === 1 ? "" : "e"} tid{published === 1 ? "" : "er"} er nå klare for booking.
+              </p>
+              <div className="flex gap-2">
+                <Button variant="outline" className="flex-1" onClick={() => setPublished(null)}>
+                  Legg ut flere
+                </Button>
+                <Button className="flex-1 bg-[#3A3A3A] hover:bg-[#2a2a2a] dark:bg-[#c87de0] dark:hover:bg-[#b56fd0] dark:text-white" onClick={() => router.push("/trainer/dashboard")}>
+                  Til dashbordet
+                </Button>
+              </div>
+            </CardContent>
+          </Card>
+        )}
+
+        {selectedDate && published === null && (
           <Card>
             <CardHeader>
               <CardTitle className="text-base capitalize">
@@ -415,7 +439,6 @@ export default function AvailabilityPage() {
 
 
                 {error && <p className="text-sm text-red-500">{error}</p>}
-                {success && <p className="text-sm text-green-600">Ledige tider lagt ut!</p>}
 
                 <Button
                   type="submit"
