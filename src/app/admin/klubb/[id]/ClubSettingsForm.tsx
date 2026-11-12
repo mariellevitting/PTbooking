@@ -67,6 +67,7 @@ export default function ClubSettingsForm({ club }: { club: Club }) {
     goal_style_1: club.goal_style_1 ?? "",
     goal_style_2: club.goal_style_2 ?? "",
   });
+  const [goalsSingleTab, setGoalsSingleTab] = useState(!!club.goals_single_tab);
   const [styles, setStyles] = useState<string[]>(club.dance_styles ?? []);
   const [saving, setSaving] = useState(false);
   const [saved, setSaved] = useState(false);
@@ -112,6 +113,7 @@ export default function ClubSettingsForm({ club }: { club: Club }) {
         contact_info: form.contact_info.trim() || null,
         goal_style_1: form.goal_style_1.trim() || null,
         goal_style_2: form.goal_style_2.trim() || null,
+        goals_single_tab: goalsSingleTab,
         dance_styles: styles,
       })
       .eq("id", club.id);
@@ -280,17 +282,38 @@ export default function ClubSettingsForm({ club }: { club: Club }) {
       </Section>
 
       <Section title="Sesongmål">
-        <p className="text-xs text-gray-400 dark:text-gray-500 -mt-2">
-          «Mine sesongmål» har to stil-faner i tillegg til «Sesong». Står disse tomme, brukes Freestyle/Slow som før.
-        </p>
-        <div>
-          <Label>Fane 1</Label>
-          <Input value={form.goal_style_1} onChange={e => set("goal_style_1", e.target.value)} placeholder="Freestyle" />
+        <div className="flex items-center justify-between">
+          <div>
+            <Label>Kun generelle sesongmål</Label>
+            <p className="text-xs text-gray-400 dark:text-gray-500">Skjuler stil-fanene – danserne får bare ett felt for sesongmål.</p>
+          </div>
+          <button
+            type="button"
+            onClick={() => setGoalsSingleTab(v => !v)}
+            className="relative inline-flex h-6 w-11 items-center rounded-full transition-colors shrink-0 ml-3"
+            style={{ background: goalsSingleTab ? "#E2A9F1" : "#d1d5db" }}
+          >
+            <span
+              className="inline-block h-5 w-5 transform rounded-full bg-white transition-transform"
+              style={{ transform: goalsSingleTab ? "translateX(22px)" : "translateX(2px)" }}
+            />
+          </button>
         </div>
-        <div>
-          <Label>Fane 2</Label>
-          <Input value={form.goal_style_2} onChange={e => set("goal_style_2", e.target.value)} placeholder="Slow" />
-        </div>
+        {!goalsSingleTab && (
+          <>
+            <p className="text-xs text-gray-400 dark:text-gray-500 -mt-1">
+              «Mine sesongmål» har to stil-faner i tillegg til «Sesong». Står disse tomme, brukes Freestyle/Slow som før.
+            </p>
+            <div>
+              <Label>Fane 1</Label>
+              <Input value={form.goal_style_1} onChange={e => set("goal_style_1", e.target.value)} placeholder="Freestyle" />
+            </div>
+            <div>
+              <Label>Fane 2</Label>
+              <Input value={form.goal_style_2} onChange={e => set("goal_style_2", e.target.value)} placeholder="Slow" />
+            </div>
+          </>
+        )}
       </Section>
 
       {error && <p className="text-sm text-red-500">{error}</p>}

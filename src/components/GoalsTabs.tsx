@@ -13,10 +13,23 @@ interface Props {
   // Bytter kun visningsnavnet – dataene lagres fortsatt under "freestyle"/"slow".
   style1Label?: string;
   style2Label?: string;
+  // Noen klubber vil bare ha ett generelt sesongmål-felt, ingen stil-faner.
+  singleTab?: boolean;
 }
 
-export default function GoalsTabs({ values, onChange, style1Label = "Freestyle", style2Label = "Slow" }: Props) {
+export default function GoalsTabs({ values, onChange, style1Label = "Freestyle", style2Label = "Slow", singleTab = false }: Props) {
   const [tab, setTab] = useState<GoalKey>("season");
+
+  if (singleTab) {
+    return (
+      <div>
+        <p className="text-xs text-gray-400 dark:text-gray-500 mb-3">
+          Hva vil du klare i løpet av sesongen? Huk av når du har klart målet.
+        </p>
+        <GoalsList value={values.season} onChange={val => onChange("season", val)} />
+      </div>
+    );
+  }
 
   const TABS: { key: GoalKey; label: string }[] = [
     { key: "season", label: "Sesong" },

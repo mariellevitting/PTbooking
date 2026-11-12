@@ -181,7 +181,7 @@ function ParentGoalsSection({ children, club }: { children: Child[]; club?: Club
       )}
       {children.length === 1 && <p className="text-sm font-medium text-gray-700 dark:text-gray-300">{children[0].name}</p>}
       <div className="bg-white dark:bg-gray-900 rounded-2xl border dark:border-gray-700 p-5 space-y-3">
-        {loading ? <p className="text-sm text-gray-400">Laster...</p> : <GoalsTabs key={selectedId} values={goals} onChange={(key, val) => setGoals(g => ({ ...g, [key]: val }))} style1Label={club?.goal_style_1 ?? undefined} style2Label={club?.goal_style_2 ?? undefined} />}
+        {loading ? <p className="text-sm text-gray-400">Laster...</p> : <GoalsTabs key={selectedId} values={goals} onChange={(key, val) => setGoals(g => ({ ...g, [key]: val }))} style1Label={club?.goal_style_1 ?? undefined} style2Label={club?.goal_style_2 ?? undefined} singleTab={!!club?.goals_single_tab} />}
       </div>
       {(saving || saved || saveError) && (
         <p className={`text-xs text-center ${saveError ? "text-red-500" : "text-gray-400 dark:text-gray-500"}`}>

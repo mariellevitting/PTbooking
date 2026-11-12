@@ -534,6 +534,7 @@ export default function DancerDashboardNav(props: Props) {
               }}
               style1Label={props.club?.goal_style_1 ?? undefined}
               style2Label={props.club?.goal_style_2 ?? undefined}
+              singleTab={!!props.club?.goals_single_tab}
             />
           </CardContent>
         </Card>
