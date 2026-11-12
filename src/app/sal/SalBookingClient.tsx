@@ -46,10 +46,8 @@ interface Props {
 }
 
 interface BookedInfo {
-  roomName: string;
+  count: number;
   dancerName: string;
-  start: string;
-  end: string;
 }
 
 // Varsler trenere i klubben som har skrudd på "Egentrening i saler"-varsler.
@@ -74,7 +72,10 @@ export default function SalBookingClient({ rooms, allSlots, userId, userName, ro
   const router = useRouter();
   const [tab, setTab] = useState<"book" | "mine">("book");
   const [activeRoom, setActiveRoom] = useState<string>(rooms[0]?.id ?? "");
-  const [selected, setSelected] = useState<SlotRow[]>([]);
+  // Hver "gruppe" er 1 eller 2 sammenhengende 30-min-blokker (maks 60 min,
+  // samme sal). Flere grupper kan velges samtidig – også på tvers av
+  // dager/saler – og publiseres/bookes samlet.
+  const [selectedGroups, setSelectedGroups] = useState<SlotRow[][]>([]);
   const [dancerChoice, setDancerChoice] = useState<string>(role === "parent" && kids.length === 1 ? kids[0].name : role === "dancer" ? userName : "");
   const [customName, setCustomName] = useState("");
   const [loading, setLoading] = useState(false);
@@ -97,47 +98,57 @@ export default function SalBookingClient({ rooms, allSlots, userId, userName, ro
     return Array.from(map.entries());
   }, [roomSlots]);
 
+  // Bytte sal beholder valgene du har gjort i andre saler.
   function pickRoom(roomId: string) {
     setActiveRoom(roomId);
-    setSelected([]);
     setBookedInfo(null);
   }
 
   function toggleSlot(slot: SlotRow) {
     if (slot.is_booked) return;
     setBookedInfo(null);
-    const already = selected.find(s => s.id === slot.id);
-    if (already) {
-      setSelected(selected.filter(s => s.id !== slot.id));
+
+    const groupIdx = selectedGroups.findIndex(g => g.some(s => s.id === slot.id));
+    if (groupIdx !== -1) {
+      // allerede valgt – fjern den (fra et par blir det ett enkelt igjen)
+      const next = selectedGroups
+        .map((g, i) => (i === groupIdx ? g.filter(s => s.id !== slot.id) : g))
+        .filter(g => g.length > 0);
+      setSelectedGroups(next);
       return;
     }
-    if (selected.length === 0) {
-      setSelected([slot]);
+
+    // kan den utvide en eksisterende enkelt-blokk til 60 min (samme sal, naboblokk)?
+    const mergeIdx = selectedGroups.findIndex(g =>
+      g.length === 1 && g[0].room_id === slot.room_id &&
+      Math.abs(new Date(slot.start_at).getTime() - new Date(g[0].start_at).getTime()) === 30 * 60 * 1000
+    );
+    if (mergeIdx !== -1) {
+      const next = selectedGroups.map((g, i) =>
+        i === mergeIdx ? [...g, slot].sort((a, b) => a.start_at.localeCompare(b.start_at)) : g
+      );
+      setSelectedGroups(next);
       return;
     }
-    if (selected.length === 1) {
-      const diffMs = Math.abs(new Date(slot.start_at).getTime() - new Date(selected[0].start_at).getTime());
-      const isAdjacent = diffMs === 30 * 60 * 1000;
-      if (isAdjacent) {
-        setSelected([...selected, slot].sort((a, b) => a.start_at.localeCompare(b.start_at)));
-      } else {
-        setSelected([slot]);
-      }
-      return;
-    }
-    // allerede 2 valgt – start på nytt
-    setSelected([slot]);
+
+    // ellers: ny, uavhengig gruppe (f.eks. en annen dag eller sal)
+    setSelectedGroups([...selectedGroups, [slot]]);
+  }
+
+  function removeGroup(idx: number) {
+    setSelectedGroups(selectedGroups.filter((_, i) => i !== idx));
   }
 
   const finalDancerName = dancerChoice === "__custom__" ? customName.trim() : dancerChoice.trim();
-  const canConfirm = selected.length > 0 && finalDancerName.length > 0 && !loading;
+  const canConfirm = selectedGroups.length > 0 && finalDancerName.length > 0 && !loading;
 
   async function confirmBooking() {
     if (!canConfirm) return;
     setLoading(true);
     setError("");
     const supabase = createClient();
-    const rows = selected.map(s => ({
+    const allSlotsFlat = selectedGroups.flat();
+    const rows = allSlotsFlat.map(s => ({
       slot_id: s.id,
       booker_id: userId,
       dancer_name: finalDancerName,
@@ -146,23 +157,19 @@ export default function SalBookingClient({ rooms, allSlots, userId, userName, ro
     if (error) {
       setLoading(false);
       setError(error.message.includes("duplicate") || error.message.includes("unique")
-        ? "Noen rakk å booke denne tiden akkurat nå. Prøv en annen tid."
+        ? "Noen rakk å booke en av disse tidene akkurat nå. Prøv igjen."
         : error.message);
       return;
     }
 
-    const info: BookedInfo = {
-      roomName,
-      dancerName: finalDancerName,
-      start: selected[0].start_at,
-      end: selected[selected.length - 1].end_at,
-    };
-    const message = `${finalDancerName} har booket ${roomName} til egentrening – ${formatDate(new Date(info.start), { weekday: "long", day: "numeric", month: "short" })} kl. ${formatTime(new Date(info.start))}`;
+    const roomNames = [...new Set(selectedGroups.map(g => rooms.find(r => r.id === g[0].room_id)?.name).filter(Boolean))].join(", ");
+    const dateStrs = [...new Set(allSlotsFlat.map(s => formatDate(new Date(s.start_at), { weekday: "long", day: "numeric", month: "short" })))].join(", ");
+    const message = `${finalDancerName} har booket ${roomNames} til egentrening – ${dateStrs}`;
     await notifyTrainers(supabase, clubId, message);
 
-    setSelected([]);
+    setSelectedGroups([]);
     setLoading(false);
-    setBookedInfo(info);
+    setBookedInfo({ count: selectedGroups.length, dancerName: finalDancerName });
     router.refresh();
   }
 
@@ -241,17 +248,9 @@ export default function SalBookingClient({ rooms, allSlots, userId, userName, ro
               <CheckCircle className="w-10 h-10 text-green-600" />
             </div>
             <h2 className="font-display text-[28px] mb-2">Booket!</h2>
-            <p className="text-gray-500 dark:text-gray-400 mb-6">Salen er reservert til deg.</p>
-
-            <div className="bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-2xl p-4 mb-8 text-left">
-              <p className="text-xs text-gray-400 dark:text-gray-500 mb-1">{bookedInfo.roomName} · {bookedInfo.dancerName}</p>
-              <p className="font-semibold capitalize">
-                {formatDate(new Date(bookedInfo.start), { weekday: "long", day: "numeric", month: "long" })}
-              </p>
-              <p className="text-sm text-gray-600 dark:text-gray-400">
-                kl. {formatTime(new Date(bookedInfo.start))}–{formatTime(new Date(bookedInfo.end))}
-              </p>
-            </div>
+            <p className="text-gray-500 dark:text-gray-400 mb-8">
+              {bookedInfo.count === 1 ? "Økten er" : `Alle ${bookedInfo.count} øktene er`} reservert til {bookedInfo.dancerName}. Se under «Mine bookinger».
+            </p>
 
             <div className="flex gap-2">
               <Button variant="outline" className="flex-1" onClick={() => setBookedInfo(null)}>
@@ -297,7 +296,7 @@ export default function SalBookingClient({ rooms, allSlots, userId, userName, ro
                         </p>
                         <div className="flex flex-wrap gap-2">
                           {daySlots.map(s => {
-                            const isSelected = !!selected.find(sel => sel.id === s.id);
+                            const isSelected = selectedGroups.some(g => g.some(sel => sel.id === s.id));
                             return (
                               <button
                                 key={s.id}
@@ -322,17 +321,28 @@ export default function SalBookingClient({ rooms, allSlots, userId, userName, ro
                   </div>
                 )}
 
-                {selected.length > 0 && (
+                {selectedGroups.length > 0 && (
                   <Card className="mt-5">
                     <CardContent className="pt-5 space-y-4">
-                      <div>
-                        <p className="text-sm font-semibold mb-1">
-                          {roomName}, {formatDate(new Date(selected[0].start_at), { weekday: "long", day: "numeric", month: "short" })}
-                        </p>
-                        <p className="text-sm text-gray-500 dark:text-gray-400">
-                          {formatTime(new Date(selected[0].start_at))}–{formatTime(new Date(selected[selected.length - 1].end_at))}
-                          {" "}({selected.length * 30} min)
-                        </p>
+                      <div className="space-y-2">
+                        {selectedGroups.map((g, i) => {
+                          const gRoomName = rooms.find(r => r.id === g[0].room_id)?.name ?? "";
+                          return (
+                            <div key={g[0].id} className="flex items-center justify-between bg-[#f5eeff] dark:bg-[#E2A9F1]/10 rounded-lg px-3 py-2">
+                              <div>
+                                <p className="text-sm font-semibold capitalize">
+                                  {gRoomName}, {formatDate(new Date(g[0].start_at), { weekday: "long", day: "numeric", month: "short" })}
+                                </p>
+                                <p className="text-xs text-gray-500 dark:text-gray-400">
+                                  {formatTime(new Date(g[0].start_at))}–{formatTime(new Date(g[g.length - 1].end_at))} ({g.length * 30} min)
+                                </p>
+                              </div>
+                              <button type="button" onClick={() => removeGroup(i)} className="text-xs text-red-400 hover:text-red-600 shrink-0 ml-2">
+                                Fjern
+                              </button>
+                            </div>
+                          );
+                        })}
                       </div>
 
                       {/* "Hvem skal trene?" trengs bare når det faktisk er noe å velge mellom:
@@ -387,7 +397,7 @@ export default function SalBookingClient({ rooms, allSlots, userId, userName, ro
                         disabled={!canConfirm}
                         className="w-full bg-[#3A3A3A] hover:bg-[#2a2a2a] dark:bg-[#c87de0] dark:hover:bg-[#b56fd0] dark:text-white"
                       >
-                        {loading ? "Booker…" : "Bekreft booking"}
+                        {loading ? "Booker…" : selectedGroups.length > 1 ? `Bekreft ${selectedGroups.length} bookinger` : "Bekreft booking"}
                       </Button>
                     </CardContent>
                   </Card>
