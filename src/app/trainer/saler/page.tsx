@@ -66,6 +66,15 @@ interface SlotInfo {
   isBooked: boolean;
   bookingId?: string;
   dancerName?: string;
+  bookerId?: string;
+}
+
+interface CancelTarget {
+  bookingId: string;
+  dancerName: string;
+  bookerId: string;
+  roomName: string;
+  startAt: string;
 }
 
 interface PublishedSummary {
@@ -76,6 +85,7 @@ interface PublishedSummary {
 interface RoomBookingRow {
   id: string;
   dancer_name: string;
+  booker_id: string;
   room_slots: { start_at: string; end_at: string; rooms: { name: string } | null } | null;
 }
 
@@ -128,6 +138,10 @@ export default function SalerPage() {
   const [customTime, setCustomTime] = useState("");
   const [customTimeError, setCustomTimeError] = useState("");
 
+  const [cancelTarget, setCancelTarget] = useState<CancelTarget | null>(null);
+  const [cancelling, setCancelling] = useState(false);
+  const [cancelError, setCancelError] = useState("");
+
   const weekDays = getWeekDays(weekStart);
   const weekNumber = getWeekNumber(weekStart);
 
@@ -163,7 +177,7 @@ export default function SalerPage() {
 
     const { data: slots } = await supabase
       .from("room_slots")
-      .select("start_at, is_booked, room_bookings(id, dancer_name, status)")
+      .select("start_at, is_booked, room_bookings(id, dancer_name, status, booker_id)")
       .eq("room_id", roomId)
       .gte("start_at", dayStart)
       .lte("start_at", dayEnd);
@@ -177,6 +191,7 @@ export default function SalerPage() {
         isBooked: !!s.is_booked,
         bookingId: booking?.id,
         dancerName: booking?.dancer_name,
+        bookerId: booking?.booker_id,
       });
     }
     setExistingSlots(map);
@@ -187,7 +202,7 @@ export default function SalerPage() {
     const supabase = createClient();
     const { data } = await supabase
       .from("room_bookings")
-      .select("id, dancer_name, room_slots(start_at, end_at, rooms(name))")
+      .select("id, dancer_name, booker_id, room_slots(start_at, end_at, rooms(name))")
       .eq("status", "confirmed");
     const now = new Date();
     const upcoming = ((data ?? []) as any[])
@@ -201,6 +216,38 @@ export default function SalerPage() {
   function openBookingsTab() {
     setPageTab("bookings");
     if (!bookingsLoaded) fetchBookings();
+  }
+
+  async function confirmCancel() {
+    if (!cancelTarget) return;
+    setCancelling(true);
+    setCancelError("");
+    const supabase = createClient();
+
+    const { error: cancelErr } = await supabase
+      .from("room_bookings")
+      .update({ status: "cancelled" })
+      .eq("id", cancelTarget.bookingId);
+
+    if (cancelErr) {
+      setCancelError("Noe gikk galt, prøv igjen");
+      setCancelling(false);
+      return;
+    }
+
+    const start = new Date(cancelTarget.startAt);
+    const message = `Treneren har avbestilt ${cancelTarget.roomName} til egentrening – ${start.toLocaleDateString("nb-NO", { weekday: "long", day: "numeric", month: "long" })} kl. ${start.toLocaleTimeString("nb-NO", { hour: "2-digit", minute: "2-digit" })}`;
+    await supabase.from("notifications").insert({ user_id: cancelTarget.bookerId, message });
+    fetch("/api/notify-trainer", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ trainerId: cancelTarget.bookerId, message }),
+    }).catch(() => {});
+
+    setCancelling(false);
+    setCancelTarget(null);
+    if (activeRoom && selectedDate) fetchExistingSlots(activeRoom, selectedDate);
+    if (bookingsLoaded) fetchBookings();
   }
 
   // Bytte sal beholder valgene du har gjort i andre saler – de forsvinner
@@ -433,7 +480,13 @@ export default function SalerPage() {
                       <Button
                         variant="outline"
                         className="text-red-500 border-red-200 dark:border-red-900 shrink-0"
-                        onClick={() => router.push(`/trainer/avbestill-sal/${b.id}`)}
+                        onClick={() => setCancelTarget({
+                          bookingId: b.id,
+                          dancerName: b.dancer_name,
+                          bookerId: b.booker_id,
+                          roomName: slot.rooms?.name ?? "Sal",
+                          startAt: slot.start_at,
+                        })}
                       >
                         Avbestill
                       </Button>
@@ -597,7 +650,19 @@ export default function SalerPage() {
                         key={slot}
                         type="button"
                         onClick={() => {
-                          if (isBooked && info?.bookingId) { router.push(`/trainer/avbestill-sal/${info.bookingId}`); return; }
+                          if (isBooked && info?.bookingId && info.bookerId && selectedDate && activeRoom) {
+                            const [h, m] = slot.split(":").map(Number);
+                            const startAt = new Date(selectedDate);
+                            startAt.setHours(h, m, 0, 0);
+                            setCancelTarget({
+                              bookingId: info.bookingId,
+                              dancerName: info.dancerName ?? "",
+                              bookerId: info.bookerId,
+                              roomName: rooms.find(r => r.id === activeRoom)?.name ?? "Sal",
+                              startAt: startAt.toISOString(),
+                            });
+                            return;
+                          }
                           if (!disabled) toggleSlot(slot);
                         }}
                         disabled={disabled && !isBooked}
@@ -687,6 +752,25 @@ export default function SalerPage() {
         </>
         )}
       </div>
+
+      {cancelTarget && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-6">
+          <div className="absolute inset-0 bg-black/40" onClick={() => !cancelling && setCancelTarget(null)} />
+          <div className="relative bg-white dark:bg-gray-900 rounded-2xl shadow-xl w-full max-w-xs p-6 text-center">
+            <p className="text-xs text-gray-400 dark:text-gray-500 mb-1">Booket av</p>
+            <p className="font-display text-[26px] mb-5">{cancelTarget.dancerName}</p>
+            {cancelError && <p className="text-sm text-red-500 mb-3">{cancelError}</p>}
+            <div className="flex gap-2">
+              <Button variant="outline" className="flex-1" onClick={() => setCancelTarget(null)} disabled={cancelling}>
+                Lukk
+              </Button>
+              <Button className="flex-1 bg-red-500 hover:bg-red-600 text-white" onClick={confirmCancel} disabled={cancelling}>
+                {cancelling ? "…" : "Avbestill"}
+              </Button>
+            </div>
+          </div>
+        </div>
+      )}
     </main>
   );
 }
