@@ -31,9 +31,10 @@ interface Props {
   avatarUrl: string | null;
   notifications: any[];
   hasRooms?: boolean;
+  logoUrl?: string | null;
 }
 
-export default function TrainerSidebar({ name, userId, email, avatarUrl, notifications, hasRooms = false }: Props) {
+export default function TrainerSidebar({ name, userId, email, avatarUrl, notifications, hasRooms = false, logoUrl = null }: Props) {
   const isAdmin = email === "miemarielle@live.no";
   const pathname = usePathname();
   const [menuOpen, setMenuOpen] = useState(false);
@@ -107,6 +108,11 @@ export default function TrainerSidebar({ name, userId, email, avatarUrl, notific
                 );
               })}
             </div>
+            {logoUrl && (
+              <div className="px-6 py-4 flex justify-center">
+                <img src={logoUrl} alt="Klubblogo" className="max-h-16 max-w-[160px] object-contain dark:invert" />
+              </div>
+            )}
             {/* Logg ut */}
             <div className="border-t dark:border-gray-700 px-6 pt-4 pb-[calc(3.5rem+env(safe-area-inset-bottom))] space-y-3 text-sm text-gray-400 dark:text-gray-500">
               <Link href="/om" onClick={() => setMenuOpen(false)} className="flex items-center gap-2 hover:text-gray-600">
@@ -158,6 +164,11 @@ export default function TrainerSidebar({ name, userId, email, avatarUrl, notific
             );
           })}
         </nav>
+        {logoUrl && (
+          <div className="px-4 py-3 flex justify-center">
+            <img src={logoUrl} alt="Klubblogo" className="max-h-14 max-w-full object-contain dark:invert" />
+          </div>
+        )}
         <div className="p-3 border-t border-gray-100 dark:border-gray-800 space-y-1">
           <Link href="/om" className="flex items-center gap-2 px-3 py-2 rounded-xl text-sm text-gray-400 dark:text-gray-500 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors">
             Danceitude

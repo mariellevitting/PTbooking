@@ -15,7 +15,7 @@ export default async function TrainerLayout({ children }: { children: React.Reac
 
   if (!profile || profile.role !== "trainer") redirect("/dashboard");
 
-  const [{ data: notifications }, { count: roomCount }] = await Promise.all([
+  const [{ data: notifications }, { count: roomCount }, { data: club }] = await Promise.all([
     supabase
       .from("notifications")
       .select("*")
@@ -25,6 +25,11 @@ export default async function TrainerLayout({ children }: { children: React.Reac
       .from("rooms")
       .select("id", { count: "exact", head: true })
       .eq("club_id", (profile as any).club_id ?? ""),
+    supabase
+      .from("clubs")
+      .select("logo_url")
+      .eq("id", (profile as any).club_id ?? "")
+      .single(),
   ]);
 
   return (
@@ -36,6 +41,7 @@ export default async function TrainerLayout({ children }: { children: React.Reac
         avatarUrl={profile.avatar_url ?? null}
         notifications={notifications ?? []}
         hasRooms={(roomCount ?? 0) > 0}
+        logoUrl={(club as any)?.logo_url ?? null}
       />
       <div className="topbar-offset md:ml-56 pt-[calc(4.5rem+env(safe-area-inset-top))] md:pt-0">
         {children}
