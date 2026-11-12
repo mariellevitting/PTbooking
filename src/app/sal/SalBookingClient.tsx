@@ -50,6 +50,22 @@ interface BookedInfo {
   dancerName: string;
 }
 
+function getMonday(date: Date) {
+  const d = new Date(date);
+  const day = d.getDay() || 7;
+  d.setDate(d.getDate() - day + 1);
+  d.setHours(0, 0, 0, 0);
+  return d;
+}
+
+function getWeekNumber(date: Date) {
+  const d = new Date(Date.UTC(date.getFullYear(), date.getMonth(), date.getDate()));
+  const dayNum = d.getUTCDay() || 7;
+  d.setUTCDate(d.getUTCDate() + 4 - dayNum);
+  const yearStart = new Date(Date.UTC(d.getUTCFullYear(), 0, 1));
+  return Math.ceil((((d.getTime() - yearStart.getTime()) / 86400000) + 1) / 7);
+}
+
 // Varsler trenere i klubben som har skrudd på "Egentrening i saler"-varsler.
 async function notifyTrainers(supabase: ReturnType<typeof createClient>, clubId: string | null, message: string) {
   if (!clubId) return;
@@ -88,15 +104,35 @@ export default function SalBookingClient({ rooms, allSlots, userId, userName, ro
     [allSlots, activeRoom]
   );
 
+  // Start på uken med første ledige time, så man slipper å bla seg fram –
+  // samme mønster som ved booking av privattime.
+  const today = useMemo(() => { const d = new Date(); d.setHours(0, 0, 0, 0); return d; }, []);
+  const [weekStart, setWeekStart] = useState(() => {
+    const now = new Date();
+    const firstFree = allSlots.filter(s => !s.is_booked && new Date(s.start_at) > now).sort((a, b) => a.start_at.localeCompare(b.start_at))[0];
+    return getMonday(firstFree ? new Date(firstFree.start_at) : now);
+  });
+  const weekEnd = useMemo(() => { const d = new Date(weekStart); d.setDate(d.getDate() + 6); d.setHours(23, 59, 59); return d; }, [weekStart]);
+  const canGoPrev = weekStart > getMonday(today);
+
+  const availableMonths = useMemo(() => Array.from(
+    new Set(allSlots.map(s => { const d = new Date(s.start_at); return `${d.getFullYear()}-${d.getMonth()}`; }))
+  ).sort().map(key => { const [year, month] = key.split("-").map(Number); return { year, month }; }), [allSlots]);
+
+  const weekRoomSlots = useMemo(
+    () => roomSlots.filter(s => { const d = new Date(s.start_at); return d >= weekStart && d <= weekEnd; }),
+    [roomSlots, weekStart, weekEnd]
+  );
+
   const groupedByDay = useMemo(() => {
     const map = new Map<string, SlotRow[]>();
-    for (const s of roomSlots) {
+    for (const s of weekRoomSlots) {
       const key = formatDateKey(new Date(s.start_at));
       if (!map.has(key)) map.set(key, []);
       map.get(key)!.push(s);
     }
     return Array.from(map.entries());
-  }, [roomSlots]);
+  }, [weekRoomSlots]);
 
   // Bytte sal beholder valgene du har gjort i andre saler.
   function pickRoom(roomId: string) {
@@ -199,7 +235,7 @@ export default function SalBookingClient({ rooms, allSlots, userId, userName, ro
 
         <div className="flex gap-1 bg-gray-100 dark:bg-gray-800 rounded-xl p-1 mb-5">
           <button onClick={() => setTab("book")} className={`flex-1 px-3 py-1.5 rounded-lg text-sm font-medium transition-colors ${tab === "book" ? "bg-white dark:bg-gray-900 text-[#c87de0] shadow-sm" : "text-gray-500 dark:text-gray-400"}`}>
-            Book sal
+            Book tid for egentrening
           </button>
           <button onClick={() => setTab("mine")} className={`flex-1 px-3 py-1.5 rounded-lg text-sm font-medium transition-colors ${tab === "mine" ? "bg-white dark:bg-gray-900 text-[#c87de0] shadow-sm" : "text-gray-500 dark:text-gray-400"}`}>
             Mine bookinger {myBookings.length > 0 && `(${myBookings.length})`}
@@ -283,9 +319,33 @@ export default function SalBookingClient({ rooms, allSlots, userId, userName, ro
                   ))}
                 </div>
 
+                {availableMonths.length > 1 && (
+                  <select
+                    className="w-full border dark:border-gray-700 rounded-lg px-3 py-2 text-sm bg-white dark:bg-gray-900 text-gray-700 dark:text-gray-300 mb-3"
+                    value={`${weekStart.getFullYear()}-${weekStart.getMonth()}`}
+                    onChange={(e) => {
+                      const [year, month] = e.target.value.split("-").map(Number);
+                      const firstOfMonth = new Date(year, month, 1);
+                      setWeekStart(getMonday(firstOfMonth < today ? today : firstOfMonth));
+                    }}
+                  >
+                    {availableMonths.map(({ year, month }) => (
+                      <option key={`${year}-${month}`} value={`${year}-${month}`}>
+                        {new Date(year, month, 1).toLocaleDateString("nb-NO", { month: "long", year: "numeric" })}
+                      </option>
+                    ))}
+                  </select>
+                )}
+
+                <div className="flex items-center justify-between mb-3">
+                  <button type="button" onClick={() => { const p = new Date(weekStart); p.setDate(p.getDate() - 7); setWeekStart(p); }} disabled={!canGoPrev} className={`text-2xl px-2 ${canGoPrev ? "text-gray-600 dark:text-gray-400 hover:text-[#E2A9F1]" : "text-gray-200 dark:text-gray-700"}`}>‹</button>
+                  <span className="font-semibold text-gray-700 dark:text-gray-300">Uke {getWeekNumber(weekStart)}</span>
+                  <button type="button" onClick={() => { const n = new Date(weekStart); n.setDate(n.getDate() + 7); setWeekStart(n); }} className="text-2xl px-2 text-gray-600 dark:text-gray-400 hover:text-[#E2A9F1]">›</button>
+                </div>
+
                 {groupedByDay.length === 0 ? (
                   <div className="bg-white dark:bg-gray-900 rounded-xl border dark:border-gray-700 p-6 text-center text-gray-400 dark:text-gray-500">
-                    Ingen tider lagt ut i {roomName} ennå
+                    Ingen ledige tider i {roomName} denne uken
                   </div>
                 ) : (
                   <div className="space-y-4">
