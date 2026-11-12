@@ -19,7 +19,6 @@ import PushPrompt from "@/components/PushPrompt";
 import CloudEdge from "@/components/CloudEdge";
 import CompetitionList from "@/components/CompetitionList";
 import PrivattimeInfo from "@/components/PrivattimeInfo";
-import RoomBookingBanner from "@/components/RoomBookingBanner";
 import PoengForklaring from "@/components/PoengForklaring";
 import PoengNivaa from "@/components/PoengNivaa";
 import type { ClubConfig } from "@/lib/club";
@@ -336,7 +335,6 @@ export default function DancerDashboardNav(props: Props) {
             </Link>
           </div>
 
-          <RoomBookingBanner clubId={props.club?.id ?? null} label="Book sal til egentrening" className="block mb-4" />
 
           <div className="flex gap-1 bg-gray-100 dark:bg-gray-800 rounded-xl p-1 mb-4">
             <button onClick={() => setBookingTab("kommende")}

@@ -18,7 +18,6 @@ import PushPrompt from "@/components/PushPrompt";
 import CloudEdge from "@/components/CloudEdge";
 import CompetitionList from "@/components/CompetitionList";
 import PrivattimeInfo from "@/components/PrivattimeInfo";
-import RoomBookingBanner from "@/components/RoomBookingBanner";
 import type { ClubConfig } from "@/lib/club";
 import ChildDancerCard from "@/app/parent/profil/ChildDancerCard";
 import CompetitionResultsCard from "@/components/CompetitionResultsCard";
@@ -418,7 +417,6 @@ export default function ParentDashboardNav({ userName, avatarUrl, notifications,
                 </Link>
               </div>
 
-              <RoomBookingBanner clubId={club?.id ?? null} label="Book sal til egentrening" className="block mb-4" />
 
               {/* Tabs */}
               <div className="flex gap-1 bg-gray-100 dark:bg-gray-800 rounded-xl p-1 mb-4">
