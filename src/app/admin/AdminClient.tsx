@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 
-type Profile = { id: string; name: string; role: string; created_at: string; club_id?: string };
+type Profile = { id: string; name: string; role: string; created_at: string; club_id?: string; avatar_url?: string | null };
 type Feedback = { id: string; user_name: string; role: string; message: string; created_at: string };
 type SlotBooking = { id: string; dancer_name: string; dance_style: string; status: string };
 type Slot = { id: string; start_at: string; end_at: string; trainer_id: string; bookings?: SlotBooking[] };
@@ -391,8 +391,10 @@ export default function AdminClient({ profiles: initialProfiles, feedback, slots
                   <button onClick={() => setTrainerOpen(isOpen ? null : trainer.id)}
                     className="w-full flex items-center justify-between px-4 py-3 hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors">
                     <div className="flex items-center gap-3">
-                      <div className="w-9 h-9 rounded-full bg-orange-100 dark:bg-orange-900 flex items-center justify-center text-orange-700 dark:text-orange-300 font-bold text-sm shrink-0">
-                        {trainer.name.charAt(0)}
+                      <div className="w-9 h-9 rounded-full bg-orange-100 dark:bg-orange-900 flex items-center justify-center text-orange-700 dark:text-orange-300 font-bold text-sm shrink-0 overflow-hidden">
+                        {trainer.avatar_url
+                          ? <img src={trainer.avatar_url} alt={trainer.name} className="w-full h-full object-cover" />
+                          : trainer.name.charAt(0)}
                       </div>
                       <div className="text-left">
                         <p className="font-semibold text-sm text-gray-800 dark:text-gray-100">{trainer.name}</p>
@@ -433,8 +435,10 @@ export default function AdminClient({ profiles: initialProfiles, feedback, slots
                 return (
                   <div key={p.id} className="flex items-center justify-between py-2.5 border-b dark:border-gray-700 last:border-0">
                     <div className="flex items-center gap-3">
-                      <div className={`w-8 h-8 rounded-full ${colors?.bg} flex items-center justify-center ${colors?.text} font-bold text-sm shrink-0`}>
-                        {p.name?.charAt(0) ?? "?"}
+                      <div className={`w-8 h-8 rounded-full ${colors?.bg} flex items-center justify-center ${colors?.text} font-bold text-sm shrink-0 overflow-hidden`}>
+                        {p.avatar_url
+                          ? <img src={p.avatar_url} alt={p.name ?? ""} className="w-full h-full object-cover" />
+                          : (p.name?.charAt(0) ?? "?")}
                       </div>
                       <div>
                         <p className="text-sm font-medium text-gray-800 dark:text-gray-100">{p.name}</p>

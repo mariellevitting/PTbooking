@@ -37,7 +37,7 @@ export default async function TrainerProfilPage() {
 
   const { data: allUsers } = isAdmin ? await supabase
     .from("profiles")
-    .select("id, name, role, email")
+    .select("id, name, role, email, avatar_url")
     .order("role")
     .order("name") : { data: null };
 
@@ -92,8 +92,10 @@ export default async function TrainerProfilPage() {
                 {allUsers.map((u) => (
                   <div key={u.id} className="flex items-center justify-between py-2 border-b dark:border-gray-700 last:border-0">
                     <div className="flex items-center gap-3">
-                      <div className="w-8 h-8 rounded-full bg-[#edd5f9] dark:bg-[#E2A9F1]/15 flex items-center justify-center text-[#E2A9F1] font-bold text-xs shrink-0">
-                        {u.name.charAt(0)}
+                      <div className="w-8 h-8 rounded-full bg-[#edd5f9] dark:bg-[#E2A9F1]/15 flex items-center justify-center text-[#E2A9F1] font-bold text-xs shrink-0 overflow-hidden">
+                        {(u as any).avatar_url
+                          ? <img src={(u as any).avatar_url} alt={u.name} className="w-full h-full object-cover" />
+                          : u.name.charAt(0)}
                       </div>
                         <div>
                         <p className="text-sm font-medium">{u.name}</p>
