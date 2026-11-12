@@ -5,9 +5,10 @@ import { usePathname } from "next/navigation";
 // Toningen vises bare på sidene man når fra menyen.
 const MENU_PAGES = [
   "/trainer/dashboard", "/trainer/availability", "/trainer/book-for-dancer", "/trainer/historikk",
-  "/trainer/sesongmal", "/trainer/konkurranser", "/trainer/profil", "/admin",
+  "/trainer/sesongmal", "/trainer/konkurranser", "/trainer/profil", "/trainer/saler", "/admin",
   "/dancer/dashboard", "/dancer/profil",
   "/parent/dashboard", "/parent/profil",
+  "/sal",
 ];
 
 export default function AppGradient() {
