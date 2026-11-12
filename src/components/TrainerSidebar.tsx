@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Calendar, Clock, UserCircle, Trophy, History, PlusCircle, Menu, X, LayoutDashboard } from "lucide-react";
+import { Calendar, Clock, UserCircle, Trophy, History, PlusCircle, Menu, X, LayoutDashboard, Building2 } from "lucide-react";
 import TargetArrowIcon from "@/components/TargetArrowIcon";
 import { useState } from "react";
 import LogoutButton from "@/components/LogoutButton";
@@ -11,7 +11,7 @@ import ThemeToggle from "@/components/ThemeToggle";
 import FeedbackButton from "@/components/FeedbackButton";
 import CloudEdge from "@/components/CloudEdge";
 
-const NAV = [
+const BASE_NAV = [
   { href: "/trainer/dashboard", label: "Mine timer", icon: Calendar },
   { href: "/trainer/availability", label: "Legg ut tid", icon: PlusCircle },
   { href: "/trainer/book-for-dancer", label: "Book for danser", icon: Clock },
@@ -22,19 +22,23 @@ const NAV = [
   { href: "/admin", label: "Admin", icon: LayoutDashboard },
 ];
 
+const SALER_ITEM = { href: "/trainer/saler", label: "Administrer saler", icon: Building2 };
+
 interface Props {
   name: string;
   userId: string;
   email: string;
   avatarUrl: string | null;
   notifications: any[];
+  hasRooms?: boolean;
 }
 
-export default function TrainerSidebar({ name, userId, email, avatarUrl, notifications }: Props) {
+export default function TrainerSidebar({ name, userId, email, avatarUrl, notifications, hasRooms = false }: Props) {
   const isAdmin = email === "miemarielle@live.no";
   const pathname = usePathname();
   const [menuOpen, setMenuOpen] = useState(false);
   const firstName = name.split(" ")[0];
+  const NAV = hasRooms ? [...BASE_NAV.slice(0, 2), SALER_ITEM, ...BASE_NAV.slice(2)] : BASE_NAV;
 
   function isActive(href: string) {
     if (href === "/trainer/dashboard") return pathname === href;

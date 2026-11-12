@@ -9,17 +9,23 @@ export default async function TrainerLayout({ children }: { children: React.Reac
 
   const { data: profile } = await supabase
     .from("profiles")
-    .select("name, role, avatar_url")
+    .select("name, role, avatar_url, club_id")
     .eq("id", user.id)
     .single();
 
   if (!profile || profile.role !== "trainer") redirect("/dashboard");
 
-  const { data: notifications } = await supabase
-    .from("notifications")
-    .select("*")
-    .eq("user_id", user.id)
-    .order("created_at", { ascending: false });
+  const [{ data: notifications }, { count: roomCount }] = await Promise.all([
+    supabase
+      .from("notifications")
+      .select("*")
+      .eq("user_id", user.id)
+      .order("created_at", { ascending: false }),
+    supabase
+      .from("rooms")
+      .select("id", { count: "exact", head: true })
+      .eq("club_id", (profile as any).club_id ?? ""),
+  ]);
 
   return (
     <div className="min-h-screen">
@@ -29,6 +35,7 @@ export default async function TrainerLayout({ children }: { children: React.Reac
         email={user.email ?? ""}
         avatarUrl={profile.avatar_url ?? null}
         notifications={notifications ?? []}
+        hasRooms={(roomCount ?? 0) > 0}
       />
       <div className="topbar-offset md:ml-56 pt-[calc(4.5rem+env(safe-area-inset-top))] md:pt-0">
         {children}
