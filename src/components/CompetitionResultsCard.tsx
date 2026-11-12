@@ -15,6 +15,8 @@ const COMPETITIONS = [
   { name: "Dancer of the Year / FDJ 9", short: "DOTY / FDJ 9" },
 ];
 
+const CUSTOM_VALUE = "__custom__";
+
 const placementLabel = formatPlacement;
 
 function placementColor(p: string | null) {
@@ -46,6 +48,7 @@ export default function CompetitionResultsCard({ userId, initialResults, childId
   }, [initialResults]);
   const [adding, setAdding] = useState(false);
   const [comp, setComp] = useState(COMPETITIONS[0].name);
+  const [customComp, setCustomComp] = useState("");
   const [placementF, setPlacementF] = useState("");
   const [placementS, setPlacementS] = useState("");
   const [notes, setNotes] = useState("");
@@ -55,6 +58,8 @@ export default function CompetitionResultsCard({ userId, initialResults, childId
 
   async function handleAdd() {
     if (!placementF && !placementS) return;
+    const name = comp === CUSTOM_VALUE ? customComp.trim() : comp;
+    if (!name) return;
     setSaving(true);
     setSaveError(null);
     const supabase = createClient();
@@ -63,7 +68,7 @@ export default function CompetitionResultsCard({ userId, initialResults, childId
       .insert({
         user_id: userId,
         ...(childId ? { child_id: childId } : {}),
-        competition_name: comp,
+        competition_name: name,
         dance_style: placementF && placementS ? "Begge" : placementF ? "Freestyle" : "Slow",
         placement_freestyle: placementF || null,
         placement_slow: placementS || null,
@@ -75,7 +80,7 @@ export default function CompetitionResultsCard({ userId, initialResults, childId
       setSaveError("Kunne ikke lagre: " + error.message);
     } else if (data) {
       setResults(r => [data, ...r]);
-      setPlacementF(""); setPlacementS(""); setNotes("");
+      setPlacementF(""); setPlacementS(""); setNotes(""); setComp(COMPETITIONS[0].name); setCustomComp("");
       setAdding(false);
       setSuccess(true);
       setTimeout(() => setSuccess(false), 3000);
@@ -110,12 +115,17 @@ export default function CompetitionResultsCard({ userId, initialResults, childId
               <select value={comp} onChange={e => setComp(e.target.value)}
                 className="w-full border dark:border-gray-700 rounded-lg px-3 py-2 text-sm bg-white dark:bg-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-[#E2A9F1]">
                 {COMPETITIONS.map(c => <option key={c.name} value={c.name}>{c.short}</option>)}
+                <option value={CUSTOM_VALUE}>Annen konkurranse...</option>
               </select>
+              {comp === CUSTOM_VALUE && (
+                <input value={customComp} onChange={e => setCustomComp(e.target.value)} placeholder="Navn på konkurranse"
+                  className="w-full border dark:border-gray-700 rounded-lg px-3 py-2 text-sm bg-white dark:bg-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-[#E2A9F1] mt-2" />
+              )}
             </div>
             <PlacementPicker label="Freestyle – hvor langt kom du?" value={placementF} onChange={setPlacementF} />
             <PlacementPicker label="Slow – hvor langt kom du?" value={placementS} onChange={setPlacementS} />
             <div className="flex gap-2">
-              <button onClick={handleAdd} disabled={saving || (!placementF && !placementS)}
+              <button onClick={handleAdd} disabled={saving || (!placementF && !placementS) || (comp === CUSTOM_VALUE && !customComp.trim())}
                 className="flex-1 bg-[#3A3A3A] hover:bg-[#2a2a2a] dark:bg-[#c87de0] dark:hover:bg-[#b56fd0] dark:text-white disabled:opacity-50 text-white text-sm font-medium rounded-lg py-2">
                 {saving ? "Lagrer..." : "Lagre resultat"}
               </button>

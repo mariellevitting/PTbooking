@@ -62,6 +62,8 @@ export default async function TrainerProfilPage() {
           notifyRoomActivity={(profile as any).notify_room_activity ?? true}
           paymentMethod={(trainerDetails as any)?.payment_method ?? null}
           paymentValue={(trainerDetails as any)?.payment_value ?? null}
+          showPayment={club?.name === "Moveon"}
+          showRoomNotify={club?.name === "Moveon"}
         />
 
         <div className="mt-4">
