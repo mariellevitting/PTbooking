@@ -23,6 +23,7 @@ export default function GoalsList({ value, onChange }: Props) {
   }
 
   function removeGoal(idx: number) {
+    if (!confirm("Slette dette målet?")) return;
     onChange(goals.filter((_, i) => i !== idx).join("\n"));
   }
 

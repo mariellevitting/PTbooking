@@ -471,7 +471,7 @@ export default function ParentDashboardNav({ userName, avatarUrl, notifications,
                   <div className="space-y-6">
                     {Object.entries(weekGroups).map(([week, dateKeys]) => (
                       <div key={week}>
-                        <p className="text-xs font-semibold text-gray-400 dark:text-gray-500 uppercase tracking-wider mb-3">Uke {week}</p>
+                        <p className="text-xs font-semibold text-gray-600 dark:text-gray-300 uppercase tracking-wider mb-3">Uke {week}</p>
                         <div className="space-y-4">
                           {dateKeys.sort().map(dateKey => {
                             const dayBookings = grouped[dateKey];

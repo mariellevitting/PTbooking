@@ -3,7 +3,7 @@
 import { useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { Check } from "lucide-react";
+import { Check, PlusCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { createClient } from "@/lib/supabase/client";
 import RemoveCompletedBooking from "@/components/RemoveCompletedBooking";
@@ -150,16 +150,26 @@ export default function TrainerDashboardTabs({ slots, completedSlots, trainerNam
 
   return (
     <div>
+      {/* Legg ut tid – hovedfunksjonen, så den skal være synlig og innbydende */}
+      <Link href="/trainer/availability" className="block mb-4">
+        <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-[#3A3A3A] to-[#5b3a6b] dark:from-[#c87de0] dark:to-[#9b59c4] p-4 shadow-lg shadow-[#9b59c4]/20 active:scale-[0.98] transition-transform">
+          <div className="flex items-center gap-3">
+            <div className="w-11 h-11 rounded-full bg-white/15 flex items-center justify-center shrink-0">
+              <PlusCircle className="text-white" size={24} />
+            </div>
+            <div className="min-w-0">
+              <p className="text-white font-bold text-base leading-tight">Legg ut tid</p>
+              <p className="text-white/70 text-xs mt-0.5">Gjør ledige privattimer klare for booking</p>
+            </div>
+          </div>
+        </div>
+      </Link>
+
       {/* Tabs */}
       <div className="flex gap-1 bg-gray-100 dark:bg-gray-800 rounded-xl p-1 mb-3">
         <button onClick={() => setTab("upcoming")} className={`flex-1 px-2 py-1.5 rounded-lg text-sm font-medium transition-colors ${tab === "upcoming" ? "bg-white dark:bg-gray-900 text-[#c87de0] shadow-sm" : "text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300"}`}>Kommende</button>
         <button onClick={() => setTab("completed")} className={`flex-1 px-2 py-1.5 rounded-lg text-sm font-medium transition-colors ${tab === "completed" ? "bg-white dark:bg-gray-900 text-[#c87de0] shadow-sm" : "text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300"}`}>Fullførte</button>
       </div>
-
-      {/* Legg ut tid-knapp */}
-      {<Link href="/trainer/availability" className="block mb-4">
-        <Button className="w-full bg-[#3A3A3A] hover:bg-[#2a2a2a] dark:bg-[#c87de0] dark:hover:bg-[#b56fd0] dark:text-white">+ Legg ut tid</Button>
-      </Link>}
 
       {/* Kommende timer */}
       {tab === "upcoming" && (() => {
@@ -189,7 +199,7 @@ export default function TrainerDashboardTabs({ slots, completedSlots, trainerNam
           <div className="space-y-6">
             {Object.entries(weekGroups).map(([week, dateKeys]) => (
               <div key={week}>
-                <p className="text-xs font-semibold text-gray-400 dark:text-gray-500 uppercase tracking-wider mb-3">Uke {week}</p>
+                <p className="text-xs font-semibold text-gray-600 dark:text-gray-300 uppercase tracking-wider mb-3">Uke {week}</p>
                 <div className="space-y-4">
                   {dateKeys.sort().map((dateKey) => {
                     const daySlots = grouped[dateKey];
@@ -293,14 +303,14 @@ export default function TrainerDashboardTabs({ slots, completedSlots, trainerNam
 
         return (
           <div className="space-y-6">
-            <p className="text-xs text-[#E2A9F1]">
+            <p className="text-xs font-medium text-[#9b59c4] dark:text-[#E2A9F1]">
               {onlyUnpaid
                 ? `${completed.length} time${completed.length === 1 ? "" : "r"} mangler betaling`
                 : `${completed.length} gjennomførte privattimer totalt`}
             </p>
             {Object.entries(monthGroups).map(([month, monthSlots]) => (
               <div key={month}>
-                <p className="text-xs font-semibold text-gray-400 dark:text-gray-500 uppercase tracking-wider mb-2">{month}</p>
+                <p className="text-xs font-semibold text-gray-600 dark:text-gray-300 uppercase tracking-wider mb-2">{month}</p>
                 <div className="space-y-2">
                   {monthSlots.map((slot) => {
                     const start = new Date(slot.start_at);
