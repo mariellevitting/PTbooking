@@ -60,10 +60,7 @@ export default function FeedbackButton({ userId, userName, role }: Props) {
             ) : (
               <form onSubmit={handleSubmit} className="space-y-4">
                 <p className="text-sm text-gray-500 dark:text-gray-400">
-                  Dette går til den som utvikler appen – skriv om bugs, forslag eller ting som er vanskelig å finne.
-                </p>
-                <p className="text-xs text-amber-600 dark:text-amber-400 bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-900 rounded-lg px-3 py-2">
-                  Ikke bruk denne for sesongmål, sykdom eller avbud – det må meldes til treneren din som vanlig, det kommer ikke frem her.
+                  Gi tilbakemelding på forbedringer, noe som ikke fungerer, eller forslag.
                 </p>
                 <textarea
                   value={message}
