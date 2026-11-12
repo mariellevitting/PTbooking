@@ -1,9 +1,8 @@
 "use client";
 
-import { useEffect, useState } from "react";
 import Link from "next/link";
-import { createClient } from "@/lib/supabase/client";
 import { Button } from "@/components/ui/button";
+import { useHasRooms } from "@/lib/useHasRooms";
 
 interface Props {
   clubId: string | null;
@@ -15,23 +14,7 @@ interface Props {
 // Vises kun for klubber som har satt opp saler (foreløpig kun Moveon).
 // Gjør ingenting synlig for klubber uten saler.
 export default function RoomBookingBanner({ clubId, href = "/sal", label = "Book sal", className = "" }: Props) {
-  const [hasRooms, setHasRooms] = useState(false);
-
-  useEffect(() => {
-    if (!clubId) return;
-    let cancelled = false;
-    const supabase = createClient();
-    supabase
-      .from("rooms")
-      .select("id", { count: "exact", head: true })
-      .eq("club_id", clubId)
-      .then(({ count }) => {
-        if (!cancelled) setHasRooms((count ?? 0) > 0);
-      });
-    return () => {
-      cancelled = true;
-    };
-  }, [clubId]);
+  const hasRooms = useHasRooms(clubId);
 
   if (!hasRooms) return null;
 

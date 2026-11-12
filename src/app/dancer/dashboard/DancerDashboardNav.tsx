@@ -4,7 +4,8 @@ import { useState, useEffect, useRef } from "react";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Menu, X, Calendar, Trophy, Medal, Star, Info, UserCircle, User } from "lucide-react";
+import { Menu, X, Calendar, Trophy, Medal, Star, Info, UserCircle, User, Building2 } from "lucide-react";
+import { useHasRooms } from "@/lib/useHasRooms";
 import TargetArrowIcon from "@/components/TargetArrowIcon";
 import GoalsTabs from "@/components/GoalsTabs";
 import CompetitionResultsCard from "@/components/CompetitionResultsCard";
@@ -128,6 +129,8 @@ export default function DancerDashboardNav(props: Props) {
 
   function goTo(id: string) { setActive(id); setMenuOpen(false); setTopbarVisible(true); }
 
+  const hasRooms = useHasRooms(props.club?.id ?? null);
+
   function handleFreestyleChange(val: number) {
     if (val < 0) { setLevelF(l => Math.max(0, l - 1)); setFreestyle(0); return; }
     const needed = getNeeded(levelF, true);
@@ -233,6 +236,13 @@ export default function DancerDashboardNav(props: Props) {
               {s.label}
             </button>
           ))}
+          {hasRooms && (
+            <Link href="/sal"
+              className="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-colors text-left text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800">
+              <span className="text-gray-400 dark:text-gray-500"><Building2 size={15} /></span>
+              Egentrening
+            </Link>
+          )}
           <Link href="/dancer/profil"
             className="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-colors text-left text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800">
             <span className="text-gray-400 dark:text-gray-500"><User size={15} /></span>
@@ -282,6 +292,13 @@ export default function DancerDashboardNav(props: Props) {
                     {s.label}
                   </button>
                 ))}
+                {hasRooms && (
+                  <Link href="/sal" onClick={() => setMenuOpen(false)}
+                    className="w-[calc(100%-1.5rem)] mx-3 my-0.5 flex items-center gap-4 px-4 py-3 rounded-xl text-[15px] font-medium transition-colors text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-950">
+                    <span className="[&>svg]:w-[22px] [&>svg]:h-[22px] text-gray-400 dark:text-gray-500"><Building2 /></span>
+                    Egentrening
+                  </Link>
+                )}
               </div>
               {/* Logg ut – nederst */}
               <div className="border-t dark:border-gray-700 px-6 pt-4 pb-[calc(3.5rem+env(safe-area-inset-bottom))] space-y-3">

@@ -3,7 +3,8 @@
 import { useState, useEffect, useRef } from "react";
 import { createClient } from "@/lib/supabase/client";
 import Link from "next/link";
-import { Menu, X, Calendar, Trophy, Medal, Star, Info, UserCircle, User } from "lucide-react";
+import { Menu, X, Calendar, Trophy, Medal, Star, Info, UserCircle, User, Building2 } from "lucide-react";
+import { useHasRooms } from "@/lib/useHasRooms";
 import TargetArrowIcon from "@/components/TargetArrowIcon";
 import GoalsTabs, { type GoalValues } from "@/components/GoalsTabs";
 import { Button } from "@/components/ui/button";
@@ -253,6 +254,8 @@ export default function ParentDashboardNav({ userName, avatarUrl, notifications,
 
   function goTo(id: string) { setActive(id); setMenuOpen(false); setTopbarVisible(true); }
 
+  const hasRooms = useHasRooms(club?.id ?? null);
+
   const grouped: Record<string, Booking[]> = {};
   for (const b of upcomingBookings) {
     const key = formatDateKey(new Date(b.availability_slots.start_at));
@@ -298,6 +301,13 @@ export default function ParentDashboardNav({ userName, avatarUrl, notifications,
             {s.label}
           </button>
         ))}
+        {hasRooms && (
+          <Link href="/sal"
+            className="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-colors text-left text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800">
+            <span className="text-gray-400 dark:text-gray-500"><Building2 size={15} /></span>
+            Egentrening
+          </Link>
+        )}
         <Link href="/parent/profil"
           className="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-colors text-left text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800">
           <span className="text-gray-400 dark:text-gray-500"><User size={15} /></span>
@@ -369,6 +379,13 @@ export default function ParentDashboardNav({ userName, avatarUrl, notifications,
                   {s.label}
                 </button>
               ))}
+              {hasRooms && (
+                <Link href="/sal" onClick={() => setMenuOpen(false)}
+                  className="w-[calc(100%-1.5rem)] mx-3 my-0.5 flex items-center gap-4 px-4 py-3 rounded-xl text-[15px] font-medium transition-colors text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-950">
+                  <span className="[&>svg]:w-[22px] [&>svg]:h-[22px] text-gray-400 dark:text-gray-500"><Building2 /></span>
+                  Egentrening
+                </Link>
+              )}
             </div>
             <div className="border-t dark:border-gray-700 px-6 pt-4 pb-[calc(3.5rem+env(safe-area-inset-bottom))] space-y-3 text-sm text-gray-400 dark:text-gray-500">
               <Link href="/om" onClick={() => setMenuOpen(false)} className="flex items-center gap-2 hover:text-gray-600">
