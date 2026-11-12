@@ -22,7 +22,7 @@ export default async function AdminClubPage({ params }: { params: Promise<{ id: 
         <a href="/admin" className="inline-flex items-center gap-2 text-sm text-gray-500 dark:text-gray-400 hover:text-[#E2A9F1] mb-4">
           ← Tilbake til admin
         </a>
-        <h1 className="text-2xl font-bold mb-1">{club.name}</h1>
+        <h1 className="font-display text-[28px] mb-1">{club.name}</h1>
         <p className="text-gray-500 dark:text-gray-400 text-sm mb-6">Klubb-innstillinger</p>
         <ClubSettingsForm club={club} />
       </div>

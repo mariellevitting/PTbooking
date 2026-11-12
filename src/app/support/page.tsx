@@ -12,7 +12,7 @@ export default function SupportPage() {
       <Link href="/login" className="inline-flex items-center justify-center w-12 h-12 rounded-full bg-gray-100 dark:bg-gray-800 hover:bg-[#E2A9F1]/20 text-gray-700 dark:text-gray-200 mb-4 -ml-2">
         <ArrowLeft size={24} strokeWidth={2.5} />
       </Link>
-      <h1 className="text-3xl font-bold text-gray-900 dark:text-white mb-2">Support</h1>
+      <h1 className="font-display text-[28px] text-gray-900 dark:text-white mb-2">Support</h1>
       <p className="text-gray-500 dark:text-gray-400 mb-10">Trenger du hjelp med Danceitude? Her finner du svar på vanlige spørsmål.</p>
 
       <div className="space-y-8">

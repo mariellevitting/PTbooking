@@ -301,6 +301,7 @@ export default function BookingForm({ slots, trainerName, bookerId, bookerName, 
   if (step === "pick") {
     return (
       <div className="space-y-6">
+        <h2 className="font-display text-[28px]">Velg en tid</h2>
         {availableMonths.length > 1 && (
           <select
             className="w-full border dark:border-gray-700 rounded-lg px-3 py-2 text-sm bg-white dark:bg-gray-900 text-gray-700 dark:text-gray-300"

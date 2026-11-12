@@ -64,7 +64,7 @@ export default async function TrainerHistorikkPage() {
         />
 
         <div className="flex items-baseline gap-2 mb-6">
-          <h1 className="text-2xl font-bold">Gjennomførte privattimer</h1>
+          <h1 className="font-display text-[28px]">Gjennomførte privattimer</h1>
           {completed.length > 0 && (
             <span className="text-sm text-[#E2A9F1]">{completed.length} totalt</span>
           )}

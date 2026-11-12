@@ -94,7 +94,7 @@ export default async function TrainerSesongmalPage() {
   return (
     <main className="bg-gray-50 dark:bg-gray-950 min-h-screen p-6">
       <div className="max-w-lg mx-auto">
-        <h1 className="text-2xl font-bold mb-1">Sesongmål</h1>
+        <h1 className="font-display text-[28px] mb-1">Sesongmål</h1>
         <p className="text-gray-800 dark:text-gray-200 text-sm font-medium mb-6">Søk opp en danser for å se mål, poeng og resultater</p>
 
         {profiles.length === 0 && children.length === 0 ? (

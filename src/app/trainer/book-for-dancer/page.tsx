@@ -31,7 +31,7 @@ export default async function BookForDancerPage() {
         <Link href="/trainer/dashboard" className="inline-flex items-center justify-center w-12 h-12 rounded-full bg-gray-100 dark:bg-gray-800 hover:bg-[#E2A9F1]/20 text-gray-700 dark:text-gray-200 mb-2 -ml-2">
           <ArrowLeft size={24} strokeWidth={2.5} />
         </Link>
-        <h1 className="text-2xl font-bold mb-6">Book time for danser</h1>
+        <h1 className="font-display text-[28px] mb-6">Book time for danser</h1>
         <BookForDancerForm trainerId={user.id} danceStyles={danceStyles} clubId={profile.club_id ?? null} />
       </div>
     </main>

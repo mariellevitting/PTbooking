@@ -52,7 +52,7 @@ export default async function TrainerDancerProfilePage({ params }: { params: Pro
               : <span className="text-2xl font-bold text-[#E2A9F1]">{dancer.name.charAt(0)}</span>}
           </div>
           <div>
-            <h1 className="text-2xl font-bold text-gray-900 dark:text-white">{dancer.name}</h1>
+            <h1 className="font-display text-[28px] text-gray-900 dark:text-white">{dancer.name}</h1>
             <p className="text-sm text-gray-500 dark:text-gray-400">{dancerSlots.length} gjennomførte timer med deg</p>
           </div>
         </div>

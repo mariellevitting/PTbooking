@@ -21,7 +21,7 @@ export default async function SlettSlotPage({ params }: { params: Promise<{ slot
   return (
     <main className="bg-gray-50 dark:bg-gray-950 p-6">
       <div className="max-w-lg mx-auto">
-        <h1 className="text-2xl font-bold mb-6">Slett ledig tid</h1>
+        <h1 className="font-display text-[28px] mb-6">Slett ledig tid</h1>
         <DeleteSlotForm slotId={slotId} startAt={slot.start_at} endAt={slot.end_at} />
       </div>
     </main>

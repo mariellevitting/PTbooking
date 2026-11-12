@@ -23,7 +23,7 @@ export default async function TrainerAvbestillPage({ params }: { params: Promise
   return (
     <main className="bg-gray-50 dark:bg-gray-950 p-6">
       <div className="max-w-lg mx-auto">
-        <h1 className="text-2xl font-bold mb-6">Avbestill time</h1>
+        <h1 className="font-display text-[28px] mb-6">Avbestill time</h1>
         <TrainerCancelForm
           bookingId={bookingId}
           slotId={booking.slot_id}

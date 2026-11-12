@@ -47,7 +47,7 @@ export default async function BookPage() {
         <Link href={backHref} className="inline-flex items-center justify-center w-12 h-12 rounded-full bg-gray-100 dark:bg-gray-800 hover:bg-[#E2A9F1]/20 text-gray-700 dark:text-gray-200 mb-2 -ml-2">
           <ArrowLeft size={24} strokeWidth={2.5} />
         </Link>
-        <h1 className="text-2xl font-bold mb-6">Velg trener</h1>
+        <h1 className="font-display text-[28px] mb-6">Velg trener</h1>
 
         {trainerList.length === 0 ? (
           <div className="bg-white dark:bg-gray-900 rounded-xl border dark:border-gray-700 p-6 text-center text-gray-400 dark:text-gray-500">
