@@ -231,7 +231,7 @@ export default function SalBookingClient({ rooms, allSlots, userId, userName, ro
         <Link href={backHref} className="inline-flex items-center justify-center w-12 h-12 rounded-full bg-gray-100 dark:bg-gray-800 hover:bg-[#E2A9F1]/20 text-gray-700 dark:text-gray-200 mb-2 -ml-2">
           <ArrowLeft size={24} strokeWidth={2.5} />
         </Link>
-        <h1 className="font-display text-[28px] mb-6">Sal til egentrening</h1>
+        <h1 className="font-display text-[28px] mb-6">Book egentrening</h1>
 
         <div className="flex gap-1 bg-gray-100 dark:bg-gray-800 rounded-xl p-1 mb-5">
           <button onClick={() => setTab("book")} className={`flex-1 px-3 py-1.5 rounded-lg text-sm font-medium transition-colors ${tab === "book" ? "bg-white dark:bg-gray-900 text-[#c87de0] shadow-sm" : "text-gray-500 dark:text-gray-400"}`}>

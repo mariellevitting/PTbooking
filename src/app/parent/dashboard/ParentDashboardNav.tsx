@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect, useRef } from "react";
+import { useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
 import Link from "next/link";
 import { Menu, X, Calendar, Trophy, Medal, Star, Info, UserCircle, User, Building2 } from "lucide-react";
@@ -87,7 +88,7 @@ function goalsToRow(g: GoalValues) {
   return { season_goals: g.season, goals_freestyle: g.freestyle, goals_slow: g.slow };
 }
 
-function ParentGoalsSection({ children }: { children: Child[] }) {
+function ParentGoalsSection({ children, club }: { children: Child[]; club?: ClubConfig | null }) {
   const [selectedId, setSelectedId] = useState(children[0]?.id ?? "");
   const goalsCache = useRef<Record<string, GoalValues>>({});
   const [goals, setGoals] = useState<GoalValues>(EMPTY_GOALS);
@@ -180,7 +181,7 @@ function ParentGoalsSection({ children }: { children: Child[] }) {
       )}
       {children.length === 1 && <p className="text-sm font-medium text-gray-700 dark:text-gray-300">{children[0].name}</p>}
       <div className="bg-white dark:bg-gray-900 rounded-2xl border dark:border-gray-700 p-5 space-y-3">
-        {loading ? <p className="text-sm text-gray-400">Laster...</p> : <GoalsTabs key={selectedId} values={goals} onChange={(key, val) => setGoals(g => ({ ...g, [key]: val }))} />}
+        {loading ? <p className="text-sm text-gray-400">Laster...</p> : <GoalsTabs key={selectedId} values={goals} onChange={(key, val) => setGoals(g => ({ ...g, [key]: val }))} style1Label={club?.goal_style_1 ?? undefined} style2Label={club?.goal_style_2 ?? undefined} />}
       </div>
       {(saving || saved || saveError) && (
         <p className={`text-xs text-center ${saveError ? "text-red-500" : "text-gray-400 dark:text-gray-500"}`}>
@@ -238,6 +239,7 @@ interface Props {
 }
 
 export default function ParentDashboardNav({ userName, avatarUrl, notifications, upcomingBookings, completedBookings, upcomingRoomBookings = [], parentId, children, trainers = [], club = null }: Props) {
+  const router = useRouter();
   const [active, setActive] = useState("timer");
   useEffect(() => {
     const onShow = () => setActive("timer");
@@ -265,6 +267,36 @@ export default function ParentDashboardNav({ userName, avatarUrl, notifications,
   function goTo(id: string) { setActive(id); setMenuOpen(false); setTopbarVisible(true); }
 
   const hasRooms = useHasRooms(club?.id ?? null);
+  const [cancellingRoomId, setCancellingRoomId] = useState<string | null>(null);
+
+  async function cancelRoomBooking(bookingId: string, dancerName: string, roomName: string, startAt: string) {
+    if (!confirm("Er du sikker på at du vil avbestille?")) return;
+    setCancellingRoomId(bookingId);
+    const supabase = createClient();
+    await supabase.from("room_bookings").update({ status: "cancelled" }).eq("id", bookingId);
+
+    const clubId = club?.id ?? null;
+    if (clubId) {
+      const { data: trainers } = await supabase
+        .from("profiles")
+        .select("id")
+        .eq("role", "trainer")
+        .eq("club_id", clubId)
+        .or("notify_room_activity.is.null,notify_room_activity.eq.true");
+      if (trainers && trainers.length > 0) {
+        const start = new Date(startAt);
+        const message = `${dancerName} har avbestilt ${roomName} til egentrening – ${formatDate(start, { weekday: "long", day: "numeric", month: "short" })} kl. ${formatTime(start)}`;
+        await supabase.from("notifications").insert(trainers.map(t => ({ user_id: t.id, message })));
+        fetch("/api/notify-new-slots", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ userIds: trainers.map(t => t.id), message }),
+        }).catch(() => {});
+      }
+    }
+    setCancellingRoomId(null);
+    router.refresh();
+  }
 
   const grouped: Record<string, TimelineEntry[]> = {};
   for (const b of upcomingBookings) {
@@ -493,9 +525,13 @@ export default function ParentDashboardNav({ userName, avatarUrl, notifications,
                                               <p className="text-sm font-medium text-amber-600 dark:text-amber-400">Egentrening – {booking.room_slots?.rooms?.name ?? "Sal"}</p>
                                               <p className="text-xs font-medium text-gray-500 dark:text-gray-400">{booking.dancer_name}</p>
                                             </div>
-                                            <Link href="/sal">
-                                              <button className="text-xs text-red-400 hover:text-red-600">Avbestill</button>
-                                            </Link>
+                                            <button
+                                              onClick={() => cancelRoomBooking(booking.id, booking.dancer_name, booking.room_slots?.rooms?.name ?? "Sal", entry.start)}
+                                              disabled={cancellingRoomId === booking.id}
+                                              className="text-xs text-red-400 hover:text-red-600 disabled:opacity-50"
+                                            >
+                                              {cancellingRoomId === booking.id ? "…" : "Avbestill"}
+                                            </button>
                                           </div>
                                         </div>
                                       );
@@ -584,7 +620,7 @@ export default function ParentDashboardNav({ userName, avatarUrl, notifications,
                 </div>
               </div>
             ) : (
-              <ParentGoalsSection children={children} />
+              <ParentGoalsSection children={children} club={club} />
             )
           )}
 

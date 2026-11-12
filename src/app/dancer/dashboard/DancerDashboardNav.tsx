@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect, useRef } from "react";
+import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -89,6 +90,7 @@ const sections = [
 
 
 export default function DancerDashboardNav(props: Props) {
+  const router = useRouter();
   const [active, setActive] = useState("timer");
   useEffect(() => {
     const onShow = () => setActive("timer");
@@ -130,6 +132,36 @@ export default function DancerDashboardNav(props: Props) {
   function goTo(id: string) { setActive(id); setMenuOpen(false); setTopbarVisible(true); }
 
   const hasRooms = useHasRooms(props.club?.id ?? null);
+  const [cancellingRoomId, setCancellingRoomId] = useState<string | null>(null);
+
+  async function cancelRoomBooking(bookingId: string, dancerName: string, roomName: string, startAt: string) {
+    if (!confirm("Er du sikker på at du vil avbestille?")) return;
+    setCancellingRoomId(bookingId);
+    const supabase = createClient();
+    await supabase.from("room_bookings").update({ status: "cancelled" }).eq("id", bookingId);
+
+    const clubId = props.club?.id ?? null;
+    if (clubId) {
+      const { data: trainers } = await supabase
+        .from("profiles")
+        .select("id")
+        .eq("role", "trainer")
+        .eq("club_id", clubId)
+        .or("notify_room_activity.is.null,notify_room_activity.eq.true");
+      if (trainers && trainers.length > 0) {
+        const start = new Date(startAt);
+        const message = `${dancerName} har avbestilt ${roomName} til egentrening – ${formatDate(start, { weekday: "long", day: "numeric", month: "short" })} kl. ${formatTime(start)}`;
+        await supabase.from("notifications").insert(trainers.map(t => ({ user_id: t.id, message })));
+        fetch("/api/notify-new-slots", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ userIds: trainers.map(t => t.id), message }),
+        }).catch(() => {});
+      }
+    }
+    setCancellingRoomId(null);
+    router.refresh();
+  }
 
   function handleFreestyleChange(val: number) {
     if (val < 0) { setLevelF(l => Math.max(0, l - 1)); setFreestyle(0); return; }
@@ -399,9 +431,13 @@ export default function DancerDashboardNav(props: Props) {
                                           <p className="text-sm font-semibold text-gray-700 dark:text-gray-300">{formatTime(start)}–{formatTime(end)}</p>
                                           <p className="text-sm font-medium text-amber-600 dark:text-amber-400">Egentrening – {booking.room_slots?.rooms?.name ?? "Sal"}</p>
                                         </div>
-                                        <Link href="/sal">
-                                          <button className="text-xs text-red-400 hover:text-red-600">Avbestill</button>
-                                        </Link>
+                                        <button
+                                          onClick={() => cancelRoomBooking(booking.id, booking.dancer_name, booking.room_slots?.rooms?.name ?? "Sal", entry.start)}
+                                          disabled={cancellingRoomId === booking.id}
+                                          className="text-xs text-red-400 hover:text-red-600 disabled:opacity-50"
+                                        >
+                                          {cancellingRoomId === booking.id ? "…" : "Avbestill"}
+                                        </button>
                                       </div>
                                     </div>
                                   );
@@ -496,6 +532,8 @@ export default function DancerDashboardNav(props: Props) {
                 else setGoalsSlow(val);
                 setSaved(false);
               }}
+              style1Label={props.club?.goal_style_1 ?? undefined}
+              style2Label={props.club?.goal_style_2 ?? undefined}
             />
           </CardContent>
         </Card>

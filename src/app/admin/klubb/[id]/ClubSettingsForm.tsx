@@ -64,6 +64,8 @@ export default function ClubSettingsForm({ club }: { club: Club }) {
     receipt_note: club.receipt_note ?? "",
     contact_name: club.contact_name ?? "",
     contact_info: club.contact_info ?? "",
+    goal_style_1: club.goal_style_1 ?? "",
+    goal_style_2: club.goal_style_2 ?? "",
   });
   const [styles, setStyles] = useState<string[]>(club.dance_styles ?? []);
   const [saving, setSaving] = useState(false);
@@ -108,6 +110,8 @@ export default function ClubSettingsForm({ club }: { club: Club }) {
         receipt_note: form.receipt_note.trim() || null,
         contact_name: form.contact_name.trim() || null,
         contact_info: form.contact_info.trim() || null,
+        goal_style_1: form.goal_style_1.trim() || null,
+        goal_style_2: form.goal_style_2.trim() || null,
         dance_styles: styles,
       })
       .eq("id", club.id);
@@ -272,6 +276,20 @@ export default function ClubSettingsForm({ club }: { club: Club }) {
               </button>
             );
           })}
+        </div>
+      </Section>
+
+      <Section title="Sesongmål">
+        <p className="text-xs text-gray-400 dark:text-gray-500 -mt-2">
+          «Mine sesongmål» har to stil-faner i tillegg til «Sesong». Står disse tomme, brukes Freestyle/Slow som før.
+        </p>
+        <div>
+          <Label>Fane 1</Label>
+          <Input value={form.goal_style_1} onChange={e => set("goal_style_1", e.target.value)} placeholder="Freestyle" />
+        </div>
+        <div>
+          <Label>Fane 2</Label>
+          <Input value={form.goal_style_2} onChange={e => set("goal_style_2", e.target.value)} placeholder="Slow" />
         </div>
       </Section>
 
