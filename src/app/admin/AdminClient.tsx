@@ -261,9 +261,9 @@ export default function AdminClient({ profiles: initialProfiles, feedback, slots
     : null;
 
   const statCards = [
-    { label: "Dansere", value: dancers.length, filter: "dancer" as RoleFilter, color: "bg-blue-500 border-blue-500" },
-    { label: "Foreldre", value: parents.length, filter: "parent" as RoleFilter, color: "bg-green-500 border-green-500" },
-    { label: "Trenere", value: trainers.length, filter: "trainer" as RoleFilter, color: "bg-orange-500 border-orange-500" },
+    { label: "Dansere", value: dancers.length, filter: "dancer" as RoleFilter, color: "bg-[#f5eeff] dark:bg-[#E2A9F1]/10 border-[#E2A9F1]/30 dark:border-[#E2A9F1]/20 text-[#9b59c4] dark:text-[#E2A9F1]" },
+    { label: "Foreldre", value: parents.length, filter: "parent" as RoleFilter, color: "bg-[#edd5f9] dark:bg-[#c87de0]/15 border-[#c87de0]/40 dark:border-[#c87de0]/30 text-[#9b59c4] dark:text-[#E2A9F1]" },
+    { label: "Trenere", value: trainers.length, filter: "trainer" as RoleFilter, color: "bg-purple-200 dark:bg-purple-900/30 border-purple-300 dark:border-purple-800 text-purple-800 dark:text-purple-300" },
   ];
 
   return (
@@ -276,7 +276,7 @@ export default function AdminClient({ profiles: initialProfiles, feedback, slots
           </a>
           <div>
             <h1 className="font-display text-[28px] text-gray-900 dark:text-white">Admin</h1>
-            <p className="text-gray-500 dark:text-gray-400 text-sm mt-1">Kun synlig for trenere · <span className="font-medium">{profiles.length} brukere totalt</span></p>
+            <p className="text-gray-500 dark:text-gray-400 text-sm mt-1"><span className="font-medium">{profiles.length} brukere</span></p>
           </div>
         </div>
 
@@ -408,12 +408,12 @@ export default function AdminClient({ profiles: initialProfiles, feedback, slots
           </div>
         </div>
 
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+        <div className="grid grid-cols-3 gap-2 max-w-sm">
           {statCards.map(card => (
             <button key={card.filter} onClick={() => setRoleFilter(roleFilter === card.filter ? null : card.filter)}
-              className={`rounded-2xl border-2 p-5 text-center transition-all ${roleFilter === card.filter ? `${card.color} text-white` : "bg-white dark:bg-gray-900 border-gray-200 dark:border-gray-700 hover:border-gray-300"}`}>
-              <p className="text-3xl font-bold">{card.value}</p>
-              <p className="text-sm mt-1 opacity-80">{card.label}</p>
+              className={`rounded-xl border p-2.5 text-center transition-all ${card.color} ${roleFilter === card.filter ? "ring-2 ring-offset-1 ring-[#9b59c4] dark:ring-offset-gray-950" : ""}`}>
+              <p className="text-lg font-bold">{card.value}</p>
+              <p className="text-xs mt-0.5 opacity-80">{card.label}</p>
             </button>
           ))}
         </div>
