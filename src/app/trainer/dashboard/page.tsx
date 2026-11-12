@@ -7,6 +7,7 @@ import TrainerDashboardTabs from "./TrainerDashboardTabs";
 import TrainerWebDashboard from "./TrainerWebDashboard";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
+import RoomBookingBanner from "@/components/RoomBookingBanner";
 
 export const dynamic = "force-dynamic";
 
@@ -53,6 +54,7 @@ export default async function TrainerDashboard() {
         <h1 className="font-display text-[28px] mb-6">{greetingText}, <span className="whitespace-nowrap">{profile.name.split(" ")[0]}!</span></h1>
         <NMCountdown href="/trainer/konkurranser" clubId={clubId} />
         <PushPrompt text="Få beskjed når noen booker, avbestiller eller bytter timer hos deg, og om meldinger fra klubben." />
+        <RoomBookingBanner clubId={clubId} href="/trainer/saler" label="Administrer saler" className="block mb-4" />
       </div>
 
       {/* Mobil tabs */}
@@ -68,6 +70,7 @@ export default async function TrainerDashboard() {
 
       {/* Web */}
       <div className="hidden lg:block max-w-5xl mx-auto px-8 py-8">
+        <RoomBookingBanner clubId={clubId} href="/trainer/saler" label="Administrer saler" className="inline-block mb-4" />
         <TrainerWebDashboard
           slots={(slots ?? []) as any}
           completedSlots={(completedSlots ?? []) as any}
