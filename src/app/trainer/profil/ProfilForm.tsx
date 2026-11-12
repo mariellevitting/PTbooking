@@ -21,11 +21,13 @@ interface Props {
   styleOptions?: string[];
   avatarUrl?: string | null;
   notifyRoomActivity?: boolean;
+  paymentMethod?: string | null;
+  paymentValue?: string | null;
 }
 
 const FALLBACK_STYLES = ["Slow", "Freestyle", "Jazz", "Moderne", "Freestyle dobbel", "Slow dobbel", "Akro", "Hiphop", "Show"];
 
-export default function ProfilForm({ userId, name, phone, bio, price, priceDouble, showDoublePrice = false, danceStyles, styleOptions, avatarUrl, notifyRoomActivity: initialNotifyRoomActivity = true }: Props) {
+export default function ProfilForm({ userId, name, phone, bio, price, priceDouble, showDoublePrice = false, danceStyles, styleOptions, avatarUrl, notifyRoomActivity: initialNotifyRoomActivity = true, paymentMethod, paymentValue }: Props) {
   const allStyles = styleOptions && styleOptions.length > 0 ? styleOptions : FALLBACK_STYLES;
   const router = useRouter();
   const [nameVal, setNameVal] = useState(name);
@@ -41,6 +43,8 @@ export default function ProfilForm({ userId, name, phone, bio, price, priceDoubl
   const [priceDoubleVal, setPriceDoubleVal] = useState(priceDouble != null ? String(priceDouble) : "");
   const [selected, setSelected] = useState<Set<string>>(new Set(danceStyles));
   const [notifyRoomActivity, setNotifyRoomActivity] = useState(initialNotifyRoomActivity);
+  const [paymentMethodVal, setPaymentMethodVal] = useState<string>(paymentMethod ?? "vipps");
+  const [paymentValueVal, setPaymentValueVal] = useState(paymentValue ?? "");
   const [avatar, setAvatar] = useState<string | null>(avatarUrl ?? null);
   const [uploading, setUploading] = useState(false);
   const [saving, setSaving] = useState(false);
@@ -98,6 +102,8 @@ export default function ProfilForm({ userId, name, phone, bio, price, priceDoubl
         dance_styles: Array.from(selected),
         price: priceVal.trim() === "" ? null : Number(priceVal),
         ...(showDoublePrice ? { price_double: priceDoubleVal.trim() === "" ? null : Number(priceDoubleVal) } : {}),
+        payment_method: paymentValueVal.trim() === "" ? null : paymentMethodVal,
+        payment_value: paymentValueVal.trim() === "" ? null : paymentValueVal.trim(),
       })
       .eq("id", userId);
 
@@ -236,6 +242,43 @@ export default function ProfilForm({ userId, name, phone, bio, price, priceDoubl
           {selected.size > 0 && (
             <p className="text-xs text-[#E2A9F1] mt-3">{selected.size} stil{selected.size !== 1 ? "er" : ""} valgt</p>
           )}
+        </CardContent>
+      </Card>
+
+      <Card>
+        <CardHeader>
+          <CardTitle className="text-base flex items-center gap-2">
+            <Wallet size={16} className="text-[#E2A9F1]" /> Betaling
+          </CardTitle>
+        </CardHeader>
+        <CardContent className="space-y-3">
+          <p className="text-xs text-gray-400 dark:text-gray-500">
+            Valgfritt. Vises til danser/forelder når de har booket en time hos deg. Står dette tomt, vises klubbens generelle betalingsinfo i stedet.
+          </p>
+          <div className="flex gap-2">
+            <button
+              type="button"
+              onClick={() => setPaymentMethodVal("vipps")}
+              className={`flex-1 px-3 py-2 rounded-lg text-sm font-medium border ${paymentMethodVal === "vipps" ? "bg-[#3A3A3A] text-[#E2A9F1] border-[#3A3A3A] dark:bg-[#c87de0] dark:text-white dark:border-[#c87de0]" : "bg-white dark:bg-gray-900 text-gray-600 dark:text-gray-400 border-gray-200 dark:border-gray-700"}`}
+            >
+              Vipps
+            </button>
+            <button
+              type="button"
+              onClick={() => setPaymentMethodVal("bank")}
+              className={`flex-1 px-3 py-2 rounded-lg text-sm font-medium border ${paymentMethodVal === "bank" ? "bg-[#3A3A3A] text-[#E2A9F1] border-[#3A3A3A] dark:bg-[#c87de0] dark:text-white dark:border-[#c87de0]" : "bg-white dark:bg-gray-900 text-gray-600 dark:text-gray-400 border-gray-200 dark:border-gray-700"}`}
+            >
+              Bankkonto
+            </button>
+          </div>
+          <div className="space-y-1.5">
+            <label className="text-sm font-medium">{paymentMethodVal === "bank" ? "Kontonummer" : "Vipps-nummer"}</label>
+            <Input
+              value={paymentValueVal}
+              onChange={(e) => setPaymentValueVal(e.target.value)}
+              placeholder={paymentMethodVal === "bank" ? "F.eks. 1224 26 96059" : "F.eks. 542018"}
+            />
+          </div>
         </CardContent>
       </Card>
 

@@ -54,7 +54,7 @@ interface Props {
   bookedSlots?: BookedSlot[];
 }
 
-export default function BookingForm({ slots, trainerName, bookerId, bookerName, bookerRole, danceStyles, children, price, priceDouble, paymentLabel, clubId, bookedSlots = [] }: Props) {
+export default function BookingForm({ slots, trainerId, trainerName, bookerId, bookerName, bookerRole, danceStyles, children, price, priceDouble, paymentLabel, clubId, bookedSlots = [] }: Props) {
   const router = useRouter();
   const [swapTarget, setSwapTarget] = useState<BookedSlot | null>(null);
   const bookedBySlot = new Map(bookedSlots.map(b => [b.slot_id, b]));
@@ -294,7 +294,7 @@ export default function BookingForm({ slots, trainerName, bookerId, bookerName, 
       }
     }
 
-    router.push("/booking/kvittering?success=1");
+    router.push(`/booking/kvittering?success=1&trainerId=${trainerId}`);
   }
 
   // STEG 1: Velg tider

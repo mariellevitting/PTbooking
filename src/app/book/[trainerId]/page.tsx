@@ -5,6 +5,8 @@ import BookingForm from "./BookingForm";
 import { ArrowLeft, Phone } from "lucide-react";
 import { styleColor } from "@/lib/danceStyleColors";
 import { getClubById, danceStylesFor, defaultPriceFor } from "@/lib/club";
+import { trainerPaymentInfo } from "@/lib/trainerPayment";
+import { PaymentText } from "@/components/PrivattimeInfo";
 
 export default async function TrainerBookPage({ params }: { params: Promise<{ trainerId: string }> }) {
   const { trainerId } = await params;
@@ -33,9 +35,11 @@ export default async function TrainerBookPage({ params }: { params: Promise<{ tr
 
   const { data: trainerDetails } = await supabase
     .from("trainers")
-    .select("dance_styles, bio, price, price_double")
+    .select("dance_styles, bio, price, price_double, payment_method, payment_value")
     .eq("id", trainerId)
     .single();
+
+  const ownPayment = trainerPaymentInfo((trainerDetails as any)?.payment_method, (trainerDetails as any)?.payment_value);
 
   const { data: children } = await supabase
     .from("children")
@@ -98,6 +102,13 @@ export default async function TrainerBookPage({ params }: { params: Promise<{ tr
             <a href={`tel:${trainer.phone}`} className="inline-flex items-center gap-2 text-sm text-gray-500 dark:text-gray-400 hover:text-[#E2A9F1]">
               <Phone size={14} /> {trainer.phone}
             </a>
+          )}
+
+          {ownPayment && (
+            <div className="mt-4 bg-[#f5eeff] dark:bg-[#E2A9F1]/10 border border-[#E2A9F1]/30 rounded-xl p-3">
+              <p className="text-xs font-semibold text-[#9b59c4] mb-0.5">Betaling til {trainer.name.split(" ")[0]}</p>
+              <p className="text-sm text-[#9b59c4]"><PaymentText info={ownPayment.info} url={null} /></p>
+            </div>
           )}
         </div>
 

@@ -8,6 +8,8 @@ export const DANCE_STYLE_COLORS: Record<string, { bg: string; text: string; bord
   "Akro":             { bg: "bg-orange-100", text: "text-orange-700", border: "border-orange-200", darkBg: "dark:bg-orange-900/30", darkText: "dark:text-orange-300" },
   "Hiphop":           { bg: "bg-green-100",  text: "text-green-700",  border: "border-green-200",  darkBg: "dark:bg-green-900/30",  darkText: "dark:text-green-300" },
   "Show":             { bg: "bg-rose-100",   text: "text-rose-700",   border: "border-rose-200",   darkBg: "dark:bg-rose-900/30",   darkText: "dark:text-rose-300" },
+  "Disco":            { bg: "bg-fuchsia-100", text: "text-fuchsia-700", border: "border-fuchsia-200", darkBg: "dark:bg-fuchsia-900/30", darkText: "dark:text-fuchsia-300" },
+  "PA":               { bg: "bg-cyan-100",   text: "text-cyan-700",   border: "border-cyan-200",   darkBg: "dark:bg-cyan-900/30",   darkText: "dark:text-cyan-300" },
 };
 
 export function styleColor(style: string) {

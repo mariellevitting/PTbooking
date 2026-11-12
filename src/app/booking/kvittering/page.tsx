@@ -4,14 +4,22 @@ import { CheckCircle } from "lucide-react";
 import { createClient } from "@/lib/supabase/server";
 import { getClubForUser, CLUB_DEFAULTS } from "@/lib/club";
 import { PaymentText } from "@/components/PrivattimeInfo";
+import { trainerPaymentInfo } from "@/lib/trainerPayment";
 
 export const dynamic = "force-dynamic";
 
-export default async function KvitteringPage() {
+export default async function KvitteringPage({ searchParams }: { searchParams: Promise<{ trainerId?: string }> }) {
+  const { trainerId } = await searchParams;
   const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
   const club = user ? await getClubForUser(supabase, user.id) : null;
-  const paymentInfo = club?.payment_info?.trim() || CLUB_DEFAULTS.payment_info;
+
+  const { data: trainerDetails } = trainerId
+    ? await supabase.from("trainers").select("payment_method, payment_value").eq("id", trainerId).single()
+    : { data: null };
+  const ownPayment = trainerPaymentInfo((trainerDetails as any)?.payment_method, (trainerDetails as any)?.payment_value);
+
+  const paymentInfo = ownPayment?.info || club?.payment_info?.trim() || CLUB_DEFAULTS.payment_info;
 
   return (
     <main className="bg-gray-50 dark:bg-gray-950 flex items-center justify-center p-6">
@@ -32,7 +40,7 @@ export default async function KvitteringPage() {
         <div className="bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-2xl p-4 mb-8 text-left">
           <p className="text-sm font-semibold text-gray-800 dark:text-gray-100 mb-1">Betaling</p>
           <p className="text-sm text-gray-600 dark:text-gray-400">
-            <PaymentText info={paymentInfo} label={club?.payment_label ?? null} url={club?.payment_url ?? null} />
+            <PaymentText info={paymentInfo} label={(ownPayment ? ownPayment.label : club?.payment_label) ?? null} url={ownPayment ? null : (club?.payment_url ?? null)} />
           </p>
         </div>
 
