@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { ROUNDS, FINALE_PLACES, FINALIST_PLACES, roundOf, type Round } from "@/lib/placement";
+import { ROUNDS, FINALE_PLACES, roundOf, type Round } from "@/lib/placement";
 
 export default function PlacementPicker({ label, value, onChange }: { label: string; value: string; onChange: (v: string) => void }) {
   const [round, setRound] = useState<Round | null>(roundOf(value));
@@ -9,16 +9,16 @@ export default function PlacementPicker({ label, value, onChange }: { label: str
   function pickRound(r: Round) {
     if (round === r) { setRound(null); onChange(""); return; }
     setRound(r);
-    // Finale/finalist trenger plassering fra nedtrekksmenyen; de andre er ferdige med en gang
-    onChange(r === "finale" || r === "finalist" ? "" : r);
+    // Finale trenger plassering fra nedtrekksmenyen; de andre er ferdige med en gang
+    onChange(r === "finale" ? "" : r);
   }
 
-  const places = round === "finale" ? FINALE_PLACES : round === "finalist" ? FINALIST_PLACES : null;
-  const placeValue = round === "finale" ? value : round === "finalist" ? value.replace("finalist:", "") : "";
+  const places = round === "finale" ? FINALE_PLACES : null;
+  const placeValue = round === "finale" ? value : "";
 
   return (
     <div className="space-y-2">
-      <p className="text-xs font-medium text-gray-600 dark:text-gray-400">{label}</p>
+      <p className="text-base font-semibold text-gray-800 dark:text-gray-100">{label}</p>
       <div className="flex flex-wrap gap-1.5">
         {ROUNDS.map(r => (
           <button
@@ -39,7 +39,7 @@ export default function PlacementPicker({ label, value, onChange }: { label: str
       {places && (
         <select
           value={placeValue}
-          onChange={e => onChange(e.target.value ? (round === "finalist" ? `finalist:${e.target.value}` : e.target.value) : "")}
+          onChange={e => onChange(e.target.value)}
           className="w-full border dark:border-gray-700 rounded-lg px-3 py-2 text-sm bg-white dark:bg-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-[#E2A9F1]"
         >
           <option value="">Velg plass</option>
