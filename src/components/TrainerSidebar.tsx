@@ -19,10 +19,13 @@ const BASE_NAV = [
   { href: "/trainer/sesongmal", label: "Sesongmål", icon: TargetArrowIcon },
   { href: "/trainer/konkurranser", label: "Konkurranser", icon: Trophy },
   { href: "/trainer/profil", label: "Profil", icon: UserCircle },
-  { href: "/admin", label: "Trenerkalender", icon: LayoutDashboard },
 ];
 
 const SALER_ITEM = { href: "/trainer/saler", label: "Administrer saler", icon: Building2 };
+
+// Silje Stave er eneste Moveon-trener med tilgang til salstyring, og ser
+// "Admin" i stedet for "Trenerkalender" på /admin-lenken, samme som miemarielle.
+const SILJE_EMAIL = "silje@moveon.no";
 
 interface Props {
   name: string;
@@ -36,10 +39,13 @@ interface Props {
 
 export default function TrainerSidebar({ name, userId, email, avatarUrl, notifications, hasRooms = false, logoUrl = null }: Props) {
   const isAdmin = email === "miemarielle@live.no";
+  const isSiljeAdmin = email === SILJE_EMAIL;
   const pathname = usePathname();
   const [menuOpen, setMenuOpen] = useState(false);
   const firstName = name.split(" ")[0];
-  const NAV = hasRooms ? [...BASE_NAV.slice(0, 2), SALER_ITEM, ...BASE_NAV.slice(2)] : BASE_NAV;
+  const adminItem = { href: "/admin", label: isAdmin || isSiljeAdmin ? "Admin" : "Trenerkalender", icon: LayoutDashboard };
+  const withSaler = hasRooms && (isAdmin || isSiljeAdmin) ? [...BASE_NAV.slice(0, 2), SALER_ITEM, ...BASE_NAV.slice(2)] : BASE_NAV;
+  const NAV = [...withSaler, adminItem];
 
   function isActive(href: string) {
     if (href === "/trainer/dashboard") return pathname === href;

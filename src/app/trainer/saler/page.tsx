@@ -151,6 +151,10 @@ export default function SalerPage() {
       const supabase = createClient();
       const { data: { user } } = await supabase.auth.getUser();
       if (!user) return;
+      if (user.email !== "miemarielle@live.no" && user.email !== "silje@moveon.no") {
+        router.push("/trainer/dashboard");
+        return;
+      }
       const { data: profile } = await supabase.from("profiles").select("club_id").eq("id", user.id).single();
       const clubId = (profile as any)?.club_id;
       if (!clubId) { setRoomsLoading(false); return; }
