@@ -545,7 +545,9 @@ export default function DancerDashboardNav(props: Props) {
           <CardContent className="flex items-center justify-between gap-4">
             <div>
               <p className="text-sm font-medium text-gray-800 dark:text-gray-100">Vis målene mine for trenere</p>
-              <p className="text-xs text-gray-500 dark:text-gray-400">Gjelder Sesong, Freestyle og Slow</p>
+              <p className="text-xs text-gray-500 dark:text-gray-400">
+                {props.club?.goals_single_tab ? "Gjelder sesongmålene dine" : `Gjelder Sesong, ${props.club?.goal_style_1 ?? "Freestyle"} og ${props.club?.goal_style_2 ?? "Slow"}`}
+              </p>
             </div>
             <button
               type="button"
