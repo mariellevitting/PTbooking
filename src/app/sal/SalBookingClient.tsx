@@ -66,7 +66,10 @@ function getWeekNumber(date: Date) {
   return Math.ceil((((d.getTime() - yearStart.getTime()) / 86400000) + 1) / 7);
 }
 
-// Varsler trenere i klubben som har skrudd på "Egentrening i saler"-varsler.
+// Varsler trenere som faktisk administrerer saler (kun Silje Stave for Moveon)
+// og som har skrudd på "Egentrening i saler"-varsler.
+const ROOM_ADMIN_EMAILS = ["silje@moveon.no"];
+
 async function notifyTrainers(supabase: ReturnType<typeof createClient>, clubId: string | null, message: string) {
   if (!clubId) return;
   const { data: trainers } = await supabase
@@ -74,6 +77,7 @@ async function notifyTrainers(supabase: ReturnType<typeof createClient>, clubId:
     .select("id")
     .eq("role", "trainer")
     .eq("club_id", clubId)
+    .in("email", ROOM_ADMIN_EMAILS)
     .or("notify_room_activity.is.null,notify_room_activity.eq.true");
   if (!trainers || trainers.length === 0) return;
   await supabase.from("notifications").insert(trainers.map(t => ({ user_id: t.id, message })));

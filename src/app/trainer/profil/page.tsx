@@ -63,7 +63,7 @@ export default async function TrainerProfilPage() {
           paymentMethod={(trainerDetails as any)?.payment_method ?? null}
           paymentValue={(trainerDetails as any)?.payment_value ?? null}
           showPayment={club?.name === "Moveon"}
-          showRoomNotify={club?.name === "Moveon"}
+          showRoomNotify={club?.name === "Moveon" && user.email === "silje@moveon.no"}
         />
 
         <div className="mt-4">
