@@ -8,6 +8,7 @@ import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Check, User, Phone, FileText, Music, Camera, Wallet, Bell } from "lucide-react";
 import DeleteAccountSection from "@/components/DeleteAccountSection";
+import ChangePasswordSection from "@/components/ChangePasswordSection";
 
 interface Props {
   userId: string;
@@ -327,6 +328,7 @@ export default function ProfilForm({ userId, name, phone, bio, price, priceDoubl
       <Button type="submit" className="w-full bg-[#3A3A3A] hover:bg-[#2a2a2a] dark:bg-[#c87de0] dark:hover:bg-[#b56fd0] dark:text-white" disabled={saving || success}>
         {saving ? "Lagrer..." : "Lagre profil"}
       </Button>
+      <ChangePasswordSection />
       <DeleteAccountSection userId={userId} />
     </form>
   );

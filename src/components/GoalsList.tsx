@@ -45,6 +45,25 @@ export default function GoalsList({ value, onChange }: Props) {
 
   return (
     <div className="space-y-2.5">
+      <div className="flex gap-2">
+        <input
+          type="text"
+          value={newGoal}
+          onChange={e => setNewGoal(e.target.value)}
+          onKeyDown={handleKeyDown}
+          onBlur={handleBlur}
+          placeholder="Legg til et mål..."
+          className="flex-1 min-w-0 border border-gray-100 dark:border-gray-700 bg-white/80 dark:bg-gray-800/70 dark:text-white rounded-[14px] px-3.5 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-[#E2A9F1]"
+        />
+        <button
+          type="button"
+          onClick={addGoal}
+          disabled={!newGoal.trim()}
+          className="w-11 h-11 bg-[#3A3A3A] hover:bg-[#2a2a2a] dark:bg-[#c87de0] dark:hover:bg-[#b56fd0] text-[#E2A9F1] dark:text-white disabled:opacity-40 rounded-[14px] flex items-center justify-center transition-colors shrink-0"
+        >
+          <Plus size={16} />
+        </button>
+      </div>
       {goals.length === 0 && (
         <p className="text-sm text-gray-400 dark:text-gray-500 py-1">Ingen mål lagt til ennå</p>
       )}
@@ -74,25 +93,6 @@ export default function GoalsList({ value, onChange }: Props) {
           </div>
         );
       })}
-      <div className="flex gap-2 pt-1">
-        <input
-          type="text"
-          value={newGoal}
-          onChange={e => setNewGoal(e.target.value)}
-          onKeyDown={handleKeyDown}
-          onBlur={handleBlur}
-          placeholder="Legg til et mål..."
-          className="flex-1 min-w-0 border border-gray-100 dark:border-gray-700 bg-white/80 dark:bg-gray-800/70 dark:text-white rounded-[14px] px-3.5 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-[#E2A9F1]"
-        />
-        <button
-          type="button"
-          onClick={addGoal}
-          disabled={!newGoal.trim()}
-          className="w-11 h-11 bg-[#3A3A3A] hover:bg-[#2a2a2a] dark:bg-[#c87de0] dark:hover:bg-[#b56fd0] text-[#E2A9F1] dark:text-white disabled:opacity-40 rounded-[14px] flex items-center justify-center transition-colors shrink-0"
-        >
-          <Plus size={16} />
-        </button>
-      </div>
     </div>
   );
 }

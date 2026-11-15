@@ -23,7 +23,7 @@ export default function GoalsTabs({ values, onChange, style1Label = "Freestyle",
   if (singleTab) {
     return (
       <div>
-        <p className="text-xs text-gray-400 dark:text-gray-500 mb-3">
+        <p className="text-sm text-gray-600 dark:text-gray-300 mb-3">
           Hva vil du klare i løpet av sesongen? Huk av når du har klart målet.
         </p>
         <GoalsList value={values.season} onChange={val => onChange("season", val)} />
@@ -57,7 +57,7 @@ export default function GoalsTabs({ values, onChange, style1Label = "Freestyle",
           </button>
         ))}
       </div>
-      <p className="text-xs text-gray-400 dark:text-gray-500 mb-3">{HINTS[tab]}</p>
+      <p className="text-sm text-gray-600 dark:text-gray-300 mb-3">{HINTS[tab]}</p>
       <GoalsList key={tab} value={values[tab]} onChange={val => onChange(tab, val)} />
     </div>
   );

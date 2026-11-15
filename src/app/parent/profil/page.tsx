@@ -5,6 +5,8 @@ import { ArrowLeft } from "lucide-react";
 import UserProfileForm from "@/components/UserProfileForm";
 import ChildrenForm from "./ChildrenForm";
 import ThemeSetting from "@/components/ThemeSetting";
+import DeleteAccountSection from "@/components/DeleteAccountSection";
+import ChangePasswordSection from "@/components/ChangePasswordSection";
 
 export default async function ParentProfilPage() {
   const supabase = await createClient();
@@ -42,6 +44,8 @@ export default async function ParentProfilPage() {
           />
           <ThemeSetting />
           <ChildrenForm parentId={user.id} children={(children ?? []).map(c => ({ id: c.id, name: c.name }))} />
+          <ChangePasswordSection />
+          <DeleteAccountSection userId={user.id} />
         </div>
       </div>
     </main>

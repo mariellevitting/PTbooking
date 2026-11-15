@@ -48,32 +48,15 @@ export default async function TrainerProfilPage() {
           <ArrowLeft size={24} strokeWidth={2.5} />
         </Link>
         <h1 className="font-display text-[28px] mb-6">Min profil</h1>
-        <ProfilForm
-          userId={user.id}
-          name={profile.name}
-          phone={profile.phone ?? ""}
-          bio={trainerDetails?.bio ?? ""}
-          price={trainerDetails?.price ?? null}
-          priceDouble={(trainerDetails as any)?.price_double ?? null}
-          showDoublePrice={club?.name === "Trondheim Danseklubb"}
-          danceStyles={trainerDetails?.dance_styles ?? []}
-          styleOptions={danceStylesFor(club)}
-          avatarUrl={profile.avatar_url ?? null}
-          notifyRoomActivity={(profile as any).notify_room_activity ?? true}
-          paymentMethod={(trainerDetails as any)?.payment_method ?? null}
-          paymentValue={(trainerDetails as any)?.payment_value ?? null}
-          showPayment={club?.name === "Moveon"}
-          showRoomNotify={club?.name === "Moveon" && user.email === "silje@moveon.no"}
-        />
 
-        <div className="mt-4">
+        <div className="mb-4">
           <ThemeSetting />
         </div>
 
         {isAdmin && allUsers && (
           <>
             {/* Statistikk */}
-            <div className="bg-white dark:bg-gray-900 rounded-2xl border dark:border-gray-700 p-5 mt-6">
+            <div className="bg-white dark:bg-gray-900 rounded-2xl border dark:border-gray-700 p-5 mb-6">
               <h2 className="font-semibold text-base flex items-center gap-2 mb-4">
                 <Users size={16} className="text-[#E2A9F1]" />
                 Registrerte brukere ({allUsers.length})
@@ -117,6 +100,24 @@ export default async function TrainerProfilPage() {
             </div>
           </>
         )}
+
+        <ProfilForm
+          userId={user.id}
+          name={profile.name}
+          phone={profile.phone ?? ""}
+          bio={trainerDetails?.bio ?? ""}
+          price={trainerDetails?.price ?? null}
+          priceDouble={(trainerDetails as any)?.price_double ?? null}
+          showDoublePrice={club?.name === "Trondheim Danseklubb"}
+          danceStyles={trainerDetails?.dance_styles ?? []}
+          styleOptions={danceStylesFor(club)}
+          avatarUrl={profile.avatar_url ?? null}
+          notifyRoomActivity={(profile as any).notify_room_activity ?? true}
+          paymentMethod={(trainerDetails as any)?.payment_method ?? null}
+          paymentValue={(trainerDetails as any)?.payment_value ?? null}
+          showPayment={club?.name === "Moveon"}
+          showRoomNotify={club?.name === "Moveon" && user.email === "silje@moveon.no"}
+        />
       </div>
     </main>
   );

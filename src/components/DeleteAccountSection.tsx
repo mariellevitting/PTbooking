@@ -20,7 +20,7 @@ export default function DeleteAccountSection({ userId }: { userId: string }) {
   }
 
   return (
-    <div className="border-t dark:border-gray-700 pt-6 mt-2">
+    <div className="mt-6">
       {!confirm ? (
         <button
           type="button"
